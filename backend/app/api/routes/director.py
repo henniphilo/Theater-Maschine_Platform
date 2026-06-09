@@ -6,7 +6,6 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import StreamingResponse
 
 from app.core.config import settings
-from app.director.dialogue.models import DialogueEvent
 from app.director.pipeline import get_director_pipeline
 from app.director.recording import RecordingManager
 from app.schemas.director import (

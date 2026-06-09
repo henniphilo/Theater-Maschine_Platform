@@ -18,8 +18,8 @@ function speakerLabel(speaker: DebateSpeaker) {
 export default function Page() {
   const [topic, setTopic] = useState("");
   const [rounds, setRounds] = useState(3);
-  const [openaiModel, setOpenaiModel] = useState(OPENAI_MODELS[0]);
-  const [anthropicModel, setAnthropicModel] = useState(ANTHROPIC_MODELS[0]);
+  const [openaiModel, setOpenaiModel] = useState<string>(OPENAI_MODELS[0]);
+  const [anthropicModel, setAnthropicModel] = useState<string>(ANTHROPIC_MODELS[0]);
   const [conversationId, setConversationId] = useState<string | undefined>(undefined);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [thinking, setThinking] = useState<DebateSpeaker | null>(null);
