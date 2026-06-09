@@ -1,0 +1,15 @@
+---
+description: Token-efficient agent behavior
+alwaysApply: true
+---
+
+# Token Economy Rules
+
+- Keep responses concise.
+- Do not summarize entire files unless asked.
+- Do not paste large code blocks when a small diff or focused snippet is enough.
+- Read only files directly relevant to the task.
+- Avoid broad searches across the repo unless the first targeted search fails.
+- Prefer editing existing functions over creating new layers.
+- Ask for clarification only when the implementation would otherwise be unsafe or likely wrong.
+- Do not explain obvious code. Explain only tradeoffs, risks, or non-obvious decisions.

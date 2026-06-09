@@ -1,0 +1,15 @@
+---
+description: Core engineering behavior
+alwaysApply: true
+---
+
+# Core Rules
+
+- Make the smallest safe change that solves the request.
+- Do not rewrite unrelated code.
+- Before editing, inspect the relevant existing files.
+- Prefer simple, boring, maintainable solutions over clever abstractions.
+- Preserve existing architecture, naming, formatting, and public APIs unless explicitly asked.
+- When uncertain, state the assumption briefly and continue with the safest reasonable implementation.
+- Do not add new dependencies unless necessary. Explain why before adding one.
+- Never remove tests, validation, error handling, logging, auth checks, or security checks to make code pass.

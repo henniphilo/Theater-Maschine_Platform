@@ -1,0 +1,111 @@
+{
+  "videos": [
+    {
+      "id": "memory_noise_03",
+      "type": "video",
+      "path": "media/video/memory_noise_03.mp4",
+      "tags": ["memory", "glitch", "archive", "cold", "erinnerung"],
+      "moods": ["melancholisch", "unheimlich"],
+      "intensity_min": 0.3,
+      "intensity_max": 0.8,
+      "duration": 42.0,
+      "loopable": true,
+      "preferred_blend": "slow_fade"
+    },
+    {
+      "id": "body_close_01",
+      "type": "video",
+      "path": "media/video/body_close_01.mp4",
+      "tags": ["body", "körper", "skin", "warm"],
+      "moods": ["intim", "warm"],
+      "intensity_min": 0.2,
+      "intensity_max": 0.7,
+      "duration": 28.0,
+      "loopable": true,
+      "preferred_blend": "slow_fade"
+    },
+    {
+      "id": "machine_grid_02",
+      "type": "video",
+      "path": "media/video/machine_grid_02.mp4",
+      "tags": ["machine", "maschine", "tech", "grid"],
+      "moods": ["kalt", "mechanisch"],
+      "intensity_min": 0.4,
+      "intensity_max": 0.9,
+      "duration": 35.0,
+      "loopable": true,
+      "preferred_blend": "cut"
+    },
+    {
+      "id": "fear_shadow_01",
+      "type": "video",
+      "path": "media/video/fear_shadow_01.mp4",
+      "tags": ["fear", "angst", "shadow", "dark"],
+      "moods": ["unheimlich", "spannung"],
+      "intensity_min": 0.5,
+      "intensity_max": 1.0,
+      "duration": 30.0,
+      "loopable": false,
+      "preferred_blend": "slow_fade"
+    },
+    {
+      "id": "silence_void_01",
+      "type": "video",
+      "path": "media/video/silence_void_01.mp4",
+      "tags": ["silence", "stille", "void", "minimal"],
+      "moods": ["leer", "melancholisch"],
+      "intensity_min": 0.0,
+      "intensity_max": 0.4,
+      "duration": 60.0,
+      "loopable": true,
+      "preferred_blend": "slow_fade"
+    }
+  ],
+  "sounds": [
+    {
+      "id": "low_drone_02",
+      "type": "sound",
+      "path": "media/audio/low_drone_02.wav",
+      "tags": ["drone", "tension", "dark", "memory", "erinnerung"],
+      "moods": ["melancholisch", "unheimlich"],
+      "intensity_min": 0.3,
+      "intensity_max": 0.8
+    },
+    {
+      "id": "body_pulse_01",
+      "type": "sound",
+      "path": "media/audio/body_pulse_01.wav",
+      "tags": ["body", "körper", "pulse", "warm"],
+      "moods": ["intim", "warm"],
+      "intensity_min": 0.2,
+      "intensity_max": 0.6
+    },
+    {
+      "id": "machine_tick_01",
+      "type": "sound",
+      "path": "media/audio/machine_tick_01.wav",
+      "tags": ["machine", "maschine", "tick", "tech"],
+      "moods": ["mechanisch", "kalt"],
+      "intensity_min": 0.4,
+      "intensity_max": 0.9
+    },
+    {
+      "id": "fear_stinger_01",
+      "type": "sound",
+      "path": "media/audio/fear_stinger_01.wav",
+      "tags": ["fear", "angst", "stinger"],
+      "moods": ["spannung", "unheimlich"],
+      "intensity_min": 0.6,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "silence_room_01",
+      "type": "sound",
+      "path": "media/audio/silence_room_01.wav",
+      "tags": ["silence", "stille", "ambient"],
+      "moods": ["leer", "melancholisch"],
+      "intensity_min": 0.0,
+      "intensity_max": 0.3
+    }
+  ]
+}

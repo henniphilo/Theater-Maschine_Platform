@@ -1,0 +1,13 @@
+---
+description: Testing and verification
+alwaysApply: true
+---
+
+# Testing Rules
+
+- Add or update tests for changed behavior when a test framework already exists.
+- Prefer focused tests over broad snapshot tests.
+- Do not weaken existing tests to pass.
+- After changes, mention the exact test command to run.
+- If unable to run tests, say so and explain what should be verified manually.
+- Cover edge cases, invalid input, and permission failures where relevant.

@@ -1,0 +1,16 @@
+---
+description: Secure coding defaults
+alwaysApply: true
+---
+
+# Security Rules
+
+- Treat all user input, external API responses, files, env vars, URLs, and database values as untrusted.
+- Validate input at trust boundaries.
+- Do not hardcode secrets, tokens, credentials, private keys, or production URLs.
+- Do not log secrets, PII, auth headers, cookies, session IDs, or payment data.
+- Use parameterized queries or ORM-safe APIs. Never concatenate SQL.
+- Keep authorization checks server-side.
+- Fail closed for auth, permissions, payments, and data access.
+- For destructive actions, require explicit confirmation in code paths where appropriate.
+- Prefer allowlists over blocklists.

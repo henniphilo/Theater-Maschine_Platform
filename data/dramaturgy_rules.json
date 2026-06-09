@@ -1,0 +1,22 @@
+{
+  "keyword_tags": {
+    "memory": ["memory", "erinnerung", "vergangen", "archive", "vergessen"],
+    "body": ["body", "körper", "haut", "atmen", "hand", "herz"],
+    "machine": ["machine", "maschine", "technik", "code", "algorithmus", "digital"],
+    "fear": ["fear", "angst", "schrecken", "panik", "dunkel"],
+    "silence": ["silence", "stille", "pause", "leer", "schweigen"]
+  },
+  "mood_keywords": {
+    "melancholisch": ["vielleicht", "verloren", "traurig", "wehmütig", "einsam"],
+    "unheimlich": ["störung", "fremd", "schatten", "unbekannt", "kalt"],
+    "warm": ["nähe", "warm", "berührung", "herz", "menschlich"],
+    "spannung": ["plötzlich", "alarm", "gefahr", "schnell", "!"],
+    "leer": ["nichts", "leer", "stille", "pause", "…"]
+  },
+  "intensity_boosters": ["!", "??", "!!!", "niemals", "immer", "explosion"],
+  "min_cue_interval_seconds": {
+    "light": 10.0,
+    "video": 5.0,
+    "sound": 3.0
+  }
+}
