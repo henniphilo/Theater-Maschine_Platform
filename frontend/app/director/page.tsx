@@ -132,12 +132,12 @@ export default function DirectorPage() {
         <h1 style={{ margin: 0 }}>Live-Regie Operator</h1>
         <Link href="/">← Zur Debatte</Link>
       </div>
-      <p style={{ margin: 0, color: "#6b5e4a" }}>
+      <p className="textMuted">
         Semi-autonome Regie: Safety-Flags, Emergency Stop, Aufnahme-Steuerung.
       </p>
 
       {error ? (
-        <div role="alert" style={{ color: "#8b2020" }}>
+        <div role="alert" className="textError">
           {error}
         </div>
       ) : null}
@@ -194,11 +194,11 @@ export default function DirectorPage() {
               </button>
             </div>
             {status.safety.emergency_stop_active ? (
-              <p style={{ margin: 0, color: "#8b2020" }}>Emergency Stop aktiv — Ausgabe gesperrt.</p>
+              <p className="textError">Emergency Stop aktiv — Ausgabe gesperrt.</p>
             ) : null}
           </>
         ) : (
-          <p style={{ margin: 0, color: "#9c8e78" }}>Lade Status …</p>
+          <p className="textFaint">Lade Status …</p>
         )}
       </section>
 
@@ -228,7 +228,7 @@ export default function DirectorPage() {
             {JSON.stringify(lastEvent, null, 2)}
           </pre>
         ) : (
-          <p style={{ margin: 0, color: "#9c8e78" }}>Noch kein Event — Debatte starten oder Test-Event senden.</p>
+          <p className="textFaint">Noch kein Event — Debatte starten oder Test-Event senden.</p>
         )}
       </section>
 
@@ -245,7 +245,7 @@ export default function DirectorPage() {
             </pre>
           </>
         ) : (
-          <p style={{ margin: 0, color: "#9c8e78" }}>Noch keine Entscheidung.</p>
+          <p className="textFaint">Noch keine Entscheidung.</p>
         )}
       </section>
 
@@ -258,7 +258,7 @@ export default function DirectorPage() {
             ))}
           </ul>
         ) : (
-          <p style={{ margin: 0, color: "#9c8e78" }}>Keine aktiven Cues.</p>
+          <p className="textFaint">Keine aktiven Cues.</p>
         )}
       </section>
     </main>

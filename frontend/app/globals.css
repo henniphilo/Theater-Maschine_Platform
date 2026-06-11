@@ -1,5 +1,20 @@
 :root {
   color-scheme: light;
+  --bg: #e8f5ec;
+  --bg-subtle: #f4fbf6;
+  --surface: #ffffff;
+  --surface-muted: #edf8f0;
+  --border: #a8d5b5;
+  --border-strong: #6bae7d;
+  --text: #0f2918;
+  --text-muted: #3d6b4f;
+  --text-faint: #6b9a7a;
+  --accent: #15803d;
+  --accent-hover: #166534;
+  --accent-soft: #bbf7d0;
+  --accent-glow: #22c55e;
+  --error: #b91c1c;
+  --link: #166534;
 }
 
 * {
@@ -9,8 +24,17 @@
 body {
   margin: 0;
   font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  background: #f6f4ef;
-  color: #1f1a11;
+  background: var(--bg);
+  color: var(--text);
+}
+
+a {
+  color: var(--link);
+  font-weight: 500;
+}
+
+a:hover {
+  color: var(--accent-hover);
 }
 
 .container {
@@ -20,10 +44,11 @@ body {
 }
 
 .card {
-  background: #fffdf8;
-  border: 1px solid #d6cebf;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 1rem;
+  box-shadow: 0 1px 3px rgba(21, 128, 61, 0.08);
 }
 
 .row {
@@ -37,13 +62,27 @@ body {
   gap: 0.75rem;
 }
 
+.textMuted {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.textFaint {
+  margin: 0;
+  color: var(--text-faint);
+}
+
+.textError {
+  color: var(--error);
+}
+
 .chatList {
   max-height: 62vh;
   overflow: auto;
   padding: 0.5rem;
   border-radius: 10px;
-  border: 1px solid #ddd4c4;
-  background: #fbf8f1;
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
 }
 
 .bubble {
@@ -56,27 +95,27 @@ body {
 }
 
 .bubbleUser {
-  background: #ece1d5;
-  border-color: #ccbba0;
+  background: #c8e6d0;
+  border-color: var(--border-strong);
 }
 
 .bubbleAi {
-  background: #fff;
-  border-color: #ddd4c4;
+  background: var(--surface);
+  border-color: var(--border);
 }
 
 .bubbleOpenai {
-  background: #e8f5f0;
-  border-color: #10a37f;
+  background: #d4f5e2;
+  border-color: var(--accent-glow);
 }
 
 .bubbleAnthropic {
-  background: #faf0e6;
-  border-color: #d4761a;
+  background: #e2f5e8;
+  border-color: #4ade80;
 }
 
 .bubblePlaying {
-  box-shadow: 0 0 0 2px #8b7355;
+  box-shadow: 0 0 0 2px var(--accent-glow);
 }
 
 .bubbleContent {
@@ -101,11 +140,11 @@ body {
 }
 
 .bubbleContentPlayable:hover {
-  background: rgba(0, 0, 0, 0.04);
+  background: rgba(21, 128, 61, 0.08);
 }
 
 .bubbleContentPlayable:focus-visible {
-  outline: 2px solid #8b7355;
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
@@ -129,12 +168,24 @@ body {
 }
 
 button {
-  border: 1px solid #c8beaa;
-  background: #fffdf8;
-  color: #1f1a11;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-muted);
+  color: var(--text);
   border-radius: 8px;
   padding: 0.6rem 0.8rem;
   cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+button:hover:not(:disabled) {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+button[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent-hover);
+  color: #fff;
 }
 
 button:disabled {
@@ -146,9 +197,16 @@ textarea,
 input,
 select {
   width: 100%;
-  border: 1px solid #c8beaa;
+  border: 1px solid var(--border);
   border-radius: 8px;
-  background: #fff;
-  color: #1f1a11;
+  background: var(--surface);
+  color: var(--text);
   padding: 0.6rem 0.75rem;
+}
+
+textarea:focus,
+input:focus,
+select:focus {
+  outline: 2px solid var(--accent-soft);
+  border-color: var(--accent);
 }

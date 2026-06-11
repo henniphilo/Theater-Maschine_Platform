@@ -159,7 +159,7 @@ export default function Page() {
         <h1 style={{ margin: 0 }}>AI Debate</h1>
         <a href="/director">Live-Regie →</a>
       </div>
-      <p style={{ margin: 0, color: "#6b5e4a" }}>
+      <p className="textMuted">
         GPT und Claude diskutieren live miteinander — kurze Beiträge, sichtbarer Denkstatus.
       </p>
 
@@ -252,11 +252,11 @@ export default function Page() {
         </div>
 
         {ttsHint ? (
-          <p style={{ margin: 0, color: "#6b5e4a", fontSize: "0.9rem" }}>{ttsHint}</p>
+          <p className="textMuted" style={{ fontSize: "0.9rem" }}>{ttsHint}</p>
         ) : null}
 
         {error ? (
-          <div role="alert" style={{ color: "#8b2020" }}>
+          <div role="alert" className="textError">
             {error}
           </div>
         ) : null}
@@ -265,7 +265,7 @@ export default function Page() {
       <section className="card col">
         <h2>Debatte</h2>
         {messages.length === 0 && !thinking ? (
-          <p style={{ color: "#9c8e78", margin: 0 }}>Thema eingeben und starten.</p>
+          <p className="textFaint">Thema eingeben und starten.</p>
         ) : (
           <MessageList
             messages={messages}
