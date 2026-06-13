@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const LINKS = [
+  { href: "/technik", label: "Technik-Test" },
   { href: "/dramaturgie", label: "Dramaturgie" },
   { href: "/stueck", label: "Stücktext" },
   { href: "/auffuehrung", label: "Aufführung" },

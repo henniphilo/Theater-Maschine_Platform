@@ -25,3 +25,11 @@ backend/data/
 
 # Director logs
 logs/
+
+# Large media assets (local / Docker volume only — not in Git)
+media/video/*
+!media/video/.gitkeep
+media/recordings/*
+!media/recordings/.gitkeep
+*.mov
+*.mp4

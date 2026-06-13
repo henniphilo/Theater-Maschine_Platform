@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from app.director.dramaturgy.rules_text import _rules_path, load_dramaturgy_rules
 
 

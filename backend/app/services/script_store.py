@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 from uuid import uuid4
 
@@ -6,7 +5,7 @@ from fastapi import HTTPException, status
 
 from app.director.media.database import MediaDatabase
 from app.director.outputs.osc_commands import build_osc_commands
-from app.schemas.script import PatchScriptBeatRequest, ProductionScript, ScriptBeat, ScriptStatus
+from app.schemas.script import PatchScriptBeatRequest, ProductionScript, ScriptBeat
 
 
 class ScriptStore:

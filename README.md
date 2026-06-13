@@ -42,7 +42,7 @@ Bei jedem Debatten-Beitrag (wenn `DIRECTOR_ENABLED=true`):
 1. Text wird analysiert (Tags, Stimmung, Intensität).
 2. Die **Dramaturgie-Engine** wählt passende Video-, Sound- und Licht-Cues aus der Medien-Datenbank.
 3. Der **Cue-Scheduler** prüft Safety-Regeln (Abstände, Overrides).
-4. Befehle gehen per **OSC** an TouchDesigner (Video) und werden für Sound/Licht geloggt oder per OSC weitergeleitet.
+4. Befehle gehen per **OSC** an TouchDesigner (Video/Sound). **Licht** geht direkt per **TCP** ans Pult (`10.101.90.112:3032`, Protokoll 1.0).
 5. Entscheidungen werden in `logs/director.log` protokolliert.
 
 Der Operator steuert alles über **http://localhost:3003/director** (Autopilot, Visuals/Sound/Licht, Aufnahme, Emergency Stop).
@@ -154,7 +154,8 @@ docker compose down
 |------|-----------|--------|---------------------|
 | **3003** | HTTP | Frontend (Debatte + `/director`) | ja |
 | **8000** | HTTP | Backend API | ja |
-| **7000** | UDP | OSC → TouchDesigner / Sound / Licht | nein (Host/Mac, `OSC_PORT` in `.env`) |
+| **7000** | UDP | OSC → TouchDesigner (Video/Sound) | nein (Host/Mac, `OSC_PORT` in `.env`) |
+| **3032** | TCP | Licht-Pult (JSON Protokoll 1.0) | nein (LAN, `LIGHT_TCP_*` in `.env`) |
 | 5432 | TCP | PostgreSQL | nein (nur Docker-intern) |
 | 6379 | TCP | Redis | nein (nur Docker-intern) |
 
@@ -184,6 +185,10 @@ DIRECTOR_DATA_DIR="data"
 OSC_HOST="127.0.0.1"
 OSC_PORT=7000
 OSC_DRY_RUN=false
+LIGHT_OUTPUT=tcp
+LIGHT_TCP_HOST=10.101.90.112
+LIGHT_TCP_PORT=3032
+LIGHT_TCP_PROTOCOL=1.0
 DIRECTOR_EXECUTE_MODE=sequenced
 OSC_LOG_COMMANDS=true
 ```
@@ -195,9 +200,13 @@ OSC_LOG_COMMANDS=true
 | `OSC_DRY_RUN` | `false` | `true` = nur loggen, kein UDP an TouchDesigner |
 | `OSC_LOG_COMMANDS` | `true` | Lesbare `[OSC …]`-Zeilen im Backend-Log |
 | `OSC_HOST` | `127.0.0.1` | In Docker auf Mac: `host.docker.internal` |
+| `LIGHT_OUTPUT` | `tcp` | `tcp` = direkt ans Licht-Pult; `osc` = über TouchDesigner |
+| `LIGHT_TCP_HOST` | `10.101.90.112` | IP des Licht-Pults |
+| `LIGHT_TCP_PORT` | `3032` | TCP-Port |
+| `LIGHT_TCP_PROTOCOL` | `1.0` | JSON-Protokollversion in jeder Nachricht |
 | `DIRECTOR_DATA_DIR` | `data` | Pfad zu `media.json`, `light_scenes.json`, … |
 
-In `docker-compose.yml` ist `OSC_DRY_RUN=true` voreingestellt, damit der Stack ohne TouchDesigner startet.
+In `docker-compose.yml` ist `OSC_DRY_RUN=false` gesetzt, damit OSC an TouchDesigner gesendet wird. Licht nutzt `LIGHT_TCP_*` (Standard: `10.101.90.112:3032`).
 
 ---
 
@@ -372,7 +381,7 @@ Theatermaschine/
 | [`cues/safety.py`](backend/app/director/cues/safety.py) | `SafetyState` — Autopilot, Overrides, Emergency |
 | [`outputs/touchdesigner.py`](backend/app/director/outputs/touchdesigner.py) | **OSC-Bridge** zu TouchDesigner |
 | [`outputs/sound.py`](backend/app/director/outputs/sound.py) | Sound per OSC (QLab/Ableton) |
-| [`outputs/lighting.py`](backend/app/director/outputs/lighting.py) | Licht per OSC (Art-Net-Stub in `artnet.py`) |
+| [`outputs/lighting.py`](backend/app/director/outputs/lighting.py) | Licht per TCP ans Pult (`light_tcp.py`) oder optional OSC |
 | [`outputs/logger.py`](backend/app/director/outputs/logger.py) | Schreibt Entscheidungen nach `logs/director.log` |
 | [`recording.py`](backend/app/director/recording.py) | Live-Aufnahme Start/Stop (Phase 4) |
 | [`api/routes/director.py`](backend/app/api/routes/director.py) | REST + SSE für Operator-UI |

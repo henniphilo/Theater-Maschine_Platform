@@ -23,6 +23,11 @@ class SoundBridge:
         elif cue.action.value == "set_volume":
             self._send("/sound/volume", cue.cue_id, cue.volume, dry_run=dry_run)
 
+    def hold(self, cue: SoundCue, dry_run: bool = False) -> None:
+        if cue.cue_id is None:
+            return
+        self._send("/sound/hold", cue.cue_id, cue.volume, dry_run=dry_run)
+
     def stop_all(self, dry_run: bool = False) -> None:
         self._send("/sound/stop_all", dry_run=dry_run)
 

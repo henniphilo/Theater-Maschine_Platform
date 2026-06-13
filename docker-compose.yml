@@ -35,9 +35,21 @@ services:
       DIRECTOR_EXECUTE_MODE: sequenced
       OSC_DRY_RUN: "false"
       OSC_LOG_COMMANDS: "true"
+      OSC_LOG_PATH: logs/osc.log
+      DIRECTOR_LOG_PATH: logs/director.log
+      LIGHT_OUTPUT: tcp
+      LIGHT_OSC_MIRROR: "true"
+      LIGHT_TCP_HOST: "10.101.90.112"
+      LIGHT_TCP_PORT: "3032"
+      LIGHT_TCP_PROTOCOL: "1.0"
+      LIGHT_TCP_CONNECT_DELAY: "0.5"
+      LIGHT_TCP_HANDSHAKE: none
+      LIGHT_OSC_TCP_FORMAT: binary
+      LIGHT_OSC_TCP_FRAMING: length_prefix
     volumes:
       - ./media:/app/media:ro
       - ./docs:/app/docs:ro
+      - ./logs:/app/logs
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:

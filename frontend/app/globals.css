@@ -308,6 +308,77 @@ select:focus {
   color: var(--error);
 }
 
+.oscTestPanel h2 {
+  margin-top: 0;
+}
+
+.oscTestGrid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .oscTestGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.oscTestChannel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-muted);
+}
+
+.oscTestChannel span {
+  font-weight: 600;
+}
+
+.oscTestActions {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.oscTestWarn {
+  color: var(--error);
+}
+
+.oscTestActive {
+  margin: 0.5rem 0 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-strong);
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.oscTestStopBtn {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: var(--error);
+}
+
+.oscTestLog {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #fafafa;
+}
+
+.oscLogList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+}
+
 .machineStartBtn:not(:disabled) {
   background: var(--accent);
   border-color: var(--accent-hover);

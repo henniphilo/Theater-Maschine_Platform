@@ -8,7 +8,6 @@ from fastapi.responses import StreamingResponse
 from app.core.config import settings
 from app.director.pipeline import get_director_pipeline
 from app.director.recording import RecordingManager
-from app.director.cues.cue_models import OscCommand
 from app.schemas.director import (
     DialogueEventRequest,
     DirectorProcessResponse,
@@ -20,6 +19,10 @@ from app.schemas.director import (
     RecordingRequest,
     RecordingStatusResponse,
     SafetyUpdateRequest,
+    TechnikHoldStatusResponse,
+    TechnikStopRequest,
+    LightDeskStatusResponse,
+    LightSendRequest,
 )
 
 router = APIRouter(prefix="/director", tags=["director"])
@@ -85,33 +88,234 @@ def post_execute(payload: ExecuteRequest) -> ExecuteResponse:
 
 @router.post("/osc-test", response_model=OscTestResponse)
 def post_osc_test(payload: OscTestRequest | None = None) -> OscTestResponse:
-    """Send ping + play_clip to TouchDesigner for wiring checks."""
+    """Send selected OSC test signals (video, sound, light) like performance execute."""
     _ensure_enabled()
+    from app.director.cues.cue_models import (
+        DramaturgyDecision,
+        LightCue,
+        SoundAction,
+        SoundCue,
+        VisualAction,
+        VisualCue,
+    )
+    from app.director.media.database import MediaDatabase
+
     body = payload or OscTestRequest()
+    db = MediaDatabase()
+    video_ids = {v.id for v in db.videos}
+    sound_ids = {s.id for s in db.sounds}
+    light_ids = {s.id for s in db.light_scenes}
+
+    if body.send_visual and body.clip_id not in video_ids:
+        raise HTTPException(status_code=400, detail=f"Unknown clip_id: {body.clip_id}")
+    if body.send_sound and body.sound_cue_id not in sound_ids:
+        raise HTTPException(status_code=400, detail=f"Unknown sound_cue_id: {body.sound_cue_id}")
+    if body.send_light and body.light_scene_id not in light_ids:
+        raise HTTPException(status_code=400, detail=f"Unknown light_scene_id: {body.light_scene_id}")
+
+    if not body.send_visual and not body.send_sound and not body.send_light:
+        raise HTTPException(status_code=400, detail="At least one of send_visual, send_sound, send_light required")
+
+    decision = DramaturgyDecision(
+        visual=(
+            VisualCue(
+                action=VisualAction.PLAY_CLIP,
+                clip_id=body.clip_id,
+                opacity=body.opacity,
+                fade_time=body.fade_time,
+            )
+            if body.send_visual
+            else None
+        ),
+        sound=(
+            SoundCue(
+                action=SoundAction.TRIGGER_CUE,
+                cue_id=body.sound_cue_id,
+                volume=body.volume,
+            )
+            if body.send_sound
+            else None
+        ),
+        light=(
+            LightCue(scene_id=body.light_scene_id, fade_time=body.fade_time)
+            if body.send_light
+            else None
+        ),
+        reason="OSC Technik-Test",
+    )
+    result = _pipeline.execute(decision, force=True, stagger=body.stagger)
     dry_run = settings.osc_dry_run
     target = f"{settings.osc_host}:{settings.osc_port}"
-    bridge = _pipeline.touchdesigner
-    bridge._send("/theatermaschine/ping", "hello")
-    bridge.play_clip(body.clip_id, opacity=0.8, fade_time=4.0)
-    messages = [
-        OscCommand(
-            bridge="visual",
-            host=settings.osc_host,
-            port=settings.osc_port,
-            address="/theatermaschine/ping",
-            args=["hello"],
-            dry_run=dry_run,
-        ),
-        OscCommand(
-            bridge="visual",
-            host=settings.osc_host,
-            port=settings.osc_port,
-            address="/visual/play_clip",
-            args=[body.clip_id, 0.8, 4.0],
-            dry_run=dry_run,
-        ),
-    ]
-    return OscTestResponse(sent=not dry_run, dry_run=dry_run, target=target, messages=messages)
+    return OscTestResponse(
+        sent=not dry_run and result.executed,
+        dry_run=dry_run,
+        target=target,
+        executed=result.executed,
+        blocked_reason=result.blocked_reason,
+        messages=result.osc_commands,
+    )
+
+
+def _technik_state_from_request(body: OscTestRequest):
+    from app.director.technik_hold import TechnikHoldState
+
+    return TechnikHoldState(
+        clip_id=body.clip_id,
+        sound_cue_id=body.sound_cue_id,
+        light_scene_id=body.light_scene_id,
+        send_visual=body.send_visual,
+        send_sound=body.send_sound,
+        send_light=body.send_light,
+        opacity=body.opacity,
+        volume=body.volume,
+    )
+
+
+def _technik_status_response() -> TechnikHoldStatusResponse:
+    from app.director.technik_hold import get_technik_hold_manager
+
+    state = get_technik_hold_manager(_pipeline).status()
+    if state is None:
+        return TechnikHoldStatusResponse(active=False)
+    return TechnikHoldStatusResponse(
+        active=True,
+        send_visual=state.send_visual,
+        send_sound=state.send_sound,
+        send_light=state.send_light,
+        clip_id=state.clip_id if state.send_visual else None,
+        sound_cue_id=state.sound_cue_id if state.send_sound else None,
+        light_scene_id=state.light_scene_id if state.send_light else None,
+    )
+
+
+@router.post("/technik/start", response_model=TechnikHoldStatusResponse)
+def post_technik_start(payload: OscTestRequest | None = None) -> TechnikHoldStatusResponse:
+    """Start sustained Technik output (hold keepalives until stop)."""
+    _ensure_enabled()
+    from app.director.media.database import MediaDatabase
+    from app.director.technik_hold import get_technik_hold_manager
+
+    body = payload or OscTestRequest()
+    db = MediaDatabase()
+    if body.send_visual and body.clip_id not in {v.id for v in db.videos}:
+        raise HTTPException(status_code=400, detail=f"Unknown clip_id: {body.clip_id}")
+    if body.send_sound and body.sound_cue_id not in {s.id for s in db.sounds}:
+        raise HTTPException(status_code=400, detail=f"Unknown sound_cue_id: {body.sound_cue_id}")
+    if body.send_light and body.light_scene_id not in {s.id for s in db.light_scenes}:
+        raise HTTPException(status_code=400, detail=f"Unknown light_scene_id: {body.light_scene_id}")
+    if not body.send_visual and not body.send_sound and not body.send_light:
+        raise HTTPException(status_code=400, detail="At least one of send_visual, send_sound, send_light required")
+    if body.send_light:
+        raise HTTPException(
+            status_code=400,
+            detail="Light uses two-step test: POST /director/light/connect then /director/light/send",
+        )
+
+    get_technik_hold_manager(_pipeline).start(_technik_state_from_request(body))
+    return _technik_status_response()
+
+
+@router.post("/technik/stop", response_model=TechnikHoldStatusResponse)
+def post_technik_stop(payload: TechnikStopRequest | None = None) -> TechnikHoldStatusResponse:
+    """Stop sustained Technik output (per channel or all)."""
+    _ensure_enabled()
+    from app.director.technik_hold import get_technik_hold_manager
+
+    body = payload or TechnikStopRequest()
+    get_technik_hold_manager(_pipeline).stop(
+        send_visual=body.send_visual,
+        send_sound=body.send_sound,
+        send_light=body.send_light,
+    )
+    return _technik_status_response()
+
+
+@router.get("/technik/status", response_model=TechnikHoldStatusResponse)
+def get_technik_status() -> TechnikHoldStatusResponse:
+    _ensure_enabled()
+    return _technik_status_response()
+
+
+def _light_desk_status_response() -> LightDeskStatusResponse:
+    from app.director.light_desk_test import get_light_desk_test_manager
+
+    status = get_light_desk_test_manager(_pipeline).status()
+    return LightDeskStatusResponse(
+        tcp_connected=status.tcp_connected,
+        scene_id=status.scene_id,
+        hold_active=status.hold_active,
+    )
+
+
+@router.post("/light/connect", response_model=LightDeskStatusResponse)
+def post_light_connect() -> LightDeskStatusResponse:
+    _ensure_enabled()
+    from app.director.light_desk_test import get_light_desk_test_manager
+
+    status = get_light_desk_test_manager(_pipeline).connect()
+    return _light_desk_status_response_from(status)
+
+
+@router.post("/light/disconnect", response_model=LightDeskStatusResponse)
+def post_light_disconnect() -> LightDeskStatusResponse:
+    _ensure_enabled()
+    from app.director.light_desk_test import get_light_desk_test_manager
+
+    status = get_light_desk_test_manager(_pipeline).disconnect()
+    return _light_desk_status_response_from(status)
+
+
+@router.get("/light/status", response_model=LightDeskStatusResponse)
+def get_light_status() -> LightDeskStatusResponse:
+    _ensure_enabled()
+    return _light_desk_status_response()
+
+
+@router.post("/light/send", response_model=LightDeskStatusResponse)
+def post_light_send(payload: LightSendRequest) -> LightDeskStatusResponse:
+    _ensure_enabled()
+    from app.director.light_desk_test import LightDeskNotConnectedError, get_light_desk_test_manager
+    from app.director.media.database import MediaDatabase
+
+    if payload.light_scene_id not in {s.id for s in MediaDatabase().light_scenes}:
+        raise HTTPException(status_code=400, detail=f"Unknown light_scene_id: {payload.light_scene_id}")
+    try:
+        status = get_light_desk_test_manager(_pipeline).send_scene(payload.light_scene_id)
+    except LightDeskNotConnectedError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return _light_desk_status_response_from(status)
+
+
+@router.post("/light/hold/start", response_model=LightDeskStatusResponse)
+def post_light_hold_start(payload: LightSendRequest) -> LightDeskStatusResponse:
+    _ensure_enabled()
+    from app.director.light_desk_test import LightDeskNotConnectedError, get_light_desk_test_manager
+    from app.director.media.database import MediaDatabase
+
+    if payload.light_scene_id not in {s.id for s in MediaDatabase().light_scenes}:
+        raise HTTPException(status_code=400, detail=f"Unknown light_scene_id: {payload.light_scene_id}")
+    try:
+        status = get_light_desk_test_manager(_pipeline).start_hold(payload.light_scene_id)
+    except LightDeskNotConnectedError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return _light_desk_status_response_from(status)
+
+
+@router.post("/light/stop", response_model=LightDeskStatusResponse)
+def post_light_stop() -> LightDeskStatusResponse:
+    _ensure_enabled()
+    from app.director.light_desk_test import get_light_desk_test_manager
+
+    status = get_light_desk_test_manager(_pipeline).stop_signal()
+    return _light_desk_status_response_from(status)
+
+
+def _light_desk_status_response_from(status) -> LightDeskStatusResponse:
+    return LightDeskStatusResponse(
+        tcp_connected=status.tcp_connected,
+        scene_id=status.scene_id,
+        hold_active=status.hold_active,
+    )
 
 
 @router.get("/status", response_model=DirectorStatusResponse)

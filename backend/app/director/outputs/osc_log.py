@@ -1,5 +1,6 @@
 import logging
 import sys
+from pathlib import Path
 
 from app.core.config import settings
 
@@ -11,9 +12,18 @@ def _ensure_osc_logger() -> None:
     global _configured
     if _configured:
         return
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setFormatter(logging.Formatter("%(message)s"))
-    _osc_logger.addHandler(handler)
+    formatter = logging.Formatter("%(message)s")
+
+    stream_handler = logging.StreamHandler(sys.stdout)
+    stream_handler.setFormatter(formatter)
+    _osc_logger.addHandler(stream_handler)
+
+    log_path = Path(settings.osc_log_path)
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    file_handler = logging.FileHandler(log_path, encoding="utf-8")
+    file_handler.setFormatter(formatter)
+    _osc_logger.addHandler(file_handler)
+
     _osc_logger.setLevel(logging.INFO)
     _osc_logger.propagate = False
     _configured = True

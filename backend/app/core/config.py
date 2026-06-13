@@ -37,6 +37,23 @@ class Settings(BaseSettings):
     osc_port: int = 7000
     osc_dry_run: bool = False
     osc_log_commands: bool = True
+    osc_log_path: str = "logs/osc.log"
+    light_output: Literal["tcp", "osc"] = "tcp"
+    light_osc_mirror: bool = True
+    light_tcp_host: str = "10.101.90.112"
+    light_tcp_port: int = 3032
+    light_tcp_protocol: str = "1.0"
+    light_tcp_handshake: Literal["none", "json"] = "none"
+    light_tcp_timeout: float = 5.0
+    light_tcp_connect_delay: float = 0.5
+    light_tcp_read_ack: bool = False
+    light_tcp_ack_timeout: float = 2.0
+    light_osc_send_delay: float = 0.0
+    light_osc_host: str | None = None
+    light_osc_port: int = 3032
+    light_osc_tcp_format: Literal["json", "binary"] = "binary"
+    light_osc_tcp_framing: Literal["length_prefix", "raw", "slip"] = "length_prefix"
+    technik_hold_interval_seconds: float = 2.0
 
 
 settings = Settings()

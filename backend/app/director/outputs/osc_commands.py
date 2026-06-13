@@ -3,6 +3,57 @@ from typing import Any
 from app.core.config import settings
 from app.director.cues.cue_models import DramaturgyDecision, OscCommand, VisualAction
 from app.director.cues.cue_points import decision_from_cue_point, normalize_cue_points
+from app.director.media.database import MediaDatabase
+from app.director.outputs.eos_light import eos_chan_full, eos_key_out, expand_channels
+
+
+def _light_osc_target(osc_host: str, osc_port: int) -> tuple[str, int]:
+    if settings.light_output == "tcp":
+        return settings.light_tcp_host, settings.light_tcp_port
+    return osc_host, osc_port
+
+
+def _eos_commands_for_scene(
+    scene_id: str,
+    *,
+    osc_host: str,
+    osc_port: int,
+    is_dry_run: bool,
+) -> list[OscCommand]:
+    light_host, light_port = _light_osc_target(osc_host, osc_port)
+    scene = next((s for s in MediaDatabase().light_scenes if s.id == scene_id), None)
+    commands: list[OscCommand] = []
+    for channel in expand_channels(scene.channels if scene else []):
+        address, args = eos_chan_full(channel)
+        commands.append(
+            OscCommand(
+                bridge="light",
+                host=light_host,
+                port=light_port,
+                address=address,
+                args=args,
+                dry_run=is_dry_run,
+            )
+        )
+    return commands
+
+
+def _eos_blackout_command(
+    *,
+    osc_host: str,
+    osc_port: int,
+    is_dry_run: bool,
+) -> OscCommand:
+    light_host, light_port = _light_osc_target(osc_host, osc_port)
+    address, args = eos_key_out()
+    return OscCommand(
+        bridge="light",
+        host=light_host,
+        port=light_port,
+        address=address,
+        args=args,
+        dry_run=is_dry_run,
+    )
 
 
 def _commands_for_single_decision(
@@ -111,7 +162,45 @@ def _commands_for_single_decision(
     if decision.light and decision.light.scene_id:
         light = decision.light
         fade = light.fade_time
+
         if light.action.value == "fade_blackout":
+            commands.append(_eos_blackout_command(osc_host=osc_host, osc_port=osc_port, is_dry_run=is_dry_run))
+            if settings.light_output == "tcp" and settings.light_osc_mirror:
+                commands.append(
+                    OscCommand(
+                        bridge="light",
+                        host=osc_host,
+                        port=osc_port,
+                        address="/light/blackout",
+                        args=[],
+                        dry_run=is_dry_run,
+                        mirror=True,
+                    )
+                )
+        else:
+            commands.extend(
+                _eos_commands_for_scene(
+                    light.scene_id,
+                    osc_host=osc_host,
+                    osc_port=osc_port,
+                    is_dry_run=is_dry_run,
+                )
+            )
+            if settings.light_output == "tcp" and settings.light_osc_mirror:
+                commands.append(
+                    OscCommand(
+                        bridge="light",
+                        host=osc_host,
+                        port=osc_port,
+                        address="/light/set_scene",
+                        args=[light.scene_id, fade],
+                        dry_run=is_dry_run,
+                        mirror=True,
+                    )
+                )
+    elif decision.light and decision.light.action.value == "fade_blackout":
+        commands.append(_eos_blackout_command(osc_host=osc_host, osc_port=osc_port, is_dry_run=is_dry_run))
+        if settings.light_output == "tcp" and settings.light_osc_mirror:
             commands.append(
                 OscCommand(
                     bridge="light",
@@ -120,30 +209,9 @@ def _commands_for_single_decision(
                     address="/light/blackout",
                     args=[],
                     dry_run=is_dry_run,
+                    mirror=True,
                 )
             )
-        else:
-            commands.append(
-                OscCommand(
-                    bridge="light",
-                    host=osc_host,
-                    port=osc_port,
-                    address="/light/set_scene",
-                    args=[light.scene_id, fade],
-                    dry_run=is_dry_run,
-                )
-            )
-    elif decision.light and decision.light.action.value == "fade_blackout":
-        commands.append(
-            OscCommand(
-                bridge="light",
-                host=osc_host,
-                port=osc_port,
-                address="/light/blackout",
-                args=[],
-                dry_run=is_dry_run,
-            )
-        )
 
     return commands
 
@@ -217,7 +285,18 @@ def send_osc_commands(commands: list[OscCommand], bridges: dict[str, Any]) -> li
         elif cmd.bridge == "light":
             from app.director.cues.cue_models import LightCue
 
-            if cmd.address == "/light/blackout":
+            if cmd.mirror:
+                sent.append(cmd)
+                continue
+            if cmd.address == "/eos/key/out":
+                lighting.blackout(dry_run=cmd.dry_run)
+            elif cmd.address.startswith("/eos/chan/"):
+                from app.director.outputs.eos_light import parse_eos_chan_address
+
+                channel = parse_eos_chan_address(cmd.address)
+                if channel is not None:
+                    lighting.apply_channel(channel, dry_run=cmd.dry_run)
+            elif cmd.address == "/light/blackout":
                 lighting.blackout(dry_run=cmd.dry_run)
             elif cmd.address == "/light/set_scene" and len(cmd.args) >= 2:
                 lighting.execute(

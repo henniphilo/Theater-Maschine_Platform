@@ -40,6 +40,15 @@ export type MediaCatalog = {
     addresses: Record<string, string>;
     docs: string;
   };
+  lighting?: {
+    output: string;
+    osc_mirror: boolean;
+    tcp_host: string;
+    tcp_port: number;
+    tcp_protocol: string;
+    osc_host: string;
+    osc_port: number;
+  };
   data_dir: string;
 };
 
@@ -48,6 +57,14 @@ export type MediaLookup = {
   soundById: Record<string, MediaSound>;
   lightById: Record<string, MediaLight>;
 };
+
+export function formatLightChannelLabel(light: MediaLight): string {
+  const channels = light.channels?.filter(Boolean) ?? [];
+  if (!channels.length) {
+    return light.id;
+  }
+  return `${light.id} · Kanäle ${channels.join(", ")}`;
+}
 
 export function buildMediaLookup(catalog: MediaCatalog): MediaLookup {
   const allVideos = [...catalog.videos, ...(catalog.recordings ?? [])];

@@ -2,7 +2,7 @@
   "source": "media/light/Kanal Übersicht.xlsx",
   "venue": "Unter Tieren",
   "groups": [
-    {"id": "ol_4er_hmi", "channels": ["6", "741", "742"], "fixtures": ["HMI", "5 KW"], "location": "OL 4er / OL 7er"},
+    {"id": "ol_4er_hmi", "channels": ["6", "741", "742"], "fixtures": ["HMI"], "location": "OL 4er"},
     {"id": "ol_6er_hmi", "channels": ["7", "8", "9"], "fixtures": ["HMI"], "location": "OL 6er"},
     {"id": "ol_7er_hmi", "channels": ["10"], "fixtures": ["HMI"], "location": "OL 7er"},
     {"id": "vorbuehnenzug", "channels": ["11-19"], "fixtures": ["JB P12"], "location": "Vorbühnenzug"},
@@ -26,6 +26,7 @@
     {"id": "podest_tischlampe", "channels": ["479"], "fixtures": ["Tischlampe"], "location": "Podest"},
     {"id": "etage_seite", "channels": ["589", "590"], "fixtures": ["JB P10"], "location": "Etage Li+Re"},
     {"id": "cyc_fluter", "channels": ["1701"], "fixtures": ["NanoPix CYC Fluter"], "location": "OL 8er"},
+    {"id": "ol_7er_5kw", "channels": ["771", "772"], "fixtures": ["5 KW"], "location": "OL 7er"},
     {"id": "latte_23", "channels": ["1811-1815"], "fixtures": ["Tambora Batten"], "location": "Latte 23"},
     {"id": "latte_49", "channels": ["1821-1825"], "fixtures": ["Tambora Batten"], "location": "Latte 49"},
     {"id": "latte_71", "channels": ["1831-1837"], "fixtures": ["Tambora Batten"], "location": "Latte 71"},

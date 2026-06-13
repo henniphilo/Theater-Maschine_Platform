@@ -68,6 +68,17 @@
       "fade_time": 4.0
     },
     {
+      "id": "loge_10er",
+      "description": "10er Loge Li+Re — JB P18, Kanäle 221, 222",
+      "location": "10er Loge Li+Re",
+      "channels": ["221", "222"],
+      "fixtures": ["JB P18"],
+      "moods": ["seitlich", "fokus"],
+      "intensity_min": 0.3,
+      "intensity_max": 0.8,
+      "fade_time": 3.0
+    },
+    {
       "id": "deckenschlitz",
       "description": "Deckenschlitz — JB P18, Kanäle 301–304",
       "location": "Deckenschlitz",
@@ -88,6 +99,39 @@
       "intensity_min": 0.5,
       "intensity_max": 1.0,
       "fade_time": 2.0
+    },
+    {
+      "id": "schlitz_zr",
+      "description": "Schlitz ZR — Mac Encore, Kanäle 381–386",
+      "location": "Schlitz Li+Re ZR",
+      "channels": ["381-386"],
+      "fixtures": ["Mac Encore"],
+      "moods": ["scharf", "fokus"],
+      "intensity_min": 0.5,
+      "intensity_max": 1.0,
+      "fade_time": 2.0
+    },
+    {
+      "id": "schlitz_2er",
+      "description": "2er Schlitz — JB P18, Kanäle 387, 388",
+      "location": "2er Schlitz",
+      "channels": ["387", "388"],
+      "fixtures": ["JB P18"],
+      "moods": ["fokus", "spannung"],
+      "intensity_min": 0.4,
+      "intensity_max": 1.0,
+      "fade_time": 2.0
+    },
+    {
+      "id": "loge_3stock",
+      "description": "3er Loge 3. Stock — JB P12, Kanäle 391, 392",
+      "location": "3er Loge 3. Stock",
+      "channels": ["391", "392"],
+      "fixtures": ["JB P12"],
+      "moods": ["seitlich", "nah"],
+      "intensity_min": 0.3,
+      "intensity_max": 0.8,
+      "fade_time": 3.0
     },
     {
       "id": "rampe_vorne",
@@ -123,6 +167,50 @@
       "fade_time": 3.0
     },
     {
+      "id": "etage_seite",
+      "description": "Etage Li+Re — JB P10, Kanäle 589, 590",
+      "location": "Etage Li+Re",
+      "channels": ["589", "590"],
+      "fixtures": ["JB P10"],
+      "moods": ["seitlich", "neutral"],
+      "intensity_min": 0.3,
+      "intensity_max": 0.8,
+      "fade_time": 3.0
+    },
+    {
+      "id": "latte_23",
+      "description": "Latte 23 — Tambora Batten Kanäle 1811–1815",
+      "location": "Latte 23",
+      "channels": ["1811-1815"],
+      "fixtures": ["Tambora Batten"],
+      "moods": ["linear", "offen"],
+      "intensity_min": 0.3,
+      "intensity_max": 0.9,
+      "fade_time": 3.0
+    },
+    {
+      "id": "latte_49",
+      "description": "Latte 49 — Tambora Batten Kanäle 1821–1825",
+      "location": "Latte 49",
+      "channels": ["1821-1825"],
+      "fixtures": ["Tambora Batten"],
+      "moods": ["linear", "offen"],
+      "intensity_min": 0.3,
+      "intensity_max": 0.9,
+      "fade_time": 3.0
+    },
+    {
+      "id": "latte_71",
+      "description": "Latte 71 — Tambora Batten Kanäle 1831–1837",
+      "location": "Latte 71",
+      "channels": ["1831-1837"],
+      "fixtures": ["Tambora Batten"],
+      "moods": ["linear", "offen"],
+      "intensity_min": 0.3,
+      "intensity_max": 0.9,
+      "fade_time": 3.0
+    },
+    {
       "id": "ol_4er_hmi",
       "description": "OL 4er — HMI Kanäle 6, 741, 742",
       "location": "OL 4er",
@@ -131,6 +219,105 @@
       "moods": ["hell", "neutral", "klar"],
       "intensity_min": 0.3,
       "intensity_max": 0.9,
+      "fade_time": 2.0
+    },
+    {
+      "id": "ol_6er_hmi",
+      "description": "OL 6er — HMI Kanäle 7–9",
+      "location": "OL 6er",
+      "channels": ["7-9"],
+      "fixtures": ["HMI"],
+      "moods": ["hell", "neutral"],
+      "intensity_min": 0.3,
+      "intensity_max": 0.9,
+      "fade_time": 2.0
+    },
+    {
+      "id": "ol_7er_hmi",
+      "description": "OL 7er — HMI Kanal 10",
+      "location": "OL 7er",
+      "channels": ["10"],
+      "fixtures": ["HMI"],
+      "moods": ["hell", "neutral"],
+      "intensity_min": 0.3,
+      "intensity_max": 0.9,
+      "fade_time": 2.0
+    },
+    {
+      "id": "ol_2er_sola",
+      "description": "OL 2er — Sola Theatre Kanäle 21–28",
+      "location": "OL 2er",
+      "channels": ["21-28"],
+      "fixtures": ["Sola Theatre"],
+      "moods": ["warm", "offen"],
+      "intensity_min": 0.3,
+      "intensity_max": 1.0,
+      "fade_time": 3.0
+    },
+    {
+      "id": "ol_3er_sola",
+      "description": "OL 3er — JB P15 + Sola Theatre Kanäle 30–38",
+      "location": "OL 3er",
+      "channels": ["30-38"],
+      "fixtures": ["JB P15", "Sola Theatre"],
+      "moods": ["warm", "offen"],
+      "intensity_min": 0.3,
+      "intensity_max": 1.0,
+      "fade_time": 3.0
+    },
+    {
+      "id": "ol_4er_sola",
+      "description": "OL 4er — JB P15 + Sola Kanäle 40–46, 48",
+      "location": "OL 4er",
+      "channels": ["40-46", "48"],
+      "fixtures": ["JB P15", "Sola"],
+      "moods": ["warm", "offen"],
+      "intensity_min": 0.3,
+      "intensity_max": 1.0,
+      "fade_time": 3.0
+    },
+    {
+      "id": "ol_5er_sola",
+      "description": "OL 5er — Sola Theatre Kanäle 51–55",
+      "location": "OL 5er",
+      "channels": ["51-55"],
+      "fixtures": ["Sola Theatre"],
+      "moods": ["warm", "offen"],
+      "intensity_min": 0.3,
+      "intensity_max": 1.0,
+      "fade_time": 3.0
+    },
+    {
+      "id": "ol_6er_sola1500",
+      "description": "OL 6er — Sola 1500 Kanäle 61–64",
+      "location": "OL 6er",
+      "channels": ["61-64"],
+      "fixtures": ["Sola 1500"],
+      "moods": ["warm", "fokus"],
+      "intensity_min": 0.3,
+      "intensity_max": 1.0,
+      "fade_time": 3.0
+    },
+    {
+      "id": "ol_7er_sola_wash",
+      "description": "OL 7er — Sola Wash Kanäle 71–74",
+      "location": "OL 7er",
+      "channels": ["71-74"],
+      "fixtures": ["Sola Wash"],
+      "moods": ["warm", "wash"],
+      "intensity_min": 0.3,
+      "intensity_max": 1.0,
+      "fade_time": 3.0
+    },
+    {
+      "id": "ol_7er_5kw",
+      "description": "OL 7er — 5 KW Kanäle 771, 772",
+      "location": "OL 7er",
+      "channels": ["771", "772"],
+      "fixtures": ["5 KW"],
+      "moods": ["hell", "krass"],
+      "intensity_min": 0.4,
+      "intensity_max": 1.0,
       "fade_time": 2.0
     },
     {

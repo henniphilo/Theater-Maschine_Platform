@@ -39,3 +39,15 @@ def director_test_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
         touchdesigner=director_routes._pipeline.touchdesigner,
         media_db=director_routes._pipeline.media_db,
     )
+
+    import app.director.light_desk_test as light_desk_mod
+    import app.director.technik_hold as technik_hold_mod
+    from app.director.outputs.light_tcp import close_light_tcp
+
+    technik_hold_mod._manager = None
+    technik_hold_mod.get_technik_hold_manager(director_routes._pipeline).stop()
+    light_desk_mod._manager = None
+    try:
+        light_desk_mod.get_light_desk_test_manager(director_routes._pipeline).disconnect()
+    except Exception:
+        close_light_tcp()

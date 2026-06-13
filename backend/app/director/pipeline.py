@@ -169,6 +169,9 @@ class DirectorPipeline:
             self.state.history = self.state.history[-50:]
 
     def emergency_stop(self) -> None:
+        from app.director.technik_hold import get_technik_hold_manager
+
+        get_technik_hold_manager(self).stop()
         self.safety.emergency_stop()
         self.scheduler.clear_active()
         dry_run = settings.osc_dry_run

@@ -67,13 +67,50 @@ class DirectorStatusResponse(BaseModel):
 
 class OscTestRequest(BaseModel):
     clip_id: str = "kuh"
+    sound_cue_id: str = "dummy_drone"
+    light_scene_id: str = "vorbuehnenzug"
+    send_visual: bool = True
+    send_sound: bool = True
+    send_light: bool = True
+    opacity: float = Field(default=0.8, ge=0.0, le=1.0)
+    volume: float = Field(default=0.5, ge=0.0, le=1.0)
+    fade_time: float = Field(default=4.0, ge=0.0)
+    stagger: bool = True
 
 
 class OscTestResponse(BaseModel):
     sent: bool
     dry_run: bool
     target: str
-    messages: list[OscCommand]
+    executed: bool
+    blocked_reason: str | None = None
+    messages: list[OscCommand] = Field(default_factory=list)
+
+
+class TechnikStopRequest(BaseModel):
+    send_visual: bool = True
+    send_sound: bool = True
+    send_light: bool = True
+
+
+class TechnikHoldStatusResponse(BaseModel):
+    active: bool
+    send_visual: bool = False
+    send_sound: bool = False
+    send_light: bool = False
+    clip_id: str | None = None
+    sound_cue_id: str | None = None
+    light_scene_id: str | None = None
+
+
+class LightDeskStatusResponse(BaseModel):
+    tcp_connected: bool
+    scene_id: str | None = None
+    hold_active: bool = False
+
+
+class LightSendRequest(BaseModel):
+    light_scene_id: str = Field(min_length=1)
 
 
 class RecordingRequest(BaseModel):

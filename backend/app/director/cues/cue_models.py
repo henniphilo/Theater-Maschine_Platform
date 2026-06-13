@@ -12,6 +12,7 @@ class OscCommand(BaseModel):
     address: str
     args: list[Any] = Field(default_factory=list)
     dry_run: bool = False
+    mirror: bool = False
 
 
 class VisualAction(str, Enum):

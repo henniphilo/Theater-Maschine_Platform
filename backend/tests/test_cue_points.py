@@ -36,9 +36,10 @@ def test_build_osc_commands_from_multiple_cue_points() -> None:
         ],
     )
     commands = build_osc_commands(decision, dry_run=True)
-    assert len(commands) == 6
-    clip_cmds = [c for c in commands if c.address == "/visual/play_clip"]
-    assert len(clip_cmds) == 2
+    light_cmds = [c for c in commands if c.bridge == "light" and not c.mirror]
+    assert len(light_cmds) == 10
+    assert all(c.address.endswith("/full") for c in light_cmds)
+    assert all(c.args == [] for c in light_cmds)
 
 
 def test_min_cue_points_scales_with_text_length() -> None:

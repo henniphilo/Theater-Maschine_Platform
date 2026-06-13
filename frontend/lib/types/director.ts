@@ -5,6 +5,7 @@ export type OscCommand = {
   address: string;
   args: unknown[];
   dry_run: boolean;
+  mirror?: boolean;
 };
 
 export type CuePoint = {
@@ -61,5 +62,7 @@ export type ShowPhase = "planned" | "speaking" | "cues_active" | "sent" | "block
 export function formatOscCommand(cmd: OscCommand): string {
   const args = cmd.args.length ? ` ${cmd.args.map((a) => JSON.stringify(a)).join(" ")}` : "";
   const mode = cmd.dry_run ? "DRY-RUN" : "SEND";
-  return `[${mode}] [${cmd.bridge}] → ${cmd.host}:${cmd.port} ${cmd.address}${args}`;
+  const transport = cmd.address.startsWith("tcp/") ? "TCP" : "OSC";
+  const mirror = cmd.mirror ? " mirror" : "";
+  return `[${mode}] [${cmd.bridge}/${transport}${mirror}] → ${cmd.host}:${cmd.port} ${cmd.address}${args}`;
 }

@@ -34,7 +34,62 @@ When running the backend in Docker on Mac, use `OSC_HOST=host.docker.internal` s
 | `/visual/play_recording` | `recording_id` | Play back a previous recording |
 | `/visual/blackout` | — | Fade to black / hide output |
 | `/light/set_scene` | `scene_id`, `fade_time` | Optional: route to DMX if TD controls light |
+
+**Licht am Pult (Unter Tieren / ETC EOS):** TCP-Port **3032** ist laut [ETC EOS OSC Setup](https://www.etcconnect.com/WebDocs/Controls/EosFamilyOnlineHelp/en/Content/23_Show_Control/08_OSC/Using_OSC_with_Eos/Eos_OSC_Setup.htm) der native **OSC-over-TCP**-Port. Kein UDP, kein JSON-Handshake nötig.
+
+| Schritt | Ziel | Aktion |
+|---------|------|--------|
+| 1 | `10.101.90.112:3032` (TCP) | Socket verbinden (EOS lauscht als Server) |
+| 2 | dieselbe TCP-Verbindung | Binäres OSC mit **4-Byte-Längenpräfix** (EOS „OSC 1.0 TCP“) |
+| Stopp | TCP | `/eos/key/out` als OSC-Paket, dann Socket schließen |
+
+EOS Setup am Pult: **OSC RX** und **OSC TX** aktivieren, TCP-Modus **OSC 1.0** (Packet Length Headers).
+
+Beispiel-Adressen:
+
+```text
+/eos/chan/6/full
+/eos/chan/92/full
+/eos/key/out
+```
+
+Backend-Defaults: `LIGHT_TCP_HANDSHAKE=none`, `LIGHT_OSC_TCP_FORMAT=binary`, `LIGHT_OSC_TCP_FRAMING=length_prefix`.
+
+Falls das Pult **OSC 1.1 (SLIP)** erwartet: `LIGHT_OSC_TCP_FRAMING=slip`.
+
+Legacy JSON-Handshake (nur falls vom Venue verlangt): `LIGHT_TCP_HANDSHAKE=json`.
+
+Optional: `LIGHT_OSC_MIRROR=true` spiegelt dieselben OSC-Befehle zusätzlich an TouchDesigner (`OSC_HOST:OSC_PORT`).
+
+| Einstellung | Wert |
+|-------------|------|
+| TCP IP / Port | `10.101.90.112` / `3032` (EOS OSC-over-TCP) |
+| OSC-Format | `binary` + `length_prefix` (EOS OSC 1.0 TCP) |
+| Handshake | `none` (kein JSON — nur Socket + OSC-Pakete) |
+
+Beispiel TCP-Handshake:
+
+```json
+{"protocol":"1.0","command":"connect"}
+```
+
+Danach binäres OSC über dieselbe TCP-Verbindung `:3032` (4-Byte-Längenpräfix, dann OSC-Body):
+
+```text
+/eos/chan/6/full
+/eos/key/out
+```
+
+Im Log: `[OSC SEND] [light] → 10.101.90.112:3032 tcp/osc binary+length_prefix 28B /eos/chan/6/full`
+
+Beispiel Szene `panolatte_rechts` → Kanäle 92, 94, 96, 98 je `/eos/chan/N/full`.  
+Stopp/Blackout → `/eos/key/out`, dann TCP `disconnect`.
+
+Konfiguration in `backend/.env`: `LIGHT_TCP_HOST`, `LIGHT_TCP_PORT`, `LIGHT_TCP_PROTOCOL`.
 | `/sound/trigger` | `cue_id`, `volume` | Optional: forward to QLab/Ableton |
+| `/sound/hold` | `cue_id`, `volume` | Technik-Test: Soundfläche halten (Keepalive) |
+| `/sound/stop` | `cue_id` | Cue stoppen |
+| `/light/hold` | `scene_id` | Technik-Test: Lichtszene halten (Keepalive, parallel TCP `hold`) |
 
 ## Suggested TD network
 
