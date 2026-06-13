@@ -11,8 +11,11 @@ def get_media_catalog() -> dict:
     db = MediaDatabase()
     return {
         "videos": [v.model_dump() for v in db.videos],
+        "recordings": [r.model_dump() for r in db.recordings],
         "sounds": [s.model_dump() for s in db.sounds],
         "lights": [s.model_dump() for s in db.light_scenes],
+        "light_inventory": db.light_inventory,
+        "media_root": str(db.media_root),
         "touchdesigner": {
             "osc_host": settings.osc_host,
             "osc_port": settings.osc_port,

@@ -13,6 +13,7 @@ import {
   postRecordStop,
   streamDirectorEvents
 } from "@/lib/api/director";
+import { formatOscCommand } from "@/lib/types/director";
 
 function FlagButton({
   label,
@@ -52,13 +53,15 @@ export default function DirectorPage() {
     void refresh();
     const stop = streamDirectorEvents((update) => {
       setStatus((prev) => ({
+        ...(prev ?? {}),
         safety: update.safety,
         active_cues: update.active_cues,
         last_event: update.event,
         last_decision: update.decision,
         last_executed: update.executed,
         last_blocked_reason: update.blocked_reason,
-        ...(prev ?? {})
+        last_planned_commands: update.planned_commands ?? prev?.last_planned_commands ?? [],
+        last_osc_commands: update.last_osc_commands ?? update.osc_commands ?? []
       }));
     });
     return stop;
@@ -246,6 +249,32 @@ export default function DirectorPage() {
           </>
         ) : (
           <p className="textFaint">Noch keine Entscheidung.</p>
+        )}
+      </section>
+
+      <section className="card col">
+        <h2>Letzte OSC-Befehle</h2>
+        {status?.last_osc_commands?.length ? (
+          <ul className="regieOscList" style={{ margin: 0, paddingLeft: "1.2rem" }}>
+            {status.last_osc_commands.map((cmd, i) => (
+              <li key={`${cmd.address}-${i}`}>
+                <code>{formatOscCommand(cmd)}</code>
+              </li>
+            ))}
+          </ul>
+        ) : status?.last_planned_commands?.length ? (
+          <>
+            <p className="textFaint">Noch nicht gesendet — geplant:</p>
+            <ul className="regieOscList" style={{ margin: 0, paddingLeft: "1.2rem" }}>
+              {status.last_planned_commands.map((cmd, i) => (
+                <li key={`${cmd.address}-${i}`}>
+                  <code>{formatOscCommand(cmd)}</code>
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : (
+          <p className="textFaint">Noch keine OSC-Befehle — Debatte im Show-Modus starten.</p>
         )}
       </section>
 

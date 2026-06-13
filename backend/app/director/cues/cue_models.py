@@ -55,11 +55,32 @@ class LightCue(BaseModel):
     fade_time: float = Field(default=4.0, ge=0.0)
 
 
+class CuePointTrigger(str, Enum):
+    START = "start"
+    KEYWORD = "keyword"
+    SENTENCE_END = "sentence_end"
+    TIME = "time"
+
+
+class CuePoint(BaseModel):
+    trigger: CuePointTrigger | str = CuePointTrigger.START
+    keyword: str | None = None
+    sentence_index: int | None = None
+    time_offset_sec: float = Field(default=0.0, ge=0.0)
+    function: str = ""
+    intensity: float = Field(default=0.5, ge=0.0, le=1.0)
+    visual: VisualCue | None = None
+    sound: SoundCue | None = None
+    light: LightCue | None = None
+
+
 class DramaturgyDecision(BaseModel):
     visual: VisualCue | None = None
     sound: SoundCue | None = None
     light: LightCue | None = None
     reason: str = ""
+    dramaturgical_reading: str = ""
+    cue_points: list[CuePoint] = Field(default_factory=list)
     tags: list[str] = Field(default_factory=list)
     mood: str = "neutral"
     intensity: float = Field(default=0.5, ge=0.0, le=1.0)

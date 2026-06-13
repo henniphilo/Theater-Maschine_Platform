@@ -2,16 +2,28 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import AsyncIterator, Literal
 
+from app.director.cues.cue_points import min_cue_points_for_text
 from app.director.dialogue.builder import build_dialogue_event
+from app.director.dramaturgy.rules_text import dramaturgy_rules_excerpt
 from app.director.dramaturgy.llm_director import LLMDirector
 from app.director.outputs.osc_commands import build_osc_commands
 from app.schemas.script import ScriptBeat
 from app.services.ai_service import AIService
 
-DRAMATURGY_SYSTEM = """Ihr seid zwei Theater-Dramaturgen in einem Workshop.
+def _dramaturgy_system_prompt() -> str:
+    rules = dramaturgy_rules_excerpt(max_chars=6000)
+    return f"""Ihr seid zwei Theater-Dramaturgen in einem Workshop (Bühne Unter Tieren).
 Diskutiert ausschließlich die Regie für den gegebenen Textabschnitt: Video, Sound, Licht.
-Bezieht euch auf konkrete Medien-IDs aus dem Katalog. Kurz und präzise (max. 4 Sätze).
-Kein allgemeines Pro/Contra zum Thema — nur Bühnenbild und Cues."""
+Alle Empfehlungen müssen dem Dramaturgie-Regelwerk folgen und als OSC-Cues umsetzbar sein.
+Nur existierende clip_id aus media/video, recording_id aus media/recordings, Sound nur dummy_* Cues.
+Licht nur scene_id aus der Kanal-Übersicht (Kanal Übersicht.xlsx).
+Keine Illustration, keine Schauspiel- oder Bühnenanweisungen, keine erfundenen Medien.
+Nennt dramaturgische Funktion (verstärken, widersprechen, entlarven, überlagern, reduzieren …).
+Geht den Textabschnitt Satz für Satz durch — nennt Schlüsselwörter, Stimmungswechsel und mehrere Cue-Punkte.
+Jeder Beitrag: 5–8 Sätze, konkret zu Video-, Sound- und Licht-Cues. Kein allgemeines Pro/Contra.
+
+=== DRAMATURGIE-REGELWERK ===
+{rules}"""
 
 OPENAI_DRAMATURGE = "Dramaturg A (GPT)"
 ANTHROPIC_DRAMATURGE = "Dramaturg B (Claude)"
@@ -47,56 +59,33 @@ class DramaturgyWorkshopService:
         if "anthropic" not in self.ai.providers:
             raise ValueError("Anthropic is not configured (set ANTHROPIC_API_KEY)")
 
-    async def _openai_discussion(
-        self,
-        beat: ScriptBeat,
-        title: str,
-        catalog_hint: str,
-        prior: list[str],
-        openai_model: str,
-    ) -> str:
-        context = "\n\n".join(prior) if prior else "(noch keine Diskussion)"
-        user = (
-            f"Stück: {title}\n"
-            f"Textabschnitt:\n{beat.text}\n\n"
-            f"Medien-Katalog (Auszug):\n{catalog_hint}\n\n"
-            f"Bisherige Dramaturgie-Diskussion:\n{context}\n\n"
-            "Ergänze oder widersprich mit einer konkreten Regie-Empfehlung."
-        )
-        return await self.ai.generate(
-            "openai",
-            openai_model,
-            [
-                {"role": "system", "content": DRAMATURGY_SYSTEM},
-                {"role": "user", "content": user},
-            ],
-            max_tokens=280,
-        )
+    def _discussion_rounds_for_beat(self, beat: ScriptBeat, requested: int) -> int:
+        extra = len(beat.text) // 400
+        return min(6, max(requested, 2 + extra))
 
-    async def _anthropic_discussion(
+    def _discussion_user_prompt(
         self,
         beat: ScriptBeat,
         title: str,
         catalog_hint: str,
         prior: list[str],
-        anthropic_model: str,
+        *,
+        role: str,
     ) -> str:
         context = "\n\n".join(prior) if prior else "(noch keine Diskussion)"
-        user = (
+        min_cues = min_cue_points_for_text(beat.text)
+        action = (
+            "Ergänze oder widersprich mit einer ausführlichen Regie-Empfehlung."
+            if role == "openai"
+            else "Antworte auf die letzte Empfehlung — vertiefe oder widersprich mit konkreten Cues."
+        )
+        return (
             f"Stück: {title}\n"
-            f"Textabschnitt:\n{beat.text}\n\n"
+            f"Textabschnitt ({len(beat.text)} Zeichen):\n{beat.text}\n\n"
+            f"Ziel: mindestens {min_cues} Cue-Punkte (start, keyword, sentence_end) für diesen Abschnitt.\n"
             f"Medien-Katalog (Auszug):\n{catalog_hint}\n\n"
             f"Bisherige Dramaturgie-Diskussion:\n{context}\n\n"
-            "Antworte auf die letzte Empfehlung mit deiner Regie-Sicht."
-        )
-        return await self.ai.generate(
-            "anthropic",
-            anthropic_model,
-            [
-                {"role": "system", "content": DRAMATURGY_SYSTEM},
-                {"role": "user", "content": user},
-            ],
-            max_tokens=280,
+            f"{action} Beziehe dich auf konkrete Textstellen."
         )
 
     async def run_stream(
@@ -113,11 +102,23 @@ class DramaturgyWorkshopService:
 
         for beat in beats:
             discussion_lines: list[str] = []
+            beat_rounds = self._discussion_rounds_for_beat(beat, discussion_rounds)
             try:
-                for _round in range(discussion_rounds):
+                for _round in range(beat_rounds):
                     yield WorkshopEvent(type="thinking", beat_id=beat.id, beat_order=beat.order, speaker="openai")
-                    gpt = await self._openai_discussion(
-                        beat, title, catalog_hint, discussion_lines, openai_model
+                    gpt = await self.ai.generate(
+                        "openai",
+                        openai_model,
+                        [
+                            {"role": "system", "content": _dramaturgy_system_prompt()},
+                            {
+                                "role": "user",
+                                "content": self._discussion_user_prompt(
+                                    beat, title, catalog_hint, discussion_lines, role="openai"
+                                ),
+                            },
+                        ],
+                        max_tokens=650,
                     )
                     discussion_lines.append(f"{OPENAI_DRAMATURGE}: {gpt}")
                     yield WorkshopEvent(
@@ -129,8 +130,19 @@ class DramaturgyWorkshopService:
                     )
 
                     yield WorkshopEvent(type="thinking", beat_id=beat.id, beat_order=beat.order, speaker="anthropic")
-                    claude = await self._anthropic_discussion(
-                        beat, title, catalog_hint, discussion_lines, anthropic_model
+                    claude = await self.ai.generate(
+                        "anthropic",
+                        anthropic_model,
+                        [
+                            {"role": "system", "content": _dramaturgy_system_prompt()},
+                            {
+                                "role": "user",
+                                "content": self._discussion_user_prompt(
+                                    beat, title, catalog_hint, discussion_lines, role="anthropic"
+                                ),
+                            },
+                        ],
+                        max_tokens=650,
                     )
                     discussion_lines.append(f"{ANTHROPIC_DRAMATURGE}: {claude}")
                     yield WorkshopEvent(

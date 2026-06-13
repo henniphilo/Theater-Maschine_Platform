@@ -8,12 +8,15 @@ from fastapi.responses import StreamingResponse
 from app.core.config import settings
 from app.director.pipeline import get_director_pipeline
 from app.director.recording import RecordingManager
+from app.director.cues.cue_models import OscCommand
 from app.schemas.director import (
     DialogueEventRequest,
     DirectorProcessResponse,
     DirectorStatusResponse,
     ExecuteRequest,
     ExecuteResponse,
+    OscTestRequest,
+    OscTestResponse,
     RecordingRequest,
     RecordingStatusResponse,
     SafetyUpdateRequest,
@@ -78,6 +81,37 @@ def post_execute(payload: ExecuteRequest) -> ExecuteResponse:
         blocked_reason=result.blocked_reason,
         osc_commands=result.osc_commands,
     )
+
+
+@router.post("/osc-test", response_model=OscTestResponse)
+def post_osc_test(payload: OscTestRequest | None = None) -> OscTestResponse:
+    """Send ping + play_clip to TouchDesigner for wiring checks."""
+    _ensure_enabled()
+    body = payload or OscTestRequest()
+    dry_run = settings.osc_dry_run
+    target = f"{settings.osc_host}:{settings.osc_port}"
+    bridge = _pipeline.touchdesigner
+    bridge._send("/theatermaschine/ping", "hello")
+    bridge.play_clip(body.clip_id, opacity=0.8, fade_time=4.0)
+    messages = [
+        OscCommand(
+            bridge="visual",
+            host=settings.osc_host,
+            port=settings.osc_port,
+            address="/theatermaschine/ping",
+            args=["hello"],
+            dry_run=dry_run,
+        ),
+        OscCommand(
+            bridge="visual",
+            host=settings.osc_host,
+            port=settings.osc_port,
+            address="/visual/play_clip",
+            args=[body.clip_id, 0.8, 4.0],
+            dry_run=dry_run,
+        ),
+    ]
+    return OscTestResponse(sent=not dry_run, dry_run=dry_run, target=target, messages=messages)
 
 
 @router.get("/status", response_model=DirectorStatusResponse)

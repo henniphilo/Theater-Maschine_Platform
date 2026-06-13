@@ -65,6 +65,17 @@ class DirectorStatusResponse(BaseModel):
     last_osc_commands: list[OscCommand] = Field(default_factory=list)
 
 
+class OscTestRequest(BaseModel):
+    clip_id: str = "kuh"
+
+
+class OscTestResponse(BaseModel):
+    sent: bool
+    dry_run: bool
+    target: str
+    messages: list[OscCommand]
+
+
 class RecordingRequest(BaseModel):
     recording_id: str = Field(min_length=1)
 

@@ -1,3 +1,4 @@
+import { DirectorPayload } from "@/lib/types/director";
 import { DebateRequest, DebateStreamEvent } from "@/lib/types/chat";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api/v1";
@@ -9,6 +10,7 @@ export type DebateStreamHandlers = {
     content: string;
     model: string;
     created_at: string;
+    director?: DirectorPayload;
   }) => void;
   onDone: (data: { conversation_id: string; topic: string }) => void;
   onError: (detail: string) => void;
@@ -49,7 +51,8 @@ export async function streamDebate(payload: DebateRequest, handlers: DebateStrea
           speaker: event.speaker,
           content: event.content,
           model: event.model,
-          created_at: event.created_at
+          created_at: event.created_at,
+          director: event.director
         });
       } else if (event.type === "done" && event.conversation_id && event.topic) {
         handlers.onDone({ conversation_id: event.conversation_id, topic: event.topic });
@@ -72,7 +75,10 @@ export async function fetchTTSStatus() {
   };
 }
 
-export async function fetchSpeechBlob(text: string, speaker: "openai" | "anthropic"): Promise<Blob> {
+export async function fetchSpeechBlob(
+  text: string,
+  speaker: "openai" | "anthropic" | "AI_A" | "AI_B" | "narrator"
+): Promise<Blob> {
   const res = await fetch(`${API_BASE}/tts/speak`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -95,12 +101,21 @@ export function stopPlayback(): void {
   }
 }
 
-export function playBlob(blob: Blob): Promise<void> {
+export function playBlob(
+  blob: Blob,
+  hooks?: { onPlay?: () => void; onTimeUpdate?: (currentTime: number, duration: number) => void }
+): Promise<void> {
   return new Promise((resolve, reject) => {
     stopPlayback();
     const url = URL.createObjectURL(blob);
     const audio = new Audio(url);
     currentAudio = audio;
+    audio.onplay = () => {
+      hooks?.onPlay?.();
+    };
+    audio.ontimeupdate = () => {
+      hooks?.onTimeUpdate?.(audio.currentTime, audio.duration);
+    };
     audio.onended = () => {
       URL.revokeObjectURL(url);
       if (currentAudio === audio) currentAudio = null;

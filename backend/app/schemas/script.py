@@ -39,4 +39,4 @@ class PatchScriptBeatRequest(BaseModel):
 class DramaturgyStreamRequest(BaseModel):
     openai_model: str = Field(default="gpt-4o", min_length=3, max_length=80)
     anthropic_model: str = Field(default="claude-sonnet-4-6", min_length=3, max_length=80)
-    discussion_rounds: int = Field(default=1, ge=1, le=3)
+    discussion_rounds: int = Field(default=3, ge=1, le=6)

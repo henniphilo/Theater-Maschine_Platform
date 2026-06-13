@@ -1,3 +1,10 @@
+# Öffentliche Ports (Host):
+#   3003 — Frontend (Debatte + Operator), Host-Port → Container 3000
+#   8000 — Backend API
+# Intern (nur Docker-Netzwerk, nicht nach außen):
+#   postgres:5432, redis:6379
+# OSC (TouchDesigner, vom Host/Mac): 7000 UDP — siehe backend/.env OSC_PORT
+
 services:
   postgres:
     image: postgres:15
@@ -5,15 +12,11 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: aidebatte
-    ports:
-      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
 
   redis:
     image: redis:7
-    ports:
-      - "6379:6379"
 
   backend:
     build:
@@ -26,8 +29,17 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg://postgres:postgres@postgres:5432/aidebatte
       REDIS_URL: redis://redis:6379/0
+      CORS_ORIGINS: '["http://localhost:3003"]'
       DIRECTOR_DATA_DIR: data
-      OSC_DRY_RUN: "true"
+      DIRECTOR_DRAMATURGY_MODE: llm
+      DIRECTOR_EXECUTE_MODE: sequenced
+      OSC_DRY_RUN: "false"
+      OSC_LOG_COMMANDS: "true"
+    volumes:
+      - ./media:/app/media:ro
+      - ./docs:/app/docs:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - postgres
       - redis

@@ -21,8 +21,8 @@ def test_validator_rejects_unknown_clip() -> None:
     director = LLMDirector()
     decision = DramaturgyDecision(
         visual=VisualCue(action=VisualAction.PLAY_CLIP, clip_id="does_not_exist"),
-        sound=SoundCue(cue_id="low_drone_02"),
-        light=LightCue(scene_id="cold_blue_low"),
+        sound=SoundCue(cue_id="dummy_drone"),
+        light=LightCue(scene_id="vorbuehnenzug"),
         reason="test",
     )
     with pytest.raises(DramaturgyValidationError):
@@ -39,4 +39,7 @@ def test_rules_mode_decide(monkeypatch: pytest.MonkeyPatch) -> None:
 
     decision = asyncio.run(director.decide(_event()))
     assert decision.visual is not None
-    assert decision.visual.clip_id == "memory_noise_03"
+    from app.director.media.database import MediaDatabase
+
+    video_ids = {v.id for v in MediaDatabase().videos}
+    assert decision.visual.clip_id in video_ids

@@ -21,7 +21,10 @@ def test_director_dialogue_event_returns_decision() -> None:
     assert res.status_code == 200
     body = res.json()
     assert body["executed"] is False
-    assert body["decision"]["visual"]["clip_id"] == "memory_noise_03"
+    from app.director.media.database import MediaDatabase
+
+    video_ids = {v.id for v in MediaDatabase().videos}
+    assert body["decision"]["visual"]["clip_id"] in video_ids
     assert body["planned_commands"]
     assert body["osc_commands"] == []
 

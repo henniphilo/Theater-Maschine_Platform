@@ -1,4 +1,6 @@
 from app.director.cues.cue_models import (
+    CuePoint,
+    CuePointTrigger,
     DramaturgyDecision,
     LightCue,
     SoundAction,
@@ -48,7 +50,7 @@ class DramaturgyEngine:
                 fade_time=light.fade_time,
             )
 
-        return DramaturgyDecision(
+        decision = DramaturgyDecision(
             visual=visual,
             sound=sound_cue,
             light=light_cue,
@@ -57,7 +59,18 @@ class DramaturgyEngine:
             mood=event.mood,
             intensity=event.intensity,
             timestamp=event.timestamp,
+            cue_points=[
+                CuePoint(
+                    trigger=CuePointTrigger.START,
+                    function="verstärken",
+                    intensity=event.intensity,
+                    visual=visual,
+                    sound=sound_cue,
+                    light=light_cue,
+                )
+            ],
         )
+        return decision
 
     @staticmethod
     def _build_reason(event: DialogueEvent, video, sound, light) -> str:

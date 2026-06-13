@@ -11,7 +11,9 @@ Weitere Details: [PLAN.md](../PLAN.md) · [TouchDesigner-Setup](../touchdesigner
 ```mermaid
 flowchart TB
   subgraph ui [Ebene 1 Bedienung]
-    DebateUI["Debatten-UI /"]
+    DramaturgieUI["Dramaturgie /dramaturgie"]
+    StueckUI["Stücktext /stueck"]
+    ShowUI["Aufführung /auffuehrung"]
     OperatorUI["Operator-UI /director"]
   end
 
@@ -370,10 +372,12 @@ Regie-Mac          TouchDesigner-Mac       Sound-Mac
 
 | Port | Protokoll | Dienst |
 |------|-----------|--------|
-| 3003 | HTTP | Frontend |
+| 3003 | HTTP | Frontend (Debatte + Operator) |
 | 8000 | HTTP | Backend API |
 | 7000 | UDP OSC | TouchDesigner + Sound + Licht |
 | 6454 | UDP Art-Net | DMX (Phase 3, optional) |
+
+Postgres (5432) und Redis (6379) laufen in Docker **nur intern** — nicht auf dem Host exponiert.
 
 Alle Geräte im **gleichen lokalen Netz**; WLAN für Live-Show vermeiden — bevorzugt Ethernet.
 

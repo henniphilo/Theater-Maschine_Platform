@@ -1,3 +1,5 @@
+import type { DramaturgyDecision, OscCommand } from "@/lib/types/director";
+
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api/v1";
 
 export type DirectorSafety = {
@@ -16,6 +18,8 @@ export type DirectorStatus = {
   last_decision: Record<string, unknown> | null;
   last_executed: boolean | null;
   last_blocked_reason: string | null;
+  last_planned_commands: OscCommand[];
+  last_osc_commands: OscCommand[];
 };
 
 export type SafetyUpdate = Partial<DirectorSafety>;
@@ -64,14 +68,64 @@ export async function postRecordStop(): Promise<{ active: boolean; recording_id:
   return res.json();
 }
 
+export type ExecuteResponse = {
+  executed: boolean;
+  blocked_reason: string | null;
+  osc_commands: OscCommand[];
+};
+
+export async function postDirectorDialogueEvent(payload: {
+  speaker: "AI_A" | "AI_B";
+  text: string;
+  topic?: string;
+  mood?: string;
+  intensity?: number;
+  tags?: string[];
+}): Promise<{
+  event: Record<string, unknown>;
+  decision: DramaturgyDecision;
+  executed: boolean;
+  blocked_reason: string | null;
+  planned_commands: OscCommand[];
+  osc_commands: OscCommand[];
+}> {
+  const res = await fetch(`${API_BASE}/director/dialogue-event`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok) throw new Error("Director plan failed");
+  return res.json();
+}
+
+export async function postDirectorExecute(
+  decision: DramaturgyDecision,
+  options?: { force?: boolean; stagger?: boolean }
+): Promise<ExecuteResponse> {
+  const res = await fetch(`${API_BASE}/director/execute`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      decision,
+      force: options?.force ?? false,
+      stagger: options?.stagger ?? true
+    })
+  });
+  if (!res.ok) throw new Error("Director execute failed");
+  return res.json();
+}
+
 export type DirectorStreamUpdate = {
   type: "director_update";
   event: Record<string, unknown>;
   decision: Record<string, unknown>;
   executed: boolean;
   blocked_reason: string | null;
+  planned_commands: OscCommand[];
+  osc_commands: OscCommand[];
   safety: DirectorSafety;
   active_cues: string[];
+  last_osc_commands: OscCommand[];
 };
 
 export function streamDirectorEvents(onUpdate: (update: DirectorStreamUpdate) => void): () => void {

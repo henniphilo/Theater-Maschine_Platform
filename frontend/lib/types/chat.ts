@@ -1,3 +1,5 @@
+import type { DirectorPayload, OscCommand, ShowPhase } from "@/lib/types/director";
+
 export type ChatRole = "user" | "assistant";
 export type DebateSpeaker = "openai" | "anthropic";
 
@@ -7,6 +9,9 @@ export interface ChatMessage {
   content: string;
   speaker?: DebateSpeaker;
   label?: string;
+  director?: DirectorPayload;
+  showPhase?: ShowPhase;
+  osc_commands?: OscCommand[];
 }
 
 export interface DebateRequest {
@@ -27,6 +32,7 @@ export interface DebateStreamEvent {
   conversation_id?: string;
   topic?: string;
   detail?: string;
+  director?: DirectorPayload;
 }
 
 export interface DebateTurn {

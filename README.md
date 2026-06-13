@@ -128,7 +128,9 @@ docker compose up --build
 
 | Dienst | URL |
 |--------|-----|
-| **Debatte (Frontend)** | http://localhost:3003 |
+| **Dramaturgie** | http://localhost:3003/dramaturgie |
+| **Stücktext** | http://localhost:3003/stueck |
+| **Aufführung** | http://localhost:3003/auffuehrung |
 | **Live-Regie (Operator)** | http://localhost:3003/director |
 | **Backend (API)** | http://localhost:8000 |
 | **API-Docs** | http://localhost:8000/docs |
@@ -145,6 +147,18 @@ curl http://localhost:8000/api/v1/director/status
 ```bash
 docker compose down
 ```
+
+### Ports (einheitlich)
+
+| Port | Protokoll | Dienst | Nach außen (Docker) |
+|------|-----------|--------|---------------------|
+| **3003** | HTTP | Frontend (Debatte + `/director`) | ja |
+| **8000** | HTTP | Backend API | ja |
+| **7000** | UDP | OSC → TouchDesigner / Sound / Licht | nein (Host/Mac, `OSC_PORT` in `.env`) |
+| 5432 | TCP | PostgreSQL | nein (nur Docker-intern) |
+| 6379 | TCP | Redis | nein (nur Docker-intern) |
+
+Docker: Frontend **3003**, Backend **8000**. Lokal ohne Docker (`npm run dev`): Frontend **3000**. Postgres/Redis nur intern in Docker.
 
 ---
 
@@ -170,12 +184,16 @@ DIRECTOR_DATA_DIR="data"
 OSC_HOST="127.0.0.1"
 OSC_PORT=7000
 OSC_DRY_RUN=false
+DIRECTOR_EXECUTE_MODE=sequenced
+OSC_LOG_COMMANDS=true
 ```
 
 | Variable | Standard | Beschreibung |
 |----------|----------|--------------|
 | `DIRECTOR_ENABLED` | `true` | Regie bei Debatten-Turns aktivieren |
+| `DIRECTOR_EXECUTE_MODE` | `sequenced` | `sequenced` = nur planen bei Debatte, Execute per UI; `immediate` = sofort OSC |
 | `OSC_DRY_RUN` | `false` | `true` = nur loggen, kein UDP an TouchDesigner |
+| `OSC_LOG_COMMANDS` | `true` | Lesbare `[OSC …]`-Zeilen im Backend-Log |
 | `OSC_HOST` | `127.0.0.1` | In Docker auf Mac: `host.docker.internal` |
 | `DIRECTOR_DATA_DIR` | `data` | Pfad zu `media.json`, `light_scenes.json`, … |
 
@@ -185,13 +203,37 @@ In `docker-compose.yml` ist `OSC_DRY_RUN=true` voreingestellt, damit der Stack o
 
 ## Bedienung
 
-### Debatte (`/`)
+### 3-Phasen-Workflow
+
+1. **`/dramaturgie`** — Stücktext einfügen, KIs diskutieren Regie (LLM wählt Cues aus `media.json`)
+2. **`/stueck`** — Stücktext mit Video/Sound/Licht-Markierungen prüfen, Sprecher anpassen
+3. **`/auffuehrung`** — Bühnen-Vorschau, Timeline/Text klickbar, **Start/Stop/Fortsetzen** (TTS + OSC)
+
+**Medien-Datenbank:** Videos/Recordings werden aus `media/video/` und `media/recordings/` gescannt (nur existierende Dateien). Sounds: Dummy-WAVs in `media/audio/`. Licht: `data/light_scenes.json` aus [`media/light/Kanal Übersicht.xlsx`](media/light/Kanal%20Übersicht.xlsx). API: `GET /api/v1/media/catalog`. TouchDesigner: [`touchdesigner/README_touchdesigner_setup.md`](touchdesigner/README_touchdesigner_setup.md).
+
+`DIRECTOR_DRAMATURGY_MODE=llm` (Standard) oder `rules` für regelbasierte Cues.
+
+### Debatte (Legacy) — Show-Modus
+
+Mit **Show-Modus AN** (Standard) läuft pro Beitrag eine sichtbare Sequenz:
+
+1. Text erscheint mit **Regie-Karte** (Stimmung, geplante Cues, OSC-Vorschau)
+2. **TTS** startet automatisch
+3. Beim Start der Stimme: `POST /director/execute` — Cues gehen parallel zur Stimme (Licht → Sound → Video, ~150 ms Staffelung)
+4. Regie-Karte zeigt Status und gesendete OSC-Befehle
+5. Nächster Turn erst, wenn die Queue frei ist
+
+**Show-Modus AUS:** wie bisher — Text sofort, Vertonung manuell per Klick.
+
+**Maschine starten** (nach der Debatte): spielt den gesamten Stücktext nacheinander ab — mit Satz-für-Satz-Highlight im aktuellen Beitrag, sichtbaren Cues/OSC und Fortschrittsanzeige oben.
 
 1. **Thema** eingeben → **Diskussion starten**
 2. Beiträge erscheinen live mit Denk-Indikator
 3. **Weiter diskutieren** — weitere Runden anhängen
-4. **Vertonung** — einzelne Beiträge oder ganzes Gespräch abspielen
+4. **Vertonung** (nur ohne Show-Modus) — einzelne Beiträge oder ganzes Gespräch abspielen
 5. Link **Live-Regie →** führt zur Operator-Oberfläche
+
+OSC-Befehle sind sichtbar in der Regie-Karte unter jedem Beitrag und im Operator-Panel unter **Letzte OSC-Befehle**. Im Terminal: `docker compose logs backend` (bei `OSC_LOG_COMMANDS=true`).
 
 ### Live-Regie (`/director`)
 
@@ -203,6 +245,8 @@ Siehe [Live-Regie (Director)](#live-regie-director).
 
 ### Ablauf
 
+Im **Show-Modus** (`DIRECTOR_EXECUTE_MODE=sequenced`): Planung bei jedem Turn, OSC-Ausführung erst wenn die Debatten-UI TTS startet (`POST /director/execute`).
+
 ```text
 KI spricht Text
     ↓
@@ -212,9 +256,11 @@ DramaturgyEngine wählt Cues aus data/media.json
     ↓
 CueScheduler prüft Safety + Mindestabstände
     ↓
-OSC → TouchDesigner (Video) + Sound/Light (Log/OSC)
+plan() → geplante OSC-Befehle an UI
     ↓
-Entscheidung in logs/director.log
+execute() (Show-Modus) → OSC → TouchDesigner + Sound/Light
+    ↓
+Entscheidung in logs/director.log + last_osc_commands im Status
 ```
 
 ### Operator-UI
@@ -439,12 +485,13 @@ cd frontend && npm run dev
 | Problem | Lösung |
 |---------|--------|
 | Port 8000 belegt | Alten Stack stoppen: `docker stop aidebatte-backend-1 …` oder `docker compose down` im anderen Projekt |
-| Port 3003 belegt | Port in `docker-compose.yml` unter `frontend.ports` ändern |
+| Port 3003 oder 8000 belegt | Alten Docker-Stack stoppen: `docker ps` → `docker stop …` |
+| Postgres/Redis-Konflikt | In Docker nicht mehr nach außen gemappt — nur intern |
 | TTS nicht verfügbar | `curl localhost:8000/api/v1/tts/status`; in Docker edge-tts, auf Mac `say` |
 | Director sendet kein OSC | `OSC_DRY_RUN=false` setzen; `OSC_HOST=host.docker.internal` in Docker auf Mac |
 | Keine Videoclips | Dateien in `media/video/` ablegen; IDs müssen zu `data/media.json` passen |
 | Cues werden blockiert | Operator-UI: Autopilot an? Mindestabstand abgewartet? `/director/status` prüfen |
-| CORS-Fehler | Frontend-URL in `CORS_ORIGINS` in `.env` eintragen |
+| CORS-Fehler | `CORS_ORIGINS='["http://localhost:3003"]'` in `backend/.env` (Docker) |
 
 ---
 

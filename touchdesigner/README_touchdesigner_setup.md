@@ -76,11 +76,57 @@ def onReceiveOSC(dat, rowIndex, message, bytes, time, address, args, peer):
 
 ## Clip ID → file path
 
-Clip IDs come from `data/media.json`. Map each `id` to a `Movie File In TOP` or a folder lookup, e.g.:
+Clip IDs are **auto-scanned** from `media/video/` and `media/recordings/` (e.g. `kuh.mov` → `clip_id` `kuh`). Map each `id` to a `Movie File In TOP` or a folder lookup, e.g.:
+
+Alle Dateien in `media/video/` werden automatisch erkannt (`clip_id` = Dateiname ohne Endung, Leerzeichen → `_`, Umlaute → ae/oe/ue). Aktuell z. B.:
+
+| clip_id | Datei |
+|---------|-------|
+| `kuh` | `kuh.mov` |
+| `fuchs` | `fuchs.mov` |
+| `ente` | `Ente.mov` |
+| `bar_avatar` | `Bär Avatar.mp4` |
+| `fuchs_avatar` | `Fuchs Avatar.mp4` |
+| `hund_avatar` | `Hund Avatar.mp4` |
+| `esel_lauft_27-05` | `Esel läuft 27-05.mp4` |
+| `lowe_test` | `Löwe Test.mp4` |
+| `gehirn_test` | `Gehirn Test.mp4` |
+| `schmetterlinge` | `Schmetterlinge.mp4` |
+| `insekten` | `Insekten.mp4` |
+| `mehlwurmer` | `Mehlwürmer.mp4` |
+
+Licht-Szenen kommen aus `data/light_scenes.json` (abgeleitet aus `media/light/Kanal Übersicht.xlsx`). OSC: `/light/set_scene <scene_id> <fade_time>` — z. B. `vorbuehnenzug` → Kanäle 11–19.
+
+Sounds sind aktuell **Dummy-WAVs** in `media/audio/dummy_*.wav` bis echte Cues eingepflegt sind.
+
+Legacy example:
 
 ```text
 memory_noise_03  →  ../media/video/memory_noise_03.mp4
 ```
+
+## TouchDesigner Checkliste (wenn „nichts ankommt“)
+
+Das Backend **sendet** OSC (Log: `[OSC SEND] → host.docker.internal:7000`). TouchDesigner lauscht typischerweise auf Port **7000**. Wenn trotzdem nichts passiert:
+
+1. **OSC In DAT** → Parameter **Network Port** = `7000`, **Active** = an
+2. **Callbacks DAT** verknüpfen: OSC In DAT → Parameter **Callbacks DAT** → dein Callbacks-DAT
+3. **Textport** öffnen (Alt+T) — bei ankommendem OSC muss etwas erscheinen (siehe `theatermaschine_callbacks.py`)
+4. Im OSC In DAT die **Tabelle** prüfen — neue Zeilen mit `/visual/play_clip`?
+5. **Adresse exakt**: `/visual/play_clip` (nicht `/play_clip`)
+6. **Argumente**: `clip_id` (string), `opacity` (float), `fade_time` (float) — z. B. `kuh`, `0.8`, `4.0`
+
+Schnelltest vom Mac (Backend muss laufen):
+
+```bash
+curl -X POST http://localhost:8000/api/v1/director/osc-test \
+  -H 'Content-Type: application/json' \
+  -d '{"clip_id":"kuh"}'
+```
+
+Wenn im Textport `[TM] OSC /visual/play_clip ...` erscheint, ist die Verbindung OK — dann Clip-Mapping / Movie File In TOP prüfen.
+
+Referenz-Callback: [`theatermaschine_callbacks.py`](theatermaschine_callbacks.py)
 
 ## Testing without full TD network
 

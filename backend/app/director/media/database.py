@@ -33,6 +33,9 @@ class SoundAsset(BaseModel):
 class LightScene(BaseModel):
     id: str
     description: str = ""
+    location: str = ""
+    channels: list[str] = Field(default_factory=list)
+    fixtures: list[str] = Field(default_factory=list)
     moods: list[str] = Field(default_factory=list)
     intensity_min: float = 0.0
     intensity_max: float = 1.0
@@ -51,9 +54,13 @@ class DramaturgyRules:
 class MediaDatabase:
     def __init__(self, data_dir: Path | None = None) -> None:
         self.data_dir = data_dir or self._resolve_data_dir()
+        self.media_root = self._resolve_media_root()
+        self.repo_root = self.media_root.parent if self.media_root.name == "media" else self.data_dir.parent
         self.videos: list[VideoAsset] = []
+        self.recordings: list[VideoAsset] = []
         self.sounds: list[SoundAsset] = []
         self.light_scenes: list[LightScene] = []
+        self.light_inventory: dict = {}
         self.rules = DramaturgyRules()
         self.reload()
 
@@ -75,17 +82,36 @@ class MediaDatabase:
                 return candidate
         return Path.cwd() / configured
 
+    def _resolve_media_root(self) -> Path:
+        from app.director.media.inventory import resolve_media_root
+
+        return resolve_media_root(self.data_dir)
+
     def reload(self) -> None:
+        from app.director.media.inventory import (
+            load_sound_assets,
+            partition_visual_assets,
+            resolve_repo_root,
+            scan_visual_assets,
+        )
+
         media_path = self.data_dir / "media.json"
         light_path = self.data_dir / "light_scenes.json"
+        inventory_path = self.data_dir / "light_inventory.json"
         rules_path = self.data_dir / "dramaturgy_rules.json"
 
         media_data = json.loads(media_path.read_text(encoding="utf-8"))
         light_data = json.loads(light_path.read_text(encoding="utf-8"))
         rules_data = json.loads(rules_path.read_text(encoding="utf-8"))
+        if inventory_path.exists():
+            self.light_inventory = json.loads(inventory_path.read_text(encoding="utf-8"))
 
-        self.videos = [VideoAsset.model_validate(v) for v in media_data.get("videos", [])]
-        self.sounds = [SoundAsset.model_validate(s) for s in media_data.get("sounds", [])]
+        self.repo_root = resolve_repo_root(self.data_dir)
+        self.media_root = self._resolve_media_root()
+
+        visual_assets = scan_visual_assets(self.media_root)
+        self.videos, self.recordings = partition_visual_assets(visual_assets)
+        self.sounds = load_sound_assets(self.media_root, self.repo_root, media_data.get("sounds", []))
         self.light_scenes = [LightScene.model_validate(s) for s in light_data.get("scenes", [])]
         self.rules = DramaturgyRules(
             keyword_tags=rules_data.get("keyword_tags", {}),
@@ -163,9 +189,10 @@ class MediaDatabase:
         return next((s for s in self.sounds if s.id not in exclude), None)
 
     def register_recording(self, recording_id: str, path: str, tags: list[str]) -> VideoAsset:
-        """Phase 4 stub: add live recording to in-memory catalog."""
+        """Add live recording to in-memory catalog after capture."""
         asset = VideoAsset(
             id=recording_id,
+            type="recording",
             path=path,
             tags=["live", "recording", *tags],
             moods=["live"],
@@ -175,5 +202,8 @@ class MediaDatabase:
             loopable=False,
             preferred_blend="slow_fade",
         )
-        self.videos.append(asset)
+        self.recordings.append(asset)
         return asset
+
+    def all_visual_ids(self) -> set[str]:
+        return {v.id for v in self.videos} | {r.id for r in self.recordings}

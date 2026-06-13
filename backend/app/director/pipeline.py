@@ -7,7 +7,7 @@ from app.core.config import settings
 from app.director.cues.cue_models import DramaturgyDecision, OscCommand, ScheduledCue
 from app.director.cues.scheduler import CueScheduler
 from app.director.cues.safety import SafetyState, get_safety_state
-from app.director.dialogue.models import DialogueEvent
+from app.director.dialogue.models import DialogueEvent, DialogueSpeaker
 from app.director.dramaturgy.engine import DramaturgyEngine
 from app.director.media.database import MediaDatabase
 from app.director.outputs.lighting import LightingBridge
@@ -108,8 +108,8 @@ class DirectorPipeline:
             self.scheduler.mark_executed(decision)
 
         event = self.state.last_event or DialogueEvent(
-            speaker="AI_A",
-            text="",
+            speaker=DialogueSpeaker.AI_A,
+            text="(script beat)",
             topic="",
             mood=decision.mood,
             intensity=decision.intensity,

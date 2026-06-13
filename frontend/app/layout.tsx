@@ -2,13 +2,13 @@ import "./globals.css";
 import { ReactNode } from "react";
 
 export const metadata = {
-  title: "AI Debate",
-  description: "GPT vs Claude — live AI debate"
+  title: "Theatermaschine",
+  description: "Dramaturgie, Stücktext und Live-Aufführung"
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="de">
       <body>{children}</body>
     </html>
   );

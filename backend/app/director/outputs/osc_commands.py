@@ -2,18 +2,16 @@ from typing import Any
 
 from app.core.config import settings
 from app.director.cues.cue_models import DramaturgyDecision, OscCommand, VisualAction
+from app.director.cues.cue_points import decision_from_cue_point, normalize_cue_points
 
 
-def build_osc_commands(
+def _commands_for_single_decision(
     decision: DramaturgyDecision,
     *,
-    host: str | None = None,
-    port: int | None = None,
-    dry_run: bool | None = None,
+    osc_host: str,
+    osc_port: int,
+    is_dry_run: bool,
 ) -> list[OscCommand]:
-    osc_host = host or settings.osc_host
-    osc_port = port or settings.osc_port
-    is_dry_run = settings.osc_dry_run if dry_run is None else dry_run
     commands: list[OscCommand] = []
 
     if decision.visual:
@@ -135,8 +133,53 @@ def build_osc_commands(
                     dry_run=is_dry_run,
                 )
             )
+    elif decision.light and decision.light.action.value == "fade_blackout":
+        commands.append(
+            OscCommand(
+                bridge="light",
+                host=osc_host,
+                port=osc_port,
+                address="/light/blackout",
+                args=[],
+                dry_run=is_dry_run,
+            )
+        )
 
     return commands
+
+
+def build_osc_commands(
+    decision: DramaturgyDecision,
+    *,
+    host: str | None = None,
+    port: int | None = None,
+    dry_run: bool | None = None,
+) -> list[OscCommand]:
+    osc_host = host or settings.osc_host
+    osc_port = port or settings.osc_port
+    is_dry_run = settings.osc_dry_run if dry_run is None else dry_run
+    commands: list[OscCommand] = []
+
+    points = normalize_cue_points(decision)
+    if points:
+        for point in points:
+            mini = decision_from_cue_point(decision, point)
+            commands.extend(
+                _commands_for_single_decision(
+                    mini,
+                    osc_host=osc_host,
+                    osc_port=osc_port,
+                    is_dry_run=is_dry_run,
+                )
+            )
+        return commands
+
+    return _commands_for_single_decision(
+        decision,
+        osc_host=osc_host,
+        osc_port=osc_port,
+        is_dry_run=is_dry_run,
+    )
 
 
 def send_osc_commands(commands: list[OscCommand], bridges: dict[str, Any]) -> list[OscCommand]:

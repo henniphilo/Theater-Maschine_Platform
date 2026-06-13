@@ -9,6 +9,8 @@ COPY backend/app /app/app
 COPY backend/tests /app/tests
 COPY backend/.env.example /app/.env.example
 COPY data /app/data
+COPY media /app/media
+COPY docs /app/docs
 
 ENV DIRECTOR_DATA_DIR=data
 

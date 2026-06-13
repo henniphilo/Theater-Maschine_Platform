@@ -8,9 +8,9 @@ from app.director.pipeline import DirectorPipeline
 
 def _sample_decision() -> DramaturgyDecision:
     return DramaturgyDecision(
-        visual=VisualCue(action=VisualAction.PLAY_CLIP, clip_id="memory_noise_03"),
-        sound=SoundCue(cue_id="low_drone_02"),
-        light=LightCue(scene_id="cold_blue_low"),
+        visual=VisualCue(action=VisualAction.PLAY_CLIP, clip_id="kuh"),
+        sound=SoundCue(cue_id="dummy_drone"),
+        light=LightCue(scene_id="vorbuehnenzug"),
         reason="test",
         tags=["memory"],
         mood="melancholisch",
