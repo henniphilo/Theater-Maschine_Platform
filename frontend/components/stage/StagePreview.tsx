@@ -1,3 +1,4 @@
+import { formatVisualCueLabel } from "@/lib/types/visual";
 import type { MediaLookup } from "@/lib/types/media";
 import type { ScriptBeat } from "@/lib/types/script";
 import { speakerLabel } from "@/lib/types/script";
@@ -21,20 +22,17 @@ export function StagePreview({
   onBeatSelect?: (index: number) => void;
   media?: MediaLookup;
 }) {
-  const activeVideo =
-    activeBeatIndex >= 0 ? beats[activeBeatIndex]?.dramaturgy?.visual?.clip_id : undefined;
-  const activeVideoPath = activeVideo ? media?.videoById[activeVideo]?.path : undefined;
+  const activeVisual =
+    activeBeatIndex >= 0 ? beats[activeBeatIndex]?.dramaturgy?.visual : undefined;
+  const activeVideoLabel = formatVisualCueLabel(activeVisual);
 
   return (
     <div className="stagePreview">
       <div className="stageCanvas" aria-label="Abstrakte Bühnenansicht">
         <div className={`stageZone stageZoneScreen${activeOscBridge === "visual" ? " stageZoneActive" : ""}`}>
           <span>Beamer / Video</span>
-          {activeVideo ? (
-            <small className="stageZoneDetail">
-              {activeVideo}
-              {activeVideoPath ? ` → ${activeVideoPath}` : ""}
-            </small>
+          {activeVideoLabel ? (
+            <small className="stageZoneDetail">{activeVideoLabel}</small>
           ) : null}
         </div>
         <div className="stageZoneRow">
@@ -47,8 +45,8 @@ export function StagePreview({
         </div>
         {!running && !paused ? (
           <p className="textFaint stageCanvasHint">
-            Vorschau — Timeline oder Textabschnitt wählen, dann starten. Videos aus{" "}
-            <code>data/media.json</code> → TouchDesigner per OSC.
+            Vorschau — Timeline oder Textabschnitt wählen, dann starten. Video per Pixera OSC (
+            <code>/pixera/args/cue/apply</code>).
           </p>
         ) : paused ? (
           <p className="textFaint stageCanvasHint">Pausiert — Fortsetzen oder anderen Abschnitt wählen.</p>
@@ -76,9 +74,8 @@ export function StagePreview({
                 ? "D"
                 : "";
           const d = beat.dramaturgy;
-          const videoPath = d?.visual?.clip_id ? media?.videoById[d.visual.clip_id]?.path : undefined;
           const rowClass = `stageTimelineRow${active ? " stageTimelineRowActive" : ""}${onBeatSelect ? " stageTimelineRowClickable" : ""}`;
-          const title = videoPath ? `${d?.visual?.clip_id}: ${videoPath}` : beat.text.slice(0, 80);
+          const title = formatVisualCueLabel(d?.visual) || beat.text.slice(0, 80);
           const cells = (
             <>
               <span className="stageTimelineCell">
@@ -86,7 +83,7 @@ export function StagePreview({
                 {index + 1}
               </span>
               <span className="stageTimelineCell">{speakerLabel(beat.speaker)}</span>
-              <span className="stageTimelineCell">{d?.visual?.clip_id ?? "—"}</span>
+              <span className="stageTimelineCell">{formatVisualCueLabel(d?.visual) || "—"}</span>
               <span className="stageTimelineCell">{d?.sound?.cue_id ?? "—"}</span>
               <span className="stageTimelineCell">{d?.light?.scene_id ?? "—"}</span>
             </>

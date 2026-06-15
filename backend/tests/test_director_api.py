@@ -73,12 +73,12 @@ def test_director_status_and_safety_patch() -> None:
 def test_osc_test_send_visual_only() -> None:
     res = client.post(
         "/api/v1/director/osc-test",
-        json={"send_visual": True, "send_sound": False, "send_light": False, "clip_id": "kuh", "stagger": False},
+        json={"send_visual": True, "send_sound": False, "send_light": False, "clip_id": "clyde", "stagger": False},
     )
     assert res.status_code == 200
     body = res.json()
     assert body["executed"] is True
-    assert {cmd["bridge"] for cmd in body["messages"]} == {"visual"}
+    assert {cmd["bridge"] for cmd in body["messages"]} == {"pixera"}
 
 
 def test_light_desk_two_step_connect_then_send() -> None:

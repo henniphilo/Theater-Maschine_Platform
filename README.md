@@ -268,7 +268,7 @@ In `docker-compose.yml` ist `OSC_DRY_RUN=false` gesetzt, damit OSC an TouchDesig
 
 **Konfiguration:** `DRAMATURGY_STATEMENTS_PER_DRAMATURG=2` (Default) begrenzt Beiträge pro Dramaturg im Workshop.
 
-**Medien-Datenbank:** Videos/Recordings aus `media/video/` und `media/recordings/`. **Sound:** `media/sound/Sound Übersicht.csv` (MIDI-Cues → Ableton, keine WAVs in der Maschine). Licht: `data/light_scenes.json` aus `media/light/Kanal Übersicht.xlsx`. API: `GET /api/v1/media/catalog`.
+**Medien-Datenbank:** Videos/Recordings aus Pixera-Katalog (`media/video/Video Übersicht.csv`, OSC `/pixera/args/cue/apply`). **Sound:** `media/sound/Sound Übersicht.csv` (MIDI-Cues → Ableton). Licht: `data/light_scenes.json` aus `media/light/Kanal Übersicht.xlsx`. API: `GET /api/v1/media/catalog`.
 
 `DIRECTOR_DRAMATURGY_MODE=llm` (Standard) oder `rules` für regelbasierte Cues.
 

@@ -11,7 +11,7 @@ def test_technik_hold_start_and_stop(mock_settings: MagicMock) -> None:
     pipeline = MagicMock()
     manager = TechnikHoldManager(pipeline)
 
-    state = TechnikHoldState(send_visual=True, clip_id="kuh", send_sound=True, sound_cue_id="maschinen_grundader")
+    state = TechnikHoldState(send_visual=True, clip_id="clyde", send_sound=True, sound_cue_id="maschinen_grundader")
     manager.start(state)
     assert manager.active is True
 

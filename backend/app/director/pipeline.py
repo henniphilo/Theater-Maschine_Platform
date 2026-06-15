@@ -13,6 +13,7 @@ from app.director.media.database import MediaDatabase
 from app.director.outputs.lighting import LightingBridge
 from app.director.outputs.logger import DirectorLogger
 from app.director.outputs.osc_commands import build_osc_commands, send_osc_commands
+from app.director.outputs.pixera import PixeraBridge
 from app.director.outputs.sound import SoundBridge
 from app.director.outputs.touchdesigner import TouchDesignerBridge
 
@@ -45,6 +46,7 @@ class DirectorPipeline:
         media_db: MediaDatabase | None = None,
         safety: SafetyState | None = None,
         touchdesigner: TouchDesignerBridge | None = None,
+        pixera: PixeraBridge | None = None,
         sound: SoundBridge | None = None,
         lighting: LightingBridge | None = None,
         logger: DirectorLogger | None = None,
@@ -54,6 +56,7 @@ class DirectorPipeline:
         self.engine = DramaturgyEngine(self.media_db)
         self.scheduler = CueScheduler(self.media_db.rules, self.safety)
         self.touchdesigner = touchdesigner or TouchDesignerBridge()
+        self.pixera = pixera or PixeraBridge()
         self.sound = sound or SoundBridge()
         self.lighting = lighting or LightingBridge(self.media_db)
         self.logger = logger or DirectorLogger()
@@ -139,6 +142,7 @@ class DirectorPipeline:
     def _execute_commands(self, commands: list[OscCommand], *, stagger: bool) -> list[OscCommand]:
         bridges = {
             "touchdesigner": self.touchdesigner,
+            "pixera": self.pixera,
             "sound": self.sound,
             "lighting": self.lighting,
         }
@@ -175,7 +179,14 @@ class DirectorPipeline:
         self.safety.emergency_stop()
         self.scheduler.clear_active()
         dry_run = settings.osc_dry_run
-        self.touchdesigner.blackout()
+        if settings.visual_output in ("pixera", "both"):
+            from app.services.video_cue_catalog import get_video_cue_catalog_service
+
+            catalog = get_video_cue_catalog_service().load()
+            for projector in catalog.projectors:
+                self.pixera.apply_cue(f"{projector.pixera_prefix}.Black")
+        if settings.visual_output in ("touchdesigner", "both"):
+            self.touchdesigner.blackout()
         self.sound.stop_all(dry_run=dry_run)
         self.lighting.blackout(dry_run=dry_run)
 

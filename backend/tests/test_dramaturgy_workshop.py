@@ -15,7 +15,7 @@ def _beat(text: str = "Erinnerung ist eine Störung.") -> ScriptBeat:
 
 def _sample_decision() -> DramaturgyDecision:
     return DramaturgyDecision(
-        visual=VisualCue(action=VisualAction.PLAY_CLIP, clip_id="kuh"),
+        visual=VisualCue(action=VisualAction.PLAY_CLIP, clip_id="clyde"),
         sound=SoundCue(cue_id="maschinen_grundader"),
         light=LightCue(scene_id="vorbuehnenzug"),
         reason="Testentscheidung",

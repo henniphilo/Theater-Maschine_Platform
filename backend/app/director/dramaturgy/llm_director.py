@@ -10,6 +10,7 @@ from app.director.dramaturgy.engine import DramaturgyEngine
 from app.director.dramaturgy.rules_text import dramaturgy_rules_excerpt, load_dramaturgy_rules
 from app.director.media.database import MediaDatabase
 from app.services.ai_service import AIService
+from app.services.video_cue_catalog import get_video_cue_catalog_service
 
 
 class DramaturgyValidationError(ValueError):
@@ -27,9 +28,14 @@ class LLMDirector:
         self.rule_engine = DramaturgyEngine(self.media_db)
 
     def catalog_allowlist(self, *, compact: bool = False) -> dict[str, Any]:
+        video_catalog = get_video_cue_catalog_service().load()
         if compact:
             return {
                 "videos": [{"id": v.id, "tags": v.tags[:4], "moods": v.moods[:3]} for v in self.media_db.videos],
+                "projectors": [
+                    {"id": p.id, "name": p.name, "pixera_prefix": p.pixera_prefix}
+                    for p in video_catalog.projectors
+                ],
                 "recordings": [{"id": r.id, "tags": r.tags[:4]} for r in self.media_db.recordings],
                 "sounds": [
                     {
@@ -52,6 +58,15 @@ class LLMDirector:
             "videos": [
                 {"id": v.id, "path": v.path, "tags": v.tags, "moods": v.moods}
                 for v in self.media_db.videos
+            ],
+            "projectors": [
+                {
+                    "id": p.id,
+                    "name": p.name,
+                    "pixera_prefix": p.pixera_prefix,
+                    "description": p.description,
+                }
+                for p in video_catalog.projectors
             ],
             "recordings": [
                 {"id": r.id, "path": r.path, "tags": r.tags}
@@ -92,6 +107,10 @@ class LLMDirector:
             "rules": [
                 "Vollständiges Regelwerk: docs/dramaturgy_rules.md",
                 "Nur clip_id aus videos[] oder recording_id aus recordings[] — keine erfundenen IDs.",
+                "Video: mehrere Projektoren (projectors[]) erlaubt — visual.outputs mit output_id + clip_id.",
+                "Gleiches Video auf mehreren Projektoren: gleiche clip_id, verschiedene output_id.",
+                "Unterschiedliche Videos: pro output_id eigene clip_id in outputs[].",
+                "Ohne outputs[] gilt clip_id nur für RZ21 (Frontprojektor).",
                 "Licht: nur scene_id aus lights[] — Kanäle laut Kanal-Übersicht.",
                 "Sound: nur cue_id aus sounds[] (play / fade_in / fade_out) — MIDI an Ableton.",
             ],
@@ -149,7 +168,7 @@ class LLMDirector:
             "JSON-Schema:\n"
             '{"dramaturgical_reading":"...","cue_points":['
             '{"trigger":"start","time_offset_sec":0,"function":"überlagern","intensity":0.45,'
-            '"visual":{"action":"play_clip","clip_id":"...","opacity":0.8,"fade_time":4},'
+            '"visual":{"action":"play_clip","clip_id":"clyde","outputs":[{"output_id":"rz21","clip_id":"clyde"},{"output_id":"adam","clip_id":"black"}],"opacity":0.8,"fade_time":4},'
             '"sound":{"action":"trigger_cue","cue_id":"...","volume":0.4},'
             '"light":{"action":"set_scene","scene_id":"...","fade_time":5}},'
             '{"trigger":"keyword","keyword":"Schuld","function":"entlarven","intensity":0.7,...}'
@@ -196,6 +215,27 @@ class LLMDirector:
         recording_ids = {r.id for r in self.media_db.recordings}
         sound_ids = {s.id for s in self.media_db.sounds}
         light_ids = {s.id for s in self.media_db.light_scenes}
+        output_ids = {p.id for p in get_video_cue_catalog_service().load().projectors}
+
+        def _validate_visual(visual, *, context: str) -> None:
+            if not visual:
+                return
+            if visual.outputs:
+                for assignment in visual.outputs:
+                    if assignment.output_id not in output_ids:
+                        raise DramaturgyValidationError(
+                            f"Unknown output_id: {assignment.output_id} ({context})"
+                        )
+                    clip_id = assignment.clip_id or visual.clip_id
+                    if clip_id and clip_id not in video_ids:
+                        raise DramaturgyValidationError(f"Unknown clip_id: {clip_id} ({context})")
+            if visual.action == VisualAction.PLAY_RECORDING:
+                if visual.recording_id and visual.recording_id not in recording_ids:
+                    raise DramaturgyValidationError(
+                        f"Unknown recording_id: {visual.recording_id} ({context})"
+                    )
+            elif visual.clip_id and visual.clip_id not in video_ids:
+                raise DramaturgyValidationError(f"Unknown clip_id: {visual.clip_id} ({context})")
 
         points = decision.cue_points
         if not points:
@@ -213,28 +253,15 @@ class LLMDirector:
                 raise DramaturgyValidationError(f"cue_point {index} has no video/sound/light")
 
             if point.visual:
-                visual = point.visual
-                if visual.action == VisualAction.PLAY_RECORDING:
-                    if visual.recording_id and visual.recording_id not in recording_ids:
-                        raise DramaturgyValidationError(
-                            f"Unknown recording_id: {visual.recording_id}"
-                        )
-                elif visual.clip_id and visual.clip_id not in video_ids:
-                    raise DramaturgyValidationError(f"Unknown clip_id: {visual.clip_id}")
+                _validate_visual(point.visual, context=f"cue_point {index}")
+
             if point.sound and point.sound.cue_id and point.sound.cue_id not in sound_ids:
                 raise DramaturgyValidationError(f"Unknown cue_id: {point.sound.cue_id}")
             if point.light and point.light.scene_id and point.light.scene_id not in light_ids:
                 raise DramaturgyValidationError(f"Unknown scene_id: {point.light.scene_id}")
 
         if decision.visual:
-            visual = decision.visual
-            if visual.action == VisualAction.PLAY_RECORDING:
-                if visual.recording_id and visual.recording_id not in recording_ids:
-                    raise DramaturgyValidationError(
-                        f"Unknown recording_id: {visual.recording_id}"
-                    )
-            elif visual.clip_id and visual.clip_id not in video_ids:
-                raise DramaturgyValidationError(f"Unknown clip_id: {visual.clip_id}")
+            _validate_visual(decision.visual, context="decision")
         if decision.sound and decision.sound.cue_id and decision.sound.cue_id not in sound_ids:
             raise DramaturgyValidationError(f"Unknown cue_id: {decision.sound.cue_id}")
         if decision.light and decision.light.scene_id and decision.light.scene_id not in light_ids:

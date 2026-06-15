@@ -1,3 +1,5 @@
+import type { VisualCue } from "@/lib/types/visual";
+
 export type OscCommand = {
   bridge: string;
   host: string;
@@ -7,6 +9,7 @@ export type OscCommand = {
   dry_run: boolean;
   mirror?: boolean;
 };
+
 
 export type CuePoint = {
   trigger: string;
@@ -21,14 +24,7 @@ export type CuePoint = {
 };
 
 export type DramaturgyDecision = {
-  visual?: {
-    action: string;
-    clip_id?: string | null;
-    recording_id?: string | null;
-    blend?: string;
-    opacity?: number;
-    fade_time?: number;
-  } | null;
+  visual?: VisualCue | null;
   sound?: {
     action: string;
     cue_id?: string | null;

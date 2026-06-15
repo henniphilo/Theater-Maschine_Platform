@@ -3,8 +3,10 @@ from typing import Any
 from app.core.config import settings
 from app.director.cues.cue_models import DramaturgyDecision, OscCommand, VisualAction
 from app.director.cues.cue_points import decision_from_cue_point, normalize_cue_points
+from app.director.cues.visual_outputs import resolve_visual_assignments
 from app.director.media.database import MediaDatabase
 from app.director.outputs.eos_light import eos_chan_full, eos_key_out, expand_channels
+from app.services.video_cue_catalog import get_video_cue_catalog_service
 
 
 def _light_osc_target(osc_host: str, osc_port: int) -> tuple[str, int]:
@@ -56,6 +58,138 @@ def _eos_blackout_command(
     )
 
 
+def _touchdesigner_visual_commands(
+    visual,
+    *,
+    osc_host: str,
+    osc_port: int,
+    is_dry_run: bool,
+) -> list[OscCommand]:
+    commands: list[OscCommand] = []
+    if visual.action == VisualAction.PLAY_CLIP and visual.clip_id:
+        commands.append(
+            OscCommand(
+                bridge="visual",
+                host=osc_host,
+                port=osc_port,
+                address="/visual/play_clip",
+                args=[visual.clip_id, visual.opacity, visual.fade_time],
+                dry_run=is_dry_run,
+            )
+        )
+    elif visual.action == VisualAction.FADE_TO_BLACK:
+        commands.append(
+            OscCommand(
+                bridge="visual",
+                host=osc_host,
+                port=osc_port,
+                address="/visual/blackout",
+                args=[],
+                dry_run=is_dry_run,
+            )
+        )
+    elif visual.action == VisualAction.STOP_CLIP:
+        commands.append(
+            OscCommand(
+                bridge="visual",
+                host=osc_host,
+                port=osc_port,
+                address="/visual/stop_clip",
+                args=[],
+                dry_run=is_dry_run,
+            )
+        )
+    elif visual.action == VisualAction.RECORD_LIVE and visual.recording_id:
+        commands.append(
+            OscCommand(
+                bridge="visual",
+                host=osc_host,
+                port=osc_port,
+                address="/visual/record_start",
+                args=[visual.recording_id],
+                dry_run=is_dry_run,
+            )
+        )
+    elif visual.action == VisualAction.PLAY_RECORDING and visual.recording_id:
+        commands.append(
+            OscCommand(
+                bridge="visual",
+                host=osc_host,
+                port=osc_port,
+                address="/visual/play_recording",
+                args=[visual.recording_id],
+                dry_run=is_dry_run,
+            )
+        )
+    return commands
+
+
+def _pixera_visual_commands(
+    visual,
+    *,
+    osc_host: str,
+    osc_port: int,
+    is_dry_run: bool,
+) -> list[OscCommand]:
+    catalog = get_video_cue_catalog_service().load()
+    if not catalog.clips:
+        return []
+
+    commands: list[OscCommand] = []
+    for output_id, clip_id, action in resolve_visual_assignments(visual):
+        if action in (VisualAction.RECORD_LIVE, VisualAction.PLAY_RECORDING):
+            continue
+        try:
+            cue_name = get_video_cue_catalog_service().pixera_cue_name(
+                output_id, clip_id, catalog
+            )
+        except KeyError:
+            continue
+        commands.append(
+            OscCommand(
+                bridge="pixera",
+                host=osc_host,
+                port=osc_port,
+                address=catalog.osc_address,
+                args=[cue_name],
+                dry_run=is_dry_run,
+            )
+        )
+    return commands
+
+
+def _visual_commands(
+    visual,
+    *,
+    osc_host: str,
+    osc_port: int,
+    is_dry_run: bool,
+) -> list[OscCommand]:
+    mode = settings.visual_output
+    commands: list[OscCommand] = []
+    if mode in ("pixera", "both"):
+        pixera_host = settings.pixera_osc_host or osc_host
+        pixera_port = settings.pixera_osc_port or osc_port
+        commands.extend(
+            _pixera_visual_commands(
+                visual,
+                osc_host=pixera_host,
+                osc_port=pixera_port,
+                is_dry_run=is_dry_run,
+            )
+        )
+    if mode in ("touchdesigner", "both"):
+        commands.extend(
+            _touchdesigner_visual_commands(
+                visual,
+                osc_host=osc_host,
+                osc_port=osc_port,
+                is_dry_run=is_dry_run,
+            )
+        )
+    return commands
+
+
 def _commands_for_single_decision(
     decision: DramaturgyDecision,
     *,
@@ -66,62 +200,14 @@ def _commands_for_single_decision(
     commands: list[OscCommand] = []
 
     if decision.visual:
-        visual = decision.visual
-        if visual.action == VisualAction.PLAY_CLIP and visual.clip_id:
-            commands.append(
-                OscCommand(
-                    bridge="visual",
-                    host=osc_host,
-                    port=osc_port,
-                    address="/visual/play_clip",
-                    args=[visual.clip_id, visual.opacity, visual.fade_time],
-                    dry_run=is_dry_run,
-                )
+        commands.extend(
+            _visual_commands(
+                decision.visual,
+                osc_host=osc_host,
+                osc_port=osc_port,
+                is_dry_run=is_dry_run,
             )
-        elif visual.action == VisualAction.FADE_TO_BLACK:
-            commands.append(
-                OscCommand(
-                    bridge="visual",
-                    host=osc_host,
-                    port=osc_port,
-                    address="/visual/blackout",
-                    args=[],
-                    dry_run=is_dry_run,
-                )
-            )
-        elif visual.action == VisualAction.STOP_CLIP:
-            commands.append(
-                OscCommand(
-                    bridge="visual",
-                    host=osc_host,
-                    port=osc_port,
-                    address="/visual/stop_clip",
-                    args=[],
-                    dry_run=is_dry_run,
-                )
-            )
-        elif visual.action == VisualAction.RECORD_LIVE and visual.recording_id:
-            commands.append(
-                OscCommand(
-                    bridge="visual",
-                    host=osc_host,
-                    port=osc_port,
-                    address="/visual/record_start",
-                    args=[visual.recording_id],
-                    dry_run=is_dry_run,
-                )
-            )
-        elif visual.action == VisualAction.PLAY_RECORDING and visual.recording_id:
-            commands.append(
-                OscCommand(
-                    bridge="visual",
-                    host=osc_host,
-                    port=osc_port,
-                    address="/visual/play_recording",
-                    args=[visual.recording_id],
-                    dry_run=is_dry_run,
-                )
-            )
+        )
 
     if decision.sound and decision.sound.cue_id:
         sound = decision.sound
@@ -254,10 +340,16 @@ def send_osc_commands(commands: list[OscCommand], bridges: dict[str, Any]) -> li
     """Send pre-built commands via bridges; returns list actually sent."""
     sent: list[OscCommand] = []
     touchdesigner = bridges["touchdesigner"]
+    pixera = bridges.get("pixera")
     sound = bridges["sound"]
     lighting = bridges["lighting"]
 
     for cmd in commands:
+        if cmd.bridge == "pixera" and pixera is not None:
+            if cmd.address == "/pixera/args/cue/apply" and cmd.args:
+                pixera.apply_cue(str(cmd.args[0]))
+            sent.append(cmd)
+            continue
         if cmd.bridge == "visual":
             if cmd.address == "/visual/play_clip" and len(cmd.args) >= 3:
                 touchdesigner.play_clip(cmd.args[0], float(cmd.args[1]), float(cmd.args[2]))

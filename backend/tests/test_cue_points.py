@@ -5,7 +5,7 @@ from app.director.outputs.osc_commands import build_osc_commands
 
 def test_normalize_legacy_decision_to_cue_points() -> None:
     decision = DramaturgyDecision(
-        visual=VisualCue(action=VisualAction.PLAY_CLIP, clip_id="kuh"),
+        visual=VisualCue(action=VisualAction.PLAY_CLIP, clip_id="clyde"),
         sound=SoundCue(cue_id="maschinen_grundader"),
         light=LightCue(scene_id="vorbuehnenzug"),
         reason="test",
@@ -22,7 +22,7 @@ def test_build_osc_commands_from_multiple_cue_points() -> None:
         cue_points=[
             CuePoint(
                 trigger="start",
-                visual=VisualCue(action=VisualAction.PLAY_CLIP, clip_id="kuh"),
+                visual=VisualCue(action=VisualAction.PLAY_CLIP, clip_id="clyde"),
                 sound=SoundCue(cue_id="maschinen_grundader"),
                 light=LightCue(scene_id="vorbuehnenzug"),
             ),

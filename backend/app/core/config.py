@@ -74,6 +74,10 @@ class Settings(BaseSettings):
     sound_midi_auto_note: bool = False
     sound_midi_map_path: str = "data/sound_midi_map.json"
     sound_cues_path: str = "data/sound_cues.json"
+    video_cues_path: str = "data/video_cues.json"
+    visual_output: Literal["pixera", "touchdesigner", "both"] = "pixera"
+    pixera_osc_host: str | None = None
+    pixera_osc_port: int | None = None
 
 
 settings = Settings()

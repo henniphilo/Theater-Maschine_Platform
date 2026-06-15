@@ -12,7 +12,7 @@ from app.director.pipeline import DirectorPipeline
 
 @dataclass
 class TechnikHoldState:
-    clip_id: str = "kuh"
+    clip_id: str = "clyde"
     sound_cue_id: str = "maschinen_grundader"
     light_scene_id: str = "vorbuehnenzug"
     send_visual: bool = False
@@ -112,7 +112,13 @@ class TechnikHoldManager:
     def _send_start(self, state: TechnikHoldState) -> None:
         dry_run = self._dry_run()
         if state.send_visual:
-            self._pipeline.touchdesigner.play_clip(state.clip_id, state.opacity, fade_time=0.0)
+            if settings.visual_output in ("pixera", "both"):
+                from app.services.video_cue_catalog import get_video_cue_catalog_service
+
+                cue_name = get_video_cue_catalog_service().pixera_cue_name("rz21", state.clip_id)
+                self._pipeline.pixera.apply_cue(cue_name)
+            if settings.visual_output in ("touchdesigner", "both"):
+                self._pipeline.touchdesigner.play_clip(state.clip_id, state.opacity, fade_time=0.0)
         if state.send_sound:
             self._pipeline.sound.execute(
                 SoundCue(action=SoundAction.TRIGGER_CUE, cue_id=state.sound_cue_id, volume=state.volume),
@@ -121,7 +127,7 @@ class TechnikHoldManager:
 
     def _send_hold(self, state: TechnikHoldState) -> None:
         dry_run = self._dry_run()
-        if state.send_visual:
+        if state.send_visual and settings.visual_output in ("touchdesigner", "both"):
             self._pipeline.touchdesigner.set_opacity(state.opacity)
         if state.send_sound:
             self._pipeline.sound.hold(
@@ -130,8 +136,15 @@ class TechnikHoldManager:
             )
 
     def _stop_visual(self) -> None:
-        self._pipeline.touchdesigner.stop_clip()
-        self._pipeline.touchdesigner.blackout()
+        if settings.visual_output in ("pixera", "both"):
+            from app.services.video_cue_catalog import get_video_cue_catalog_service
+
+            catalog = get_video_cue_catalog_service().load()
+            for projector in catalog.projectors:
+                self._pipeline.pixera.apply_cue(f"{projector.pixera_prefix}.Black")
+        if settings.visual_output in ("touchdesigner", "both"):
+            self._pipeline.touchdesigner.stop_clip()
+            self._pipeline.touchdesigner.blackout()
 
     def _stop_sound(self, state: TechnikHoldState) -> None:
         self._pipeline.sound.execute(

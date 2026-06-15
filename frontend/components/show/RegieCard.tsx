@@ -1,5 +1,6 @@
 import type { DirectorPayload, OscCommand, ShowPhase } from "@/lib/types/director";
 import { formatOscCommand } from "@/lib/types/director";
+import { formatVisualCueLabel } from "@/lib/types/visual";
 
 const PHASE_LABELS: Record<ShowPhase, string> = {
   planned: "Regie geplant",
@@ -10,10 +11,12 @@ const PHASE_LABELS: Record<ShowPhase, string> = {
   blocked: "Cues blockiert"
 };
 
+
 function cueSummary(director: DirectorPayload): string[] {
   const lines: string[] = [];
   const d = director.decision;
-  if (d.visual?.clip_id) lines.push(`Video: ${d.visual.clip_id}`);
+  const visual = formatVisualCueLabel(d.visual);
+  if (visual) lines.push(`Video: ${visual}`);
   if (d.sound?.cue_id) lines.push(`Sound: ${d.sound.cue_id}`);
   if (d.light?.scene_id) lines.push(`Licht: ${d.light.scene_id}`);
   return lines;

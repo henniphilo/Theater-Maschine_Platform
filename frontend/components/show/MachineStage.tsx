@@ -3,6 +3,7 @@ import { formatOscCommand } from "@/lib/types/director";
 import type { DebateSpeaker } from "@/lib/types/chat";
 import type { DramaturgSpeaker, ScriptSpeaker } from "@/lib/types/script";
 import { dramaturgSpeakerLabel, speakerLabel } from "@/lib/types/script";
+import { formatVisualCueLabel } from "@/lib/types/visual";
 
 function speakerName(speaker: DebateSpeaker | "narrator") {
   if (speaker === "openai") return "GPT";
@@ -14,7 +15,10 @@ function cueChips(director: DirectorPayload | undefined) {
   if (!director) return [];
   const d = director.decision;
   const chips: { id: string; label: string; bridge: string }[] = [];
-  if (d.visual?.clip_id) chips.push({ id: "visual", label: `Video: ${d.visual.clip_id}`, bridge: "visual" });
+  if (d.visual) {
+    const label = formatVisualCueLabel(d.visual);
+    if (label) chips.push({ id: "visual", label: `Video: ${label}`, bridge: "visual" });
+  }
   if (d.sound?.cue_id) chips.push({ id: "sound", label: `Sound: ${d.sound.cue_id}`, bridge: "sound" });
   if (d.light?.scene_id) chips.push({ id: "light", label: `Licht: ${d.light.scene_id}`, bridge: "light" });
   return chips;

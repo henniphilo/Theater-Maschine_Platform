@@ -24,7 +24,7 @@ type Channel = "visual" | "sound";
 
 export function OscTestPanel() {
   const [catalog, setCatalog] = useState<MediaCatalog | null>(null);
-  const [clipId, setClipId] = useState("kuh");
+  const [clipId, setClipId] = useState("clyde");
   const [soundId, setSoundId] = useState("maschinen_grundader");
   const [lightId, setLightId] = useState("vorbuehnenzug");
   const [sendVisual, setSendVisual] = useState(true);

@@ -1,7 +1,26 @@
 import type { MediaLookup } from "@/lib/types/media";
 import { formatMidiTrigger } from "@/lib/midi/format";
 import type { CuePoint, DramaturgyDecision } from "@/lib/types/director";
+import { formatVisualCueLabel } from "@/lib/types/visual";
 import { normalizeCuePoints } from "@/features/show/cuePlayback";
+
+function VisualChips({ visual }: { visual: CuePoint["visual"] }) {
+  if (!visual) return null;
+  const label = formatVisualCueLabel(visual);
+  if (!label) return null;
+  if (visual.outputs?.length) {
+    return (
+      <>
+        {visual.outputs.map((item) => (
+          <span key={item.output_id} className="scriptCueChip scriptCueVideo">
+            {item.output_id.toUpperCase()} {item.clip_id || visual.clip_id || "—"}
+          </span>
+        ))}
+      </>
+    );
+  }
+  return <span className="scriptCueChip scriptCueVideo">VIDEO {label}</span>;
+}
 
 function CuePointRow({ point, media }: { point: CuePoint; media?: MediaLookup }) {
   const videoId = point.visual?.clip_id;
@@ -19,7 +38,7 @@ function CuePointRow({ point, media }: { point: CuePoint; media?: MediaLookup })
         {point.function ? ` · ${point.function}` : ""}
       </strong>
       <div className="scriptCueRow">
-        {videoId ? <span className="scriptCueChip scriptCueVideo">VIDEO {videoId}</span> : null}
+        <VisualChips visual={point.visual} />
         {point.visual?.action === "stop_clip" || point.visual?.action === "fade_to_black" ? (
           <span className="scriptCueChip scriptCueVideo">VIDEO aus</span>
         ) : null}
@@ -79,9 +98,7 @@ export function MediaCueDetail({
       ) : (
         <>
           <div className="scriptCueRow">
-            {dramaturgy.visual?.clip_id ? (
-              <span className="scriptCueChip scriptCueVideo">VIDEO {dramaturgy.visual.clip_id}</span>
-            ) : null}
+            <VisualChips visual={dramaturgy.visual} />
             {dramaturgy.sound?.cue_id ? (
               <span className="scriptCueChip scriptCueSound">SOUND {dramaturgy.sound.cue_id}</span>
             ) : null}
@@ -95,7 +112,7 @@ export function MediaCueDetail({
                 <li>
                   <strong>Video-Datei:</strong> <code>{video.path}</code>
                   <br />
-                  <code>/visual/play_clip {video.id}</code>
+                  <code>/pixera/args/cue/apply {formatVisualCueLabel(dramaturgy.visual)}</code>
                 </li>
               ) : null}
               {sound ? (

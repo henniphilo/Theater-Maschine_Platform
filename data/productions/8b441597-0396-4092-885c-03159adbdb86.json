@@ -1,0 +1,281 @@
+{
+  "id": "8b441597-0396-4092-885c-03159adbdb86",
+  "title": "Stück",
+  "source_text": "– wir werden alle von Pflanzen ersetzt werden, \nweil die billiger in der Anschaffung und im Betrieb sind \nund keine Widerworte geben –,\nDa der Mensch, ja, sagen wir so, \nalso dermaßen leicht verderblich geworden ist, \nohne daß dem Tier stattdessen eine kleine Chance gegeben wird, \nauch ein bißchen was zu verdienen",
+  "beats": [
+    {
+      "id": "07f0f450-cfd1-4faf-92a9-a862dc5e97fb",
+      "order": 0,
+      "text": "– wir werden alle von Pflanzen ersetzt werden, \nweil die billiger in der Anschaffung und im Betrieb sind \nund keine Widerworte geben –,\nDa der Mensch, ja, sagen wir so, \nalso dermaßen leicht verderblich geworden ist, \nohne daß dem Tier stattdessen eine kleine Chance gegeben wird, \nauch ein bißchen was zu verdienen",
+      "speaker": "AI_A",
+      "dramaturgy": {
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "gehirn_test",
+          "recording_id": null,
+          "blend": "slow_fade",
+          "opacity": 0.8,
+          "fade_time": 4.0
+        },
+        "sound": {
+          "action": "trigger_cue",
+          "cue_id": "leere_zwischen_saetzen",
+          "volume": 0.4
+        },
+        "light": {
+          "action": "set_scene",
+          "scene_id": "cyc_fluter",
+          "fade_time": 5.0
+        },
+        "reason": "Die Regie nutzt Video, Sound und Licht, um die wirtschaftliche Logik hinter der Verdrängung des Menschen durch Pflanzen zu entlarven und die vernachlässigte Rolle der Tiere in diesem Schema hervorzuheben.",
+        "dramaturgical_reading": "Der Text deutet auf die Entwertung menschlichen Lebens zugunsten effizienter pflanzlicher Alternativen, während Tiere ebenfalls vernachlässigt werden. Die Regie hebt die versteckte Rationalität und wirtschaftliche Logik hervor und zeigt zugleich die unbeachtete Würde der Tiere.",
+        "cue_points": [
+          {
+            "trigger": "start",
+            "keyword": null,
+            "sentence_index": null,
+            "time_offset_sec": 0.0,
+            "function": "überlagern",
+            "intensity": 0.45,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "gehirn_test",
+              "recording_id": null,
+              "blend": "slow_fade",
+              "opacity": 0.8,
+              "fade_time": 4.0
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "leere_zwischen_saetzen",
+              "volume": 0.4
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "cyc_fluter",
+              "fade_time": 5.0
+            }
+          },
+          {
+            "trigger": "keyword",
+            "keyword": "keine Widerworte geben",
+            "sentence_index": null,
+            "time_offset_sec": 0.0,
+            "function": "auslöschen",
+            "intensity": 0.7,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "gehirn_test",
+              "recording_id": null,
+              "blend": "slow_fade",
+              "opacity": 0.8,
+              "fade_time": 4.0
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "leere_zwischen_saetzen",
+              "volume": 0.6
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": null,
+              "fade_time": 1.0
+            }
+          },
+          {
+            "trigger": "keyword",
+            "keyword": "Tier stattdessen",
+            "sentence_index": null,
+            "time_offset_sec": 0.0,
+            "function": "widersprechen",
+            "intensity": 0.65,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "esel_lauft_27-05",
+              "recording_id": null,
+              "blend": "slow_fade",
+              "opacity": 0.8,
+              "fade_time": 4.0
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader",
+              "volume": 0.3
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "lusterkranz",
+              "fade_time": 5.0
+            }
+          }
+        ],
+        "tags": [
+          "memory",
+          "mechanical",
+          "contrast"
+        ],
+        "mood": "neutral",
+        "intensity": 0.6,
+        "timestamp": 0.0
+      },
+      "planned_commands": [
+        {
+          "bridge": "visual",
+          "host": "host.docker.internal",
+          "port": 7000,
+          "address": "/visual/play_clip",
+          "args": [
+            "gehirn_test",
+            0.8,
+            4.0
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "sound",
+          "host": "host.docker.internal",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "leere_zwischen_saetzen",
+            0.4
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/1701/full",
+          "args": [],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "host.docker.internal",
+          "port": 7000,
+          "address": "/light/set_scene",
+          "args": [
+            "cyc_fluter",
+            5.0
+          ],
+          "dry_run": true,
+          "mirror": true
+        },
+        {
+          "bridge": "visual",
+          "host": "host.docker.internal",
+          "port": 7000,
+          "address": "/visual/play_clip",
+          "args": [
+            "gehirn_test",
+            0.8,
+            4.0
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "sound",
+          "host": "host.docker.internal",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "leere_zwischen_saetzen",
+            0.6
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "visual",
+          "host": "host.docker.internal",
+          "port": 7000,
+          "address": "/visual/play_clip",
+          "args": [
+            "esel_lauft_27-05",
+            0.8,
+            4.0
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "sound",
+          "host": "host.docker.internal",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader",
+            0.3
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/189/full",
+          "args": [],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/190/full",
+          "args": [],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/193/full",
+          "args": [],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "host.docker.internal",
+          "port": 7000,
+          "address": "/light/set_scene",
+          "args": [
+            "lusterkranz",
+            5.0
+          ],
+          "dry_run": true,
+          "mirror": true
+        }
+      ],
+      "discussion_turns": [
+        {
+          "speaker": "openai",
+          "content": "Der Text spielt mit der Idee, dass Menschen durch Pflanzen ersetzt werden, da sie effizienter sind. Dies entlarvt die Entwertung des Menschen und die Instrumentalisierung von Lebewesen. \n\nDramaturgisch schlage ich vor, beim Wort \"Pflanzen\" Video \"gehirn_test\" zu nutzen — es entlarvt mechanische Kälte hinter der Idee. Beim Satz \"leicht verderblich\" könnte ein flackerndes Licht zur Auslöschung des menschlichen Lebens beitragen."
+        },
+        {
+          "speaker": "anthropic",
+          "content": "Dramaturg A, deine Entlarvungs-Lesart sitzt — aber ich würde den Fokus verschieben: Das Tier als ausgeschlossene dritte Partei ist die eigentliche dramaturgische Pointe. Nicht Mensch gegen Pflanze, sondern alle drei im ökonomischen Verwertungsranking. Für \"Tier stattdessen\" würde ich `esel_lauft_27-05` als widersprechenden Einschub setzen — beiläufige Würde gegen den sachlichen Ton der Verdrängungslogik."
+        },
+        {
+          "speaker": "openai",
+          "content": "Dramaturg B, deine Idee der Widerrede durch das Video \"esel_lauft_27-05\" finde ich stark, um die Würde der Tiere hervorzuheben. Ich sehe das Video als subtilen Kommentar zur ökonomischen Logik. \n\nGleichzeitig könnte ein dröhnender, maschineller Sound den Sachzwang der Effizienz verstärken — ein Hintergrundgeräusch, das die bedrohliche Rationalität des Textes hörbar macht. Das Licht bleibt kühl und sachlich, um die emotionale Kälte zu betonen."
+        },
+        {
+          "speaker": "anthropic",
+          "content": "Dramaturg A, der maschinelle Sound übersetzt die Logik zu direkt — er illustriert, was der Text schon sagt. Ich würde stattdessen *Stille* als Widerspruch setzen: Gerade wenn \"keine Widerworte geben\" fällt, bricht der Sound kurz ab. Das Schweigen *ist* die Pflanze. Dann kehrt der Sound zurück — aber leiser, als hätte er sich angepasst. Funktion: auslöschen, dann wiederkehren."
+        }
+      ],
+      "discussion_summary": "Dramaturg A (GPT): Der Text spielt mit der Idee, dass Menschen durch Pflanzen ersetzt werden, da sie effizienter sind. Dies entlarvt die Entwertung des Menschen und die Instrumentalisierung von Lebewesen. \n\nDramaturgisch schlage ich vor, beim Wort \"Pflanzen\" Video \"gehirn_test\" zu nutzen — es entlarvt mechanische Kälte hinter der Idee. Beim Satz \"leicht verderblich\" könnte ein flackerndes Licht zur Auslöschung des menschlichen Lebens beitragen.\nDramaturg B (Claude): Dramaturg A, deine Entlarvungs-Lesart sitzt — aber ich würde den Fokus verschieben: Das Tier als ausgeschlossene dritte Partei ist die eigentliche dramaturgische Pointe. Nicht Mensch gegen Pflanze, sondern alle drei im ökonomischen Verwertungsranking. Für \"Tier stattdessen\" würde ich `esel_lauft_27-05` als widersprechenden Einschub setzen — beiläufige Würde gegen den sachlichen Ton der Verdrängungslogik.\nDramaturg A (GPT): Dramaturg B, deine Idee der Widerrede durch das Video \"esel_lauft_27-05\" finde ich stark, um die Würde der Tiere hervorzuheben. Ich sehe das Video als subtilen Kommentar zur ökonomischen Logik. \n\nGleichzeitig könnte ein dröhnender, maschineller Sound den Sachzwang der Effizienz verstärken — ein Hintergrundgeräusch, das die bedrohliche Rationalität des Textes hörbar macht. Das Licht bleibt kühl und sachlich, um die emotionale Kälte zu betonen.\nDramaturg B (Claude): Dramaturg A, der maschinelle Sound übersetzt die Logik zu direkt — er illustriert, was der Text schon sagt. Ich würde stattdessen *Stille* als Widerspruch setzen: Gerade wenn \"keine Widerworte geben\" fällt, bricht der Sound kurz ab. Das Schweigen *ist* die Pflanze. Dann kehrt der Sound zurück — aber leiser, als hätte er sich angepasst. Funktion: auslöschen, dann wiederkehren."
+    }
+  ],
+  "status": "ready",
+  "has_rendered_audio": false
+}

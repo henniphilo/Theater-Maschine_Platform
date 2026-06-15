@@ -35,9 +35,16 @@ class LightAction(str, Enum):
     PULSE = "pulse"
 
 
+class VisualOutputAssignment(BaseModel):
+    output_id: str = Field(min_length=1, max_length=40)
+    clip_id: str | None = None
+    action: VisualAction | None = None
+
+
 class VisualCue(BaseModel):
     action: VisualAction = VisualAction.PLAY_CLIP
     clip_id: str | None = None
+    outputs: list[VisualOutputAssignment] = Field(default_factory=list)
     recording_id: str | None = None
     blend: str = "slow_fade"
     opacity: float = Field(default=0.8, ge=0.0, le=1.0)

@@ -113,12 +113,16 @@ class MediaDatabase:
         if inventory_path.exists():
             self.light_inventory = json.loads(inventory_path.read_text(encoding="utf-8"))
 
+        from app.services.sound_cue_catalog import get_sound_cue_catalog_service
+        from app.services.video_cue_catalog import get_video_cue_catalog_service
+
         self.repo_root = resolve_repo_root(self.data_dir)
         self.media_root = self._resolve_media_root()
 
-        visual_assets = scan_visual_assets(self.media_root)
+        visual_assets = get_video_cue_catalog_service().to_video_assets()
+        if not visual_assets:
+            visual_assets = scan_visual_assets(self.media_root)
         self.videos, self.recordings = partition_visual_assets(visual_assets)
-        from app.services.sound_cue_catalog import get_sound_cue_catalog_service
 
         self.sounds = get_sound_cue_catalog_service().to_sound_assets()
         self.light_scenes = [LightScene.model_validate(s) for s in light_data.get("scenes", [])]

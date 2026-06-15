@@ -1,0 +1,250 @@
+{
+  "version": 1,
+  "osc_address": "/pixera/args/cue/apply",
+  "_source": "/app/media/video/Video Übersicht.csv",
+  "_note": "Abgeleitet aus Video Übersicht.csv — bitte CSV bearbeiten, nicht diese Datei.",
+  "projectors": [
+    {
+      "id": "rz21",
+      "pixera_prefix": "KI_RZ21",
+      "name": "RZ21",
+      "description": "Großer Frontprojektor"
+    },
+    {
+      "id": "adam",
+      "pixera_prefix": "KI_Adam",
+      "name": "Adam",
+      "description": "Kleiner Bühnenbeamer"
+    },
+    {
+      "id": "eva",
+      "pixera_prefix": "KI_Eva",
+      "name": "Eva",
+      "description": "Kleiner Bühnenbeamer"
+    },
+    {
+      "id": "led",
+      "pixera_prefix": "KI_LED",
+      "name": "LED",
+      "description": "LED-Wand auf der Bühne"
+    }
+  ],
+  "clips": [
+    {
+      "id": "black",
+      "pixera_name": "Black",
+      "label": "Black",
+      "description": "Schwarz / Aus",
+      "tags": [
+        "blackout",
+        "aus"
+      ],
+      "moods": [
+        "neutral"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "clyde",
+      "pixera_name": "Clyde",
+      "label": "Clyde",
+      "description": "Clip Clyde",
+      "tags": [
+        "clyde",
+        "tier"
+      ],
+      "moods": [
+        "neutral",
+        "melancholisch"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "bonnie",
+      "pixera_name": "Bonnie",
+      "label": "Bonnie",
+      "description": "Clip Bonnie",
+      "tags": [
+        "bonnie",
+        "tier"
+      ],
+      "moods": [
+        "neutral",
+        "warm"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "macbook",
+      "pixera_name": "Macbook",
+      "label": "Macbook",
+      "description": "Macbook-Motiv",
+      "tags": [
+        "technik",
+        "bildschirm"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "ipad",
+      "pixera_name": "IPad",
+      "label": "IPad",
+      "description": "Tablet-Motiv",
+      "tags": [
+        "technik",
+        "bildschirm"
+      ],
+      "moods": [
+        "neutral"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "inge",
+      "pixera_name": "Inge",
+      "label": "Inge",
+      "description": "Figur Inge",
+      "tags": [
+        "figur",
+        "inge"
+      ],
+      "moods": [
+        "melancholisch"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "sebastian",
+      "pixera_name": "Sebastian",
+      "label": "Sebastian",
+      "description": "Figur Sebastian",
+      "tags": [
+        "figur",
+        "sebastian"
+      ],
+      "moods": [
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "thomas",
+      "pixera_name": "Thomas",
+      "label": "Thomas",
+      "description": "Figur Thomas",
+      "tags": [
+        "figur",
+        "thomas"
+      ],
+      "moods": [
+        "neutral"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "thiel",
+      "pixera_name": "Thiel",
+      "label": "Thiel",
+      "description": "Szene Thiel",
+      "tags": [
+        "figur",
+        "thiel"
+      ],
+      "moods": [
+        "unheimlich"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "thiel2",
+      "pixera_name": "Thiel2",
+      "label": "Thiel2",
+      "description": "Szene Thiel Variante 2",
+      "tags": [
+        "figur",
+        "thiel"
+      ],
+      "moods": [
+        "unheimlich"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "thiel3",
+      "pixera_name": "Thiel3",
+      "label": "Thiel3",
+      "description": "Szene Thiel Variante 3",
+      "tags": [
+        "figur",
+        "thiel"
+      ],
+      "moods": [
+        "unheimlich"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "kurzthiel",
+      "pixera_name": "KurzThiel",
+      "label": "KurzThiel",
+      "description": "Kurzsequenz Thiel",
+      "tags": [
+        "figur",
+        "thiel",
+        "kurz"
+      ],
+      "moods": [
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "berge",
+      "pixera_name": "Berge",
+      "label": "Berge",
+      "description": "Landschaft Berge",
+      "tags": [
+        "natur",
+        "landschaft"
+      ],
+      "moods": [
+        "weit",
+        "melancholisch"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "strand",
+      "pixera_name": "Strand",
+      "label": "Strand",
+      "description": "Landschaft Strand",
+      "tags": [
+        "natur",
+        "wasser"
+      ],
+      "moods": [
+        "ruhig",
+        "melancholisch"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    }
+  ]
+}
