@@ -5,7 +5,10 @@ import pytest
 from app.director.media.database import MediaDatabase
 from app.director.media.inventory import scan_visual_assets, resolve_media_root, VISUAL_EXTENSIONS
 from app.director.media.video_inventory import load_video_cues_from_csv, resolve_video_overview_paths
-from tests.repo_paths import repo_data_dir
+try:
+    from tests.repo_paths import repo_data_dir
+except ModuleNotFoundError:
+    from repo_paths import repo_data_dir
 
 
 def _video_files_on_disk(media_root: Path) -> set[str]:

@@ -4,7 +4,10 @@ import pytest
 
 from app.director.media.sound_inventory import load_sound_cues_from_csv, resolve_sound_overview_path
 from app.services.sound_cue_catalog import SoundCueCatalogService
-from tests.repo_paths import repo_data_dir
+try:
+    from tests.repo_paths import repo_data_dir
+except ModuleNotFoundError:
+    from repo_paths import repo_data_dir
 
 
 def test_resolve_sound_overview_csv_exists() -> None:
