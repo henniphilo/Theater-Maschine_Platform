@@ -8,9 +8,12 @@ SOUND_ACTIONS = frozenset({"play", "fade_in", "fade_out"})
 
 
 def resolve_sound_overview_path(data_dir: Path) -> Path | None:
+    resolved_data = data_dir.resolve() if data_dir.is_absolute() else (Path.cwd() / data_dir).resolve()
     candidates = [
+        resolved_data.parent / "media" / "sound" / "Sound Übersicht.csv",
         data_dir.parent / "media" / "sound" / "Sound Übersicht.csv",
         Path.cwd() / "media" / "sound" / "Sound Übersicht.csv",
+        Path.cwd().parent / "media" / "sound" / "Sound Übersicht.csv",
         Path("/app") / "media" / "sound" / "Sound Übersicht.csv",
     ]
     for candidate in candidates:

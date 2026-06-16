@@ -1,7 +1,11 @@
 from pathlib import Path
 
+import pytest
+
 from app.director.media.database import MediaDatabase
 from app.director.media.inventory import scan_visual_assets, resolve_media_root, VISUAL_EXTENSIONS
+from app.director.media.video_inventory import load_video_cues_from_csv, resolve_video_overview_paths
+from tests.repo_paths import repo_data_dir
 
 
 def _video_files_on_disk(media_root: Path) -> set[str]:
@@ -16,16 +20,26 @@ def _video_files_on_disk(media_root: Path) -> set[str]:
 
 
 def test_scan_finds_all_video_files() -> None:
-    repo_data = Path(__file__).resolve().parents[2] / "data"
-    if not repo_data.exists():
-        repo_data = Path(__file__).resolve().parents[1] / "data"
+    repo_data = repo_data_dir()
     media_root = resolve_media_root(repo_data)
+    on_disk = _video_files_on_disk(media_root)
+    if not on_disk:
+        pytest.skip("Keine Video-Dateien im Checkout (nur lokal mit media/video/*.mov|mp4)")
+
     assets = scan_visual_assets(media_root)
     video_assets = [a for a in assets if a.type == "video"]
     scanned_paths = {Path(a.path).name for a in video_assets}
-    on_disk = _video_files_on_disk(media_root)
-    assert on_disk
     assert scanned_paths == on_disk
+
+
+def test_video_overview_csv_loads() -> None:
+    clips_path, projectors_path = resolve_video_overview_paths(repo_data_dir())
+    if clips_path is None:
+        pytest.skip("Video Übersicht.csv nicht im Checkout")
+
+    catalog = load_video_cues_from_csv(clips_path, projectors_path)
+    assert any(clip.id == "clyde" for clip in catalog.clips)
+    assert any(projector.id == "rz21" for projector in catalog.projectors)
 
 
 def test_media_database_loads_pixera_videos() -> None:

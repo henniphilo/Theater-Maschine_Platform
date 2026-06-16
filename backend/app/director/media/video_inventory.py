@@ -6,9 +6,12 @@ from app.schemas.video_cues import VideoClipEntry, VideoCueCatalog, VideoProject
 
 
 def resolve_video_overview_paths(data_dir: Path) -> tuple[Path | None, Path | None]:
+    resolved_data = data_dir.resolve() if data_dir.is_absolute() else (Path.cwd() / data_dir).resolve()
     roots = [
+        resolved_data.parent,
         data_dir.parent,
         Path.cwd(),
+        Path.cwd().parent,
         Path("/app"),
     ]
     clips_path: Path | None = None

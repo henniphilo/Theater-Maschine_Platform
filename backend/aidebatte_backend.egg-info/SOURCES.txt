@@ -32,6 +32,7 @@ app/director/cues/cue_models.py
 app/director/cues/cue_points.py
 app/director/cues/safety.py
 app/director/cues/scheduler.py
+app/director/cues/visual_outputs.py
 app/director/dialogue/__init__.py
 app/director/dialogue/builder.py
 app/director/dialogue/models.py
@@ -44,6 +45,8 @@ app/director/media/__init__.py
 app/director/media/database.py
 app/director/media/inventory.py
 app/director/media/selector.py
+app/director/media/sound_inventory.py
+app/director/media/video_inventory.py
 app/director/outputs/__init__.py
 app/director/outputs/artnet.py
 app/director/outputs/eos_light.py
@@ -53,6 +56,7 @@ app/director/outputs/logger.py
 app/director/outputs/midi_log.py
 app/director/outputs/osc_commands.py
 app/director/outputs/osc_log.py
+app/director/outputs/pixera.py
 app/director/outputs/sound.py
 app/director/outputs/sound_midi.py
 app/director/outputs/touchdesigner.py
@@ -63,14 +67,20 @@ app/schemas/chat.py
 app/schemas/conversation.py
 app/schemas/debate.py
 app/schemas/director.py
+app/schemas/performance.py
 app/schemas/script.py
+app/schemas/sound_cues.py
+app/schemas/video_cues.py
 app/services/__init__.py
 app/services/ai_service.py
 app/services/debate_service.py
 app/services/dramaturgy_workshop_service.py
+app/services/performance_bundle_service.py
 app/services/script_splitter.py
 app/services/script_store.py
+app/services/sound_cue_catalog.py
 app/services/tts_service.py
+app/services/video_cue_catalog.py
 app/services/providers/__init__.py
 app/services/providers/anthropic_provider.py
 app/services/providers/base.py
@@ -78,6 +88,7 @@ app/services/providers/openai_provider.py
 app/services/tts/__init__.py
 app/services/tts/edge_provider.py
 app/services/tts/mac_say.py
+app/services/tts/performance_voices.py
 app/services/tts/voice_map.py
 tests/test_cue_points.py
 tests/test_cue_scheduler.py
@@ -94,8 +105,12 @@ tests/test_llm_director.py
 tests/test_media_api.py
 tests/test_media_inventory.py
 tests/test_media_selector.py
+tests/test_performance_bundle.py
+tests/test_pixera_video.py
 tests/test_script_api.py
 tests/test_script_splitter.py
+tests/test_sound_cue_catalog.py
 tests/test_sound_midi.py
 tests/test_technik_hold.py
 tests/test_touchdesigner_bridge.py
+tests/test_voice_map.py
