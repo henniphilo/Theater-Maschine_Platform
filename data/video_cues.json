@@ -1,7 +1,7 @@
 {
   "version": 1,
   "osc_address": "/pixera/args/cue/apply",
-  "_source": "/app/media/video/Video Übersicht.csv",
+  "_source": "/Users/multimediapc146/Documents/Code/Theatermaschine/media/video/Video Übersicht.csv",
   "_note": "Abgeleitet aus Video Übersicht.csv — bitte CSV bearbeiten, nicht diese Datei.",
   "projectors": [
     {

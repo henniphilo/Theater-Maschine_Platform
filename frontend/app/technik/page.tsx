@@ -9,7 +9,7 @@ export default function TechnikPage() {
         <AppNav />
       </div>
       <p className="textMuted">
-        OSC-Signale an TouchDesigner prüfen — einzeln oder kombiniert wie in der Aufführung.
+        Video, Sound und Licht jeweils einzeln testen — getrennte Bereiche wie am Licht-Pult.
       </p>
       <OscTestPanel />
     </main>

@@ -2,13 +2,20 @@ from unittest.mock import MagicMock, patch
 
 from app.director.cues.cue_models import SoundAction, SoundCue
 from app.director.outputs.sound import SoundBridge
-from app.director.outputs.sound_midi import SoundMidiBridge, load_sound_midi_map
+from app.director.outputs.sound_midi import SoundMidiBridge, load_sound_midi_map, resolve_midi_output_port
 
 
 def test_load_sound_midi_map_reads_cues() -> None:
     mapping = load_sound_midi_map()
     assert mapping["maschinen_grundader"].note == 36
     assert mapping["maschinen_grundader_fade_in"].note == 52
+
+
+def test_resolve_midi_port_accepts_german_iac_name() -> None:
+    available = ["IAC-Treiber Bus 1"]
+    assert resolve_midi_output_port("IAC Driver Bus 1", available) == "IAC-Treiber Bus 1"
+    assert resolve_midi_output_port("iac-treiber bus 1", available) == "IAC-Treiber Bus 1"
+    assert resolve_midi_output_port(None, available) == "IAC-Treiber Bus 1"
 
 
 @patch("app.director.outputs.sound_midi.settings")

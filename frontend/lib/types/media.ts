@@ -47,6 +47,13 @@ export type MediaCatalog = {
     addresses: Record<string, string>;
     docs: string;
   };
+  pixera?: {
+    output: string;
+    osc_host: string;
+    osc_port: number;
+    osc_dry_run: boolean;
+    address: string;
+  };
   lighting?: {
     output: string;
     osc_mirror: boolean;

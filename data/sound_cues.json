@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "_source": "/app/media/sound/Sound Übersicht.csv",
+  "_source": "/Users/multimediapc146/Documents/Code/Theatermaschine/media/sound/Sound Übersicht.csv",
   "_note": "Abgeleitet aus Sound Übersicht.csv — bitte CSV bearbeiten, nicht diese Datei.",
   "defaults": {
     "channel": 1,

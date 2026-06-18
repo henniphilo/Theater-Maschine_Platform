@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import threading
 from dataclasses import dataclass
 from pathlib import Path
@@ -15,6 +16,41 @@ class MidiCueMapping:
     note: int
     channel: int = 1
     velocity: int | None = None
+
+
+def _normalize_iac_port_name(name: str) -> str:
+    return re.sub(r"\s+", " ", name.lower().replace("driver", "treiber")).strip()
+
+
+def _iac_bus_number(name: str) -> str | None:
+    match = re.search(r"bus\s*(\d+)", name, flags=re.IGNORECASE)
+    return match.group(1) if match else None
+
+
+def resolve_midi_output_port(requested: str | None, available: list[str]) -> str | None:
+    """Match configured MIDI port across macOS locales (Driver vs Treiber)."""
+    if not available:
+        return None
+    if not requested:
+        for name in available:
+            if "iac" in name.lower():
+                return name
+        return available[0]
+    if requested in available:
+        return requested
+    by_lower = {name.lower(): name for name in available}
+    if requested.lower() in by_lower:
+        return by_lower[requested.lower()]
+    normalized_requested = _normalize_iac_port_name(requested)
+    for name in available:
+        if _normalize_iac_port_name(name) == normalized_requested:
+            return name
+    requested_bus = _iac_bus_number(requested)
+    if requested_bus:
+        for name in available:
+            if "iac" in name.lower() and _iac_bus_number(name) == requested_bus:
+                return name
+    return None
 
 
 def _repo_roots() -> list[Path]:
@@ -155,8 +191,16 @@ class SoundMidiBridge:
         log_midi_command(port, label, dry_run=dry_run or self._is_dry_run())
         if dry_run or self._is_dry_run():
             return
-        out = self._open_port()
-        out.send(message)
+        try:
+            out = self._open_port()
+            out.send(message)
+        except Exception as exc:
+            hint = (
+                "MIDI-Ausgabe nur mit Backend nativ auf dem Mac (IAC Driver) — "
+                "nicht aus dem Docker-Container."
+            )
+            log_midi_command(port, f"FEHLER: {exc} · {hint}", dry_run=False)
+            raise RuntimeError(f"MIDI send failed: {exc}. {hint}") from exc
 
     def _is_dry_run(self) -> bool:
         return settings.osc_dry_run
@@ -184,9 +228,13 @@ class SoundMidiBridge:
             if not names:
                 raise RuntimeError("No MIDI output ports available")
             port_name = settings.sound_midi_port
-            if port_name and port_name not in names:
-                raise RuntimeError(f"MIDI port not found: {port_name!r} (available: {names})")
-            chosen = port_name or names[0]
+            chosen = resolve_midi_output_port(port_name, names)
+            if chosen is None:
+                raise RuntimeError(
+                    f"MIDI port not found: {port_name!r} (available: {names})"
+                    if port_name
+                    else f"No MIDI output ports available (available: {names})"
+                )
             self._port = mido.open_output(chosen)
             self._port_name = chosen
             return self._port

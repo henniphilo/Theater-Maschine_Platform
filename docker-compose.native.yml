@@ -1,0 +1,13 @@
+# Backend nativ auf dem Mac (MIDI → Ableton IAC, macOS `say` TTS).
+#
+#   docker compose -f docker-compose.yml -f docker-compose.native.yml up -d postgres redis frontend
+#   docker compose -f docker-compose.yml -f docker-compose.native.yml stop backend
+#   cd backend && source .venv/bin/activate && uvicorn app.main:app --reload --port 8000
+
+services:
+  postgres:
+    ports:
+      - "5432:5432"
+  redis:
+    ports:
+      - "6379:6379"
