@@ -48,6 +48,7 @@ def test_dramaturgy_sound_pool_is_filtered() -> None:
     assert "metallseufzer" in dram_ids
     assert "alle_sounds_cut" in dram_ids
     assert "kaefigecho_out" in dram_ids
+    assert "leere_zwischen_saetzen" in dram_ids
     assert "stallluft_digital" not in dram_ids
     assert "archiv_rauschen_out" not in dram_ids
 

@@ -3,7 +3,7 @@ import re
 from typing import Any
 
 from app.core.config import settings
-from app.director.cues.cue_models import DramaturgyDecision
+from app.director.cues.cue_models import DramaturgyDecision, resolve_light_scene_ids
 from app.director.dialogue.models import DialogueEvent
 from app.director.cues.cue_points import cue_point_is_active, min_cue_points_for_text, normalize_cue_points
 from app.director.dramaturgy.engine import DramaturgyEngine
@@ -112,6 +112,8 @@ class LLMDirector:
                 "Unterschiedliche Videos: pro output_id eigene clip_id in outputs[].",
                 "Ohne outputs[] gilt clip_id nur für RZ21 (Frontprojektor).",
                 "Licht: nur scene_id aus lights[] — Kanäle laut Kanal-Übersicht.",
+                "Licht kombinieren: light.scene_ids mit mehreren IDs (z. B. [\"musiker\", \"warme_buehnenflaeche\"]).",
+                "Jeder neue Licht-Cue ersetzt den vorherigen (Key Out, dann neue Kanäle/Gruppen).",
                 "Licht-Intensität: light.intensity 0.0–1.0 (0.35 = dezent, 1.0 = voll); fehlt → cue_point.intensity.",
                 "Sound: nur cue_id aus sounds[] (play / fade_in / fade_out / out) — MIDI an Ableton.",
                 "Sound sofort aus (ein Layer): cue_id mit _out (z. B. kaefigecho_out).",
@@ -262,15 +264,19 @@ class LLMDirector:
 
             if point.sound and point.sound.cue_id and point.sound.cue_id not in sound_ids:
                 raise DramaturgyValidationError(f"Unknown cue_id: {point.sound.cue_id}")
-            if point.light and point.light.scene_id and point.light.scene_id not in light_ids:
-                raise DramaturgyValidationError(f"Unknown scene_id: {point.light.scene_id}")
+            if point.light:
+                for sid in resolve_light_scene_ids(point.light):
+                    if sid not in light_ids:
+                        raise DramaturgyValidationError(f"Unknown scene_id: {sid} (cue_point {index})")
 
         if decision.visual:
             _validate_visual(decision.visual, context="decision")
         if decision.sound and decision.sound.cue_id and decision.sound.cue_id not in sound_ids:
             raise DramaturgyValidationError(f"Unknown cue_id: {decision.sound.cue_id}")
-        if decision.light and decision.light.scene_id and decision.light.scene_id not in light_ids:
-            raise DramaturgyValidationError(f"Unknown scene_id: {decision.light.scene_id}")
+        if decision.light:
+            for sid in resolve_light_scene_ids(decision.light):
+                if sid not in light_ids:
+                    raise DramaturgyValidationError(f"Unknown scene_id: {sid}")
 
         allowed_speakers = {"AI_A", "AI_B", "narrator"}
         if decision.performance_speakers:

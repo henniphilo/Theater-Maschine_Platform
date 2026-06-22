@@ -2,15 +2,17 @@ import logging
 from typing import Any
 
 from app.core.config import settings
-from app.director.cues.cue_models import DramaturgyDecision, LightCue, OscCommand, VisualAction
+from app.director.cues.cue_models import DramaturgyDecision, LightCue, OscCommand, VisualAction, resolve_light_scene_ids
 from app.director.cues.cue_points import decision_from_cue_point, normalize_cue_points
 from app.director.cues.visual_outputs import resolve_visual_assignments
 from app.director.media.database import MediaDatabase
 from app.director.outputs.eos_light import (
     eos_chan_level,
+    eos_group_level,
     eos_key_out,
     expand_channels,
     parse_eos_chan_command,
+    EOS_GROUP_ADDRESS_RE,
 )
 from app.services.video_cue_catalog import get_video_cue_catalog_service
 
@@ -40,7 +42,22 @@ def _eos_commands_for_scene(
     light_host, light_port = _light_osc_target(osc_host, osc_port)
     scene = next((s for s in MediaDatabase().light_scenes if s.id == scene_id), None)
     commands: list[OscCommand] = []
-    for channel in expand_channels(scene.channels if scene else []):
+    if scene is None:
+        return commands
+    for group in scene.groups:
+        group_id = int(str(group).strip())
+        address, args = eos_group_level(group_id, intensity)
+        commands.append(
+            OscCommand(
+                bridge="light",
+                host=light_host,
+                port=light_port,
+                address=address,
+                args=args,
+                dry_run=is_dry_run,
+            )
+        )
+    for channel in expand_channels(scene.channels):
         address, args = eos_chan_level(channel, intensity)
         commands.append(
             OscCommand(
@@ -50,6 +67,36 @@ def _eos_commands_for_scene(
                 address=address,
                 args=args,
                 dry_run=is_dry_run,
+            )
+        )
+    return commands
+
+
+def _eos_commands_for_light_cue(
+    light: LightCue,
+    *,
+    decision: DramaturgyDecision,
+    osc_host: str,
+    osc_port: int,
+    is_dry_run: bool,
+) -> list[OscCommand]:
+    scene_ids = resolve_light_scene_ids(light)
+    if not scene_ids:
+        return []
+
+    commands: list[OscCommand] = []
+    if light.replace_previous and light.action.value != "fade_blackout":
+        commands.append(_eos_blackout_command(osc_host=osc_host, osc_port=osc_port, is_dry_run=is_dry_run))
+
+    light_intensity = _resolve_light_intensity(light, decision)
+    for scene_id in scene_ids:
+        commands.extend(
+            _eos_commands_for_scene(
+                scene_id,
+                intensity=light_intensity,
+                osc_host=osc_host,
+                osc_port=osc_port,
+                is_dry_run=is_dry_run,
             )
         )
     return commands
@@ -260,13 +307,14 @@ def _commands_for_single_decision(
                 )
             )
 
-    if decision.light and decision.light.scene_id:
+    if decision.light and resolve_light_scene_ids(decision.light):
         light = decision.light
         fade = light.fade_time
+        scene_ids = resolve_light_scene_ids(light)
 
         if light.action.value == "fade_blackout":
             commands.append(_eos_blackout_command(osc_host=osc_host, osc_port=osc_port, is_dry_run=is_dry_run))
-            if settings.light_output == "tcp" and settings.light_osc_mirror:
+            if settings.light_osc_mirror:
                 commands.append(
                     OscCommand(
                         bridge="light",
@@ -279,31 +327,30 @@ def _commands_for_single_decision(
                     )
                 )
         else:
-            light_intensity = _resolve_light_intensity(light, decision)
             commands.extend(
-                _eos_commands_for_scene(
-                    light.scene_id,
-                    intensity=light_intensity,
+                _eos_commands_for_light_cue(
+                    light,
+                    decision=decision,
                     osc_host=osc_host,
                     osc_port=osc_port,
                     is_dry_run=is_dry_run,
                 )
             )
-            if settings.light_output == "tcp" and settings.light_osc_mirror:
+            if settings.light_osc_mirror:
                 commands.append(
                     OscCommand(
                         bridge="light",
                         host=osc_host,
                         port=osc_port,
                         address="/light/set_scene",
-                        args=[light.scene_id, fade],
+                        args=[",".join(scene_ids), fade],
                         dry_run=is_dry_run,
                         mirror=True,
                     )
                 )
     elif decision.light and decision.light.action.value == "fade_blackout":
         commands.append(_eos_blackout_command(osc_host=osc_host, osc_port=osc_port, is_dry_run=is_dry_run))
-        if settings.light_output == "tcp" and settings.light_osc_mirror:
+        if settings.light_osc_mirror:
             commands.append(
                 OscCommand(
                     bridge="light",
@@ -399,7 +446,14 @@ def send_osc_commands(commands: list[OscCommand], bridges: dict[str, Any]) -> li
                     sent.append(cmd)
                     continue
                 if cmd.address == "/eos/key/out":
-                    lighting.blackout(dry_run=cmd.dry_run)
+                    lighting.blackout_signal(dry_run=cmd.dry_run)
+                elif cmd.address.startswith("/eos/group/"):
+                    match = EOS_GROUP_ADDRESS_RE.match(cmd.address)
+                    if match is not None:
+                        group = int(match.group(1))
+                        kind = match.group(2)
+                        intensity = float(cmd.args[0]) / 100.0 if kind == "level" and cmd.args else 1.0
+                        lighting.apply_group(group, intensity=intensity, dry_run=cmd.dry_run)
                 elif cmd.address.startswith("/eos/chan/"):
                     parsed = parse_eos_chan_command(cmd.address, cmd.args)
                     if parsed is not None:
@@ -408,8 +462,14 @@ def send_osc_commands(commands: list[OscCommand], bridges: dict[str, Any]) -> li
                 elif cmd.address == "/light/blackout":
                     lighting.blackout(dry_run=cmd.dry_run)
                 elif cmd.address == "/light/set_scene" and len(cmd.args) >= 2:
+                    scene_arg = str(cmd.args[0])
+                    scene_ids = [part.strip() for part in scene_arg.split(",") if part.strip()]
                     lighting.execute(
-                        LightCue(scene_id=str(cmd.args[0]), fade_time=float(cmd.args[1])),
+                        LightCue(
+                            scene_ids=scene_ids if len(scene_ids) > 1 else [],
+                            scene_id=scene_ids[0] if len(scene_ids) == 1 else None,
+                            fade_time=float(cmd.args[1]),
+                        ),
                         dry_run=cmd.dry_run,
                     )
             except Exception as exc:

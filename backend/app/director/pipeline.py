@@ -133,6 +133,58 @@ class DirectorPipeline:
         self._store_result(result, log_executed=result.executed)
         return result
 
+    def execute_layered(
+        self,
+        decision: DramaturgyDecision,
+        *,
+        anarchy_level: float = 0.5,
+        stack: bool = True,
+        skip_interval_check: bool = True,
+        stagger: bool = False,
+    ) -> DirectorResult:
+        if stack and decision.visual:
+            decision = decision.model_copy(deep=True)
+            decision.visual = decision.visual.model_copy(
+                update={"blend_mode": "layer"},
+            )
+        allowed, blocked_reason = self.scheduler.can_execute(
+            decision,
+            anarchy_level=anarchy_level,
+            skip_interval_check=skip_interval_check,
+        )
+        if skip_interval_check:
+            allowed = True
+            blocked_reason = None
+
+        dry_run = settings.osc_dry_run or self.safety.emergency_stop_active
+        planned = build_osc_commands(decision, dry_run=dry_run)
+        osc_commands: list[OscCommand] = []
+
+        if allowed and planned:
+            osc_commands = self._execute_commands(planned, stagger=stagger)
+            self.scheduler.mark_executed(decision)
+
+        event = self.state.last_event or DialogueEvent(
+            speaker=DialogueSpeaker.AI_A,
+            text="(inszenierung moment)",
+            topic="",
+            mood=decision.mood,
+            intensity=decision.intensity,
+            tags=decision.tags,
+            timestamp=decision.timestamp,
+        )
+
+        result = DirectorResult(
+            event=event,
+            decision=decision,
+            executed=allowed and bool(osc_commands),
+            blocked_reason=blocked_reason,
+            planned_commands=planned,
+            osc_commands=osc_commands,
+        )
+        self._store_result(result, log_executed=result.executed)
+        return result
+
     def process(self, event: DialogueEvent, *, force: bool = False) -> DirectorResult:
         if settings.director_execute_mode == "sequenced" and not force:
             return self.plan(event)

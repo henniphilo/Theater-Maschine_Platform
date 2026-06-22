@@ -1,0 +1,26 @@
+# Lichtstimmungen Unter Tieren (22.06.26)
+
+Quelle: OSC/Pixera-Regie — Preset Pr.91 wo nicht anders angegeben.
+
+| scene_id | Scheinwerfer / Gruppe | Wirkung |
+|----------|----------------------|---------|
+| blendung_zuschauerraum | Ch. 71–74 | Blendung Zuschauerraum |
+| blendung_magenta | Ch. 1701 | Blendung magenta |
+| seitenlicht_hart | Ch. 91–94 | Seitenlicht hartes Licht |
+| saallicht | Gr. 2 | Saallicht |
+| teppich_rot | Ch. 22–26 | Teppich Rot |
+| buehne_kalt_hart | Ch. 7–9 | Fläche Bühne hartes kaltes Licht |
+| gegenlicht_weich | Gr. 13, 23 | Gegenlicht weich |
+| wolkenprospekt_boden | Gr. 12 | Röhren vor dem Wolkenprospekt am Boden |
+| musiker | Ch. 46 | Musiker |
+| klavier | Ch. 27 | Klavier |
+| fluegel | Ch. 33 | Flügel |
+| palmen | Ch. 372, 37 | Palmen links vorne rechts hinten |
+| lautsprecher_buehne | Ch. 34 | Lautsprecher auf der Bühne |
+| warme_buehnenflaeche | Ch. 6+10 | Warme Fläche auf der Bühne |
+| luster_treppen | Ch. 151, 152 | Luster über den Treppen |
+| zwei_spots | Ch. 52, 54 | 2 Spots |
+| spot_tisch | Ch. 51 | Spot am Tisch |
+| blackout | /eos/key/out | Alles aus |
+
+Kombination: mehrere `scene_ids` in einem Licht-Cue — vorherige Lampen gehen aus, dann alle gewählten Stimmungen gemeinsam.

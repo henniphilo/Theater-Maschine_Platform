@@ -10,6 +10,7 @@ from app.api.routes.conversations import router as conversations_router
 from app.api.routes.debate import router as debate_router, tts_router
 from app.api.routes.director import router as director_router
 from app.api.routes.media import router as media_router
+from app.api.routes.inszenierung import router as inszenierung_router
 from app.api.routes.script import router as script_router
 from app.api.routes.health import router as health_router
 from app.core.config import settings
@@ -37,4 +38,5 @@ app.include_router(debate_router, prefix="/api/v1")
 app.include_router(tts_router, prefix="/api/v1")
 app.include_router(director_router, prefix="/api/v1")
 app.include_router(script_router, prefix="/api/v1")
+app.include_router(inszenierung_router, prefix="/api/v1")
 app.include_router(media_router, prefix="/api/v1")

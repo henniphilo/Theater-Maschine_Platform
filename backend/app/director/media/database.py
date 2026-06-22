@@ -43,6 +43,7 @@ class LightScene(BaseModel):
     description: str = ""
     location: str = ""
     channels: list[str] = Field(default_factory=list)
+    groups: list[str] = Field(default_factory=list)
     fixtures: list[str] = Field(default_factory=list)
     moods: list[str] = Field(default_factory=list)
     intensity_min: float = 0.0

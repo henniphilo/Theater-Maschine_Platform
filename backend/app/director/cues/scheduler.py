@@ -15,7 +15,13 @@ class CueScheduler:
     _last_sound_change: datetime | None = field(default=None, init=False)
     active_cues: list[str] = field(default_factory=list)
 
-    def can_execute(self, decision: DramaturgyDecision) -> tuple[bool, str | None]:
+    def can_execute(
+        self,
+        decision: DramaturgyDecision,
+        *,
+        anarchy_level: float = 0.0,
+        skip_interval_check: bool = False,
+    ) -> tuple[bool, str | None]:
         if self.safety.emergency_stop_active:
             return False, "emergency_stop_active"
 
@@ -33,10 +39,15 @@ class CueScheduler:
         if decision.light and not self.safety.lights_enabled:
             return False, "lights_disabled"
 
+        if skip_interval_check:
+            return True, None
+
+        scale = max(0.05, 1.0 - anarchy_level * 0.95)
+
         if decision.visual:
             blocked = self._check_interval(
                 self._last_video_change,
-                self.rules.min_cue_interval_seconds.get("video", 5.0),
+                self.rules.min_cue_interval_seconds.get("video", 5.0) * scale,
                 now,
             )
             if blocked:
@@ -51,7 +62,7 @@ class CueScheduler:
         if decision.light:
             blocked = self._check_interval(
                 self._last_light_change,
-                self.rules.min_cue_interval_seconds.get("light", 10.0),
+                self.rules.min_cue_interval_seconds.get("light", 10.0) * scale,
                 now,
             )
             if blocked:
@@ -66,7 +77,7 @@ class CueScheduler:
         if decision.sound:
             blocked = self._check_interval(
                 self._last_sound_change,
-                self.rules.min_cue_interval_seconds.get("sound", 3.0),
+                self.rules.min_cue_interval_seconds.get("sound", 3.0) * scale,
                 now,
             )
             if blocked:

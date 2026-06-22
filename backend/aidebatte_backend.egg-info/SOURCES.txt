@@ -13,6 +13,7 @@ app/api/routes/conversations.py
 app/api/routes/debate.py
 app/api/routes/director.py
 app/api/routes/health.py
+app/api/routes/inszenierung.py
 app/api/routes/media.py
 app/api/routes/script.py
 app/core/__init__.py
@@ -67,6 +68,7 @@ app/schemas/chat.py
 app/schemas/conversation.py
 app/schemas/debate.py
 app/schemas/director.py
+app/schemas/inszenierung.py
 app/schemas/performance.py
 app/schemas/script.py
 app/schemas/sound_cues.py
@@ -75,6 +77,10 @@ app/services/__init__.py
 app/services/ai_service.py
 app/services/debate_service.py
 app/services/dramaturgy_workshop_service.py
+app/services/inszenierung_analyse_service.py
+app/services/inszenierung_komposition_service.py
+app/services/inszenierung_store.py
+app/services/inszenierung_validation.py
 app/services/performance_bundle_service.py
 app/services/script_splitter.py
 app/services/script_store.py
@@ -99,6 +105,10 @@ tests/test_dramaturgy_rules_text.py
 tests/test_dramaturgy_workshop.py
 tests/test_eos_light.py
 tests/test_health.py
+tests/test_inszenierung_analyse.py
+tests/test_inszenierung_validation.py
+tests/test_layered_cues.py
+tests/test_light_replace.py
 tests/test_light_tcp.py
 tests/test_lighting.py
 tests/test_llm_director.py

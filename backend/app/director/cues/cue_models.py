@@ -49,6 +49,7 @@ class VisualCue(BaseModel):
     outputs: list[VisualOutputAssignment] = Field(default_factory=list)
     recording_id: str | None = None
     blend: str = "slow_fade"
+    blend_mode: Literal["replace", "layer"] = "replace"
     opacity: float = Field(default=0.8, ge=0.0, le=1.0)
     fade_time: float = Field(default=4.0, ge=0.0)
 
@@ -62,8 +63,20 @@ class SoundCue(BaseModel):
 class LightCue(BaseModel):
     action: LightAction = LightAction.SET_SCENE
     scene_id: str | None = None
+    scene_ids: list[str] = Field(default_factory=list)
     fade_time: float = Field(default=4.0, ge=0.0)
     intensity: float | None = Field(default=None, ge=0.0, le=1.0)
+    replace_previous: bool = True
+
+
+def resolve_light_scene_ids(light: LightCue | None) -> list[str]:
+    if light is None:
+        return []
+    if light.scene_ids:
+        return [sid for sid in light.scene_ids if sid]
+    if light.scene_id:
+        return [light.scene_id]
+    return []
 
 
 class CuePointTrigger(str, Enum):

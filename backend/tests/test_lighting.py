@@ -20,17 +20,18 @@ def test_lighting_opens_tcp_then_sends_eos_chan_full(
     tcp = MagicMock()
     mock_tcp_session.return_value = tcp
     scene = LightScene(
-        id="panolatte_rechts",
+        id="seitenlicht_hart",
         description="test",
-        channels=["92", "94", "96", "98"],
+        channels=["91-94"],
     )
     bridge = LightingBridge(media_db=MagicMock(light_scenes=[scene]))
 
-    bridge.execute(LightCue(scene_id="panolatte_rechts", fade_time=4.0), dry_run=False)
+    bridge.execute(LightCue(scene_id="seitenlicht_hart", fade_time=4.0), dry_run=False)
 
     tcp.open_session.assert_called_once_with(dry_run=False)
-    assert tcp.send_osc.call_count == 4
-    tcp.send_osc.assert_any_call("/eos/chan/92/full", [], dry_run=False)
+    assert tcp.send_osc.call_count == 5
+    tcp.send_osc.assert_any_call("/eos/key/out", [], dry_run=False)
+    tcp.send_osc.assert_any_call("/eos/chan/91/full", [], dry_run=False)
 
 
 @patch("app.director.outputs.lighting.settings")
@@ -49,16 +50,17 @@ def test_lighting_scene_at_partial_intensity(
     tcp.connected = True
     mock_tcp_session.return_value = tcp
     scene = LightScene(
-        id="panolatte_rechts",
+        id="seitenlicht_hart",
         description="test",
-        channels=["92", "94"],
+        channels=["91", "92"],
     )
     bridge = LightingBridge(media_db=MagicMock(light_scenes=[scene]))
 
-    bridge.execute(LightCue(scene_id="panolatte_rechts", fade_time=4.0, intensity=0.6), dry_run=False)
+    bridge.execute(LightCue(scene_id="seitenlicht_hart", fade_time=4.0, intensity=0.6), dry_run=False)
 
+    tcp.send_osc.assert_any_call("/eos/key/out", [], dry_run=False)
+    tcp.send_osc.assert_any_call("/eos/chan/91/at", [60.0], dry_run=False)
     tcp.send_osc.assert_any_call("/eos/chan/92/at", [60.0], dry_run=False)
-    tcp.send_osc.assert_any_call("/eos/chan/94/at", [60.0], dry_run=False)
 
 
 @patch("app.director.outputs.lighting.settings")

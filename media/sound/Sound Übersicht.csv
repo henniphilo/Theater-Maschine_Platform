@@ -27,10 +27,10 @@ metallseufzer;42;1;Metallseufzer;play;Einmaliger metallischer Seufzer — Maschi
 metallseufzer_fade_in;64;1;Metallseufzer;fade_in;Einblenden Metallseufzer (selten);metall,fade;spannung;ja
 metallseufzer_fade_out;65;1;Metallseufzer;fade_out;Ausblenden Metallseufzer;metall,fade;spannung;ja
 metallseufzer_out;78;1;Metallseufzer;out;Sofort aus — Metallseufzer;metall,cut;spannung;ja
-leere_zwischen_saetzen;43;1;Leere zwischen Sätzen;play;Fast Stille — Pause, Nachhall der Abwesenheit;stille,raum,leise;leer,melancholisch;nein
-leere_zwischen_saetzen_fade_in;66;1;Leere zwischen Sätzen;fade_in;Einblenden Leere zwischen Sätzen;stille,fade;leer;nein
-leere_zwischen_saetzen_fade_out;67;1;Leere zwischen Sätzen;fade_out;Ausblenden Leere zwischen Sätzen;stille,fade;leer;nein
-leere_zwischen_saetzen_out;79;1;Leere zwischen Sätzen;out;Sofort aus — Leere zwischen Sätzen;stille,cut;leer;nein
+leere_zwischen_saetzen;43;1;Leere zwischen Sätzen;play;Fast Stille — Pause, Nachhall der Abwesenheit;stille,raum,leise;leer,melancholisch;ja
+leere_zwischen_saetzen_fade_in;66;1;Leere zwischen Sätzen;fade_in;Einblenden Leere zwischen Sätzen;stille,fade;leer;ja
+leere_zwischen_saetzen_fade_out;67;1;Leere zwischen Sätzen;fade_out;Ausblenden Leere zwischen Sätzen;stille,fade;leer;ja
+leere_zwischen_saetzen_out;79;1;Leere zwischen Sätzen;out;Sofort aus — Leere zwischen Sätzen;stille,cut;leer;ja
 unter_tiere_chor;44;1;Unter-Tiere-Chor;play;Fernes Summen vieler Stimmen — Masse, Bedrohung;chor,masse,tier;unheimlich,spannung;nein
 unter_tiere_chor_fade_in;68;1;Unter-Tiere-Chor;fade_in;Einblenden Unter-Tiere-Chor;chor,fade;unheimlich;nein
 unter_tiere_chor_fade_out;69;1;Unter-Tiere-Chor;fade_out;Ausblenden Unter-Tiere-Chor;chor,fade;unheimlich;nein

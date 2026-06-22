@@ -3,9 +3,9 @@
 from pythonosc import udp_client
 
 from app.core.config import settings
-from app.director.cues.cue_models import LightCue
+from app.director.cues.cue_models import LightCue, resolve_light_scene_ids
 from app.director.media.database import MediaDatabase
-from app.director.outputs.eos_light import eos_chan_level, eos_key_out, expand_channels
+from app.director.outputs.eos_light import eos_chan_level, eos_group_level, eos_key_out, expand_channels
 from app.director.outputs.light_tcp import (
     LightDeskConnectionError,
     close_light_tcp,
@@ -36,7 +36,9 @@ class LightingBridge:
             )
 
     def execute(self, cue: LightCue, dry_run: bool = False) -> None:
-        if cue.scene_id is None or cue.scene_id == "blackout":
+        if cue.action.value == "fade_blackout" or (
+            not resolve_light_scene_ids(cue) and cue.scene_id in (None, "blackout")
+        ):
             self.blackout(dry_run=dry_run)
             return
 
@@ -55,26 +57,36 @@ class LightingBridge:
             close_light_tcp()
 
     def send_scene(self, cue: LightCue, dry_run: bool = False) -> None:
-        if cue.scene_id is None or cue.scene_id == "blackout":
+        if cue.action.value == "fade_blackout" or not resolve_light_scene_ids(cue):
             self.blackout_signal(dry_run=dry_run)
             return
-        scene = next((s for s in self.media_db.light_scenes if s.id == cue.scene_id), None)
-        fade = cue.fade_time if cue.fade_time else (scene.fade_time if scene else 4.0)
+
+        scene_ids = resolve_light_scene_ids(cue)
+        primary = next((s for s in self.media_db.light_scenes if s.id == scene_ids[0]), None)
+        fade = cue.fade_time if cue.fade_time else (primary.fade_time if primary else 4.0)
 
         if settings.light_output == "tcp" and not get_light_tcp_session().connected:
-            if dry_run:
-                pass
-            else:
-                return
+            if not dry_run:
+                if not self._open_tcp_session(dry_run=dry_run):
+                    return
 
-        self._apply_scene_channels(
-            scene.channels if scene else [],
-            intensity=cue.intensity if cue.intensity is not None else 1.0,
-            dry_run=dry_run,
-        )
+        if cue.replace_previous:
+            self.blackout_signal(dry_run=dry_run)
+
+        intensity = cue.intensity if cue.intensity is not None else 1.0
+        for scene_id in scene_ids:
+            scene = next((s for s in self.media_db.light_scenes if s.id == scene_id), None)
+            if scene is None:
+                continue
+            self._apply_scene_channels(
+                scene.channels,
+                groups=scene.groups,
+                intensity=intensity,
+                dry_run=dry_run,
+            )
 
         if settings.light_osc_mirror:
-            self._send_td_osc("/light/set_scene", cue.scene_id, fade, dry_run=dry_run)
+            self._send_td_osc("/light/set_scene", ",".join(scene_ids), fade, dry_run=dry_run)
 
     def blackout_signal(self, dry_run: bool = False) -> None:
         if settings.light_output == "tcp" and get_light_tcp_session().connected:
@@ -100,12 +112,22 @@ class LightingBridge:
         self,
         channel_specs: list[str],
         *,
+        groups: list[str] | None = None,
         intensity: float = 1.0,
         dry_run: bool,
     ) -> None:
+        for group in groups or []:
+            address, args = eos_group_level(int(group), intensity)
+            self._send_desk_osc(address, *args, dry_run=dry_run)
         for channel in expand_channels(channel_specs):
             address, args = eos_chan_level(channel, intensity)
             self._send_desk_osc(address, *args, dry_run=dry_run)
+
+    def apply_group(self, group: int, *, intensity: float = 1.0, dry_run: bool = False) -> None:
+        if settings.light_output == "tcp" and not self._open_tcp_session(dry_run=dry_run):
+            return
+        address, args = eos_group_level(group, intensity)
+        self._send_desk_osc(address, *args, dry_run=dry_run)
 
     def apply_channel(self, channel: int, *, intensity: float = 1.0, dry_run: bool = False) -> None:
         if settings.light_output == "tcp" and not self._open_tcp_session(dry_run=dry_run):

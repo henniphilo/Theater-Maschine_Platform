@@ -48,6 +48,14 @@ class ExecuteRequest(BaseModel):
     stagger: bool = True
 
 
+class ExecuteLayeredRequest(BaseModel):
+    decision: DramaturgyDecision
+    anarchy_level: float = Field(default=0.5, ge=0.0, le=1.0)
+    stack: bool = True
+    skip_interval_check: bool = True
+    stagger: bool = False
+
+
 class ExecuteResponse(BaseModel):
     executed: bool
     blocked_reason: str | None = None

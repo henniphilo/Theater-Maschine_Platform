@@ -8,11 +8,16 @@ from app.core.config import settings
 @pytest.fixture(autouse=True)
 def director_test_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     backend_or_app_root = Path(__file__).resolve().parents[1]
-    repo_data = backend_or_app_root / "data"
-    if not repo_data.exists():
-        repo_data = Path(__file__).resolve().parents[2] / "data"
+    repo_root_data = Path(__file__).resolve().parents[2] / "data"
+    backend_data = backend_or_app_root / "data"
+    repo_data = backend_data
+    if not (backend_data / "light_scenes.json").exists() and (repo_root_data / "light_scenes.json").exists():
+        repo_data = repo_root_data
+    elif not repo_data.exists():
+        repo_data = repo_root_data
     monkeypatch.setattr(settings, "director_enabled", True)
     monkeypatch.setattr(settings, "osc_dry_run", True)
+    monkeypatch.setattr(settings, "osc_host", "127.0.0.1")
     monkeypatch.setattr(settings, "director_data_dir", str(repo_data))
     monkeypatch.setattr(settings, "director_log_path", str(tmp_path / "director.log"))
     monkeypatch.setattr(settings, "director_autopilot_default", True)

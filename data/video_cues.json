@@ -154,6 +154,211 @@
       "intensity_max": 1.0
     },
     {
+      "id": "nicolas",
+      "pixera_name": "Nicolas",
+      "label": "Nicolas",
+      "description": "Figur Nicolas",
+      "tags": [
+        "figur",
+        "nicolas"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "branko",
+      "pixera_name": "Branko",
+      "label": "Branko",
+      "description": "Figur Branko",
+      "tags": [
+        "figur",
+        "branko"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "thiemo",
+      "pixera_name": "Thiemo",
+      "label": "Thiemo",
+      "description": "Figur Thiemo",
+      "tags": [
+        "figur",
+        "thiemo"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "musiker",
+      "pixera_name": "Musiker",
+      "label": "Musiker",
+      "description": "Musiker-Motiv",
+      "tags": [
+        "figur",
+        "musik"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "hundethiel",
+      "pixera_name": "HundeThiel",
+      "label": "HundeThiel",
+      "description": "Hunde Thiel",
+      "tags": [
+        "figur",
+        "thiel",
+        "tier"
+      ],
+      "moods": [
+        "unheimlich"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "odyssee",
+      "pixera_name": "Odyssee",
+      "label": "Odyssee",
+      "description": "Odyssee-Motiv",
+      "tags": [
+        "narrativ",
+        "reise"
+      ],
+      "moods": [
+        "weit",
+        "melancholisch"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "kaefer",
+      "pixera_name": "Kaefer",
+      "label": "Kaefer",
+      "description": "Käfer-Motiv",
+      "tags": [
+        "tier",
+        "insekt"
+      ],
+      "moods": [
+        "unheimlich"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "random",
+      "pixera_name": "Random",
+      "label": "Random",
+      "description": "Zufalls-/Mix-Clip",
+      "tags": [
+        "mix",
+        "abstrakt"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "mehlwurm",
+      "pixera_name": "Mehlwurm",
+      "label": "Mehlwurm",
+      "description": "Mehlwurm-Motiv",
+      "tags": [
+        "tier",
+        "insekt"
+      ],
+      "moods": [
+        "unheimlich"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "avatar",
+      "pixera_name": "Avatar",
+      "label": "Avatar",
+      "description": "Avatar-Motiv",
+      "tags": [
+        "figur",
+        "digital"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "avatar2",
+      "pixera_name": "Avatar2",
+      "label": "Avatar2",
+      "description": "Avatar Variante 2",
+      "tags": [
+        "figur",
+        "digital"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "esel",
+      "pixera_name": "Esel",
+      "label": "Esel",
+      "description": "Esel-Motiv",
+      "tags": [
+        "tier",
+        "esel"
+      ],
+      "moods": [
+        "melancholisch"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
+      "id": "gehirn",
+      "pixera_name": "Gehirn",
+      "label": "Gehirn",
+      "description": "Gehirn-Motiv",
+      "tags": [
+        "körper",
+        "abstrakt"
+      ],
+      "moods": [
+        "unheimlich",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0
+    },
+    {
       "id": "thiel",
       "pixera_name": "Thiel",
       "label": "Thiel",

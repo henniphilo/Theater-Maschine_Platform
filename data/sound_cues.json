@@ -648,7 +648,7 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "dramaturgy_active": false
+      "dramaturgy_active": true
     },
     {
       "id": "leere_zwischen_saetzen_fade_in",
@@ -669,7 +669,7 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "dramaturgy_active": false
+      "dramaturgy_active": true
     },
     {
       "id": "leere_zwischen_saetzen_fade_out",
@@ -691,7 +691,7 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "dramaturgy_active": false
+      "dramaturgy_active": true
     },
     {
       "id": "leere_zwischen_saetzen_out",
@@ -713,7 +713,7 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "dramaturgy_active": false
+      "dramaturgy_active": true
     },
     {
       "id": "unter_tiere_chor",

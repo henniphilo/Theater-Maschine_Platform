@@ -7,8 +7,11 @@ from typing import Any
 
 EOS_CHAN_FULL = "/eos/chan/{channel}/full"
 EOS_CHAN_AT = "/eos/chan/{channel}/at"
+EOS_GROUP_FULL = "/eos/group/{group}/full"
+EOS_GROUP_LEVEL = "/eos/group/{group}/level"
 EOS_KEY_OUT = "/eos/key/out"
 EOS_CHAN_ADDRESS_RE = re.compile(r"^/eos/chan/(\d+)/(full|at)$")
+EOS_GROUP_ADDRESS_RE = re.compile(r"^/eos/group/(\d+)/(full|level)$")
 
 
 def expand_channels(specs: list[str]) -> list[int]:
@@ -47,6 +50,13 @@ def eos_chan_level(channel: int, intensity: float = 1.0) -> tuple[str, list[floa
     if percent >= 100:
         return eos_chan_full(channel)
     return EOS_CHAN_AT.format(channel=channel), [float(percent)]
+
+
+def eos_group_level(group: int, intensity: float = 1.0) -> tuple[str, list[float]]:
+    percent = light_intensity_to_percent(intensity)
+    if percent >= 100:
+        return EOS_GROUP_FULL.format(group=group), []
+    return EOS_GROUP_LEVEL.format(group=group), [float(percent)]
 
 
 def eos_key_out() -> tuple[str, list[str]]:

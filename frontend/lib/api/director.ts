@@ -263,6 +263,30 @@ export async function postDirectorExecute(
   return res.json();
 }
 
+export async function postDirectorExecuteLayered(
+  decision: DramaturgyDecision,
+  options?: {
+    anarchy_level?: number;
+    stack?: boolean;
+    skip_interval_check?: boolean;
+    stagger?: boolean;
+  }
+): Promise<ExecuteResponse> {
+  const res = await fetch(`${API_BASE}/director/execute-layered`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      decision,
+      anarchy_level: options?.anarchy_level ?? 0.5,
+      stack: options?.stack ?? true,
+      skip_interval_check: options?.skip_interval_check ?? true,
+      stagger: options?.stagger ?? false
+    })
+  });
+  if (!res.ok) throw new Error("Director layered execute failed");
+  return res.json();
+}
+
 export type DirectorStreamUpdate = {
   type: "director_update";
   event: Record<string, unknown>;

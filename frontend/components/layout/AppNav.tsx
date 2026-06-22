@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const LINKS = [
   { href: "/technik", label: "Technik-Test" },
   { href: "/dramaturgie", label: "Dramaturgie" },
+  { href: "/inszenierung", label: "Teil 2" },
   { href: "/stueck", label: "Stücktext" },
   { href: "/auffuehrung", label: "Aufführung" },
   { href: "/director", label: "Live-Regie" }

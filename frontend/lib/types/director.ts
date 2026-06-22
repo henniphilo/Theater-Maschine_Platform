@@ -35,8 +35,10 @@ export type DramaturgyDecision = {
   light?: {
     action: string;
     scene_id?: string | null;
+    scene_ids?: string[];
     fade_time?: number;
     intensity?: number | null;
+    replace_previous?: boolean;
   } | null;
   reason: string;
   dramaturgical_reading?: string;

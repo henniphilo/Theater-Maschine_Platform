@@ -13,6 +13,7 @@ from app.schemas.director import (
     DirectorProcessResponse,
     DirectorStatusResponse,
     ExecuteRequest,
+    ExecuteLayeredRequest,
     ExecuteResponse,
     OscTestRequest,
     OscTestResponse,
@@ -77,6 +78,23 @@ def post_execute(payload: ExecuteRequest) -> ExecuteResponse:
     result = _pipeline.execute(
         payload.decision,
         force=payload.force,
+        stagger=payload.stagger,
+    )
+    return ExecuteResponse(
+        executed=result.executed,
+        blocked_reason=result.blocked_reason,
+        osc_commands=result.osc_commands,
+    )
+
+
+@router.post("/execute-layered", response_model=ExecuteResponse)
+def post_execute_layered(payload: ExecuteLayeredRequest) -> ExecuteResponse:
+    _ensure_enabled()
+    result = _pipeline.execute_layered(
+        payload.decision,
+        anarchy_level=payload.anarchy_level,
+        stack=payload.stack,
+        skip_interval_check=payload.skip_interval_check,
         stagger=payload.stagger,
     )
     return ExecuteResponse(
