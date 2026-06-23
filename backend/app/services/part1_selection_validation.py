@@ -50,7 +50,7 @@ def validate_media_lists(lists: MediaSelectionLists, *, require_minimums: bool =
     unknown_sounds = [s for s in lists.sounds if s not in play_sounds]
     unknown_music = [m for m in lists.music if m not in play_sounds]
     unknown_videos = [v for v in lists.videos if v not in video_ids]
-    unknown_lights = [l for l in lists.lights if l not in light_ids]
+    unknown_lights = [light_id for light_id in lists.lights if light_id not in light_ids]
 
     errors: list[str] = []
     if unknown_sounds:

@@ -11,7 +11,6 @@ from app.schemas.inszenierung import (
     AnarchyCurve,
     CompositionMoment,
     CompositionPlan,
-    Gesamtkonzept,
     SceneCorpus,
 )
 

@@ -9,7 +9,6 @@ from app.core.config import settings
 from app.director.cues.cue_models import CuePoint, CuePointTrigger, DramaturgyDecision, VisualCue
 from app.director.dialogue.builder import build_dialogue_event
 from app.director.dramaturgy.llm_director import LLMDirector
-from app.director.dramaturgy.rules_text import dramaturgy_rules_excerpt
 from app.director.outputs.osc_commands import build_osc_commands
 from app.schemas.inszenierung import (
     CompositionMoment,

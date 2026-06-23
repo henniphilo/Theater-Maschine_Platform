@@ -1,7 +1,6 @@
 import json
 from pathlib import Path
 
-from fastapi import HTTPException, status
 
 from app.schemas.part1_selection import Part1BaerenklauSelection
 from app.schemas.script import ProductionScript

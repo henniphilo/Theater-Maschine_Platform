@@ -3,7 +3,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-from app.director.cues.cue_models import OscCommand, ProjectorTarget, VideoType
+from app.director.cues.cue_models import OscCommand, ProjectorTarget
 from app.schemas.discussion import DiscussionTurn
 
 PerformancePart = Literal["part1_baerenklau", "part2_delphin_to_mole"]

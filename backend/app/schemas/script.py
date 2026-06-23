@@ -3,7 +3,7 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 from app.director.cues.cue_models import DramaturgyDecision, OscCommand
-from app.schemas.discussion import DiscussionTurn, DramaturgSpeaker
+from app.schemas.discussion import DiscussionTurn
 from app.schemas.part1_selection import Part1BaerenklauSelection, PerformancePart
 
 ScriptSpeaker = Literal["AI_A", "AI_B", "narrator"]

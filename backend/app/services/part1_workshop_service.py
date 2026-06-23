@@ -11,7 +11,7 @@ from app.director.cues.cue_points import min_cue_points_for_text
 from app.director.dramaturgy.llm_director import LLMDirector
 from app.director.dramaturgy.rules_text import dramaturgy_rules_excerpt
 from app.director.outputs.osc_commands import build_osc_commands
-from app.schemas.part1_selection import MediaSelectionLists, Part1BaerenklauSelection, PreviewCue
+from app.schemas.part1_selection import MediaSelectionLists, Part1BaerenklauSelection
 from app.schemas.script import DiscussionTurn, ScriptBeat
 from app.services.ai_service import AIService
 from app.services.dramaturg_labels import CHATGPT_LABEL, CLAUDE_LABEL

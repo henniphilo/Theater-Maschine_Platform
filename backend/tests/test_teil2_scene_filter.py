@@ -1,4 +1,3 @@
-import pytest
 
 from app.schemas.inszenierung import AnimalScene, SceneCorpus
 from app.services.teil2_scene_filter import filter_teil2_scenes, is_baerenklau_scene
