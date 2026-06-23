@@ -1,0 +1,6 @@
+id;avatar;text;video_clip_id;scene_ref
+DEL1;delphin;Test Delphin Text mit genug Inhalt für Token.;avatar;
+BK1;baerenklau;Bärenklau Test mit genug Inhalt.;avatar2;
+BK3;baerenklau;Geld könnte vielleicht der Baerenklau von vorhin wieder übernehmen;avatar2;
+PET5;petya;Erstes PET5 Zitat mit genug Wörtern hier drin.;hundethiel;
+PET5;petya;Zweites PET5 Zitat ebenfalls lang genug für Parser.;hundethiel;

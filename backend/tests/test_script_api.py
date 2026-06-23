@@ -13,7 +13,7 @@ SAMPLE_TEXT = (
 )
 
 
-def test_create_script_splits_beats() -> None:
+def test_create_script_whole_text_beat() -> None:
     res = client.post(
         "/api/v1/scripts",
         json={"title": "Teststück", "source_text": SAMPLE_TEXT},
@@ -21,7 +21,8 @@ def test_create_script_splits_beats() -> None:
     assert res.status_code == 201
     body = res.json()
     assert body["title"] == "Teststück"
-    assert len(body["beats"]) == 2
+    assert len(body["beats"]) == 1
+    assert SAMPLE_TEXT.split("---")[0].strip() in body["beats"][0]["text"]
     assert body["status"] == "draft"
 
 

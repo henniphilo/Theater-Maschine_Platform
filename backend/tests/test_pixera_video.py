@@ -1,3 +1,4 @@
+import pytest
 from unittest.mock import MagicMock, patch
 
 from app.director.cues.cue_models import DramaturgyDecision, VisualAction, VisualCue, VisualOutputAssignment
@@ -29,9 +30,8 @@ def test_osc_befehlliste_matches_video_overview() -> None:
     data_dir = repo_data_dir()
     clips_path, projectors_path = resolve_video_overview_paths(data_dir)
     osc_path = resolve_osc_befehlliste_path(data_dir)
-    assert clips_path is not None
-    assert projectors_path is not None
-    assert osc_path is not None
+    if not clips_path or not projectors_path or not osc_path:
+        pytest.skip("media/video CSV fixtures not available in CI")
 
     catalog = load_video_cues_from_csv(clips_path, projectors_path)
     clip_names = {c.pixera_name for c in catalog.clips}

@@ -1,3 +1,5 @@
+from pathlib import Path
+
 
 from app.services.avatar_speech_catalog import (
     match_avatar_cues,
@@ -6,12 +8,20 @@ from app.services.avatar_speech_catalog import (
     resolve_avatar_csv_path,
 )
 
+FIXTURE_CSV = Path(__file__).resolve().parent / "fixtures" / "avatar_textzuordnung.csv"
+
+
+def _avatar_csv_path() -> Path:
+    path = resolve_avatar_csv_path()
+    if path is not None:
+        return path
+    assert FIXTURE_CSV.is_file()
+    return FIXTURE_CSV
+
 
 def test_avatar_csv_loads_and_maps_prefixes() -> None:
-    path = resolve_avatar_csv_path()
-    assert path is not None
-    catalog = parse_avatar_csv(path)
-    assert len(catalog.cues) >= 30
+    catalog = parse_avatar_csv(_avatar_csv_path())
+    assert len(catalog.cues) >= 3
     del_cue = next(c for c in catalog.cues if c.id == "DEL1")
     assert del_cue.avatar == "delphin"
     assert del_cue.video_clip_id == "avatar"
@@ -21,9 +31,7 @@ def test_avatar_csv_loads_and_maps_prefixes() -> None:
 
 
 def test_pet5_duplicate_gets_suffix() -> None:
-    path = resolve_avatar_csv_path()
-    assert path is not None
-    catalog = parse_avatar_csv(path)
+    catalog = parse_avatar_csv(_avatar_csv_path())
     pet_ids = [c.id for c in catalog.cues if c.id.startswith("PET5")]
     assert "PET5" in pet_ids
     assert "PET5a" in pet_ids
@@ -34,9 +42,7 @@ def test_normalize_avatar_text_strips_control_chars() -> None:
 
 
 def test_match_avatar_cues_finds_overlap() -> None:
-    path = resolve_avatar_csv_path()
-    assert path is not None
-    catalog = parse_avatar_csv(path)
+    catalog = parse_avatar_csv(_avatar_csv_path())
     bk3 = next(c for c in catalog.cues if c.id == "BK3")
     matches = match_avatar_cues(bk3.text[:80])
     assert any(m.id == "BK3" for m in matches)

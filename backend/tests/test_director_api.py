@@ -88,10 +88,10 @@ def test_light_desk_two_step_connect_then_send() -> None:
 
     send = client.post(
         "/api/v1/director/light/send",
-        json={"light_scene_id": "ol_4er_hmi"},
+        json={"light_scene_id": "buehne_kalt_hart"},
     )
     assert send.status_code == 200
-    assert send.json()["scene_id"] == "ol_4er_hmi"
+    assert send.json()["scene_id"] == "buehne_kalt_hart"
 
     stop = client.post("/api/v1/director/light/stop")
     assert stop.status_code == 200
@@ -106,7 +106,7 @@ def test_light_send_without_connect_returns_409() -> None:
     client.post("/api/v1/director/light/disconnect")
     res = client.post(
         "/api/v1/director/light/send",
-        json={"light_scene_id": "vorbuehnenzug"},
+        json={"light_scene_id": "blendung_zuschauerraum"},
     )
     assert res.status_code == 409
 

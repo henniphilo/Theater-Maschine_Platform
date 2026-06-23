@@ -22,7 +22,7 @@ def test_validator_rejects_unknown_clip() -> None:
     decision = DramaturgyDecision(
         visual=VisualCue(action=VisualAction.PLAY_CLIP, clip_id="does_not_exist"),
         sound=SoundCue(cue_id="maschinen_grundader"),
-        light=LightCue(scene_id="vorbuehnenzug"),
+        light=LightCue(scene_id="blendung_zuschauerraum"),
         reason="test",
     )
     with pytest.raises(DramaturgyValidationError):

@@ -28,7 +28,7 @@ def _decision() -> DramaturgyDecision:
     return DramaturgyDecision(
         visual=VisualCue(action=VisualAction.PLAY_CLIP, clip_id="clyde"),
         sound=SoundCue(cue_id="maschinen_grundader"),
-        light=LightCue(scene_id="vorbuehnenzug"),
+        light=LightCue(scene_id="blendung_zuschauerraum"),
         reason="Test",
         mood="neutral",
         intensity=0.5,
@@ -70,7 +70,12 @@ def bundle_service(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Performan
     tts.is_available.return_value = True
     tts.resolve_provider.return_value = "edge"
 
-    async def fake_synth(text: str, speaker: str) -> Path:
+    async def fake_synth(
+        text: str,
+        speaker: str,
+        *,
+        profile: str | None = None,
+    ) -> Path:
         safe = speaker.replace("/", "_")
         return _fake_audio(tmp_path, f"{safe}-{len(text)}.mp3")
 
@@ -78,10 +83,11 @@ def bundle_service(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Performan
     return PerformanceBundleService(store=store, tts=tts, data_dir=tmp_path)
 
 
-@pytest.mark.asyncio
-async def test_render_and_zip_roundtrip(bundle_service: PerformanceBundleService, tmp_path: Path) -> None:
+def test_render_and_zip_roundtrip(bundle_service: PerformanceBundleService, tmp_path: Path) -> None:
+    import asyncio
+
     script = _ready_script(tmp_path)
-    manifest = await bundle_service.render_and_save(script.id)
+    manifest = asyncio.run(bundle_service.render_and_save(script.id))
     performance_entries = [e for e in manifest.audio_files if e.kind == "performance"]
     assert len(performance_entries) == 1
     assert performance_entries[0].turn_index == 0

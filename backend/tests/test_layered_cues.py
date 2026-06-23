@@ -8,7 +8,7 @@ def _decision() -> DramaturgyDecision:
     return DramaturgyDecision(
         visual=VisualCue(action=VisualAction.PLAY_CLIP, clip_id="clyde"),
         sound=SoundCue(cue_id="maschinen_grundader"),
-        light=LightCue(scene_id="vorbuehnenzug"),
+        light=LightCue(scene_id="blendung_zuschauerraum"),
         reason="test",
     )
 
