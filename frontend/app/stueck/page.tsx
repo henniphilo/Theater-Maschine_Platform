@@ -9,6 +9,7 @@ import { ScriptBeatBlock } from "@/components/script/ScriptBeatBlock";
 import { fetchMediaCatalog } from "@/lib/api/media";
 import { fetchScript, patchScriptBeat } from "@/lib/api/script";
 import { buildMediaLookup, type MediaLookup } from "@/lib/types/media";
+import { isBaerenklauBeat, isPart1Beat } from "@/lib/show/baerenklauBeat";
 import type { ProductionScript, ScriptSpeaker } from "@/lib/types/script";
 
 function StueckContent() {
@@ -76,7 +77,17 @@ function StueckContent() {
         <>
           <section className="card col">
             <h2>{script.title}</h2>
-            <p className="textMuted">Status: {script.status} · {script.beats.length} Abschnitte</p>
+            <p className="textMuted">
+              Status: {script.status} ·{" "}
+              {script.beats.length === 1 ? "Gesamttext" : `${script.beats.length} Abschnitte`}
+            </p>
+            {script.part1_selection ? (
+              <p className="textMuted" style={{ fontSize: "0.9rem" }}>
+                Finale Medien: {script.part1_selection.final_sounds.length} Sounds,{" "}
+                {script.part1_selection.final_music.length} Musik, {script.part1_selection.final_videos.length}{" "}
+                Videos, {script.part1_selection.final_lights.length} Licht
+              </p>
+            ) : null}
             {ready ? (
               <Link href={`/auffuehrung?id=${script.id}`} className="machineStartBtn" style={{ display: "inline-block", textAlign: "center", textDecoration: "none" }}>
                 Zur Aufführung →
@@ -87,15 +98,36 @@ function StueckContent() {
           </section>
 
           <section className="card col scriptDocument">
-            {script.beats.map((beat) => (
-              <ScriptBeatBlock
+            {script.beats.map((beat) => {
+              const teil1 = isPart1Beat(beat, script.beats);
+              const baerenklau = isBaerenklauBeat(beat);
+              return (
+              <div
                 key={beat.id}
-                beat={beat}
-                editable
-                media={media}
-                onSpeakerChange={(speaker) => void handleSpeakerChange(beat.id, speaker)}
-              />
-            ))}
+                style={
+                  teil1
+                    ? { outline: "2px solid var(--accent, #6b8cff)", borderRadius: 8, padding: 4 }
+                    : { opacity: 0.72 }
+                }
+              >
+                {!teil1 ? (
+                  <p className="textMuted" style={{ fontSize: "0.85rem", margin: "0 0 0.5rem" }}>
+                    Teil 2 / später
+                  </p>
+                ) : (
+                  <p className="textMuted" style={{ fontSize: "0.85rem", margin: "0 0 0.5rem" }}>
+                    {baerenklau ? "Teil 1 — Bärenklau" : "Teil 1 — Workshop"}
+                  </p>
+                )}
+                <ScriptBeatBlock
+                  beat={beat}
+                  editable
+                  media={media}
+                  onSpeakerChange={(speaker) => void handleSpeakerChange(beat.id, speaker)}
+                />
+              </div>
+            );
+            })}
           </section>
         </>
       ) : null}

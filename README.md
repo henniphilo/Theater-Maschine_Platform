@@ -20,6 +20,8 @@ Zwei KIs (GPT und Claude) diskutieren live über ein Thema. Während sie spreche
 - [Sound & Ableton einrichten](#sound--ableton-einrichten)
 - [Konfiguration](#konfiguration)
 - [Bedienung](#bedienung)
+- [Teil 1 — Stücktext-Dramaturgie](#teil-1--stücktext-dramaturgie)
+- [Teil 2 — Anarchische Inszenierung](#teil-2--anarchische-inszenierung)
 - [Live-Regie (Director)](#live-regie-director)
 - [TouchDesigner](#touchdesigner)
 - [Projektstruktur](#projektstruktur)
@@ -49,6 +51,16 @@ Bei jedem Debatten-Beitrag (wenn `DIRECTOR_ENABLED=true`):
 5. Entscheidungen werden in `logs/director.log` protokolliert.
 
 Der Operator steuert alles über **http://localhost:3003/director** (Autopilot, Visuals/Sound/Licht, Aufnahme, Emergency Stop).
+
+### Zwei Inszenierungs-Modi
+
+| | **Teil 1** — Stücktext | **Teil 2** — Anarchische Inszenierung |
+|---|------------------------|----------------------------------------|
+| Textquelle | Ein Stücktext, Beats | Mehrere Tier-Szenen (Korpus), z. B. Jelinek *Unter Tieren* / Geld |
+| Workflow | Dramaturgie → Stücktext → Aufführung | Import → Analyse → Komposition → Aufführung |
+| Wiedergabe | Sequentiell: Diskussion, dann Stücktext | Eskalierende Überlagerung, parallele Stimmen & Beamer |
+| Stimmen | Dramaturgen + Stimme A/B/Erzähler | Avatar-Video (kein TTS) + eigene KI-Stimmen (Teil 2) |
+| Doku | unten [Teil 1](#teil-1--stücktext-dramaturgie) | [`docs/teil2_inszenierung.md`](docs/teil2_inszenierung.md) |
 
 Ausführlicher Entwicklungsplan: [`PLAN.md`](PLAN.md)  
 Architektur, Signale, Kamera/Ton/Licht-Setup: [`docs/architektur.md`](docs/architektur.md)
@@ -160,9 +172,13 @@ docker compose up --force-recreate backend
 
 | Dienst | URL |
 |--------|-----|
-| **Dramaturgie** | http://localhost:3003/dramaturgie |
-| **Stücktext** | http://localhost:3003/stueck |
-| **Aufführung** | http://localhost:3003/auffuehrung |
+| **Dramaturgie** (Teil 1) | http://localhost:3003/dramaturgie |
+| **Stücktext** (Teil 1) | http://localhost:3003/stueck |
+| **Aufführung** (Teil 1) | http://localhost:3003/auffuehrung |
+| **Inszenierung** (Teil 2) | http://localhost:3003/inszenierung |
+| **Analyse** (Teil 2) | http://localhost:3003/inszenierung/analyse |
+| **Komposition** (Teil 2) | http://localhost:3003/inszenierung/komposition |
+| **Aufführung** (Teil 2) | http://localhost:3003/inszenierung/auffuehrung |
 | **Live-Regie (Operator)** | http://localhost:3003/director |
 | **Technik-Test** (Video/Sound/Licht einzeln) | http://localhost:3003/technik |
 | **Backend (API)** | http://localhost:8000 |
@@ -347,15 +363,30 @@ OPENAI_API_KEY="sk-..."
 ANTHROPIC_API_KEY="sk-ant-..."
 TTS_PROVIDER="auto"
 
-# Dramaturgen (Workshop / Phase 1)
+# Dramaturgen (Workshop / Phase 1) — macOS: Petra (Premium) / Viktor (Enhanced)
+TTS_VOICE_OPENAI="Petra (Premium)"
+TTS_VOICE_ANTHROPIC="Viktor (Enhanced)"
 TTS_EDGE_VOICE_OPENAI="de-DE-ConradNeural"
 TTS_EDGE_VOICE_ANTHROPIC="de-DE-KatjaNeural"
 
-# Aufführung Stücktext (Phase 2) — rotiert satzweise AI_A / AI_B / narrator
+# Aufführung Teil 1 — rotiert satzweise AI_A / AI_B / narrator
+TTS_VOICE_AI_A="Anna"
+TTS_VOICE_AI_B="Martin"
+TTS_VOICE_NARRATOR="Alex"
 TTS_EDGE_VOICE_AI_A="de-DE-KillianNeural"
 TTS_EDGE_VOICE_AI_B="de-DE-SeraphinaMultilingualNeural"
 TTS_EDGE_VOICE_NARRATOR="de-DE-AmalaNeural"
+
+# Teil 2 Inszenierung — eigene KI-Stimmen (getrennt von Teil 1)
+TTS_VOICE_INSZENIERUNG_AI_A="Eddy"
+TTS_VOICE_INSZENIERUNG_AI_B="Sandy"
+TTS_VOICE_INSZENIERUNG_NARRATOR="Helena"
+TTS_EDGE_VOICE_INSZENIERUNG_AI_A="de-DE-FlorianMultilingualNeural"
+TTS_EDGE_VOICE_INSZENIERUNG_AI_B="de-DE-SeraphinaMultilingualNeural"
+TTS_EDGE_VOICE_INSZENIERUNG_NARRATOR="de-DE-KatjaNeural"
 ```
+
+TTS-API optional mit `profile`: `dramaturg` | `performance` | `inszenierung` (siehe `POST /api/v1/tts/speak`).
 
 Nach Änderungen an Code oder `.env`: `docker compose up --build`
 
@@ -426,7 +457,9 @@ Clips/Projektoren: `media/video/Video Übersicht.csv`, `media/video/Projektor Ü
 
 ## Bedienung
 
-### 3-Phasen-Workflow
+### Teil 1 — Stücktext-Dramaturgie
+
+#### 3-Phasen-Workflow
 
 1. **`/dramaturgie`** — Stücktext einfügen; Dramaturg A (GPT) und Dramaturg B (Claude) diskutieren abwechselnd die Regie (max. 2 Beiträge je Dramaturg). Das Gespräch wird gespeichert und in der Aufführung vertont.
 2. **`/stueck`** — Stücktext mit Dramaturgen-Gespräch, Video/Sound/Licht-Markierungen prüfen, Sprecher anpassen
@@ -434,13 +467,51 @@ Clips/Projektoren: `media/video/Video Übersicht.csv`, `media/video/Projektor Ü
 
 **Aufführungs-Paket (`.tmshow.zip`):** `manifest.json` + `audio/` — enthält Stücktext, `discussion_turns`, Regieentscheidungen und alle Stimmen. Auf einem anderen Rechner importieren und direkt abspielen.
 
-**Stimmen:** Dramaturgen = GPT (`openai`) / Claude (`anthropic`) — eigene TTS-Stimmen (`TTS_VOICE_OPENAI` / `TTS_VOICE_ANTHROPIC` bzw. `TTS_EDGE_VOICE_*`). Stücktext = **Stimme A / B / Erzähler** (`AI_A` / `AI_B` / `narrator`) — eigene Stimmen (`TTS_VOICE_AI_A` / `TTS_VOICE_AI_B` / `TTS_VOICE_NARRATOR`); im Ablauf wechseln die Sätze rotierend zwischen diesen drei Stimmen, nie die Dramaturgen-Stimmen.
+**Stimmen (Teil 1):** Dramaturgen = GPT / Claude — **Petra (Premium)** / **Viktor (Enhanced)** auf macOS (`TTS_VOICE_OPENAI` / `TTS_VOICE_ANTHROPIC`). Stücktext = **Stimme A / B / Erzähler** (`TTS_VOICE_AI_A` / `AI_B` / `NARRATOR`); Sätze rotieren zwischen diesen drei Stimmen, nie die Dramaturgen-Stimmen.
 
 **Konfiguration:** `DRAMATURGY_STATEMENTS_PER_DRAMATURG=2` (Default) begrenzt Beiträge pro Dramaturg im Workshop.
 
-**Medien-Datenbank:** Videos/Recordings aus Pixera-Katalog (`media/video/Video Übersicht.csv`, OSC `/pixera/args/cue/apply`). **Sound:** `media/sound/Sound Übersicht.csv` (MIDI-Cues → Ableton). Licht: `data/light_scenes.json` aus `media/light/Kanal Übersicht.xlsx`. API: `GET /api/v1/media/catalog`.
+**Medien-Datenbank:** Videos/Recordings aus Pixera-Katalog (`media/video/Video Übersicht.csv`, OSC `/pixera/args/cue/apply`). **Sound:** `media/sound/Sound Übersicht.csv` (MIDI-Cues → Ableton). Licht: `data/light_scenes.json`. API: `GET /api/v1/media/catalog`.
 
 `DIRECTOR_DRAMATURGY_MODE=llm` (Standard) oder `rules` für regelbasierte Cues.
+
+### Teil 2 — Anarchische Inszenierung
+
+Separater Modus für mehrere Tier-Szenen zum Thema **Geld** (z. B. Elfriede Jelinek — *Unter Tieren*). Persistenz: `data/inszenierungen/{id}.json`.
+
+```text
+/inszenierung          Szenen importieren (TXT/JSON, Batch-Upload)
+        ↓
+/inszenierung/analyse  KI: Gesamtkonzept, Geld-Achsen, Anarchie-Kurve
+        ↓
+/inszenierung/komposition  KI wählt Textausschnitte + Regie pro Moment
+        ↓
+/inszenierung/auffuehrung  Anarchie-Player (parallele Stimmen, Layer-Cues)
+```
+
+**Sprache pro Moment (`speech_mode`):**
+
+| Modus | Bedeutung |
+|-------|-----------|
+| `avatar_video` | Gesprochener Text steckt im Pixera-Avatar-Clip — kein TTS |
+| `tts` | KI vertont den Jelinek-Ausschnitt (Teil-2-Stimmen: Eddy / Sandy / Helena) |
+| `silent` | Nur Video/Sound/Licht-Cues |
+
+Die KI matcht Ausschnitte an den **Avatar-Textkatalog** ([`media/video/Avatar Textzuordnung.csv`](media/video/Avatar%20Textzuordnung.csv), API `GET /api/v1/media/avatar-speech`). Frühe Momente bevorzugen Avatar-Videos; mit steigendem `anarchy_level` überlagern sich Stimmen, Clips auf mehreren Beamern (`layer`-Modus) und Sounds.
+
+**Schnellstart Teil 2:**
+
+```bash
+make run
+# Browser: http://localhost:3003/inszenierung
+```
+
+1. Korpus anlegen → Szenen hochladen  
+2. Analyse → Gesamtkonzept prüfen  
+3. Komposition → Momente reviewen (Badge: `Avatar BK3`, `KI Stimme B`, …)  
+4. Aufführung → TTS-Puffer (nur `tts`-Momente) → Play  
+
+Vollständige Anleitung: [`docs/teil2_inszenierung.md`](docs/teil2_inszenierung.md)
 
 ### Debatte (Legacy) — Show-Modus
 
@@ -553,6 +624,8 @@ Theatermaschine/
 ├── frontend/                   # Next.js UI
 │   ├── app/
 │   │   ├── page.tsx            # Debatten-Oberfläche
+│   │   ├── dramaturgie/        # Teil 1: Dramaturgie-Workshop
+│   │   ├── inszenierung/       # Teil 2: Korpus, Analyse, Komposition, Aufführung
 │   │   └── director/page.tsx   # Operator-UI
 │   ├── components/chat/
 │   └── lib/api/
@@ -582,6 +655,7 @@ Theatermaschine/
 | [`backend/app/services/ai_service.py`](backend/app/services/ai_service.py) | OpenAI/Anthropic Provider-Aufrufe |
 | [`backend/app/services/tts_service.py`](backend/app/services/tts_service.py) | TTS-Orchestrierung |
 | [`backend/app/services/tts/`](backend/app/services/tts/) | `mac_say.py` (Siri), `edge_provider.py` (Docker) |
+| [`backend/app/services/tts/voice_map.py`](backend/app/services/tts/voice_map.py) | Stimmen-Profile: `dramaturg`, `performance`, `inszenierung` |
 | [`backend/app/db/`](backend/app/db/) | SQLAlchemy Session, Conversation/Message speichern |
 | [`backend/app/models/entities.py`](backend/app/models/entities.py) | DB-Entitäten |
 | [`backend/app/schemas/debate.py`](backend/app/schemas/debate.py) | Debatten Request/Response-Modelle |
@@ -608,12 +682,26 @@ Theatermaschine/
 | [`recording.py`](backend/app/director/recording.py) | Live-Aufnahme Start/Stop (Phase 4) |
 | [`api/routes/director.py`](backend/app/api/routes/director.py) | REST + SSE für Operator-UI |
 
+### Backend — Teil 2 Inszenierung
+
+| Pfad | Aufgabe |
+|------|---------|
+| [`backend/app/api/routes/inszenierung.py`](backend/app/api/routes/inszenierung.py) | CRUD Korpus, SSE Analyse & Komposition |
+| [`backend/app/services/inszenierung_analyse_service.py`](backend/app/services/inszenierung_analyse_service.py) | Gesamtkonzept aus Tier-Szenen |
+| [`backend/app/services/inszenierung_komposition_service.py`](backend/app/services/inszenierung_komposition_service.py) | Momente, `speech_mode`, Avatar-Matching |
+| [`backend/app/services/avatar_speech_catalog.py`](backend/app/services/avatar_speech_catalog.py) | Avatar-Textkatalog (DEL/BK/LG/PET/WO) |
+| [`backend/app/services/inszenierung_import.py`](backend/app/services/inszenierung_import.py) | Szenen-Import aus TXT/JSON |
+| [`data/inszenierungen/`](data/inszenierungen/) | Persistierte Korpora & Kompositionen |
+| [`data/avatar_speech.json`](data/avatar_speech.json) | Cache des Avatar-Katalogs |
+
 ### Frontend
 
 | Pfad | Aufgabe |
 |------|---------|
 | [`frontend/app/page.tsx`](frontend/app/page.tsx) | Debatten-UI, SSE-Stream, TTS-Wiedergabe |
 | [`frontend/app/director/page.tsx`](frontend/app/director/page.tsx) | **Operator-Panel** — Safety, Status, Recording |
+| [`frontend/app/inszenierung/`](frontend/app/inszenierung/) | **Teil 2** — Import, Analyse, Komposition, Anarchie-Player |
+| [`frontend/features/inszenierung/anarchyPlayback.ts`](frontend/features/inszenierung/anarchyPlayback.ts) | Parallele Stimmen + Layer-Cues |
 | [`frontend/lib/api/client.ts`](frontend/lib/api/client.ts) | Debatten-API + SSE-Parser |
 | [`frontend/lib/api/director.ts`](frontend/lib/api/director.ts) | Director-API + Event-Stream |
 | [`frontend/components/chat/`](frontend/components/chat/) | Nachrichten, Denk-Bubble, Composer |
@@ -625,7 +713,7 @@ Theatermaschine/
 | [`data/media.json`](data/media.json) | Katalog: Videos + Sounds mit dramaturgischen Metadaten |
 | [`data/light_scenes.json`](data/light_scenes.json) | Lichtstimmungen (DMX-Kanäle) |
 | [`data/dramaturgy_rules.json`](data/dramaturgy_rules.json) | Keyword-Mapping, Cue-Mindestabstände |
-| [`media/video/`](media/video/) | Echte Videodateien (`.mp4`) |
+| [`media/video/`](media/video/) | Echte Videodateien (`.mp4`), `Video Übersicht.csv`, `Avatar Textzuordnung.csv` |
 | [`media/audio/`](media/audio/) | Echte Audiodateien (`.wav`) |
 | [`media/recordings/`](media/recordings/) | Live-Aufnahmen aus TouchDesigner |
 
@@ -638,6 +726,8 @@ Theatermaschine/
 | [`backend/tests/test_cue_scheduler.py`](backend/tests/test_cue_scheduler.py) | Safety, Scheduler |
 | [`backend/tests/test_touchdesigner_bridge.py`](backend/tests/test_touchdesigner_bridge.py) | OSC-Payload |
 | [`backend/tests/test_director_api.py`](backend/tests/test_director_api.py) | Director REST-Endpunkte |
+| [`backend/tests/test_inszenierung_*.py`](backend/tests/) | Teil 2: Import, Validierung, Komposition, Avatar-Katalog |
+| [`frontend/features/inszenierung/anarchyPlayback.test.ts`](frontend/features/inszenierung/anarchyPlayback.test.ts) | Anarchie-Scheduling & Speech-Labels |
 
 ---
 
@@ -648,9 +738,21 @@ Theatermaschine/
 | Methode | Pfad | Beschreibung |
 |---------|------|--------------|
 | `POST` | `/api/v1/debate/stream` | Debatte starten/fortsetzen (SSE, enthält optional `director`) |
-| `POST` | `/api/v1/tts/speak` | Text zu Audio |
+| `POST` | `/api/v1/tts/speak` | Text zu Audio (`profile` optional) |
 | `GET` | `/api/v1/tts/status` | TTS-Verfügbarkeit |
 | `GET` | `/api/v1/health` | Health-Check |
+
+### Teil 2 Inszenierung
+
+| Methode | Pfad | Beschreibung |
+|---------|------|--------------|
+| `POST` | `/api/v1/inszenierung` | Korpus anlegen |
+| `GET` | `/api/v1/inszenierung/{id}` | Korpus laden |
+| `POST` | `/api/v1/inszenierung/{id}/scenes/upload` | Szenen-Dateien importieren |
+| `POST` | `/api/v1/inszenierung/{id}/analyse/stream` | Analyse-Workshop (SSE) |
+| `POST` | `/api/v1/inszenierung/{id}/komposition/stream` | Komposition (SSE) |
+| `GET` | `/api/v1/media/avatar-speech` | Avatar-Textkatalog |
+| `POST` | `/api/v1/director/execute-layered` | Layer-Cues für Anarchie-Player |
 
 ### Live-Regie (Director)
 

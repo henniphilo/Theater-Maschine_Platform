@@ -75,14 +75,18 @@ export async function fetchTTSStatus() {
   };
 }
 
+export type TtsSpeaker = "openai" | "anthropic" | "AI_A" | "AI_B" | "narrator";
+export type TtsProfile = "dramaturg" | "performance" | "inszenierung";
+
 export async function fetchSpeechBlob(
   text: string,
-  speaker: "openai" | "anthropic" | "AI_A" | "AI_B" | "narrator"
+  speaker: TtsSpeaker,
+  options?: { profile?: TtsProfile }
 ): Promise<Blob> {
   const res = await fetch(`${API_BASE}/tts/speak`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text, speaker })
+    body: JSON.stringify({ text, speaker, profile: options?.profile ?? null })
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({ detail: "TTS failed" }));

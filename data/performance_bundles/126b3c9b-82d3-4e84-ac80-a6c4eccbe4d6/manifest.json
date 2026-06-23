@@ -1,0 +1,836 @@
+{
+  "format_version": 1,
+  "exported_at": "2026-06-23T11:32:35.405305Z",
+  "tts_provider": "say",
+  "script": {
+    "id": "126b3c9b-82d3-4e84-ac80-a6c4eccbe4d6",
+    "title": "Elfriede jelinek Unter Tieren - Bärenklau",
+    "source_text": "20. Der Bärenklau: \n\n– wir werden alle von Pflanzen ersetzt werden, \nweil die billiger in der Anschaffung und im Betrieb sind \nund keine Widerworte geben –,\nDa der Mensch, ja, sagen wir so, \nalso dermaßen leicht verderblich geworden ist, \nohne daß dem Tier stattdessen eine kleine Chance gegeben wird, \nauch ein bißchen was zu verdienen \n\nda wir also gar kein Geld haben, \nmüssen wir uns leider wieder dem Produzenten der Waren zuwenden, \nwelcher jede Ware an der eines andren messen muß, \n\ndie Produkte stehen sich gegenüber und knurren einander an. \n\n\n\nDer wahre Klassenkampf\n\nWas aber, wenn die Preissteigerungen so hoch sind, \ndaß keiner die Waren mehr kaufen kann? \n\nWenn beide, \nProduzenten wie Arbeiter, \nzusätzliche Kaufkraft wollen, \ndann stehen ihre Interessen ja denen der Gläubigerklasse entgegen, oder?",
+    "beats": [
+      {
+        "id": "a586f08b-9662-4546-b420-ac3598d624c9",
+        "order": 0,
+        "text": "– wir werden alle von Pflanzen ersetzt werden, \nweil die billiger in der Anschaffung und im Betrieb sind \nund keine Widerworte geben –,\nDa der Mensch, ja, sagen wir so, \nalso dermaßen leicht verderblich geworden ist, \nohne daß dem Tier stattdessen eine kleine Chance gegeben wird, \nauch ein bißchen was zu verdienen",
+        "scene_title": "20. Der Bärenklau",
+        "speaker": "AI_A",
+        "dramaturgy": {
+          "visual": null,
+          "sound": null,
+          "light": null,
+          "reason": "Dann einigen wir uns auf ChatGPTs Variante — `machine_whir` statt `click_loop`, das trägt die Verwaltungskälte präziser. Alles andere bleibt. Der Stücktext **„Der Bärenklau\"** liegt bereit. Teil 2 folgt separat.\n\n**Regie drückt Play.**",
+          "dramaturgical_reading": "Dann einigen wir uns auf ChatGPTs Variante — `machine_whir` statt `click_loop`, das trägt die Verwaltungskälte präziser. Alles andere bleibt. Der Stücktext **„Der Bärenklau\"** liegt bereit. Teil 2 folgt separat.\n\n**Regie drückt Play.**",
+          "cue_points": [
+            {
+              "trigger": "start",
+              "keyword": null,
+              "sentence_index": null,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.2,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "avatar",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": {
+                "action": "trigger_cue",
+                "cue_id": "maschinen_grundader",
+                "volume": 0.5
+              },
+              "light": {
+                "action": "set_scene",
+                "scene_id": "blackout",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.45,
+                "replace_previous": true
+              }
+            },
+            {
+              "trigger": "sentence_end",
+              "keyword": null,
+              "sentence_index": 1,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.275,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "avatar2",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": {
+                "action": "trigger_cue",
+                "cue_id": "erinnerungsglitch",
+                "volume": 0.55
+              },
+              "light": {
+                "action": "set_scene",
+                "scene_id": "blendung_magenta",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.45,
+                "replace_previous": true
+              }
+            }
+          ],
+          "performance_speakers": [],
+          "tags": [],
+          "mood": "kontrolliert",
+          "intensity": 0.25,
+          "timestamp": 0.0
+        },
+        "planned_commands": [
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Avatar"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "sound",
+            "host": "127.0.0.1",
+            "port": 7000,
+            "address": "/sound/trigger",
+            "args": [
+              "maschinen_grundader",
+              0.5
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "127.0.0.1",
+            "port": 7000,
+            "address": "/light/set_scene",
+            "args": [
+              "blackout",
+              4.0
+            ],
+            "dry_run": true,
+            "mirror": true
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Avatar2"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "sound",
+            "host": "127.0.0.1",
+            "port": 7000,
+            "address": "/sound/trigger",
+            "args": [
+              "erinnerungsglitch",
+              0.55
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/1701/at",
+            "args": [
+              45.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "127.0.0.1",
+            "port": 7000,
+            "address": "/light/set_scene",
+            "args": [
+              "blendung_magenta",
+              4.0
+            ],
+            "dry_run": true,
+            "mirror": true
+          }
+        ],
+        "discussion_turns": [
+          {
+            "speaker": "anthropic",
+            "content": "Jelinek stellt hier eine bittere Ökonomie aus: Der Mensch wird als verderbliche Ware gedacht, ersetzbar durch Pflanzen — *„billiger in der Anschaffung und im Betrieb\"*. Das Tier bleibt außen vor, bekommt nicht mal *„eine kleine Chance\"*. Die Stimmung ist klinisch-sarkastisch, fast bürokratisch kalt — eine Sprache, die das Lebendige zum Kostenfaktor degradiert. Kein Aufschrei, nur Verwaltung.",
+            "proposed_decision": null
+          },
+          {
+            "speaker": "openai",
+            "content": "ChatGPT: Ja, genau, und das verstärkt diesen Nihilismus, der wie eine übermächtige Wolke über dem Text hängt. Es ist wie eine Inventarliste, der Mensch ist auf ein reglementiertes Objekt reduziert. Ein zusätzliches Zitat könnte *„leicht verderblich geworden\"*. Dramaturgisch könnten wir einen Soundteppich nutzen, der mechanische Geräusche überlagert und die Distanz zwischen Mensch und Natur verstärkt. Ein flackerndes Licht könnte den instabilen Zustand visualisieren.",
+            "proposed_decision": null
+          },
+          {
+            "speaker": "anthropic",
+            "content": "**Medienpaket: Der Bärenklau**\n\n**Sounds/Musik**\n- `low_drone` — Verwaltungsmaschinerie, kalt\n- `static_noise` — Verderblichkeit, Rauschen\n- `click_loop` — „Betrieb\", mechanisch\n- `breath_slow` — letzter organischer Rest\n- `cash_register` — „Anschaffung\"\n- `wind_distant` — Pflanzenwelt, gleichgültig\n- 🎵 `minimal_piano` — leere Würde\n\n**Videos**\n- `kaefer` — Tier ohne Chance\n- `macbook` — Ersatz-Logik\n- `clyde` — verderbliches Tier\n- `inge` — menschliche Restgröße\n- `black` — Auslöschung\n- `odyssee` — verlorene Reise\n\n**Licht**\n- `cold_low` → `verhör` → `flicker` → `narrow` → `warm_fade` → `blackout`\n\n---\n\n\n\n---\n\n**Der Text liegt bereit. Regie drückt Play.**",
+            "proposed_decision": null
+          },
+          {
+            "speaker": "openai",
+            "content": "Claudes Paket passt gut, besonders der Sound `low_drone` und das Video `macbook`, da sie die Idee des ineffizienten Menschen im Vergleich zur Maschine unterstreichen. Ich würde `click_loop` durch `machine_whir` ersetzen, um das mechanistische Gefühl noch deutlicher zu machen. Auch `kaefer` finde ich perfekt zum Entlarven der tierischen Ausweglosigkeit.",
+            "proposed_decision": null
+          },
+          {
+            "speaker": "anthropic",
+            "content": "Dann einigen wir uns auf ChatGPTs Variante — `machine_whir` statt `click_loop`, das trägt die Verwaltungskälte präziser. Alles andere bleibt. Der Stücktext **„Der Bärenklau\"** liegt bereit. Teil 2 folgt separat.\n\n**Regie drückt Play.**",
+            "proposed_decision": null
+          }
+        ],
+        "discussion_summary": "Claude: Jelinek stellt hier eine bittere Ökonomie aus: Der Mensch wird als verderbliche Ware gedacht, ersetzbar durch Pflanzen — *„billiger in der Anschaffung und im Betrieb\"*. Das Tier bleibt außen vor, bekommt nicht mal *„eine kleine Chance\"*. Die Stimmung ist klinisch-sarkastisch, fast bürokratisch kalt — eine Sprache, die das Lebendige zum Kostenfaktor degradiert. Kein Aufschrei, nur Verwaltung.\nChatGPT: ChatGPT: Ja, genau, und das verstärkt diesen Nihilismus, der wie eine übermächtige Wolke über dem Text hängt. Es ist wie eine Inventarliste, der Mensch ist auf ein reglementiertes Objekt reduziert. Ein zusätzliches Zitat könnte *„leicht verderblich geworden\"*. Dramaturgisch könnten wir einen Soundteppich nutzen, der mechanische Geräusche überlagert und die Distanz zwischen Mensch und Natur verstärkt. Ein flackerndes Licht könnte den instabilen Zustand visualisieren.\nClaude: **Medienpaket: Der Bärenklau**\n\n**Sounds/Musik**\n- `low_drone` — Verwaltungsmaschinerie, kalt\n- `static_noise` — Verderblichkeit, Rauschen\n- `click_loop` — „Betrieb\", mechanisch\n- `breath_slow` — letzter organischer Rest\n- `cash_register` — „Anschaffung\"\n- `wind_distant` — Pflanzenwelt, gleichgültig\n- 🎵 `minimal_piano` — leere Würde\n\n**Videos**\n- `kaefer` — Tier ohne Chance\n- `macbook` — Ersatz-Logik\n- `clyde` — verderbliches Tier\n- `inge` — menschliche Restgröße\n- `black` — Auslöschung\n- `odyssee` — verlorene Reise\n\n**Licht**\n- `cold_low` → `verhör` → `flicker` → `narrow` → `warm_fade` → `blackout`\n\n---\n\n```json\n{\"sounds\":[\"low_drone\",\"static_noise\",\"click_loop\",\"breath_slow\",\"cash_register\",\"wind_distant\"],\"music\":[\"minimal_piano\"],\"videos\":[\"kaefer\",\"macbook\",\"clyde\",\"inge\",\"black\",\"odyssee\"],\"lights\":[\"cold_low\",\"verhoer\",\"flicker\",\"narrow\",\"warm_fade\",\"blackout\"]}\n```\n\n---\n\n**Der Text liegt bereit. Regie drückt Play.**\nChatGPT: Claudes Paket passt gut, besonders der Sound `low_drone` und das Video `macbook`, da sie die Idee des ineffizienten Menschen im Vergleich zur Maschine unterstreichen. Ich würde `click_loop` durch `machine_whir` ersetzen, um das mechanistische Gefühl noch deutlicher zu machen. Auch `kaefer` finde ich perfekt zum Entlarven der tierischen Ausweglosigkeit.\n\n```json\n{\"sounds\":[\"low_drone\",\"static_noise\",\"machine_whir\",\"breath_slow\",\"cash_register\",\"wind_distant\"],\"music\":[\"minimal_piano\"],\"videos\":[\"kaefer\",\"macbook\",\"clyde\",\"inge\",\"black\",\"odyssee\"],\"lights\":[\"cold_low\",\"verhoer\",\"flicker\",\"narrow\",\"warm_fade\",\"blackout\"]}\n```\nClaude: Dann einigen wir uns auf ChatGPTs Variante — `machine_whir` statt `click_loop`, das trägt die Verwaltungskälte präziser. Alles andere bleibt. Der Stücktext **„Der Bärenklau\"** liegt bereit. Teil 2 folgt separat.\n\n**Regie drückt Play.**\n\n```json\n{\"sounds\":[\"low_drone\",\"static_noise\",\"machine_whir\",\"breath_slow\",\"cash_register\",\"wind_distant\"],\"music\":[\"minimal_piano\"],\"videos\":[\"kaefer\",\"macbook\",\"clyde\",\"inge\",\"black\",\"odyssee\"],\"lights\":[\"cold_low\",\"verhoer\",\"flicker\",\"narrow\",\"warm_fade\",\"blackout\"]}\n```"
+      },
+      {
+        "id": "ad670f16-6f20-4f8e-abb2-5cea342a63bb",
+        "order": 1,
+        "text": "müssen wir uns leider wieder dem Produzenten der Waren zuwenden, \nwelcher jede Ware an der eines andren messen muß,\n\ndie Produkte stehen sich gegenüber und knurren einander an.",
+        "scene_title": "da wir also gar kein Geld haben,",
+        "speaker": "AI_B",
+        "dramaturgy": {
+          "visual": null,
+          "sound": null,
+          "light": null,
+          "reason": "Dann einigen wir uns auf folgende Variante: `chaos_loop` statt `motor_loop` — der instabilere Charakter trifft das Knurren besser. `flicker_fast` verschärft den Warenkonflikt. Alle anderen Elemente bleiben. Der Stücktext wird jetzt aufgeführt. **Regie drückt Play, wenn bereit. Teil 2 (Anarchie) folgt separat.**",
+          "dramaturgical_reading": "Dann einigen wir uns auf folgende Variante: `chaos_loop` statt `motor_loop` — der instabilere Charakter trifft das Knurren besser. `flicker_fast` verschärft den Warenkonflikt. Alle anderen Elemente bleiben. Der Stücktext wird jetzt aufgeführt. **Regie drückt Play, wenn bereit. Teil 2 (Anarchie) folgt separat.**",
+          "cue_points": [
+            {
+              "trigger": "start",
+              "keyword": null,
+              "sentence_index": null,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.2,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "avatar",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": {
+                "action": "trigger_cue",
+                "cue_id": "maschinen_grundader",
+                "volume": 0.5
+              },
+              "light": {
+                "action": "set_scene",
+                "scene_id": "blackout",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.45,
+                "replace_previous": true
+              }
+            }
+          ],
+          "performance_speakers": [],
+          "tags": [],
+          "mood": "kontrolliert",
+          "intensity": 0.25,
+          "timestamp": 0.0
+        },
+        "planned_commands": [
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Avatar"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "sound",
+            "host": "127.0.0.1",
+            "port": 7000,
+            "address": "/sound/trigger",
+            "args": [
+              "maschinen_grundader",
+              0.5
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "127.0.0.1",
+            "port": 7000,
+            "address": "/light/set_scene",
+            "args": [
+              "blackout",
+              4.0
+            ],
+            "dry_run": true,
+            "mirror": true
+          }
+        ],
+        "discussion_turns": [
+          {
+            "speaker": "anthropic",
+            "content": "Jelinek setzt hier den Warentausch als Urgewalt in Szene — kein Mensch spricht, sondern Waren selbst. „Die Produkte stehen sich gegenüber und knurren einander an\" — das Knurren ist das Schlüsselbild: tierisch, ökonomisch, bedrohlich zugleich. Stimmung: kalt, maschinell, latent aggressiv. Keine Empathie, nur Messung. Wir sind im Verhörraum des Kapitals.",
+            "proposed_decision": null
+          },
+          {
+            "speaker": "openai",
+            "content": "ChatGPT: Dein Bild des Verhörraums gefällt mir — es unterstreicht die Entmenschlichung. Das Zitat „müssen wir uns leider wieder dem Produzenten der Waren zuwenden\" steht für ein Rückwärtsgehen in Abhängigkeit. Dramaturgisch könnte ein Sound wie ein mechanisches, kaltes Uhrwerk den ökonomischen Zwang verstärken. Ein Video zeigt, wie Bildschirme ineinander fließen, während kaltes, steriles Licht die Szene unterstreicht.",
+            "proposed_decision": null
+          },
+          {
+            "speaker": "anthropic",
+            "content": "**Sounds/Musik**\n„Knurren\" braucht maschinelle Reibung: `motor_loop` (Zwang), `static_noise` (Störung), `clock_tick` (Messung), `low_drone` (Bedrohung), `breath_loop` (Tier/Körper), `cash_register` (Ware). Musik: `ambient_dark` — kein Puls, nur Druck.\n\n**Videos**\n`macbook`+`ipad` (Bildschirme messen einander), `branko`+`nicolas` (Figuren als Waren gegenüber), `kaefer` (tierisches Knurren), `black` (Auslöschung).\n\n**Licht**\nVerhörartig kalt: `cold_low`, `narrow_spot`, `flicker_slow`, `blue_wash`, `hard_cut`, `blackout`.\n\n\n\n**→ Das Medienpaket steht. Sobald die Regie bereit ist: Play.**",
+            "proposed_decision": null
+          },
+          {
+            "speaker": "openai",
+            "content": "Claude, dein Paket greift die Kälte und Mechanik wunderbar auf. Ich denke, das `chaos_loop` könnte zusätzlich die instabile Wirtschaft simulieren. Einstellen würde ich `motor_loop`, da `chaos_loop` maschinelle Bedrohung und Reibung umfasst. Die Lichtwahl passt, doch `flicker_fast` könnte den Konflikt zwischen Waren stärker verstärken. \n\n\n\n**Die Präsentation steht bereit. Sobald die Regie bereit ist: Play.**",
+            "proposed_decision": null
+          },
+          {
+            "speaker": "anthropic",
+            "content": "Dann einigen wir uns auf folgende Variante: `chaos_loop` statt `motor_loop` — der instabilere Charakter trifft das Knurren besser. `flicker_fast` verschärft den Warenkonflikt. Alle anderen Elemente bleiben. Der Stücktext wird jetzt aufgeführt. **Regie drückt Play, wenn bereit. Teil 2 (Anarchie) folgt separat.**",
+            "proposed_decision": null
+          }
+        ],
+        "discussion_summary": "Claude: Jelinek setzt hier den Warentausch als Urgewalt in Szene — kein Mensch spricht, sondern Waren selbst. „Die Produkte stehen sich gegenüber und knurren einander an\" — das Knurren ist das Schlüsselbild: tierisch, ökonomisch, bedrohlich zugleich. Stimmung: kalt, maschinell, latent aggressiv. Keine Empathie, nur Messung. Wir sind im Verhörraum des Kapitals.\nChatGPT: ChatGPT: Dein Bild des Verhörraums gefällt mir — es unterstreicht die Entmenschlichung. Das Zitat „müssen wir uns leider wieder dem Produzenten der Waren zuwenden\" steht für ein Rückwärtsgehen in Abhängigkeit. Dramaturgisch könnte ein Sound wie ein mechanisches, kaltes Uhrwerk den ökonomischen Zwang verstärken. Ein Video zeigt, wie Bildschirme ineinander fließen, während kaltes, steriles Licht die Szene unterstreicht.\nClaude: **Sounds/Musik**\n„Knurren\" braucht maschinelle Reibung: `motor_loop` (Zwang), `static_noise` (Störung), `clock_tick` (Messung), `low_drone` (Bedrohung), `breath_loop` (Tier/Körper), `cash_register` (Ware). Musik: `ambient_dark` — kein Puls, nur Druck.\n\n**Videos**\n`macbook`+`ipad` (Bildschirme messen einander), `branko`+`nicolas` (Figuren als Waren gegenüber), `kaefer` (tierisches Knurren), `black` (Auslöschung).\n\n**Licht**\nVerhörartig kalt: `cold_low`, `narrow_spot`, `flicker_slow`, `blue_wash`, `hard_cut`, `blackout`.\n\n```json\n{\"sounds\":[\"motor_loop\",\"static_noise\",\"clock_tick\",\"low_drone\",\"breath_loop\",\"cash_register\"],\"music\":[\"ambient_dark\"],\"videos\":[\"macbook\",\"ipad\",\"branko\",\"nicolas\",\"kaefer\",\"black\"],\"lights\":[\"cold_low\",\"narrow_spot\",\"flicker_slow\",\"blue_wash\",\"hard_cut\",\"blackout\"]}\n```\n\n**→ Das Medienpaket steht. Sobald die Regie bereit ist: Play.**\nChatGPT: Claude, dein Paket greift die Kälte und Mechanik wunderbar auf. Ich denke, das `chaos_loop` könnte zusätzlich die instabile Wirtschaft simulieren. Einstellen würde ich `motor_loop`, da `chaos_loop` maschinelle Bedrohung und Reibung umfasst. Die Lichtwahl passt, doch `flicker_fast` könnte den Konflikt zwischen Waren stärker verstärken. \n\n```json\n{\"sounds\":[\"chaos_loop\",\"static_noise\",\"clock_tick\",\"low_drone\",\"breath_loop\",\"cash_register\"],\"music\":[\"ambient_dark\"],\"videos\":[\"macbook\",\"ipad\",\"branko\",\"nicolas\",\"kaefer\",\"black\"],\"lights\":[\"cold_low\",\"narrow_spot\",\"flicker_fast\",\"blue_wash\",\"hard_cut\",\"blackout\"]}\n```\n\n**Die Präsentation steht bereit. Sobald die Regie bereit ist: Play.**\nClaude: Dann einigen wir uns auf folgende Variante: `chaos_loop` statt `motor_loop` — der instabilere Charakter trifft das Knurren besser. `flicker_fast` verschärft den Warenkonflikt. Alle anderen Elemente bleiben. Der Stücktext wird jetzt aufgeführt. **Regie drückt Play, wenn bereit. Teil 2 (Anarchie) folgt separat.**\n\n```json\n{\"sounds\":[\"chaos_loop\",\"static_noise\",\"clock_tick\",\"low_drone\",\"breath_loop\",\"cash_register\"],\"music\":[\"ambient_dark\"],\"videos\":[\"macbook\",\"ipad\",\"branko\",\"nicolas\",\"kaefer\",\"black\"],\"lights\":[\"cold_low\",\"narrow_spot\",\"flicker_fast\",\"blue_wash\",\"hard_cut\",\"blackout\"]}\n```"
+      },
+      {
+        "id": "99983b52-9389-41f8-86e5-bd71ad3669c9",
+        "order": 2,
+        "text": "Der wahre Klassenkampf\n\nWas aber, wenn die Preissteigerungen so hoch sind, \ndaß keiner die Waren mehr kaufen kann?\n\nWenn beide, \nProduzenten wie Arbeiter, \nzusätzliche Kaufkraft wollen, \ndann stehen ihre Interessen ja denen der Gläubigerklasse entgegen, oder?",
+        "scene_title": null,
+        "speaker": "AI_A",
+        "dramaturgy": {
+          "visual": null,
+          "sound": null,
+          "light": null,
+          "reason": "Dann einigen wir uns: Maschinenlogik und bürokratische Kälte dominieren. Flackern statt hartem Dunkel — die Unsicherheit bleibt sichtbar. Hissing statt Schnitt — die Bedrohung atmet weiter.\n\nDer Stücktext wird jetzt aufgeführt. Teil 2 startet separat.\n\n\n\n▶ Regie: Play.",
+          "dramaturgical_reading": "Dann einigen wir uns: Maschinenlogik und bürokratische Kälte dominieren. Flackern statt hartem Dunkel — die Unsicherheit bleibt sichtbar. Hissing statt Schnitt — die Bedrohung atmet weiter.\n\nDer Stücktext wird jetzt aufgeführt. Teil 2 startet separat.\n\n\n\n▶ Regie: Play.",
+          "cue_points": [
+            {
+              "trigger": "start",
+              "keyword": null,
+              "sentence_index": null,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.2,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "avatar",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": {
+                "action": "trigger_cue",
+                "cue_id": "maschinen_grundader",
+                "volume": 0.5
+              },
+              "light": {
+                "action": "set_scene",
+                "scene_id": "blackout",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.45,
+                "replace_previous": true
+              }
+            },
+            {
+              "trigger": "sentence_end",
+              "keyword": null,
+              "sentence_index": 1,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.275,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "avatar2",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": {
+                "action": "trigger_cue",
+                "cue_id": "erinnerungsglitch",
+                "volume": 0.55
+              },
+              "light": {
+                "action": "set_scene",
+                "scene_id": "blendung_magenta",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.45,
+                "replace_previous": true
+              }
+            }
+          ],
+          "performance_speakers": [],
+          "tags": [],
+          "mood": "kontrolliert",
+          "intensity": 0.25,
+          "timestamp": 0.0
+        },
+        "planned_commands": [
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Avatar"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "sound",
+            "host": "127.0.0.1",
+            "port": 7000,
+            "address": "/sound/trigger",
+            "args": [
+              "maschinen_grundader",
+              0.5
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "127.0.0.1",
+            "port": 7000,
+            "address": "/light/set_scene",
+            "args": [
+              "blackout",
+              4.0
+            ],
+            "dry_run": true,
+            "mirror": true
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Avatar2"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "sound",
+            "host": "127.0.0.1",
+            "port": 7000,
+            "address": "/sound/trigger",
+            "args": [
+              "erinnerungsglitch",
+              0.55
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/1701/at",
+            "args": [
+              45.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "127.0.0.1",
+            "port": 7000,
+            "address": "/light/set_scene",
+            "args": [
+              "blendung_magenta",
+              4.0
+            ],
+            "dry_run": true,
+            "mirror": true
+          }
+        ],
+        "discussion_turns": [
+          {
+            "speaker": "anthropic",
+            "content": "Dieser Abschnitt ist Jelinek pur: ökonomische Logik als Verhörsprache. Der Text stellt keine Fragen — er stellt Fallen. *„Dann stehen ihre Interessen ja denen der Gläubigerklasse entgegen, oder?\"* — dieses „oder?\" ist giftig. Die Grundstimmung: bürokratische Kälte mit unterirdischem Druck. Klassenkampf nicht als Aufschrei, sondern als Rechenaufgabe, die niemand lösen kann.",
+            "proposed_decision": null
+          },
+          {
+            "speaker": "openai",
+            "content": "ChatGPT: Absolut, diese Rechenaufgabe verdeckt ein unterschwelliges Chaos. Das „Wenn beide, Produzenten wie Arbeiter…“ zeigt die verschlingende Unausweichlichkeit. Für eine dramaturgische Verstärkung könnten wir mit einem metallischen, kratzenden Sound beginnen, der die Kaltheit der Idee des Klassenkampfes widerspiegelt. Videomäßig könnte ein flackender Bildschirm das Unbehagen und die Bürokratisierung verstärken. Licht sollte ebenfalls kalt und hart wirken, um die Distanz und Härte zu betonen.",
+            "proposed_decision": null
+          },
+          {
+            "speaker": "anthropic",
+            "content": "**Sounds/Musik**\n„Oder?\" braucht Maschinenlogik: Tintendrucker, Metallscharnier, leise Sirene — Bürokratie als Körper. Dazu Stille als Waffe, ein tiefer Drone, ein unterbrochenes Piepen. Musik: schwere Elektronik, fast bewegungslos.\n\n**Videos**\nBildschirme (macbook, ipad) entlarven die Rechenaufgabe. Figuren sebastian, nicolas, branko — Produzenten/Arbeiter — überlagert. Kaefer: Systemschädling. Black: wenn „keiner kaufen kann.\"\n\n**Licht**\nVerhörkalt, fluoreszent, Pause=Dunkel, blau-weiß, schmaler Spot, Totalausfall.\n\n\n\n▶ Die Regie drückt Play — sobald sie bereit ist.",
+            "proposed_decision": null
+          },
+          {
+            "speaker": "openai",
+            "content": "ChatGPT: Claudes Ansatz passt hervorragend zur Sprachfläche von Jelinek. Ich würde den Kaefer erweitern, um das Unheimliche im System zu verstärken. Statt Pause=Dunkel könnten wir mit einem leichten Flackern arbeiten, um die Unsicherheit zu betonen. Ich tausche \"silence_cut\" gegen \"hissing_noise\", um die unterschwellige Bedrohung zu transportieren.",
+            "proposed_decision": null
+          },
+          {
+            "speaker": "anthropic",
+            "content": "Dann einigen wir uns: Maschinenlogik und bürokratische Kälte dominieren. Flackern statt hartem Dunkel — die Unsicherheit bleibt sichtbar. Hissing statt Schnitt — die Bedrohung atmet weiter.\n\nDer Stücktext wird jetzt aufgeführt. Teil 2 startet separat.\n\n\n\n▶ Regie: Play.",
+            "proposed_decision": null
+          }
+        ],
+        "discussion_summary": "Claude: Dieser Abschnitt ist Jelinek pur: ökonomische Logik als Verhörsprache. Der Text stellt keine Fragen — er stellt Fallen. *„Dann stehen ihre Interessen ja denen der Gläubigerklasse entgegen, oder?\"* — dieses „oder?\" ist giftig. Die Grundstimmung: bürokratische Kälte mit unterirdischem Druck. Klassenkampf nicht als Aufschrei, sondern als Rechenaufgabe, die niemand lösen kann.\nChatGPT: ChatGPT: Absolut, diese Rechenaufgabe verdeckt ein unterschwelliges Chaos. Das „Wenn beide, Produzenten wie Arbeiter…“ zeigt die verschlingende Unausweichlichkeit. Für eine dramaturgische Verstärkung könnten wir mit einem metallischen, kratzenden Sound beginnen, der die Kaltheit der Idee des Klassenkampfes widerspiegelt. Videomäßig könnte ein flackender Bildschirm das Unbehagen und die Bürokratisierung verstärken. Licht sollte ebenfalls kalt und hart wirken, um die Distanz und Härte zu betonen.\nClaude: **Sounds/Musik**\n„Oder?\" braucht Maschinenlogik: Tintendrucker, Metallscharnier, leise Sirene — Bürokratie als Körper. Dazu Stille als Waffe, ein tiefer Drone, ein unterbrochenes Piepen. Musik: schwere Elektronik, fast bewegungslos.\n\n**Videos**\nBildschirme (macbook, ipad) entlarven die Rechenaufgabe. Figuren sebastian, nicolas, branko — Produzenten/Arbeiter — überlagert. Kaefer: Systemschädling. Black: wenn „keiner kaufen kann.\"\n\n**Licht**\nVerhörkalt, fluoreszent, Pause=Dunkel, blau-weiß, schmaler Spot, Totalausfall.\n\n```json\n{\"sounds\":[\"drone_low\",\"metal_creak\",\"printer_loop\",\"siren_distant\",\"silence_cut\",\"beep_interrupt\"],\"music\":[\"elektro_heavy_static\"],\"videos\":[\"macbook\",\"ipad\",\"sebastian\",\"nicolas\",\"branko\",\"kaefer\"],\"lights\":[\"verhör_kalt\",\"fluoreszent_hart\",\"pause_dunkel\",\"blau_weiss\",\"spot_schmal\",\"total_ausfall\"]}\n```\n\n▶ Die Regie drückt Play — sobald sie bereit ist.\nChatGPT: ChatGPT: Claudes Ansatz passt hervorragend zur Sprachfläche von Jelinek. Ich würde den Kaefer erweitern, um das Unheimliche im System zu verstärken. Statt Pause=Dunkel könnten wir mit einem leichten Flackern arbeiten, um die Unsicherheit zu betonen. Ich tausche \"silence_cut\" gegen \"hissing_noise\", um die unterschwellige Bedrohung zu transportieren. \n\n```json\n{\"sounds\":[\"drone_low\",\"metal_creak\",\"printer_loop\",\"siren_distant\",\"hissing_noise\",\"beep_interrupt\"],\"music\":[\"elektro_heavy_static\"],\"videos\":[\"macbook\",\"ipad\",\"sebastian\",\"nicolas\",\"branko\",\"kaefer\"],\"lights\":[\"verhör_kalt\",\"fluoreszent_hart\",\"licht_flackern\",\"blau_weiss\",\"spot_schmal\",\"total_ausfall\"]}\n```\nClaude: Dann einigen wir uns: Maschinenlogik und bürokratische Kälte dominieren. Flackern statt hartem Dunkel — die Unsicherheit bleibt sichtbar. Hissing statt Schnitt — die Bedrohung atmet weiter.\n\nDer Stücktext wird jetzt aufgeführt. Teil 2 startet separat.\n\n```json\n{\"sounds\":[\"drone_low\",\"metal_creak\",\"printer_loop\",\"siren_distant\",\"hissing_noise\",\"beep_interrupt\"],\"music\":[\"elektro_heavy_static\"],\"videos\":[\"macbook\",\"ipad\",\"sebastian\",\"nicolas\",\"branko\",\"kaefer\"],\"lights\":[\"verhör_kalt\",\"fluoreszent_hart\",\"licht_flackern\",\"blau_weiss\",\"spot_schmal\",\"total_ausfall\"]}\n```\n\n▶ Regie: Play."
+      }
+    ],
+    "status": "ready",
+    "has_rendered_audio": true,
+    "part1_selection": {
+      "part": 1,
+      "scene": "Bärenklau",
+      "script_id": "126b3c9b-82d3-4e84-ac80-a6c4eccbe4d6",
+      "beat_id": "99983b52-9389-41f8-86e5-bd71ad3669c9",
+      "selected_by": [
+        "Claude",
+        "ChatGPT"
+      ],
+      "final_sounds": [
+        "archiv_rauschen",
+        "erinnerungsglitch",
+        "herz_unter_glas",
+        "kaefigecho",
+        "leere_zwischen_saetzen",
+        "maschinen_grundader"
+      ],
+      "final_music": [
+        "maschinen_grundader"
+      ],
+      "final_videos": [
+        "avatar",
+        "avatar2",
+        "berge",
+        "black",
+        "bonnie",
+        "branko"
+      ],
+      "final_lights": [
+        "blackout",
+        "blendung_magenta",
+        "blendung_zuschauerraum",
+        "buehne_kalt_hart",
+        "fluegel",
+        "gegenlicht_weich"
+      ],
+      "dramaturgical_reading": "Dann einigen wir uns: Maschinenlogik und bürokratische Kälte dominieren. Flackern statt hartem Dunkel — die Unsicherheit bleibt sichtbar. Hissing statt Schnitt — die Bedrohung atmet weiter.\n\nDer Stücktext wird jetzt aufgeführt. Teil 2 startet separat.\n\n\n\n▶ Regie: Play.",
+      "cue_strategy": "Teil 1 — finale KI-Einigung nach Dramaturgen-Gespräch",
+      "discussion_turns": [
+        {
+          "speaker": "anthropic",
+          "content": "Dieser Abschnitt ist Jelinek pur: ökonomische Logik als Verhörsprache. Der Text stellt keine Fragen — er stellt Fallen. *„Dann stehen ihre Interessen ja denen der Gläubigerklasse entgegen, oder?\"* — dieses „oder?\" ist giftig. Die Grundstimmung: bürokratische Kälte mit unterirdischem Druck. Klassenkampf nicht als Aufschrei, sondern als Rechenaufgabe, die niemand lösen kann.",
+          "proposed_decision": null
+        },
+        {
+          "speaker": "openai",
+          "content": "ChatGPT: Absolut, diese Rechenaufgabe verdeckt ein unterschwelliges Chaos. Das „Wenn beide, Produzenten wie Arbeiter…“ zeigt die verschlingende Unausweichlichkeit. Für eine dramaturgische Verstärkung könnten wir mit einem metallischen, kratzenden Sound beginnen, der die Kaltheit der Idee des Klassenkampfes widerspiegelt. Videomäßig könnte ein flackender Bildschirm das Unbehagen und die Bürokratisierung verstärken. Licht sollte ebenfalls kalt und hart wirken, um die Distanz und Härte zu betonen.",
+          "proposed_decision": null
+        },
+        {
+          "speaker": "anthropic",
+          "content": "**Sounds/Musik**\n„Oder?\" braucht Maschinenlogik: Tintendrucker, Metallscharnier, leise Sirene — Bürokratie als Körper. Dazu Stille als Waffe, ein tiefer Drone, ein unterbrochenes Piepen. Musik: schwere Elektronik, fast bewegungslos.\n\n**Videos**\nBildschirme (macbook, ipad) entlarven die Rechenaufgabe. Figuren sebastian, nicolas, branko — Produzenten/Arbeiter — überlagert. Kaefer: Systemschädling. Black: wenn „keiner kaufen kann.\"\n\n**Licht**\nVerhörkalt, fluoreszent, Pause=Dunkel, blau-weiß, schmaler Spot, Totalausfall.\n\n\n\n▶ Die Regie drückt Play — sobald sie bereit ist.",
+          "proposed_decision": null
+        },
+        {
+          "speaker": "openai",
+          "content": "ChatGPT: Claudes Ansatz passt hervorragend zur Sprachfläche von Jelinek. Ich würde den Kaefer erweitern, um das Unheimliche im System zu verstärken. Statt Pause=Dunkel könnten wir mit einem leichten Flackern arbeiten, um die Unsicherheit zu betonen. Ich tausche \"silence_cut\" gegen \"hissing_noise\", um die unterschwellige Bedrohung zu transportieren.",
+          "proposed_decision": null
+        },
+        {
+          "speaker": "anthropic",
+          "content": "Dann einigen wir uns: Maschinenlogik und bürokratische Kälte dominieren. Flackern statt hartem Dunkel — die Unsicherheit bleibt sichtbar. Hissing statt Schnitt — die Bedrohung atmet weiter.\n\nDer Stücktext wird jetzt aufgeführt. Teil 2 startet separat.\n\n\n\n▶ Regie: Play.",
+          "proposed_decision": null
+        }
+      ],
+      "created_at": "2026-06-23T11:31:02.430873Z"
+    },
+    "performance_part": null,
+    "teil2_corpus_id": null
+  },
+  "audio_files": [
+    {
+      "beat_id": "a586f08b-9662-4546-b420-ac3598d624c9",
+      "beat_order": 0,
+      "kind": "discussion",
+      "turn_index": 0,
+      "speaker": "anthropic",
+      "path": "audio/000-discussion-0.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "a586f08b-9662-4546-b420-ac3598d624c9",
+      "beat_order": 0,
+      "kind": "discussion",
+      "turn_index": 1,
+      "speaker": "openai",
+      "path": "audio/000-discussion-1.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "a586f08b-9662-4546-b420-ac3598d624c9",
+      "beat_order": 0,
+      "kind": "discussion",
+      "turn_index": 2,
+      "speaker": "anthropic",
+      "path": "audio/000-discussion-2.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "a586f08b-9662-4546-b420-ac3598d624c9",
+      "beat_order": 0,
+      "kind": "discussion",
+      "turn_index": 3,
+      "speaker": "openai",
+      "path": "audio/000-discussion-3.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "a586f08b-9662-4546-b420-ac3598d624c9",
+      "beat_order": 0,
+      "kind": "discussion",
+      "turn_index": 4,
+      "speaker": "anthropic",
+      "path": "audio/000-discussion-4.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "a586f08b-9662-4546-b420-ac3598d624c9",
+      "beat_order": 0,
+      "kind": "performance",
+      "turn_index": 0,
+      "speaker": "AI_A",
+      "path": "audio/000-performance-0.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "ad670f16-6f20-4f8e-abb2-5cea342a63bb",
+      "beat_order": 1,
+      "kind": "discussion",
+      "turn_index": 0,
+      "speaker": "anthropic",
+      "path": "audio/001-discussion-0.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "ad670f16-6f20-4f8e-abb2-5cea342a63bb",
+      "beat_order": 1,
+      "kind": "discussion",
+      "turn_index": 1,
+      "speaker": "openai",
+      "path": "audio/001-discussion-1.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "ad670f16-6f20-4f8e-abb2-5cea342a63bb",
+      "beat_order": 1,
+      "kind": "discussion",
+      "turn_index": 2,
+      "speaker": "anthropic",
+      "path": "audio/001-discussion-2.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "ad670f16-6f20-4f8e-abb2-5cea342a63bb",
+      "beat_order": 1,
+      "kind": "discussion",
+      "turn_index": 3,
+      "speaker": "openai",
+      "path": "audio/001-discussion-3.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "ad670f16-6f20-4f8e-abb2-5cea342a63bb",
+      "beat_order": 1,
+      "kind": "discussion",
+      "turn_index": 4,
+      "speaker": "anthropic",
+      "path": "audio/001-discussion-4.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "ad670f16-6f20-4f8e-abb2-5cea342a63bb",
+      "beat_order": 1,
+      "kind": "performance",
+      "turn_index": 0,
+      "speaker": "AI_B",
+      "path": "audio/001-performance-0.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "99983b52-9389-41f8-86e5-bd71ad3669c9",
+      "beat_order": 2,
+      "kind": "discussion",
+      "turn_index": 0,
+      "speaker": "anthropic",
+      "path": "audio/002-discussion-0.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "99983b52-9389-41f8-86e5-bd71ad3669c9",
+      "beat_order": 2,
+      "kind": "discussion",
+      "turn_index": 1,
+      "speaker": "openai",
+      "path": "audio/002-discussion-1.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "99983b52-9389-41f8-86e5-bd71ad3669c9",
+      "beat_order": 2,
+      "kind": "discussion",
+      "turn_index": 2,
+      "speaker": "anthropic",
+      "path": "audio/002-discussion-2.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "99983b52-9389-41f8-86e5-bd71ad3669c9",
+      "beat_order": 2,
+      "kind": "discussion",
+      "turn_index": 3,
+      "speaker": "openai",
+      "path": "audio/002-discussion-3.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "99983b52-9389-41f8-86e5-bd71ad3669c9",
+      "beat_order": 2,
+      "kind": "discussion",
+      "turn_index": 4,
+      "speaker": "anthropic",
+      "path": "audio/002-discussion-4.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "99983b52-9389-41f8-86e5-bd71ad3669c9",
+      "beat_order": 2,
+      "kind": "performance",
+      "turn_index": 0,
+      "speaker": "AI_A",
+      "path": "audio/002-performance-0.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "99983b52-9389-41f8-86e5-bd71ad3669c9",
+      "beat_order": 2,
+      "kind": "performance",
+      "turn_index": 1,
+      "speaker": "AI_B",
+      "path": "audio/002-performance-1.m4a",
+      "extension": "m4a"
+    }
+  ]
+}

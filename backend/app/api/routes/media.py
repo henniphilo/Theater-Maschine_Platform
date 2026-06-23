@@ -2,14 +2,17 @@ from fastapi import APIRouter
 
 from app.core.config import settings
 from app.director.media.database import MediaDatabase
+from app.schemas.avatar_speech import AvatarSpeechCatalog
 from app.schemas.sound_cues import SoundCueCatalog
 from app.schemas.video_cues import VideoCueCatalog
 from app.services.sound_cue_catalog import get_sound_cue_catalog_service
 from app.services.video_cue_catalog import get_video_cue_catalog_service
+from app.services.avatar_speech_catalog import get_avatar_speech_catalog_service
 
 router = APIRouter(prefix="/media", tags=["media"])
 _sound_catalog = get_sound_cue_catalog_service()
 _video_catalog = get_video_cue_catalog_service()
+_avatar_catalog = get_avatar_speech_catalog_service()
 
 
 @router.get("/sound-cues", response_model=SoundCueCatalog)
@@ -20,6 +23,11 @@ def get_sound_cues() -> SoundCueCatalog:
 @router.get("/video-cues", response_model=VideoCueCatalog)
 def get_video_cues() -> VideoCueCatalog:
     return _video_catalog.load()
+
+
+@router.get("/avatar-speech", response_model=AvatarSpeechCatalog)
+def get_avatar_speech() -> AvatarSpeechCatalog:
+    return _avatar_catalog.load()
 
 
 @router.get("/catalog")

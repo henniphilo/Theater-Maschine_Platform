@@ -43,7 +43,13 @@
         "neutral"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "clyde",
@@ -59,7 +65,13 @@
         "melancholisch"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "bonnie",
@@ -75,7 +87,13 @@
         "warm"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "macbook",
@@ -91,7 +109,13 @@
         "spannung"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "ipad",
@@ -106,7 +130,13 @@
         "neutral"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "inge",
@@ -121,7 +151,13 @@
         "melancholisch"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "sebastian",
@@ -136,7 +172,13 @@
         "spannung"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "thomas",
@@ -151,7 +193,13 @@
         "neutral"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "nicolas",
@@ -167,7 +215,13 @@
         "spannung"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "branko",
@@ -183,7 +237,13 @@
         "spannung"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "thiemo",
@@ -199,7 +259,13 @@
         "spannung"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "musiker",
@@ -215,7 +281,13 @@
         "spannung"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "hundethiel",
@@ -231,7 +303,13 @@
         "unheimlich"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "odyssee",
@@ -247,7 +325,13 @@
         "melancholisch"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "kaefer",
@@ -262,7 +346,13 @@
         "unheimlich"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "random",
@@ -278,7 +368,13 @@
         "spannung"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "mehlwurm",
@@ -293,7 +389,13 @@
         "unheimlich"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "avatar",
@@ -309,7 +411,13 @@
         "spannung"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "avatar2",
@@ -325,7 +433,13 @@
         "spannung"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "esel",
@@ -340,7 +454,13 @@
         "melancholisch"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "gehirn",
@@ -356,7 +476,13 @@
         "spannung"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "thiel",
@@ -371,7 +497,13 @@
         "unheimlich"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "thiel2",
@@ -386,7 +518,13 @@
         "unheimlich"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "thiel3",
@@ -401,7 +539,13 @@
         "unheimlich"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "kurzthiel",
@@ -417,7 +561,13 @@
         "spannung"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "berge",
@@ -433,7 +583,13 @@
         "melancholisch"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     },
     {
       "id": "strand",
@@ -449,7 +605,13 @@
         "melancholisch"
       ],
       "intensity_min": 0.0,
-      "intensity_max": 1.0
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
     }
   ]
 }

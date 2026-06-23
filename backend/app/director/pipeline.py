@@ -6,6 +6,7 @@ from threading import Lock
 
 from app.core.config import settings
 from app.director.cues.cue_models import DramaturgyDecision, OscCommand, ScheduledCue
+from app.director.cues.projector_state import ProjectorState
 from app.director.cues.scheduler import CueScheduler
 from app.director.cues.safety import SafetyState, get_safety_state
 from app.director.dialogue.models import DialogueEvent, DialogueSpeaker
@@ -62,6 +63,7 @@ class DirectorPipeline:
         self.sound = sound or SoundBridge()
         self.lighting = lighting or LightingBridge(self.media_db)
         self.logger = logger or DirectorLogger()
+        self.projectors = ProjectorState()
         self.state = DirectorState()
         self._lock = Lock()
 
@@ -147,12 +149,20 @@ class DirectorPipeline:
             decision.visual = decision.visual.model_copy(
                 update={"blend_mode": "layer"},
             )
+        projector_blocked: str | None = None
+        if decision.visual:
+            allowed_proj, projector_blocked = self.projectors.can_play(decision.visual)
+        else:
+            allowed_proj = True
         allowed, blocked_reason = self.scheduler.can_execute(
             decision,
             anarchy_level=anarchy_level,
             skip_interval_check=skip_interval_check,
         )
-        if skip_interval_check:
+        if not allowed_proj:
+            allowed = False
+            blocked_reason = projector_blocked
+        if skip_interval_check and allowed_proj:
             allowed = True
             blocked_reason = None
 
@@ -163,6 +173,8 @@ class DirectorPipeline:
         if allowed and planned:
             osc_commands = self._execute_commands(planned, stagger=stagger)
             self.scheduler.mark_executed(decision)
+            if decision.visual:
+                self.projectors.lock_after_play(decision.visual)
 
         event = self.state.last_event or DialogueEvent(
             speaker=DialogueSpeaker.AI_A,

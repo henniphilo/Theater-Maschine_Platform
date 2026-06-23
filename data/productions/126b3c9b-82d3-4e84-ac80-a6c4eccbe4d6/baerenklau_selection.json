@@ -1,0 +1,67 @@
+{
+  "part": 1,
+  "scene": "Bärenklau",
+  "script_id": "126b3c9b-82d3-4e84-ac80-a6c4eccbe4d6",
+  "beat_id": "99983b52-9389-41f8-86e5-bd71ad3669c9",
+  "selected_by": [
+    "Claude",
+    "ChatGPT"
+  ],
+  "final_sounds": [
+    "archiv_rauschen",
+    "erinnerungsglitch",
+    "herz_unter_glas",
+    "kaefigecho",
+    "leere_zwischen_saetzen",
+    "maschinen_grundader"
+  ],
+  "final_music": [
+    "maschinen_grundader"
+  ],
+  "final_videos": [
+    "avatar",
+    "avatar2",
+    "berge",
+    "black",
+    "bonnie",
+    "branko"
+  ],
+  "final_lights": [
+    "blackout",
+    "blendung_magenta",
+    "blendung_zuschauerraum",
+    "buehne_kalt_hart",
+    "fluegel",
+    "gegenlicht_weich"
+  ],
+  "dramaturgical_reading": "Dann einigen wir uns: Maschinenlogik und bürokratische Kälte dominieren. Flackern statt hartem Dunkel — die Unsicherheit bleibt sichtbar. Hissing statt Schnitt — die Bedrohung atmet weiter.\n\nDer Stücktext wird jetzt aufgeführt. Teil 2 startet separat.\n\n\n\n▶ Regie: Play.",
+  "cue_strategy": "Teil 1 — finale KI-Einigung nach Dramaturgen-Gespräch",
+  "discussion_turns": [
+    {
+      "speaker": "anthropic",
+      "content": "Dieser Abschnitt ist Jelinek pur: ökonomische Logik als Verhörsprache. Der Text stellt keine Fragen — er stellt Fallen. *„Dann stehen ihre Interessen ja denen der Gläubigerklasse entgegen, oder?\"* — dieses „oder?\" ist giftig. Die Grundstimmung: bürokratische Kälte mit unterirdischem Druck. Klassenkampf nicht als Aufschrei, sondern als Rechenaufgabe, die niemand lösen kann.",
+      "proposed_decision": null
+    },
+    {
+      "speaker": "openai",
+      "content": "ChatGPT: Absolut, diese Rechenaufgabe verdeckt ein unterschwelliges Chaos. Das „Wenn beide, Produzenten wie Arbeiter…“ zeigt die verschlingende Unausweichlichkeit. Für eine dramaturgische Verstärkung könnten wir mit einem metallischen, kratzenden Sound beginnen, der die Kaltheit der Idee des Klassenkampfes widerspiegelt. Videomäßig könnte ein flackender Bildschirm das Unbehagen und die Bürokratisierung verstärken. Licht sollte ebenfalls kalt und hart wirken, um die Distanz und Härte zu betonen.",
+      "proposed_decision": null
+    },
+    {
+      "speaker": "anthropic",
+      "content": "**Sounds/Musik**\n„Oder?\" braucht Maschinenlogik: Tintendrucker, Metallscharnier, leise Sirene — Bürokratie als Körper. Dazu Stille als Waffe, ein tiefer Drone, ein unterbrochenes Piepen. Musik: schwere Elektronik, fast bewegungslos.\n\n**Videos**\nBildschirme (macbook, ipad) entlarven die Rechenaufgabe. Figuren sebastian, nicolas, branko — Produzenten/Arbeiter — überlagert. Kaefer: Systemschädling. Black: wenn „keiner kaufen kann.\"\n\n**Licht**\nVerhörkalt, fluoreszent, Pause=Dunkel, blau-weiß, schmaler Spot, Totalausfall.\n\n\n\n▶ Die Regie drückt Play — sobald sie bereit ist.",
+      "proposed_decision": null
+    },
+    {
+      "speaker": "openai",
+      "content": "ChatGPT: Claudes Ansatz passt hervorragend zur Sprachfläche von Jelinek. Ich würde den Kaefer erweitern, um das Unheimliche im System zu verstärken. Statt Pause=Dunkel könnten wir mit einem leichten Flackern arbeiten, um die Unsicherheit zu betonen. Ich tausche \"silence_cut\" gegen \"hissing_noise\", um die unterschwellige Bedrohung zu transportieren.",
+      "proposed_decision": null
+    },
+    {
+      "speaker": "anthropic",
+      "content": "Dann einigen wir uns: Maschinenlogik und bürokratische Kälte dominieren. Flackern statt hartem Dunkel — die Unsicherheit bleibt sichtbar. Hissing statt Schnitt — die Bedrohung atmet weiter.\n\nDer Stücktext wird jetzt aufgeführt. Teil 2 startet separat.\n\n\n\n▶ Regie: Play.",
+      "proposed_decision": null
+    }
+  ],
+  "created_at": "2026-06-23T11:31:02.430873Z"
+}

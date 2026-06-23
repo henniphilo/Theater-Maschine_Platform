@@ -71,3 +71,24 @@ def test_validate_composition_rejects_bad_excerpt() -> None:
         assert False, "expected ValueError"
     except ValueError as exc:
         assert "not found" in str(exc).lower() or "Excerpt" in str(exc)
+
+
+def test_validate_avatar_video_requires_clip_or_id() -> None:
+    corpus = _corpus()
+    plan = CompositionPlan(
+        moments=[
+            CompositionMoment(
+                id="m1",
+                order=0,
+                scene_id="scene-1",
+                text_excerpt="gar kein Geld haben",
+                speech_mode="avatar_video",
+            )
+        ]
+    )
+    try:
+        validate_composition(plan, corpus)
+        assert False, "expected ValueError"
+    except ValueError as exc:
+        assert "avatar" in str(exc).lower()
+

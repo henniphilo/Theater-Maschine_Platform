@@ -2,10 +2,11 @@ import platform
 import re
 import shutil
 import subprocess
+import tempfile
 import uuid
 from pathlib import Path
 
-from app.services.tts.voice_map import voice_for_speaker as map_voice
+from app.services.tts.voice_map import VoiceProfile, voice_for_speaker as map_voice
 
 VOICE_CACHE = Path(__file__).resolve().parents[3] / "data" / "tts"
 
@@ -16,8 +17,8 @@ class MacSayProvider:
         return platform.system() == "Darwin" and shutil.which("say") is not None
 
     @staticmethod
-    def voice_for_speaker(speaker: str) -> str:
-        return map_voice(speaker, provider="say")
+    def voice_for_speaker(speaker: str, *, profile: VoiceProfile | None = None) -> str:
+        return map_voice(speaker, provider="say", profile=profile)
 
     @staticmethod
     def list_voices() -> list[str]:
@@ -32,17 +33,34 @@ class MacSayProvider:
         return voices
 
     @staticmethod
-    def synthesize(text: str, speaker: str, *, voice: str | None = None) -> Path:
+    def synthesize(
+        text: str,
+        speaker: str,
+        *,
+        voice: str | None = None,
+        profile: VoiceProfile | None = None,
+    ) -> Path:
         if not MacSayProvider.is_available():
             raise RuntimeError("macOS say ist nicht verfügbar.")
-        voice = voice or MacSayProvider.voice_for_speaker(speaker)
+        voice = voice or MacSayProvider.voice_for_speaker(speaker, profile=profile)
         VOICE_CACHE.mkdir(parents=True, exist_ok=True)
         aiff = VOICE_CACHE / f"{uuid.uuid4()}.aiff"
-        subprocess.run(
-            ["say", "-v", voice, "-o", str(aiff), text],
-            check=True,
-            timeout=180,
-        )
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            suffix=".txt",
+            delete=False,
+            encoding="utf-8",
+        ) as text_file:
+            text_file.write(text)
+            text_path = text_file.name
+        try:
+            subprocess.run(
+                ["say", "-v", voice, "-o", str(aiff), "-f", text_path],
+                check=True,
+                timeout=180,
+            )
+        finally:
+            Path(text_path).unlink(missing_ok=True)
         m4a = aiff.with_suffix(".m4a")
         if shutil.which("afconvert"):
             subprocess.run(

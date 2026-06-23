@@ -1,0 +1,67 @@
+{
+  "part": 1,
+  "scene": "Bärenklau",
+  "script_id": "e8b78925-8983-49fe-b340-10a38a553e2b",
+  "beat_id": "25000fef-bdc5-43ab-98fa-4d7498c900ce",
+  "selected_by": [
+    "Claude",
+    "ChatGPT"
+  ],
+  "final_sounds": [
+    "archiv_rauschen",
+    "erinnerungsglitch",
+    "herz_unter_glas",
+    "kaefigecho",
+    "leere_zwischen_saetzen",
+    "maschinen_grundader"
+  ],
+  "final_music": [
+    "maschinen_grundader"
+  ],
+  "final_videos": [
+    "avatar",
+    "avatar2",
+    "berge",
+    "black",
+    "bonnie",
+    "branko"
+  ],
+  "final_lights": [
+    "blackout",
+    "blendung_magenta",
+    "blendung_zuschauerraum",
+    "buehne_kalt_hart",
+    "fluegel",
+    "gegenlicht_weich"
+  ],
+  "dramaturgical_reading": "**Claude:** Dann einigen wir uns auf folgende Variante:\n\n- pulse_slow —",
+  "cue_strategy": "Teil 1 — Gesamttext, finale KI-Einigung nach Dramaturgen-Gespräch",
+  "discussion_turns": [
+    {
+      "speaker": "anthropic",
+      "content": "**Claude:** Jelinek entblößt hier die Ökonomie als Tier-Kampfarena: Waren knurren einander an, Arbeiter warten auf Ersatzbänken. «Die Produkte stehen sich gegenüber und knurren einander an» — das ist kein Klassenkampf mehr, sondern Naturgesetz. Und am Ende: «Ist das alles das alles denn wert?» — diese dreifache Leerformel zersetzt jede Gewissheit. Grundstimmung: maschinell, kalt, zirkulär.",
+      "proposed_decision": null
+    },
+    {
+      "speaker": "openai",
+      "content": "**ChatGPT:** Vollkommen richtig, Claude. Jelineks Text ist ein Ökonomiekaleidoskop, in der Menschen den Produkten unterliegen. Ein weiteres starkes Bild ist das der Pflanzen: «– wir werden alle von Pflanzen ersetzt werden, weil die billiger sind.» Pflanzen als wirtschaftliche Gegner, nicht mehr Ressource. Dramaturgisch könnte man mit verzerrten Pflanzenbildern im Video arbeiten und einem mechanischen Sound, der die Entwertung des Menschen verstärkt – das Licht überlagert hier die Monotonie.",
+      "proposed_decision": null
+    },
+    {
+      "speaker": "anthropic",
+      "content": "**Claude:** Medienpaket:\n\n- Musik: ambient_industrial — Thema: Zirkuläre Ökonomie",
+      "proposed_decision": null
+    },
+    {
+      "speaker": "openai",
+      "content": "ChatGPT: **ChatGPT:** Claudes Ansatz überzeugt, doch ich schlage folgende Anpassungen vor: Den Sound \"paper_rustle\" durch \"metal_clang\" ersetzen, um eine härtere Bürokratie zu entlarven. Video \"black\" beibehalten, verstärkt Auslöschung. Das Licht \"flicker\" für «Das klingt ernst» als instabile Bedrohung einsetzen. «Irgendwas wollen» mit \"clyde\" entlarven – die Widersprüche.\n\nJetzt sind wir bereit! Sobald die Regie startet, entfalten sich die Medien.",
+      "proposed_decision": null
+    },
+    {
+      "speaker": "anthropic",
+      "content": "**Claude:** Dann einigen wir uns auf folgende Variante:\n\n- pulse_slow —",
+      "proposed_decision": null
+    }
+  ],
+  "created_at": "2026-06-23T21:17:27.678706Z"
+}

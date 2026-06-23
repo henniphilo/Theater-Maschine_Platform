@@ -22,6 +22,19 @@ export async function fetchScript(scriptId: string): Promise<ProductionScript> {
   return res.json();
 }
 
+export async function patchScript(
+  scriptId: string,
+  update: { performance_part?: string; teil2_corpus_id?: string | null }
+): Promise<ProductionScript> {
+  const res = await fetch(`${API_BASE}/scripts/${scriptId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(update)
+  });
+  if (!res.ok) throw new Error("Script update failed");
+  return res.json();
+}
+
 export async function patchScriptBeat(
   scriptId: string,
   beatId: string,

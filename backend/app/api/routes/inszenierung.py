@@ -1,7 +1,7 @@
 import json
 from collections.abc import AsyncIterator
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, File, HTTPException, UploadFile, status
 from fastapi.responses import StreamingResponse
 from pydantic import ValidationError
 
@@ -18,6 +18,7 @@ from app.schemas.inszenierung import (
 )
 from app.services.inszenierung_analyse_service import InszenierungAnalyseService
 from app.services.inszenierung_komposition_service import InszenierungKompositionService
+from app.services.inszenierung_import import parse_uploaded_files
 from app.services.inszenierung_store import get_inszenierung_store
 
 router = APIRouter(prefix="/inszenierung", tags=["inszenierung"])
@@ -49,6 +50,34 @@ def add_scene(corpus_id: str, payload: CreateAnimalSceneRequest) -> SceneCorpus:
 @router.post("/{corpus_id}/scenes/batch", response_model=SceneCorpus)
 def add_scenes_batch(corpus_id: str, payload: BatchAnimalScenesRequest) -> SceneCorpus:
     return _store.add_scenes_batch(corpus_id, payload.scenes)
+
+
+@router.post("/{corpus_id}/scenes/upload", response_model=SceneCorpus)
+async def upload_scenes(corpus_id: str, files: list[UploadFile] = File(...)) -> SceneCorpus:
+    if not files:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Keine Dateien hochgeladen")
+    parsed_files: list[tuple[str, str]] = []
+    for upload in files:
+        name = upload.filename or "szene.txt"
+        raw = await upload.read()
+        if not raw:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Leere Datei: {name}",
+            )
+        try:
+            content = raw.decode("utf-8-sig")
+        except UnicodeDecodeError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Datei {name} ist keine UTF-8-Textdatei",
+            ) from exc
+        parsed_files.append((name, content))
+    try:
+        scenes = parse_uploaded_files(parsed_files)
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
+    return _store.add_scenes_batch(corpus_id, scenes)
 
 
 @router.delete("/{corpus_id}/scenes/{scene_id}", response_model=SceneCorpus)

@@ -77,3 +77,6 @@ test-backend: ## pytest (nutzt Repo data/ via conftest)
 
 test-frontend: ## vitest
 	cd "$(ROOT)/frontend" && npm test -- --run
+
+avatar-catalog: ## Avatar-Textkatalog aus CSV nach data/avatar_speech.json
+	cd "$(ROOT)/backend" && .venv/bin/python -c "from app.services.avatar_speech_catalog import get_avatar_speech_catalog_service; c=get_avatar_speech_catalog_service().load(); print(f'{len(c.cues)} avatar cues cached')"

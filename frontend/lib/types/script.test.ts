@@ -9,8 +9,8 @@ export function discussionTurnOrder(turns: DiscussionTurn[]): string[] {
 
 describe("dramaturgSpeakerLabel", () => {
   it("labels GPT and Claude dramaturgs", () => {
-    expect(dramaturgSpeakerLabel("openai")).toBe("Dramaturg A (GPT)");
-    expect(dramaturgSpeakerLabel("anthropic")).toBe("Dramaturg B (Claude)");
+    expect(dramaturgSpeakerLabel("openai")).toBe("ChatGPT");
+    expect(dramaturgSpeakerLabel("anthropic")).toBe("Claude");
   });
 });
 

@@ -48,6 +48,22 @@ export async function addScenesBatch(
   return res.json();
 }
 
+export async function uploadSceneFiles(corpusId: string, files: File[]): Promise<SceneCorpus> {
+  const form = new FormData();
+  for (const file of files) {
+    form.append("files", file);
+  }
+  const res = await fetch(`${API_BASE}/inszenierung/${corpusId}/scenes/upload`, {
+    method: "POST",
+    body: form
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: "Upload fehlgeschlagen" }));
+    throw new Error(typeof err.detail === "string" ? err.detail : "Upload fehlgeschlagen");
+  }
+  return res.json();
+}
+
 export async function deleteScene(corpusId: string, sceneId: string): Promise<SceneCorpus> {
   const res = await fetch(`${API_BASE}/inszenierung/${corpusId}/scenes/${sceneId}`, {
     method: "DELETE"

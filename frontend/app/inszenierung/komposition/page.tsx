@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 
 import { AppNav } from "@/components/layout/AppNav";
 import { RegieCard } from "@/components/show/RegieCard";
-import { fetchCorpus, streamKomposition } from "@/lib/api/inszenierung";
+import { momentSpeechLabel } from "@/features/inszenierung/inszenierungBuffer";
 import type { CompositionMoment, KompositionStreamEvent, SceneCorpus } from "@/lib/types/inszenierung";
 import type { DirectorPayload } from "@/lib/types/director";
 
@@ -99,7 +99,7 @@ function KompositionContent() {
                   #{moment.order + 1} · {sceneLabel(moment.scene_id)}
                 </strong>
                 <span className="textMuted">
-                  Anarchie {(moment.anarchy_level * 100).toFixed(0)}% · Overlap{" "}
+                  {momentSpeechLabel(moment)} · Anarchie {(moment.anarchy_level * 100).toFixed(0)}% · Overlap{" "}
                   {(moment.overlap_with_previous * 100).toFixed(0)}%
                 </span>
               </header>

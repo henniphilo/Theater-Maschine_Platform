@@ -4,20 +4,16 @@ import { playBlob, setPlaybackPaused, stopPlayback, waitWhilePlaybackPaused } fr
 import { sentenceIndexForProgress } from "@/lib/text/splitSentences";
 import { speakerForPerformanceSentence } from "@/lib/show/performanceVoices";
 import { progressFromBeat } from "@/lib/show/performanceTimeline";
+import { part1Beats } from "@/lib/show/baerenklauBeat";
 import type { OscCommand, PerformanceSpeaker, ShowPhase } from "@/lib/types/director";
 import type { DiscussionTurn, DramaturgSpeaker, ProductionScript, ScriptBeat, ScriptSpeaker } from "@/lib/types/script";
 import {
   createCuePlaybackContext,
-  fireNeutralReset,
   fireSentenceCues,
   fireStartCues,
   fireTimeCues,
   sentencesForBeat
 } from "@/features/show/cuePlayback";
-import {
-  createDiscussionCueContext,
-  scheduleDiscussionCue
-} from "@/features/show/discussionCuePlayback";
 
 const OSC_HIGHLIGHT_MS = 150;
 const DISCUSSION_FALLBACK_MS = 1500;
@@ -129,7 +125,7 @@ async function resolvePerformanceSpeechBlob(
       throw new Error("Vorgespeicherte Satz-Audio-Datei nicht gefunden");
     }
   }
-  return getCachedSpeech(sentenceText, speaker);
+  return getCachedSpeech(sentenceText, speaker, { profile: "performance" });
 }
 
 function prefetchDiscussionTurn(
@@ -299,7 +295,7 @@ function prefetchPerformanceSentences(
   const pool = performanceSpeakerPool(beat);
   for (let i = 0; i < sentences.length; i++) {
     const speaker = speakerForPerformanceSentence(beat.speaker, i, beat.order, pool);
-    prefetchSpeech(sentences[i], speaker);
+    prefetchSpeech(sentences[i], speaker, { profile: "performance" });
   }
 }
 
@@ -330,17 +326,6 @@ async function playDiscussionPhase(
 
   await warmBeatPlayback(beat, options);
 
-  const discussionCueCtx = createDiscussionCueContext(
-    (commands) => {
-      void highlightOscSequence(
-        commands,
-        (cmd, bridge) => onState({ activeOscCommand: cmd, activeOscBridge: bridge, showPhase: "cues_active" }),
-        shouldAbort
-      );
-    },
-    shouldAbort
-  );
-
   onState({
     beatIndex,
     sentenceIndex: 0,
@@ -370,7 +355,7 @@ async function playDiscussionPhase(
       )
     });
 
-    scheduleDiscussionCue(discussionCueCtx, turn, beat.text, topic);
+    // Discussion = voices only; machine cues fire in the performance phase after Play.
 
     if (!audioReady(options)) {
       await sleep(DISCUSSION_FALLBACK_MS);
@@ -562,7 +547,7 @@ async function playPerformancePhase(
     const nextSentence = sentences[i + 1];
     if (nextSentence) {
       const nextSpeaker = beatPerformanceSpeaker(beat, i + 1);
-      if (options.ttsAvailable) prefetchSpeech(nextSentence, nextSpeaker);
+      if (options.ttsAvailable) prefetchSpeech(nextSentence, nextSpeaker, { profile: "performance" });
     }
 
     try {
@@ -638,17 +623,6 @@ async function playBeat(
     if (!discussionOk) return false;
 
     setPlaybackPaused(false);
-    await fireNeutralReset(
-      async (commands) => {
-        await highlightOscSequence(
-          commands,
-          (cmd, bridge) => onState({ activeOscCommand: cmd, activeOscBridge: bridge }),
-          shouldAbort
-        );
-      },
-      shouldAbort
-    );
-    if (shouldAbort()) return false;
     await sleep(PERFORMANCE_PREP_PAUSE_MS);
   } else {
     prefetchPerformanceSentences(options, beat, beatIndex);
@@ -678,6 +652,18 @@ export function prefetchBeatStart(
     return;
   }
   prefetchPerformanceSentences(options, beat, beatIndex);
+}
+
+export async function runPart1ScriptPlayback(
+  beats: ScriptBeat[],
+  options: PlaybackAudioOptions,
+  startBeatIndex: number,
+  onState: (state: Partial<PlaybackState>) => void,
+  shouldAbort: () => boolean,
+  topic = "Teil 1 — Bärenklau"
+): Promise<void> {
+  const part1 = part1Beats(beats);
+  return runScriptPlayback(part1, options, startBeatIndex, onState, shouldAbort, topic);
 }
 
 export async function runScriptPlayback(

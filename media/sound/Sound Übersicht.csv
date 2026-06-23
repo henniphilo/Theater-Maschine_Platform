@@ -1,5 +1,5 @@
 cue_id;midi_note;kanal;soundname;aktion;beschreibung;tags;stimmungen;dramaturgie
-maschinen_grundader;36;1;Maschinen-Grundader;play;Leiser Dauer-Drone — Grundstimmung der Bühne;drone,grundton,dauer;melancholisch,neutral,unheimlich;ja
+maschinen_grundader;36;1;Maschinen-Grundader;play;Leiser Dauer-Drone — Grundstimmung der Bühne;drone,grundton,dauer,musik;melancholisch,neutral,unheimlich;ja
 maschinen_grundader_fade_in;52;1;Maschinen-Grundader;fade_in;Einblenden der Maschinen-Grundader;drone,fade;melancholisch,neutral;ja
 maschinen_grundader_fade_out;53;1;Maschinen-Grundader;fade_out;Ausblenden der Maschinen-Grundader;drone,fade;melancholisch,neutral;ja
 maschinen_grundader_out;72;1;Maschinen-Grundader;out;Sofort aus — Maschinen-Grundader;drone,cut;melancholisch,neutral;ja

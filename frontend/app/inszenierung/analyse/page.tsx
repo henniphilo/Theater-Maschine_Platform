@@ -34,14 +34,14 @@ function AnalyseContent() {
       await streamAnalyse(corpusId, {}, {
         onEvent: (event: AnalyseStreamEvent) => {
           if (event.type === "thinking" && event.speaker) {
-            setThinking(event.speaker === "openai" ? "Dramaturg A denkt …" : "Dramaturg B denkt …");
+            setThinking(event.speaker === "openai" ? "ChatGPT denkt …" : "Claude denkt …");
           }
           if (event.type === "discussion_turn" && event.content && event.speaker) {
             setThinking(null);
             setChat((prev) => [
               ...prev,
               {
-                speaker: event.speaker === "openai" ? "Dramaturg A" : "Dramaturg B",
+                speaker: event.speaker === "openai" ? "ChatGPT" : "Claude",
                 content: event.content
               }
             ]);

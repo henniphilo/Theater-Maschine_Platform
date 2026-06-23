@@ -1,0 +1,244 @@
+{
+  "version": 1,
+  "_source": "/Users/multimediapc146/Documents/Code/Theatermaschine/media/video/Avatar Textzuordnung.csv",
+  "cues": [
+    {
+      "id": "DEL1",
+      "avatar": "delphin",
+      "text": "23. Der Delphin? Man hat mich dazu gezwungen, ihn einzusetzen. Der Delphin, aber nur kurz",
+      "video_clip_id": "avatar",
+      "scene_ref": null
+    },
+    {
+      "id": "DEL2",
+      "avatar": "delphin",
+      "text": "Vorhin haben Sie mir die Zahlen gezeigt, jetzt zeigen Sie mir andre, noch höhere, das müssen Götter sein am andren Ende, welch wunderbare Vermehrung!",
+      "video_clip_id": "avatar",
+      "scene_ref": null
+    },
+    {
+      "id": "DEL3",
+      "avatar": "delphin",
+      "text": "die Kurse steigen rasant, ich springe vor Freude in die Luft, ich werde doch jetzt nicht aussteigen!, im Gegenteil, ich springe noch höher,",
+      "video_clip_id": "avatar",
+      "scene_ref": null
+    },
+    {
+      "id": "DEL4",
+      "avatar": "delphin",
+      "text": "unter mir Tote, neben mir konzertierte Seerettungsaktionen,",
+      "video_clip_id": "avatar",
+      "scene_ref": null
+    },
+    {
+      "id": "DEL5",
+      "avatar": "delphin",
+      "text": "Ich nehme also einen Kredit auf, während ich der Bank beim Wachsen zusehe, kann vielleicht der Bärenklau von vorhin wieder übernehmen,",
+      "video_clip_id": "avatar",
+      "scene_ref": null
+    },
+    {
+      "id": "BK1",
+      "avatar": "baerenklau",
+      "text": "24. Der Bärenkalauer, nein, der Bärenklauer übernimmt. Diese Pflanze ist ja so weiträumig, daß niemand weiß, welches Zimmer gerade aus ihr spricht, doch das Zimmer weigert sich, aus Ruinen aufzuerstehen:",
+      "video_clip_id": "avatar2",
+      "scene_ref": null
+    },
+    {
+      "id": "BK2",
+      "avatar": "baerenklau",
+      "text": "Ich steige mit, ich steige hoch, ich wachse, mit allem, was ich habe, Ich schieße Geld nach, alles wird mehr werden, Egal, es wird mehr werden, alles wird mehr werden,",
+      "video_clip_id": "avatar2",
+      "scene_ref": null
+    },
+    {
+      "id": "BK3",
+      "avatar": "baerenklau",
+      "text": "schließlich hat sich die globale Geldmenge in den letzten vierzig Jahren fast ins Unendliche vermehrt, was bleibt mir übrig, als auch mein Guthaben zu vermehren, damit es noch besser wird, größer, noch wirksamer, kein Guthaben mehr, schon ein Besserhaben, das Geld soll es bei mir besser haben,",
+      "video_clip_id": "avatar2",
+      "scene_ref": null
+    },
+    {
+      "id": "BK4",
+      "avatar": "baerenklau",
+      "text": "und Sie gründen immer neue Firmen, hohle Männer, wie Tote, Männer aus Stroh, diesmal werde ich endlich kein Opfer, das ist nicht meine Rolle, ich werde Opfer bringen, aber keins sein, nie mehr!",
+      "video_clip_id": "avatar2",
+      "scene_ref": null
+    },
+    {
+      "id": "LG1",
+      "avatar": "lamm",
+      "text": "25. Das Lamm Gottes,",
+      "video_clip_id": "esel",
+      "scene_ref": null
+    },
+    {
+      "id": "LG2",
+      "avatar": "lamm",
+      "text": "von diesem abgenabelt, aber schon länger am Leben, blök blök:",
+      "video_clip_id": "esel",
+      "scene_ref": null
+    },
+    {
+      "id": "LG3",
+      "avatar": "lamm",
+      "text": "Das Geld könnte also überall sein und nirgends.",
+      "video_clip_id": "esel",
+      "scene_ref": null
+    },
+    {
+      "id": "LG4",
+      "avatar": "lamm",
+      "text": "Das Geld könnte, von mir aus, ich werde es eh nicht sehn, auch am Himmel stehn wie dieser Pfeil. Es ist wesenlos.",
+      "video_clip_id": "esel",
+      "scene_ref": null
+    },
+    {
+      "id": "LG5",
+      "avatar": "lamm",
+      "text": "Das Geld könnte auch am Himmel stehn.",
+      "video_clip_id": "esel",
+      "scene_ref": null
+    },
+    {
+      "id": "LG6",
+      "avatar": "lamm",
+      "text": "Retouren werden nicht mehr angenommen, Beschwerden haben keinen Sinn, neue Firmen, neue Gesellschaften, die sind jetzt meine Familie. Die Bank lasse ich diesmal außen vor, sie will eh nicht, daß ich zu ihr hereinkomme. Manchmal fällt mir der Name meines eigenen Enkels nicht mehr ein, Macht nichts, wir benennen ihn trotzdem.",
+      "video_clip_id": "esel",
+      "scene_ref": null
+    },
+    {
+      "id": "BK5",
+      "avatar": "baerenklau",
+      "text": "26. Bärenklau",
+      "video_clip_id": "avatar2",
+      "scene_ref": null
+    },
+    {
+      "id": "BK6",
+      "avatar": "baerenklau",
+      "text": "kommt noch mal vorbei und verschlingt, einfach so, das Lamm Gottes, er überwuchert es, es verschwindet unter ihm:",
+      "video_clip_id": "avatar2",
+      "scene_ref": null
+    },
+    {
+      "id": "BK7",
+      "avatar": "baerenklau",
+      "text": "Ja, natürlich bin ich einverstanden, daß Sie die Spur meiner Habenschaft verwischen, alles, was ich habe, wird sich in Ruhe zusammensetzen Doch den Krempel brauche ich gar nicht, Wozu das alte Haus aufheben, wenn ich mit Kredit ein größeres und schöneres kaufen kann!",
+      "video_clip_id": "avatar2",
+      "scene_ref": null
+    },
+    {
+      "id": "BK8",
+      "avatar": "baerenklau",
+      "text": "Der Kredit ist endlos. Es zahlt sich aus, es wird ausgezahlt, Da fließen schon die Millionen, alle für mich, alle her zu mir, ich will sie herzlich begrüßen, und auch andre haben sich in diesen Kreislauf eingespeist, doch essen werde ich, am Ende werde ich endlich was zu essen kriegen, man hat es mir versprochen! Ich brauch doch eh nur Wasser! Mineralstoffe und Spurenelemente erzeuge ich selbst, die Ökologie hat gesiegt, ich bin ein beinahe selbsterhaltendes System.",
+      "video_clip_id": "avatar2",
+      "scene_ref": null
+    },
+    {
+      "id": "BK9",
+      "avatar": "baerenklau",
+      "text": "Der Gewinner nimmt alles. Wird ein andrer aus meinem alten Haus ein neues machen? Die Bank schafft das mit links, sie schafft das mit nichts, sie schafft Geld aus Dreck und aus dem Nichts. Geld aus dem Nichts. Die Pflanze, die nichts will und nichts braucht, überzieht die Erde.",
+      "video_clip_id": "avatar2",
+      "scene_ref": null
+    },
+    {
+      "id": "BK10",
+      "avatar": "baerenklau",
+      "text": "Die Pflanze ist die Rente der Erde und die Rendite. Sie ist das, was, neben dem nicht volatilen Herrn Stein, übrigbleibt,",
+      "video_clip_id": "avatar2",
+      "scene_ref": null
+    },
+    {
+      "id": "PET1",
+      "avatar": "petya",
+      "text": "27. Der arme Hund Petya aus Elisabeth Kmölnigers Fukushima-Comic.",
+      "video_clip_id": "hundethiel",
+      "scene_ref": null
+    },
+    {
+      "id": "PET2",
+      "avatar": "petya",
+      "text": "Die Kurse in Kryptowährungen, für die ich in Minen schuften mußte, bis die Radioaktivität mich gerettet hat,",
+      "video_clip_id": "hundethiel",
+      "scene_ref": null
+    },
+    {
+      "id": "PET3",
+      "avatar": "petya",
+      "text": "Kurse, welche ich doch grad erst belegte, sind schon wieder geschlossen, die Zahl der Teilnehmer ist erfüllt, das Ziel, das ich habe, ist, mein eigenes Privatgeld zu erschaffen, meinen eigenen digitalen Coin für meine Spielecke.",
+      "video_clip_id": "hundethiel",
+      "scene_ref": null
+    },
+    {
+      "id": "PET4",
+      "avatar": "petya",
+      "text": "Der Krieg ist nichts gegen das, was ich auch nicht kriege.",
+      "video_clip_id": "hundethiel",
+      "scene_ref": null
+    },
+    {
+      "id": "PET5",
+      "avatar": "petya",
+      "text": "Doch das Geld ist einfach unzerstörbar. Sie haben es versucht, es war kurz weg, schon ist es wieder da. Für eine neue Währung, und wäre sie nur digital, was aber alles ist, der Finger Gottes hat auf uns gezeigt und es uns gebracht. Dafür, für mein neues, ganz eigenes Geld, das nur mir gehört, brauche ich jedoch ein gewisses Kapital, Programmierer und fachliches Knowhow, dann entsteht Geld aus dem Nichts.",
+      "video_clip_id": "hundethiel",
+      "scene_ref": null
+    },
+    {
+      "id": "PET5a",
+      "avatar": "petya",
+      "text": "Ich bin als einziger frei von Unglück, denn das größte habe ich schon erlebt. Ich bin zwar tot, aber dieser Tod hat mich immerhin von jämmerlichen Schmerzen befreit. Als Skelett hat man kein Gewicht auf der Welt, nicht einmal, wenn es von Fell und Haaren überzogen ist.",
+      "video_clip_id": "hundethiel",
+      "scene_ref": null
+    },
+    {
+      "id": "WO1",
+      "avatar": "wolf",
+      "text": "28. Der Wolf, zu seinem Freund Petya:",
+      "video_clip_id": "thiel",
+      "scene_ref": null
+    },
+    {
+      "id": "WO2",
+      "avatar": "wolf",
+      "text": "Mit ein wenig Glück werde ich durch diesen Selbstschöpfungsakt des Geldes reich. Daneben zählt nichts mehr. Die Toten schon gar nicht.",
+      "video_clip_id": "thiel",
+      "scene_ref": null
+    },
+    {
+      "id": "WO3",
+      "avatar": "wolf",
+      "text": "Da steigen sie schon wieder, nicht die Getöteten, die Kurse, ich steige mit ihnen, habe was anzulegen, ich bin dabei, bin beim Rendite-Rennen dabei,",
+      "video_clip_id": "thiel",
+      "scene_ref": null
+    },
+    {
+      "id": "WO4",
+      "avatar": "wolf",
+      "text": "Ach, ich Verlorener,",
+      "video_clip_id": "thiel",
+      "scene_ref": null
+    },
+    {
+      "id": "WO5",
+      "avatar": "wolf",
+      "text": "Da kommt schon wieder eine neue Forderung der Finanz auf mich zu! Nachforderungen in zweistelliger Millionenhöhe! Das gibts doch nicht! (…)",
+      "video_clip_id": "thiel",
+      "scene_ref": null
+    },
+    {
+      "id": "WO6",
+      "avatar": "wolf",
+      "text": "Dann sollen sie halt die Gesetze in meinem Sinn abändern, so wie andre die Grenzen abändern, das geht doch! Der sitzt dann womöglich neben dem jüngsten Altkanzler, der heute noch lebt und sprechen und raten kann, wer bin ich? Ich mache eine Bewegung. Er hat es erraten!",
+      "video_clip_id": "thiel",
+      "scene_ref": null
+    },
+    {
+      "id": "WO7",
+      "avatar": "wolf",
+      "text": "Der Minister soll sich drum kümmern, daß noch niedriger geschätzt wird, weil ich selbst so hochgeschätzt bin, das kann mir keiner nehmen, höher gehts kaum. Dann fängt das Theater erst an.",
+      "video_clip_id": "thiel",
+      "scene_ref": null
+    }
+  ]
+}

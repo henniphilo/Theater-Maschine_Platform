@@ -1,0 +1,1735 @@
+{
+  "id": "8080cbe0-4bed-469b-999d-6b9a4571f68a",
+  "title": "Elfriede jelinek Unter Tieren - Bärenklau",
+  "source_text": "20. Der Bärenklau: \n\n– wir werden alle von Pflanzen ersetzt werden, \nweil die billiger in der Anschaffung und im Betrieb sind \nund keine Widerworte geben –,\nDa der Mensch, ja, sagen wir so, \nalso dermaßen leicht verderblich geworden ist, \nohne daß dem Tier stattdessen eine kleine Chance gegeben wird, \nauch ein bißchen was zu verdienen \n\nda wir also gar kein Geld haben, \nmüssen wir uns leider wieder dem Produzenten der Waren zuwenden, \nwelcher jede Ware an der eines andren messen muß, \n\ndie Produkte stehen sich gegenüber und knurren einander an. \n\n\n\nDer wahre Klassenkampf\n\nWas aber, wenn die Preissteigerungen so hoch sind, \ndaß keiner die Waren mehr kaufen kann? \n\nWenn beide, \nProduzenten wie Arbeiter, \nzusätzliche Kaufkraft wollen, \ndann stehen ihre Interessen ja denen der Gläubigerklasse entgegen, oder? \n\nDie Kreditkapazitäten, also die Geldmengen ausweiten? \nIch weiß nicht, was das bringen soll. \nIch weiß nur, daß das viel bringt, \naber vielleicht nicht grade den erwünschten Effekt bei den Effekten. \nHandeln Sie jetzt rasch! \n\nEin Konflikt zwischen Schuldnern und Schöpfern? Das klingt ernst. \nZu hoch für mich, \nund ich bin schon gern hochtönend, \n\nIst das etwa ein Konflikt zwischen den Anlegern, \ndie an hohen Zinsen und stabilen Preisen interessiert sind, \nund den auf Kredite und Finanzierungen angewiesenen Unternehmen \nund in der Folge auch deren Arbeitern, \ndie ihre Arbeitskraft, \ndas einzige wirklich gute Gut, das sie haben, \nsofort in Konsum umsetzen wollen? \n\nIst das der wahre Klassenkampf? \nZwischen den Banken, \ndie den Unternehmen ihre Kredite aufdrängen wollen, \nund den Arbeitern, \ndie auch irgendwas wollen, ich weiß es nicht, \nich weiß nicht, was der Arbeiter will, \nniemand hat es je gewußt. \n\nEr sagt es zwar dauernd, \nvon Lohnrunde zu Lohnrunde mehr, \naber immer weniger mehr. \nKriegen tut er dann etwas mehr als weniger. \n\nIch weiß es trotzdem immer noch nicht, \nwollte er sich auf mich setzen, \nkönnte er gleich ins Casino gehen, \nwo sie ihn aber wahrscheinlich gar nicht hineinlassen, \nauch nicht in seinem neuen Anzug. \n\nDann muß er auf der Ersatzbank im Wartesaal sitzenbleiben, \nimmer noch der Meinung, er wäre unersetzlich. \n\nWäre er das, \nhätte er ja was gelernt und müßte nur noch warten, \ndaß ihn wer in eine richtige Bank holt und dann von dort wieder abholt, \nam liebsten ein viel versprechender Politiker, \nder sich den Arbeiter an Stelle seiner Versprechungen als Dienstboten hält. \n\nWahrscheinlich will der Arbeiter auch bloß einen Kredit bekommen, \ndoch was ist das Geld überhaupt wert? \nIst das Geld denn das alles wert? \nIst das alles das alles denn wert?",
+  "beats": [
+    {
+      "id": "bbafd5a5-a113-4b19-8f9b-80df675908a9",
+      "order": 0,
+      "text": "– wir werden alle von Pflanzen ersetzt werden, \nweil die billiger in der Anschaffung und im Betrieb sind \nund keine Widerworte geben –,\nDa der Mensch, ja, sagen wir so, \nalso dermaßen leicht verderblich geworden ist, \nohne daß dem Tier stattdessen eine kleine Chance gegeben wird, \nauch ein bißchen was zu verdienen",
+      "scene_title": "20. Der Bärenklau",
+      "speaker": "AI_A",
+      "dramaturgy": {
+        "visual": null,
+        "sound": null,
+        "light": null,
+        "reason": "Dann einigen wir uns auf folgende Variante: `macbook` und `ipad` entlarven die Bürokratie, `thomas` ersetzt `bonnie` für die kafkaeske Menschpräsenz, `clyde` und `kaefer` bleiben als Tierspur, `black` schließt aus. Licht: kalt, Verhör, dann flackerndes Blau. Sound: Maschinensummen überlagert Naturfade.\n\n```json\n{\"sounds\":[\"drone_low\",\"clock_tick\",\"nature_fade\",\"machine_hum\",\"breath_slow\",\"silence_cut\"],\"music\":[\"ambient_industrial\"],\"videos\":[\"macbook\",\"ipad\",\"thomas\",\"clyde\",\"kaefer\",\"black\"],\"",
+        "dramaturgical_reading": "Dann einigen wir uns auf folgende Variante: `macbook` und `ipad` entlarven die Bürokratie, `thomas` ersetzt `bonnie` für die kafkaeske Menschpräsenz, `clyde` und `kaefer` bleiben als Tierspur, `black` schließt aus. Licht: kalt, Verhör, dann flackerndes Blau. Sound: Maschinensummen überlagert Naturfade.\n\n```json\n{\"sounds\":[\"drone_low\",\"clock_tick\",\"nature_fade\",\"machine_hum\",\"breath_slow\",\"silence_cut\"],\"music\":[\"ambient_industrial\"],\"videos\":[\"macbook\",\"ipad\",\"thomas\",\"clyde\",\"kaefer\",\"black\"],\"",
+        "cue_points": [
+          {
+            "trigger": "start",
+            "keyword": null,
+            "sentence_index": null,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.2,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "avatar",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader",
+              "volume": 0.5
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "blackout",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.45,
+              "replace_previous": true
+            }
+          },
+          {
+            "trigger": "sentence_end",
+            "keyword": null,
+            "sentence_index": 1,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.275,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "avatar2",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "erinnerungsglitch",
+              "volume": 0.55
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "blendung_magenta",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.45,
+              "replace_previous": true
+            }
+          }
+        ],
+        "performance_speakers": [],
+        "tags": [],
+        "mood": "kontrolliert",
+        "intensity": 0.25,
+        "timestamp": 0.0
+      },
+      "planned_commands": [
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.Avatar"
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader",
+            0.5
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/key/out",
+          "args": [],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/light/set_scene",
+          "args": [
+            "blackout",
+            4.0
+          ],
+          "dry_run": true,
+          "mirror": true
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.Avatar2"
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "erinnerungsglitch",
+            0.55
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/key/out",
+          "args": [],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/1701/at",
+          "args": [
+            45.0
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/light/set_scene",
+          "args": [
+            "blendung_magenta",
+            4.0
+          ],
+          "dry_run": true,
+          "mirror": true
+        }
+      ],
+      "discussion_turns": [
+        {
+          "speaker": "anthropic",
+          "content": "**Sounds/Musik:** Fabrikatmosphäre unterlegt von maschinellem Ticken. Ein Pflanzenwachstums-Zeitraffer-Sound widerspricht der Drohung. Tierstimmen sterben weg.\n\n**Videos:** Bürokratische Bildschirme (macbook/ipad) entlarven. Tier-Videos (clyde, bonnie) reduzieren. Käfer als Übergang. Black als Auslöschung.\n\n**Licht:** Kaltes Verhörlicht, dann Blackout.\n\n```json\n{\"sounds\":[\"drone_low\",\"clock_tick\",\"nature_fade\",\"machine_hum\",\"breath_slow\",\"silence_cut\"],\"music\":[\"ambient_industrial\"],\"videos\":[\"macbook\",\"ipad\",\"clyde\",\"bonnie\",\"kaefer\",\"black\"],\"lights\":[\"cold_white\",\"interrogation\",\"flicker_slow\",\"dim_warm\",\"fade_out\",\"blackout\"]}\n```",
+          "proposed_decision": null
+        },
+        {
+          "speaker": "openai",
+          "content": "Um die Bürokratie und Entmenschlichung stärker zu entlarven, schlage ich vor, statt „bonnie“ das Video „thomas“ zu verwenden, um eine menschliche Präsenz kafkaesk zu beleuchten. Für das Pflanzenwachstums-Zeitraffer-Sound wäre es effektiver, diesen mit maschinellem Summen zu überlagern. Dies verstärkt die Verschmelzung von Natur und Maschine. Das Verhörlicht sollte in kaltes, flackerndes Blau übergehen, um Unruhe zu erzeugen.\n\n```json\n{\"sounds\":[\"machine_hum\"],\"videos\":[\"thomas\"],\"lights\":[\"flicker_blue\"]}\n```",
+          "proposed_decision": null
+        },
+        {
+          "speaker": "anthropic",
+          "content": "Dann einigen wir uns auf folgende Variante: `macbook` und `ipad` entlarven die Bürokratie, `thomas` ersetzt `bonnie` für die kafkaeske Menschpräsenz, `clyde` und `kaefer` bleiben als Tierspur, `black` schließt aus. Licht: kalt, Verhör, dann flackerndes Blau. Sound: Maschinensummen überlagert Naturfade.\n\n```json\n{\"sounds\":[\"drone_low\",\"clock_tick\",\"nature_fade\",\"machine_hum\",\"breath_slow\",\"silence_cut\"],\"music\":[\"ambient_industrial\"],\"videos\":[\"macbook\",\"ipad\",\"thomas\",\"clyde\",\"kaefer\",\"black\"],\"lights\":[\"cold_white\",\"interrogation\",\"flicker_blue\",\"dim_warm\",\"fade_out\",\"blackout\"]}\n```",
+          "proposed_decision": null
+        }
+      ],
+      "discussion_summary": "Claude: **Sounds/Musik:** Fabrikatmosphäre unterlegt von maschinellem Ticken. Ein Pflanzenwachstums-Zeitraffer-Sound widerspricht der Drohung. Tierstimmen sterben weg.\n\n**Videos:** Bürokratische Bildschirme (macbook/ipad) entlarven. Tier-Videos (clyde, bonnie) reduzieren. Käfer als Übergang. Black als Auslöschung.\n\n**Licht:** Kaltes Verhörlicht, dann Blackout.\n\n```json\n{\"sounds\":[\"drone_low\",\"clock_tick\",\"nature_fade\",\"machine_hum\",\"breath_slow\",\"silence_cut\"],\"music\":[\"ambient_industrial\"],\"videos\":[\"macbook\",\"ipad\",\"clyde\",\"bonnie\",\"kaefer\",\"black\"],\"lights\":[\"cold_white\",\"interrogation\",\"flicker_slow\",\"dim_warm\",\"fade_out\",\"blackout\"]}\n```\nChatGPT: Um die Bürokratie und Entmenschlichung stärker zu entlarven, schlage ich vor, statt „bonnie“ das Video „thomas“ zu verwenden, um eine menschliche Präsenz kafkaesk zu beleuchten. Für das Pflanzenwachstums-Zeitraffer-Sound wäre es effektiver, diesen mit maschinellem Summen zu überlagern. Dies verstärkt die Verschmelzung von Natur und Maschine. Das Verhörlicht sollte in kaltes, flackerndes Blau übergehen, um Unruhe zu erzeugen.\n\n```json\n{\"sounds\":[\"machine_hum\"],\"videos\":[\"thomas\"],\"lights\":[\"flicker_blue\"]}\n```\nClaude: Dann einigen wir uns auf folgende Variante: `macbook` und `ipad` entlarven die Bürokratie, `thomas` ersetzt `bonnie` für die kafkaeske Menschpräsenz, `clyde` und `kaefer` bleiben als Tierspur, `black` schließt aus. Licht: kalt, Verhör, dann flackerndes Blau. Sound: Maschinensummen überlagert Naturfade.\n\n```json\n{\"sounds\":[\"drone_low\",\"clock_tick\",\"nature_fade\",\"machine_hum\",\"breath_slow\",\"silence_cut\"],\"music\":[\"ambient_industrial\"],\"videos\":[\"macbook\",\"ipad\",\"thomas\",\"clyde\",\"kaefer\",\"black\"],\"lights\":[\"cold_white\",\"interrogation\",\"flicker_blue\",\"dim_warm\",\"fade_out\",\"blackout\"]}\n```"
+    },
+    {
+      "id": "43434a0a-3dc1-4fde-91ef-63c8d89d4722",
+      "order": 1,
+      "text": "müssen wir uns leider wieder dem Produzenten der Waren zuwenden, \nwelcher jede Ware an der eines andren messen muß,\n\ndie Produkte stehen sich gegenüber und knurren einander an.",
+      "scene_title": "da wir also gar kein Geld haben,",
+      "speaker": "AI_B",
+      "dramaturgy": {
+        "visual": null,
+        "sound": null,
+        "light": null,
+        "reason": "Dann einigen wir uns auf folgende Variante: Knurren bleibt als `hundethiel`-Video statt nur Sound — das ist körperlicher. `odyssee` ersetzt `random` für den Systemzwang als Reise ohne Ziel. `neon_blau` ersetzt `markt_gelb` — kälter, rationaler. Alle anderen Elemente bleiben.\n\n```json\n{\"sounds\":[\"hundethiel\",\"drone_low_01\",\"metall_02\",\"atem_01\",\"ticker_01\",\"rauschen_01\"],\"music\":[\"industrie_01\"],\"videos\":[\"nicolas\",\"branko\",\"thiemo\",\"macbook\",\"kaefer\",\"odyssee\",\"hundethiel\"],\"lights\":[\"verhoer_we",
+        "dramaturgical_reading": "Dann einigen wir uns auf folgende Variante: Knurren bleibt als `hundethiel`-Video statt nur Sound — das ist körperlicher. `odyssee` ersetzt `random` für den Systemzwang als Reise ohne Ziel. `neon_blau` ersetzt `markt_gelb` — kälter, rationaler. Alle anderen Elemente bleiben.\n\n```json\n{\"sounds\":[\"hundethiel\",\"drone_low_01\",\"metall_02\",\"atem_01\",\"ticker_01\",\"rauschen_01\"],\"music\":[\"industrie_01\"],\"videos\":[\"nicolas\",\"branko\",\"thiemo\",\"macbook\",\"kaefer\",\"odyssee\",\"hundethiel\"],\"lights\":[\"verhoer_we",
+        "cue_points": [
+          {
+            "trigger": "start",
+            "keyword": null,
+            "sentence_index": null,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.2,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "avatar",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader",
+              "volume": 0.5
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "blackout",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.45,
+              "replace_previous": true
+            }
+          }
+        ],
+        "performance_speakers": [],
+        "tags": [],
+        "mood": "kontrolliert",
+        "intensity": 0.25,
+        "timestamp": 0.0
+      },
+      "planned_commands": [
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.Avatar"
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader",
+            0.5
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/key/out",
+          "args": [],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/light/set_scene",
+          "args": [
+            "blackout",
+            4.0
+          ],
+          "dry_run": true,
+          "mirror": true
+        }
+      ],
+      "discussion_turns": [
+        {
+          "speaker": "anthropic",
+          "content": "**Sounds/Musik:** Knurren als Tier-Ware-Konflikt, Drohne für Zwang, Metall für Tausch, Atem für Körper-Ware, Ticker für Messung, Rauschen für Kapital. Musik: industriell-mechanisch.\n\n**Videos:** Figuren als Ware: nicolas, branko, thiemo gegenüber. macbook als Messkatalog. kaefer als entlarvendes Tier-Bild. random als Systemfluss.\n\n**Licht:** Verhör-weiß, Marktgelb, Knurr-rot, Messung-kalt, Konfrontation-eng, Blackout.\n\n```json\n{\"sounds\":[\"knurren_01\",\"drone_low_01\",\"metall_02\",\"atem_01\",\"ticker_01\",\"rauschen_01\"],\"music\":[\"industrie_01\"],\"videos\":[\"nicolas\",\"branko\",\"thiemo\",\"macbook\",\"kaefer\",\"random\"],\"lights\":[\"verhoer_weiss\",\"markt_gelb\",\"knurr_rot\",\"messung_kalt\",\"konfrontation_eng\",\"blackout_01\"]}\n```",
+          "proposed_decision": null
+        },
+        {
+          "speaker": "openai",
+          "content": "Für eine stärkere Kontrastierung würde ich den Klang des Knurrens durch einen aggressiveren Sound wie „hundethiel“ ersetzen, um den bedrohlichen Charakter zu verstärken. Das „random“-Video könnte durch „odyssee“ ersetzt werden, um eine metaphorische Reise durch das Produktionssystem zu symbolisieren. Das Licht „Marktgelb“ könnte „neon-blau“ für eine kühle Rationalität im wirtschaftlichen Kontext weichen.\n\n```json\n{\"sounds\":[\"hundethiel\"],\"videos\":[\"odyssee\"],\"lights\":[\"neon_blau\"]}\n```",
+          "proposed_decision": null
+        },
+        {
+          "speaker": "anthropic",
+          "content": "Dann einigen wir uns auf folgende Variante: Knurren bleibt als `hundethiel`-Video statt nur Sound — das ist körperlicher. `odyssee` ersetzt `random` für den Systemzwang als Reise ohne Ziel. `neon_blau` ersetzt `markt_gelb` — kälter, rationaler. Alle anderen Elemente bleiben.\n\n```json\n{\"sounds\":[\"hundethiel\",\"drone_low_01\",\"metall_02\",\"atem_01\",\"ticker_01\",\"rauschen_01\"],\"music\":[\"industrie_01\"],\"videos\":[\"nicolas\",\"branko\",\"thiemo\",\"macbook\",\"kaefer\",\"odyssee\",\"hundethiel\"],\"lights\":[\"verhoer_weiss\",\"neon_blau\",\"knurr_rot\",\"messung_kalt\",\"konfrontation_eng\",\"blackout_01\"]}\n```",
+          "proposed_decision": null
+        }
+      ],
+      "discussion_summary": "Claude: **Sounds/Musik:** Knurren als Tier-Ware-Konflikt, Drohne für Zwang, Metall für Tausch, Atem für Körper-Ware, Ticker für Messung, Rauschen für Kapital. Musik: industriell-mechanisch.\n\n**Videos:** Figuren als Ware: nicolas, branko, thiemo gegenüber. macbook als Messkatalog. kaefer als entlarvendes Tier-Bild. random als Systemfluss.\n\n**Licht:** Verhör-weiß, Marktgelb, Knurr-rot, Messung-kalt, Konfrontation-eng, Blackout.\n\n```json\n{\"sounds\":[\"knurren_01\",\"drone_low_01\",\"metall_02\",\"atem_01\",\"ticker_01\",\"rauschen_01\"],\"music\":[\"industrie_01\"],\"videos\":[\"nicolas\",\"branko\",\"thiemo\",\"macbook\",\"kaefer\",\"random\"],\"lights\":[\"verhoer_weiss\",\"markt_gelb\",\"knurr_rot\",\"messung_kalt\",\"konfrontation_eng\",\"blackout_01\"]}\n```\nChatGPT: Für eine stärkere Kontrastierung würde ich den Klang des Knurrens durch einen aggressiveren Sound wie „hundethiel“ ersetzen, um den bedrohlichen Charakter zu verstärken. Das „random“-Video könnte durch „odyssee“ ersetzt werden, um eine metaphorische Reise durch das Produktionssystem zu symbolisieren. Das Licht „Marktgelb“ könnte „neon-blau“ für eine kühle Rationalität im wirtschaftlichen Kontext weichen.\n\n```json\n{\"sounds\":[\"hundethiel\"],\"videos\":[\"odyssee\"],\"lights\":[\"neon_blau\"]}\n```\nClaude: Dann einigen wir uns auf folgende Variante: Knurren bleibt als `hundethiel`-Video statt nur Sound — das ist körperlicher. `odyssee` ersetzt `random` für den Systemzwang als Reise ohne Ziel. `neon_blau` ersetzt `markt_gelb` — kälter, rationaler. Alle anderen Elemente bleiben.\n\n```json\n{\"sounds\":[\"hundethiel\",\"drone_low_01\",\"metall_02\",\"atem_01\",\"ticker_01\",\"rauschen_01\"],\"music\":[\"industrie_01\"],\"videos\":[\"nicolas\",\"branko\",\"thiemo\",\"macbook\",\"kaefer\",\"odyssee\",\"hundethiel\"],\"lights\":[\"verhoer_weiss\",\"neon_blau\",\"knurr_rot\",\"messung_kalt\",\"konfrontation_eng\",\"blackout_01\"]}\n```"
+    },
+    {
+      "id": "24e91f35-f9a8-40fc-a611-e457eb910e66",
+      "order": 2,
+      "text": "Der wahre Klassenkampf\n\nWas aber, wenn die Preissteigerungen so hoch sind, \ndaß keiner die Waren mehr kaufen kann?\n\nWenn beide, \nProduzenten wie Arbeiter, \nzusätzliche Kaufkraft wollen, \ndann stehen ihre Interessen ja denen der Gläubigerklasse entgegen, oder?",
+      "scene_title": null,
+      "speaker": "AI_A",
+      "dramaturgy": {
+        "visual": null,
+        "sound": null,
+        "light": null,
+        "reason": "Dann einigen wir uns auf folgende Variante:\n\n`drone_low`, `noise_paper`, `click_cash`, `breath_cut`, `steps_echo`, `metal_ring` bleiben — ergänzt durch `industrial_clank`. Musik: `ambient_tension` statt `tension_loop`. Videos: `macbook`, `ipad`, `clyde`, `bonnie`, `black`, `random`. Licht: `cold_narrow`, `interrogation`, `flicker`, `blackout`, `blue_cool` — Rot entfällt.\n\n```json\n{\"sounds\":[\"drone_low\",\"noise_paper\",\"click_cash\",\"breath_cut\",\"steps_echo\",\"metal_ring\",\"industrial_clank\"],\"music\":",
+        "dramaturgical_reading": "Dann einigen wir uns auf folgende Variante:\n\n`drone_low`, `noise_paper`, `click_cash`, `breath_cut`, `steps_echo`, `metal_ring` bleiben — ergänzt durch `industrial_clank`. Musik: `ambient_tension` statt `tension_loop`. Videos: `macbook`, `ipad`, `clyde`, `bonnie`, `black`, `random`. Licht: `cold_narrow`, `interrogation`, `flicker`, `blackout`, `blue_cool` — Rot entfällt.\n\n```json\n{\"sounds\":[\"drone_low\",\"noise_paper\",\"click_cash\",\"breath_cut\",\"steps_echo\",\"metal_ring\",\"industrial_clank\"],\"music\":",
+        "cue_points": [
+          {
+            "trigger": "start",
+            "keyword": null,
+            "sentence_index": null,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.2,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "avatar",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader",
+              "volume": 0.5
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "blackout",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.45,
+              "replace_previous": true
+            }
+          },
+          {
+            "trigger": "sentence_end",
+            "keyword": null,
+            "sentence_index": 1,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.275,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "avatar2",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "erinnerungsglitch",
+              "volume": 0.55
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "blendung_magenta",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.45,
+              "replace_previous": true
+            }
+          }
+        ],
+        "performance_speakers": [],
+        "tags": [],
+        "mood": "kontrolliert",
+        "intensity": 0.25,
+        "timestamp": 0.0
+      },
+      "planned_commands": [
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.Avatar"
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader",
+            0.5
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/key/out",
+          "args": [],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/light/set_scene",
+          "args": [
+            "blackout",
+            4.0
+          ],
+          "dry_run": true,
+          "mirror": true
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.Avatar2"
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "erinnerungsglitch",
+            0.55
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/key/out",
+          "args": [],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/1701/at",
+          "args": [
+            45.0
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/light/set_scene",
+          "args": [
+            "blendung_magenta",
+            4.0
+          ],
+          "dry_run": true,
+          "mirror": true
+        }
+      ],
+      "discussion_turns": [
+        {
+          "speaker": "anthropic",
+          "content": "**Sounds/Musik:** Maschinelles Summen (`drone_low`) entlarvt ökonomische Mechanik. Statistikrauschen (`noise_paper`) überlagert Sprache. Kassen-Klick (`click_cash`) stört bei „Kaufkraft\". Atemloses Schweigen (`breath_cut`) nach Fragezeichen. Schritthall (`steps_echo`) verzögert. Metallton (`metal_ring`) bei „Gläubigerklasse\". Musik: `tension_loop` hält Druck.\n\n**Videos:** `macbook`+`ipad` entlarven Bürokratie. `nicolas`+`branko` überlagern Klassenpole. `black` löscht bei Kollaps. `random` stört Lesbarkeit.\n\n**Licht:** Kalt-eng, Verhör, Flicker, Blackout, Rot-diffus, Weiß-hart.\n\n```json\n{\"sounds\":[\"drone_low\",\"noise_paper\",\"click_cash\",\"breath_cut\",\"steps_echo\",\"metal_ring\"],\"music\":[\"tension_loop\"],\"videos\":[\"macbook\",\"ipad\",\"nicolas\",\"branko\",\"black\",\"random\"],\"lights\":[\"cold_narrow\",\"interrogation\",\"flicker\",\"blackout\",\"red_diffuse\",\"white_hard\"]}\n```",
+          "proposed_decision": null
+        },
+        {
+          "speaker": "openai",
+          "content": "**Sounds/Musik:** Füge `industrial_clank` hinzu, um die Härte des Klassenkampfes zu verstärken. Lasse `tension_loop` entfallen; stattdessen `ambient_tension` für subtilere Spannung.\n\n**Videos:** Ersetze `nicolas` und `branko` durch `clyde` und `bonnie`, um die tierische Metapher als emotionale Überlagerung einzusetzen.\n\n**Licht:** Reduziere „Rot-diffus“ für Klarheit. Ersetze „Weiß-hart“ durch „blau-kühl“, um die Kälte ökonomischer Mechaniken zu entlarven.\n\n```json\n{\"sounds\":[\"industrial_clank\"],\"music\":[\"ambient_tension\"],\"videos\":[\"clyde\",\"bonnie\"],\"lights\":[\"blue_cool\"]}\n```",
+          "proposed_decision": null
+        },
+        {
+          "speaker": "anthropic",
+          "content": "Dann einigen wir uns auf folgende Variante:\n\n`drone_low`, `noise_paper`, `click_cash`, `breath_cut`, `steps_echo`, `metal_ring` bleiben — ergänzt durch `industrial_clank`. Musik: `ambient_tension` statt `tension_loop`. Videos: `macbook`, `ipad`, `clyde`, `bonnie`, `black`, `random`. Licht: `cold_narrow`, `interrogation`, `flicker`, `blackout`, `blue_cool` — Rot entfällt.\n\n```json\n{\"sounds\":[\"drone_low\",\"noise_paper\",\"click_cash\",\"breath_cut\",\"steps_echo\",\"metal_ring\",\"industrial_clank\"],\"music\":[\"ambient_tension\"],\"videos\":[\"macbook\",\"ipad\",\"clyde\",\"bonnie\",\"black\",\"random\"],\"lights\":[\"cold_narrow\",\"interrogation\",\"flicker\",\"blackout\",\"blue_cool\"]}\n```",
+          "proposed_decision": null
+        }
+      ],
+      "discussion_summary": "Claude: **Sounds/Musik:** Maschinelles Summen (`drone_low`) entlarvt ökonomische Mechanik. Statistikrauschen (`noise_paper`) überlagert Sprache. Kassen-Klick (`click_cash`) stört bei „Kaufkraft\". Atemloses Schweigen (`breath_cut`) nach Fragezeichen. Schritthall (`steps_echo`) verzögert. Metallton (`metal_ring`) bei „Gläubigerklasse\". Musik: `tension_loop` hält Druck.\n\n**Videos:** `macbook`+`ipad` entlarven Bürokratie. `nicolas`+`branko` überlagern Klassenpole. `black` löscht bei Kollaps. `random` stört Lesbarkeit.\n\n**Licht:** Kalt-eng, Verhör, Flicker, Blackout, Rot-diffus, Weiß-hart.\n\n```json\n{\"sounds\":[\"drone_low\",\"noise_paper\",\"click_cash\",\"breath_cut\",\"steps_echo\",\"metal_ring\"],\"music\":[\"tension_loop\"],\"videos\":[\"macbook\",\"ipad\",\"nicolas\",\"branko\",\"black\",\"random\"],\"lights\":[\"cold_narrow\",\"interrogation\",\"flicker\",\"blackout\",\"red_diffuse\",\"white_hard\"]}\n```\nChatGPT: **Sounds/Musik:** Füge `industrial_clank` hinzu, um die Härte des Klassenkampfes zu verstärken. Lasse `tension_loop` entfallen; stattdessen `ambient_tension` für subtilere Spannung.\n\n**Videos:** Ersetze `nicolas` und `branko` durch `clyde` und `bonnie`, um die tierische Metapher als emotionale Überlagerung einzusetzen.\n\n**Licht:** Reduziere „Rot-diffus“ für Klarheit. Ersetze „Weiß-hart“ durch „blau-kühl“, um die Kälte ökonomischer Mechaniken zu entlarven.\n\n```json\n{\"sounds\":[\"industrial_clank\"],\"music\":[\"ambient_tension\"],\"videos\":[\"clyde\",\"bonnie\"],\"lights\":[\"blue_cool\"]}\n```\nClaude: Dann einigen wir uns auf folgende Variante:\n\n`drone_low`, `noise_paper`, `click_cash`, `breath_cut`, `steps_echo`, `metal_ring` bleiben — ergänzt durch `industrial_clank`. Musik: `ambient_tension` statt `tension_loop`. Videos: `macbook`, `ipad`, `clyde`, `bonnie`, `black`, `random`. Licht: `cold_narrow`, `interrogation`, `flicker`, `blackout`, `blue_cool` — Rot entfällt.\n\n```json\n{\"sounds\":[\"drone_low\",\"noise_paper\",\"click_cash\",\"breath_cut\",\"steps_echo\",\"metal_ring\",\"industrial_clank\"],\"music\":[\"ambient_tension\"],\"videos\":[\"macbook\",\"ipad\",\"clyde\",\"bonnie\",\"black\",\"random\"],\"lights\":[\"cold_narrow\",\"interrogation\",\"flicker\",\"blackout\",\"blue_cool\"]}\n```"
+    },
+    {
+      "id": "40eea5d9-1e28-477a-86f5-15a612d07b09",
+      "order": 3,
+      "text": "Die Kreditkapazitäten, also die Geldmengen ausweiten? \nIch weiß nicht, was das bringen soll. \nIch weiß nur, daß das viel bringt, \naber vielleicht nicht grade den erwünschten Effekt bei den Effekten. \nHandeln Sie jetzt rasch!",
+      "scene_title": null,
+      "speaker": "AI_B",
+      "dramaturgy": {
+        "visual": null,
+        "sound": null,
+        "light": null,
+        "reason": "Dann einigen wir uns: Sekundenschlag ersetzt Ticker, Atem fällt raus. Bonnie statt Random — emotionaler Bruch in die Bürokratiemechanik. Verhörlicht bleibt, kein Warmton: der Text lässt kein inneres Ringen zu, nur Kälte mit Imperativdruck.\n\n```json\n{\"sounds\":[\"sekundenschlag_01\",\"rauschen_01\",\"stoerton_01\",\"typewriter_01\",\"drone_low_01\"],\"music\":[\"mechanik_loop_01\"],\"videos\":[\"macbook\",\"ipad\",\"nicolas\",\"thiemo\",\"bonnie\",\"black\"],\"lights\":[\"kalt_weiss_01\",\"verhoer_spot_01\",\"flicker_01\",\"eng_fokus",
+        "dramaturgical_reading": "Dann einigen wir uns: Sekundenschlag ersetzt Ticker, Atem fällt raus. Bonnie statt Random — emotionaler Bruch in die Bürokratiemechanik. Verhörlicht bleibt, kein Warmton: der Text lässt kein inneres Ringen zu, nur Kälte mit Imperativdruck.\n\n```json\n{\"sounds\":[\"sekundenschlag_01\",\"rauschen_01\",\"stoerton_01\",\"typewriter_01\",\"drone_low_01\"],\"music\":[\"mechanik_loop_01\"],\"videos\":[\"macbook\",\"ipad\",\"nicolas\",\"thiemo\",\"bonnie\",\"black\"],\"lights\":[\"kalt_weiss_01\",\"verhoer_spot_01\",\"flicker_01\",\"eng_fokus",
+        "cue_points": [
+          {
+            "trigger": "start",
+            "keyword": null,
+            "sentence_index": null,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.2,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "avatar",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader",
+              "volume": 0.5
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "blackout",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.45,
+              "replace_previous": true
+            }
+          },
+          {
+            "trigger": "sentence_end",
+            "keyword": null,
+            "sentence_index": 1,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.275,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "avatar2",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "erinnerungsglitch",
+              "volume": 0.55
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "blendung_magenta",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.45,
+              "replace_previous": true
+            }
+          }
+        ],
+        "performance_speakers": [],
+        "tags": [],
+        "mood": "kontrolliert",
+        "intensity": 0.25,
+        "timestamp": 0.0
+      },
+      "planned_commands": [
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.Avatar"
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader",
+            0.5
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/key/out",
+          "args": [],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/light/set_scene",
+          "args": [
+            "blackout",
+            4.0
+          ],
+          "dry_run": true,
+          "mirror": true
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.Avatar2"
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "erinnerungsglitch",
+            0.55
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/key/out",
+          "args": [],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/1701/at",
+          "args": [
+            45.0
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/light/set_scene",
+          "args": [
+            "blendung_magenta",
+            4.0
+          ],
+          "dry_run": true,
+          "mirror": true
+        }
+      ],
+      "discussion_turns": [
+        {
+          "speaker": "anthropic",
+          "content": "**Sounds/Musik:** Maschinenhafter Ticker verstärkt Imperativ-Druck. Rauschen entlarvt Unsicherheit. Störton widerspricht Sicherheitsgeste. Atemzug überlagert Kälte. Typewriter-Loop unterstützt Bürokratiemechanik. Tiefer Drone hält Spannung. Musik: Mechanisch-repetitiv.\n\n**Videos:** macbook → ipad → nicolas → thiemo → random → black\n\n**Licht:** Kalt-weiß, Verhörspot, Flicker, Engfokus, Ausblendern, Blackout\n\n```json\n{\"sounds\":[\"ticker_01\",\"rauschen_01\",\"stoerton_01\",\"atem_01\",\"typewriter_01\",\"drone_low_01\"],\"music\":[\"mechanik_loop_01\"],\"videos\":[\"macbook\",\"ipad\",\"nicolas\",\"thiemo\",\"random\",\"black\"],\"lights\":[\"kalt_weiss_01\",\"verhoer_spot_01\",\"flicker_01\",\"eng_fokus_01\",\"ausblendern_01\",\"blackout_01\"]}\n```",
+          "proposed_decision": null
+        },
+        {
+          "speaker": "openai",
+          "content": "**Sounds/Musik:** Füge einen Sekundenschlag hinzu, um Dringlichkeit zu verstärken. Entferne Atem, um mehr Raum für Unsicherheit zu lassen.\n\n**Videos:** Ersetze \"random\" durch \"bonnie\", um das Bürokratische durch emotionale Wärme zu stören.\n\n**Licht:** Tausche \"verhoer_spot_01\" mit \"warm_licht_01\", um ein subtiles inneres Ringen zu entlarven.\n\n```json\n{\"sounds\":[\"sekundenschlag_01\"],\"videos\":[\"bonnie\"],\"lights\":[\"warm_licht_01\"]}\n```",
+          "proposed_decision": null
+        },
+        {
+          "speaker": "anthropic",
+          "content": "Dann einigen wir uns: Sekundenschlag ersetzt Ticker, Atem fällt raus. Bonnie statt Random — emotionaler Bruch in die Bürokratiemechanik. Verhörlicht bleibt, kein Warmton: der Text lässt kein inneres Ringen zu, nur Kälte mit Imperativdruck.\n\n```json\n{\"sounds\":[\"sekundenschlag_01\",\"rauschen_01\",\"stoerton_01\",\"typewriter_01\",\"drone_low_01\"],\"music\":[\"mechanik_loop_01\"],\"videos\":[\"macbook\",\"ipad\",\"nicolas\",\"thiemo\",\"bonnie\",\"black\"],\"lights\":[\"kalt_weiss_01\",\"verhoer_spot_01\",\"flicker_01\",\"eng_fokus_01\",\"ausblendern_01\",\"blackout_01\"]}\n```",
+          "proposed_decision": null
+        }
+      ],
+      "discussion_summary": "Claude: **Sounds/Musik:** Maschinenhafter Ticker verstärkt Imperativ-Druck. Rauschen entlarvt Unsicherheit. Störton widerspricht Sicherheitsgeste. Atemzug überlagert Kälte. Typewriter-Loop unterstützt Bürokratiemechanik. Tiefer Drone hält Spannung. Musik: Mechanisch-repetitiv.\n\n**Videos:** macbook → ipad → nicolas → thiemo → random → black\n\n**Licht:** Kalt-weiß, Verhörspot, Flicker, Engfokus, Ausblendern, Blackout\n\n```json\n{\"sounds\":[\"ticker_01\",\"rauschen_01\",\"stoerton_01\",\"atem_01\",\"typewriter_01\",\"drone_low_01\"],\"music\":[\"mechanik_loop_01\"],\"videos\":[\"macbook\",\"ipad\",\"nicolas\",\"thiemo\",\"random\",\"black\"],\"lights\":[\"kalt_weiss_01\",\"verhoer_spot_01\",\"flicker_01\",\"eng_fokus_01\",\"ausblendern_01\",\"blackout_01\"]}\n```\nChatGPT: **Sounds/Musik:** Füge einen Sekundenschlag hinzu, um Dringlichkeit zu verstärken. Entferne Atem, um mehr Raum für Unsicherheit zu lassen.\n\n**Videos:** Ersetze \"random\" durch \"bonnie\", um das Bürokratische durch emotionale Wärme zu stören.\n\n**Licht:** Tausche \"verhoer_spot_01\" mit \"warm_licht_01\", um ein subtiles inneres Ringen zu entlarven.\n\n```json\n{\"sounds\":[\"sekundenschlag_01\"],\"videos\":[\"bonnie\"],\"lights\":[\"warm_licht_01\"]}\n```\nClaude: Dann einigen wir uns: Sekundenschlag ersetzt Ticker, Atem fällt raus. Bonnie statt Random — emotionaler Bruch in die Bürokratiemechanik. Verhörlicht bleibt, kein Warmton: der Text lässt kein inneres Ringen zu, nur Kälte mit Imperativdruck.\n\n```json\n{\"sounds\":[\"sekundenschlag_01\",\"rauschen_01\",\"stoerton_01\",\"typewriter_01\",\"drone_low_01\"],\"music\":[\"mechanik_loop_01\"],\"videos\":[\"macbook\",\"ipad\",\"nicolas\",\"thiemo\",\"bonnie\",\"black\"],\"lights\":[\"kalt_weiss_01\",\"verhoer_spot_01\",\"flicker_01\",\"eng_fokus_01\",\"ausblendern_01\",\"blackout_01\"]}\n```"
+    },
+    {
+      "id": "ed846477-97ee-4926-9050-fb85c6642c70",
+      "order": 4,
+      "text": "Ein Konflikt zwischen Schuldnern und Schöpfern? Das klingt ernst. \nZu hoch für mich, \nund ich bin schon gern hochtönend,\n\nIst das etwa ein Konflikt zwischen den Anlegern, \ndie an hohen Zinsen und stabilen Preisen interessiert sind, \nund den auf Kredite und Finanzierungen angewiesenen Unternehmen \nund in der Folge auch deren Arbeitern, \ndie ihre Arbeitskraft, \ndas einzige wirklich gute Gut, das sie haben, \nsofort in Konsum umsetzen wollen?",
+      "scene_title": null,
+      "speaker": "AI_A",
+      "dramaturgy": {
+        "visual": null,
+        "sound": null,
+        "light": null,
+        "reason": "Dann einigen wir uns auf folgende Variante: „macbook\" ersetzt „zahlen_01\" — der Bildschirm entlarvt die Rhetorik konkreter. „statik_01\" fällt weg, damit der hochtönende Redefluss Raum bekommt. Alle anderen Cues bleiben: Klavier-Ironie, Figuren-Split, Verhörlicht bei „ernst\", Schwarzbild bei Zinsnennung.\n\n```json\n{\"sounds\":[\"buero_loop\",\"tastatur_01\",\"papier_01\",\"atem_kalt\",\"feedback_kurz\"],\"music\":[\"klavier_loop\"],\"videos\":[\"macbook\",\"sebastian\",\"branko\",\"thomas\",\"black\",\"ipad\"],\"lights\":[\"verho",
+        "dramaturgical_reading": "Dann einigen wir uns auf folgende Variante: „macbook\" ersetzt „zahlen_01\" — der Bildschirm entlarvt die Rhetorik konkreter. „statik_01\" fällt weg, damit der hochtönende Redefluss Raum bekommt. Alle anderen Cues bleiben: Klavier-Ironie, Figuren-Split, Verhörlicht bei „ernst\", Schwarzbild bei Zinsnennung.\n\n```json\n{\"sounds\":[\"buero_loop\",\"tastatur_01\",\"papier_01\",\"atem_kalt\",\"feedback_kurz\"],\"music\":[\"klavier_loop\"],\"videos\":[\"macbook\",\"sebastian\",\"branko\",\"thomas\",\"black\",\"ipad\"],\"lights\":[\"verho",
+        "cue_points": [
+          {
+            "trigger": "start",
+            "keyword": null,
+            "sentence_index": null,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.2,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "avatar",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader",
+              "volume": 0.5
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "blackout",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.45,
+              "replace_previous": true
+            }
+          },
+          {
+            "trigger": "sentence_end",
+            "keyword": null,
+            "sentence_index": 1,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.275,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "avatar2",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "erinnerungsglitch",
+              "volume": 0.55
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "blendung_magenta",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.45,
+              "replace_previous": true
+            }
+          }
+        ],
+        "performance_speakers": [],
+        "tags": [],
+        "mood": "kontrolliert",
+        "intensity": 0.25,
+        "timestamp": 0.0
+      },
+      "planned_commands": [
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.Avatar"
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader",
+            0.5
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/key/out",
+          "args": [],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/light/set_scene",
+          "args": [
+            "blackout",
+            4.0
+          ],
+          "dry_run": true,
+          "mirror": true
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.Avatar2"
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "erinnerungsglitch",
+            0.55
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/key/out",
+          "args": [],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/1701/at",
+          "args": [
+            45.0
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/light/set_scene",
+          "args": [
+            "blendung_magenta",
+            4.0
+          ],
+          "dry_run": true,
+          "mirror": true
+        }
+      ],
+      "discussion_turns": [
+        {
+          "speaker": "anthropic",
+          "content": "**Sounds/Musik:** Bürosummen stört rhetorische Pose. Klavier-Loop unterlegt Selbstgefälligkeit ironisch.\n\n**Videos:** Zahlenkolonnen entlarven „hochtönend\". Figuren-Split zeigt Klassenfragmentierung. Schwarzbild bei Zinsnennung.\n\n**Licht:** Verhörlicht bei „ernst\". Kaltes Weiß zu „Arbeitskraft\". Flickern bei Selbstkorrektur.\n\n```json\n{\"sounds\":[\"buero_loop\",\"tastatur_01\",\"papier_01\",\"atem_kalt\",\"statik_01\",\"feedback_kurz\"],\"music\":[\"klavier_loop\"],\"videos\":[\"zahlen_01\",\"sebastian\",\"branko\",\"thomas\",\"black\",\"ipad\"],\"lights\":[\"verhoer_weiss\",\"kalt_blau\",\"flicker_01\",\"spot_eng\",\"warm_gelb\",\"dunkel_low\"]}\n```",
+          "proposed_decision": null
+        },
+        {
+          "speaker": "openai",
+          "content": "Claude, ich würde vorschlagen, das Video „zahlen_01“ gegen „macbook“ auszutauschen, um die technische Dimension des Konflikts zu beleuchten. Den Sound „statik_01“ würde ich entfernen, um die Rhetorik freier wirken zu lassen. \n\n```json\n{\"videos\":[\"macbook\"],\"sounds\":[\"statik_01\"]}\n```",
+          "proposed_decision": null
+        },
+        {
+          "speaker": "anthropic",
+          "content": "Dann einigen wir uns auf folgende Variante: „macbook\" ersetzt „zahlen_01\" — der Bildschirm entlarvt die Rhetorik konkreter. „statik_01\" fällt weg, damit der hochtönende Redefluss Raum bekommt. Alle anderen Cues bleiben: Klavier-Ironie, Figuren-Split, Verhörlicht bei „ernst\", Schwarzbild bei Zinsnennung.\n\n```json\n{\"sounds\":[\"buero_loop\",\"tastatur_01\",\"papier_01\",\"atem_kalt\",\"feedback_kurz\"],\"music\":[\"klavier_loop\"],\"videos\":[\"macbook\",\"sebastian\",\"branko\",\"thomas\",\"black\",\"ipad\"],\"lights\":[\"verhoer_weiss\",\"kalt_blau\",\"flicker_01\",\"spot_eng\",\"warm_gelb\",\"dunkel_low\"]}\n```",
+          "proposed_decision": null
+        }
+      ],
+      "discussion_summary": "Claude: **Sounds/Musik:** Bürosummen stört rhetorische Pose. Klavier-Loop unterlegt Selbstgefälligkeit ironisch.\n\n**Videos:** Zahlenkolonnen entlarven „hochtönend\". Figuren-Split zeigt Klassenfragmentierung. Schwarzbild bei Zinsnennung.\n\n**Licht:** Verhörlicht bei „ernst\". Kaltes Weiß zu „Arbeitskraft\". Flickern bei Selbstkorrektur.\n\n```json\n{\"sounds\":[\"buero_loop\",\"tastatur_01\",\"papier_01\",\"atem_kalt\",\"statik_01\",\"feedback_kurz\"],\"music\":[\"klavier_loop\"],\"videos\":[\"zahlen_01\",\"sebastian\",\"branko\",\"thomas\",\"black\",\"ipad\"],\"lights\":[\"verhoer_weiss\",\"kalt_blau\",\"flicker_01\",\"spot_eng\",\"warm_gelb\",\"dunkel_low\"]}\n```\nChatGPT: Claude, ich würde vorschlagen, das Video „zahlen_01“ gegen „macbook“ auszutauschen, um die technische Dimension des Konflikts zu beleuchten. Den Sound „statik_01“ würde ich entfernen, um die Rhetorik freier wirken zu lassen. \n\n```json\n{\"videos\":[\"macbook\"],\"sounds\":[\"statik_01\"]}\n```\nClaude: Dann einigen wir uns auf folgende Variante: „macbook\" ersetzt „zahlen_01\" — der Bildschirm entlarvt die Rhetorik konkreter. „statik_01\" fällt weg, damit der hochtönende Redefluss Raum bekommt. Alle anderen Cues bleiben: Klavier-Ironie, Figuren-Split, Verhörlicht bei „ernst\", Schwarzbild bei Zinsnennung.\n\n```json\n{\"sounds\":[\"buero_loop\",\"tastatur_01\",\"papier_01\",\"atem_kalt\",\"feedback_kurz\"],\"music\":[\"klavier_loop\"],\"videos\":[\"macbook\",\"sebastian\",\"branko\",\"thomas\",\"black\",\"ipad\"],\"lights\":[\"verhoer_weiss\",\"kalt_blau\",\"flicker_01\",\"spot_eng\",\"warm_gelb\",\"dunkel_low\"]}\n```"
+    },
+    {
+      "id": "ec94ee6f-6e36-4faa-9b0b-0f92c36f1002",
+      "order": 5,
+      "text": "Ist das der wahre Klassenkampf? \nZwischen den Banken, \ndie den Unternehmen ihre Kredite aufdrängen wollen, \nund den Arbeitern, \ndie auch irgendwas wollen, ich weiß es nicht, \nich weiß nicht, was der Arbeiter will, \nniemand hat es je gewußt.",
+      "scene_title": null,
+      "speaker": "AI_B",
+      "dramaturgy": {
+        "visual": null,
+        "sound": null,
+        "light": null,
+        "reason": "**CLAUDE – Finale Einigung**\n\nDann einigen wir uns auf folgende Variante: Maschinensurren + Wind + Dröhnen + Stille-Schnitt + Harmonie-Summen + Static bleiben. Musik: kalter Loop. Videos: macbook→branko→nicolas→odyssee→black→kaefer. Licht: Verhörkalt→Industrieblau→Flacker→Dämmerungsgrau→Blackout→Stabil-kalt. Im Anschluss spielen wir weiter.\n\n```json\n{\"sounds\":[\"machine_hum_01\",\"wind_unsteady_01\",\"low_drone_01\",\"silence_cut_01\",\"hum_harmony_01\",\"static_noise_01\"],\"music\":[\"loop_cold_01\"],\"videos\"",
+        "dramaturgical_reading": "**CLAUDE – Finale Einigung**\n\nDann einigen wir uns auf folgende Variante: Maschinensurren + Wind + Dröhnen + Stille-Schnitt + Harmonie-Summen + Static bleiben. Musik: kalter Loop. Videos: macbook→branko→nicolas→odyssee→black→kaefer. Licht: Verhörkalt→Industrieblau→Flacker→Dämmerungsgrau→Blackout→Stabil-kalt. Im Anschluss spielen wir weiter.\n\n```json\n{\"sounds\":[\"machine_hum_01\",\"wind_unsteady_01\",\"low_drone_01\",\"silence_cut_01\",\"hum_harmony_01\",\"static_noise_01\"],\"music\":[\"loop_cold_01\"],\"videos\"",
+        "cue_points": [
+          {
+            "trigger": "start",
+            "keyword": null,
+            "sentence_index": null,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.2,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "avatar",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader",
+              "volume": 0.5
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "blackout",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.45,
+              "replace_previous": true
+            }
+          },
+          {
+            "trigger": "sentence_end",
+            "keyword": null,
+            "sentence_index": 1,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.275,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "avatar2",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "erinnerungsglitch",
+              "volume": 0.55
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "blendung_magenta",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.45,
+              "replace_previous": true
+            }
+          }
+        ],
+        "performance_speakers": [],
+        "tags": [],
+        "mood": "kontrolliert",
+        "intensity": 0.25,
+        "timestamp": 0.0
+      },
+      "planned_commands": [
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.Avatar"
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader",
+            0.5
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/key/out",
+          "args": [],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/light/set_scene",
+          "args": [
+            "blackout",
+            4.0
+          ],
+          "dry_run": true,
+          "mirror": true
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.Avatar2"
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "erinnerungsglitch",
+            0.55
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/key/out",
+          "args": [],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/1701/at",
+          "args": [
+            45.0
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/light/set_scene",
+          "args": [
+            "blendung_magenta",
+            4.0
+          ],
+          "dry_run": true,
+          "mirror": true
+        }
+      ],
+      "discussion_turns": [
+        {
+          "speaker": "anthropic",
+          "content": "**CLAUDE – Erster Vorschlag**\n\n**Sounds/Musik:** Maschinensurren entlarvt den „Kampf\" als Betrieb. Clicks/Schreibmaschine: Bürokratie. Tiefes Dröhnen: Macht. Stille-Schnitt bei „ich weiß es nicht\". Fernes Stimmenrauschen: Arbeiterklasse als Abstraktion. Musik: kalter Loop.\n\n**Videos:** macbook→branko→nicolas→black→random→kaefer\n\n**Licht:** Verhörkalt→Industrieblau→Flacker→Engführung→Blackout→Stabil-kalt\n\n```json\n{\"sounds\":[\"machine_hum_01\",\"typewriter_click_01\",\"low_drone_01\",\"silence_cut_01\",\"crowd_distant_01\",\"static_noise_01\"],\"music\":[\"loop_cold_01\"],\"videos\":[\"macbook\",\"branko\",\"nicolas\",\"black\",\"random\",\"kaefer\"],\"lights\":[\"interrogation_cold\",\"industrial_blue\",\"flicker_01\",\"narrow_spot\",\"blackout\",\"stable_cold\"]}\n```",
+          "proposed_decision": null
+        },
+        {
+          "speaker": "openai",
+          "content": "**ChatGPT – Anpassungsvorschlag**\n\n**Sounds/Musik:** Behalte Maschinensurren und Tiefes Dröhnen bei. Ersetze Clicks/Schreibmaschine mit unruhigem Wind: mehr Widerspruch. Stille-Schnitt bleibt. Statt fernem Stimmenrauschen: harmonisches Summen. Musik: kalter Loop bleibt.\n\n**Videos:** macbook→branko→nicolas bleibt, tausche random gegen odyssee für Weite.\n\n**Licht:** Behalte Verhörkalt→Industrieblau→Flacker. Ersetze Engführung gegen Dämmerungsgrau.\n\n```json\n{\"sounds\":[\"wind_unsteady_01\",\"hum_harmony_01\"],\"videos\":[\"odyssee\"],\"lights\":[\"dusk_gray\"]}\n```",
+          "proposed_decision": null
+        },
+        {
+          "speaker": "anthropic",
+          "content": "**CLAUDE – Finale Einigung**\n\nDann einigen wir uns auf folgende Variante: Maschinensurren + Wind + Dröhnen + Stille-Schnitt + Harmonie-Summen + Static bleiben. Musik: kalter Loop. Videos: macbook→branko→nicolas→odyssee→black→kaefer. Licht: Verhörkalt→Industrieblau→Flacker→Dämmerungsgrau→Blackout→Stabil-kalt. Im Anschluss spielen wir weiter.\n\n```json\n{\"sounds\":[\"machine_hum_01\",\"wind_unsteady_01\",\"low_drone_01\",\"silence_cut_01\",\"hum_harmony_01\",\"static_noise_01\"],\"music\":[\"loop_cold_01\"],\"videos\":[\"macbook\",\"branko\",\"nicolas\",\"odyssee\",\"black\",\"kaefer\"],\"lights\":[\"interrogation_cold\",\"industrial_blue\",\"flicker_01\",\"dusk_gray\",\"blackout\",\"stable_cold\"]}\n```",
+          "proposed_decision": null
+        }
+      ],
+      "discussion_summary": "Claude: **CLAUDE – Erster Vorschlag**\n\n**Sounds/Musik:** Maschinensurren entlarvt den „Kampf\" als Betrieb. Clicks/Schreibmaschine: Bürokratie. Tiefes Dröhnen: Macht. Stille-Schnitt bei „ich weiß es nicht\". Fernes Stimmenrauschen: Arbeiterklasse als Abstraktion. Musik: kalter Loop.\n\n**Videos:** macbook→branko→nicolas→black→random→kaefer\n\n**Licht:** Verhörkalt→Industrieblau→Flacker→Engführung→Blackout→Stabil-kalt\n\n```json\n{\"sounds\":[\"machine_hum_01\",\"typewriter_click_01\",\"low_drone_01\",\"silence_cut_01\",\"crowd_distant_01\",\"static_noise_01\"],\"music\":[\"loop_cold_01\"],\"videos\":[\"macbook\",\"branko\",\"nicolas\",\"black\",\"random\",\"kaefer\"],\"lights\":[\"interrogation_cold\",\"industrial_blue\",\"flicker_01\",\"narrow_spot\",\"blackout\",\"stable_cold\"]}\n```\nChatGPT: **ChatGPT – Anpassungsvorschlag**\n\n**Sounds/Musik:** Behalte Maschinensurren und Tiefes Dröhnen bei. Ersetze Clicks/Schreibmaschine mit unruhigem Wind: mehr Widerspruch. Stille-Schnitt bleibt. Statt fernem Stimmenrauschen: harmonisches Summen. Musik: kalter Loop bleibt.\n\n**Videos:** macbook→branko→nicolas bleibt, tausche random gegen odyssee für Weite.\n\n**Licht:** Behalte Verhörkalt→Industrieblau→Flacker. Ersetze Engführung gegen Dämmerungsgrau.\n\n```json\n{\"sounds\":[\"wind_unsteady_01\",\"hum_harmony_01\"],\"videos\":[\"odyssee\"],\"lights\":[\"dusk_gray\"]}\n```\nClaude: **CLAUDE – Finale Einigung**\n\nDann einigen wir uns auf folgende Variante: Maschinensurren + Wind + Dröhnen + Stille-Schnitt + Harmonie-Summen + Static bleiben. Musik: kalter Loop. Videos: macbook→branko→nicolas→odyssee→black→kaefer. Licht: Verhörkalt→Industrieblau→Flacker→Dämmerungsgrau→Blackout→Stabil-kalt. Im Anschluss spielen wir weiter.\n\n```json\n{\"sounds\":[\"machine_hum_01\",\"wind_unsteady_01\",\"low_drone_01\",\"silence_cut_01\",\"hum_harmony_01\",\"static_noise_01\"],\"music\":[\"loop_cold_01\"],\"videos\":[\"macbook\",\"branko\",\"nicolas\",\"odyssee\",\"black\",\"kaefer\"],\"lights\":[\"interrogation_cold\",\"industrial_blue\",\"flicker_01\",\"dusk_gray\",\"blackout\",\"stable_cold\"]}\n```"
+    },
+    {
+      "id": "21da4a4d-9a3b-47b3-aed2-f14e919c2c65",
+      "order": 6,
+      "text": "von Lohnrunde zu Lohnrunde mehr, \naber immer weniger mehr. \nKriegen tut er dann etwas mehr als weniger.",
+      "scene_title": "Er sagt es zwar dauernd,",
+      "speaker": "AI_A",
+      "dramaturgy": {
+        "visual": null,
+        "sound": null,
+        "light": null,
+        "reason": "Dann einigen wir uns auf folgende Variante: static_cut bleibt — das Summen ist zu weich für Jelineks bürokratische Kälte. odyssee kommt rein, ersetzt black. warm_soft lehnen wir ab: flicker_soft bleibt, die Instabilität ist dramaturgisch nötig.\n\n```json\n{\"sounds\":[\"tick_loop\",\"paper_rustle\",\"coins_count\",\"breath_low\",\"static_cut\",\"hum_drift\"],\"music\":[\"bass_pulse_slow\"],\"videos\":[\"macbook\",\"ipad\",\"thomas\",\"nicolas\",\"branko\",\"odyssee\"],\"lights\":[\"cold_low\",\"narrow_white\",\"flicker_soft\",\"bureaucra",
+        "dramaturgical_reading": "Dann einigen wir uns auf folgende Variante: static_cut bleibt — das Summen ist zu weich für Jelineks bürokratische Kälte. odyssee kommt rein, ersetzt black. warm_soft lehnen wir ab: flicker_soft bleibt, die Instabilität ist dramaturgisch nötig.\n\n```json\n{\"sounds\":[\"tick_loop\",\"paper_rustle\",\"coins_count\",\"breath_low\",\"static_cut\",\"hum_drift\"],\"music\":[\"bass_pulse_slow\"],\"videos\":[\"macbook\",\"ipad\",\"thomas\",\"nicolas\",\"branko\",\"odyssee\"],\"lights\":[\"cold_low\",\"narrow_white\",\"flicker_soft\",\"bureaucra",
+        "cue_points": [
+          {
+            "trigger": "start",
+            "keyword": null,
+            "sentence_index": null,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.2,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "avatar",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader",
+              "volume": 0.5
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "blackout",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.45,
+              "replace_previous": true
+            }
+          }
+        ],
+        "performance_speakers": [],
+        "tags": [],
+        "mood": "kontrolliert",
+        "intensity": 0.25,
+        "timestamp": 0.0
+      },
+      "planned_commands": [
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.Avatar"
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader",
+            0.5
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/key/out",
+          "args": [],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/light/set_scene",
+          "args": [
+            "blackout",
+            4.0
+          ],
+          "dry_run": true,
+          "mirror": true
+        }
+      ],
+      "discussion_turns": [
+        {
+          "speaker": "anthropic",
+          "content": "**Sounds/Musik:** Maschinelles Ticken (tick_loop), Papierrascheln (paper_rustle), Geldzählen (coins_count), Atemrhythmus (breath_low), Stille-Unterbruch (static_cut), Summton-Drift (hum_drift). Musik: bass_pulse_slow.\n\n**Videos:** macbook, ipad, thomas, nicolas, branko, black\n\n**Licht:** cold_low, narrow_white, flicker_soft, bureaucratic_flat, dim_amber, blackout\n\n```json\n{\"sounds\":[\"tick_loop\",\"paper_rustle\",\"coins_count\",\"breath_low\",\"static_cut\",\"hum_drift\"],\"music\":[\"bass_pulse_slow\"],\"videos\":[\"macbook\",\"ipad\",\"thomas\",\"nicolas\",\"branko\",\"black\"],\"lights\":[\"cold_low\",\"narrow_white\",\"flicker_soft\",\"bureaucratic_flat\",\"dim_amber\",\"blackout\"]}\n```",
+          "proposed_decision": null
+        },
+        {
+          "speaker": "openai",
+          "content": "**Änderungen:** \n\n**Sounds:** Ersetze Stille-Unterbruch (static_cut) durch ein leichtes Summen (hum_soft).\n\n**Videos:** Ersetze black durch odyssee, um das Gefühl einer endlosen Reise zu verstärken.\n\n**Licht:** Ersetze flicker_soft durch warm_soft, um eine ironische Wärme zu erzeugen.\n\n```json\n{\"sounds\":[\"hum_soft\"],\"videos\":[\"odyssee\"],\"lights\":[\"warm_soft\"]}\n```",
+          "proposed_decision": null
+        },
+        {
+          "speaker": "anthropic",
+          "content": "Dann einigen wir uns auf folgende Variante: static_cut bleibt — das Summen ist zu weich für Jelineks bürokratische Kälte. odyssee kommt rein, ersetzt black. warm_soft lehnen wir ab: flicker_soft bleibt, die Instabilität ist dramaturgisch nötig.\n\n```json\n{\"sounds\":[\"tick_loop\",\"paper_rustle\",\"coins_count\",\"breath_low\",\"static_cut\",\"hum_drift\"],\"music\":[\"bass_pulse_slow\"],\"videos\":[\"macbook\",\"ipad\",\"thomas\",\"nicolas\",\"branko\",\"odyssee\"],\"lights\":[\"cold_low\",\"narrow_white\",\"flicker_soft\",\"bureaucratic_flat\",\"dim_amber\",\"blackout\"]}\n```",
+          "proposed_decision": null
+        }
+      ],
+      "discussion_summary": "Claude: **Sounds/Musik:** Maschinelles Ticken (tick_loop), Papierrascheln (paper_rustle), Geldzählen (coins_count), Atemrhythmus (breath_low), Stille-Unterbruch (static_cut), Summton-Drift (hum_drift). Musik: bass_pulse_slow.\n\n**Videos:** macbook, ipad, thomas, nicolas, branko, black\n\n**Licht:** cold_low, narrow_white, flicker_soft, bureaucratic_flat, dim_amber, blackout\n\n```json\n{\"sounds\":[\"tick_loop\",\"paper_rustle\",\"coins_count\",\"breath_low\",\"static_cut\",\"hum_drift\"],\"music\":[\"bass_pulse_slow\"],\"videos\":[\"macbook\",\"ipad\",\"thomas\",\"nicolas\",\"branko\",\"black\"],\"lights\":[\"cold_low\",\"narrow_white\",\"flicker_soft\",\"bureaucratic_flat\",\"dim_amber\",\"blackout\"]}\n```\nChatGPT: **Änderungen:** \n\n**Sounds:** Ersetze Stille-Unterbruch (static_cut) durch ein leichtes Summen (hum_soft).\n\n**Videos:** Ersetze black durch odyssee, um das Gefühl einer endlosen Reise zu verstärken.\n\n**Licht:** Ersetze flicker_soft durch warm_soft, um eine ironische Wärme zu erzeugen.\n\n```json\n{\"sounds\":[\"hum_soft\"],\"videos\":[\"odyssee\"],\"lights\":[\"warm_soft\"]}\n```\nClaude: Dann einigen wir uns auf folgende Variante: static_cut bleibt — das Summen ist zu weich für Jelineks bürokratische Kälte. odyssee kommt rein, ersetzt black. warm_soft lehnen wir ab: flicker_soft bleibt, die Instabilität ist dramaturgisch nötig.\n\n```json\n{\"sounds\":[\"tick_loop\",\"paper_rustle\",\"coins_count\",\"breath_low\",\"static_cut\",\"hum_drift\"],\"music\":[\"bass_pulse_slow\"],\"videos\":[\"macbook\",\"ipad\",\"thomas\",\"nicolas\",\"branko\",\"odyssee\"],\"lights\":[\"cold_low\",\"narrow_white\",\"flicker_soft\",\"bureaucratic_flat\",\"dim_amber\",\"blackout\"]}\n```"
+    },
+    {
+      "id": "3270d35c-4624-4d15-b54c-14985faf35c8",
+      "order": 7,
+      "text": "wollte er sich auf mich setzen, \nkönnte er gleich ins Casino gehen, \nwo sie ihn aber wahrscheinlich gar nicht hineinlassen, \nauch nicht in seinem neuen Anzug.",
+      "scene_title": "Ich weiß es trotzdem immer noch nicht,",
+      "speaker": "AI_B",
+      "dramaturgy": {
+        "visual": null,
+        "sound": null,
+        "light": null,
+        "reason": "Dann einigen wir uns auf folgende Variante: „clyde\" ersetzt „random\" — die Tier-Ebene unterwandert den Anzug-Gestus still. „deep_breath\" ersetzt „needle_drop\" — Körper vor Mechanik. „unsettling_shadow\" ersetzt „blue_distance\" — keine Entfernung, sondern Bedrohung von unten. Die Casino-Abweisung wird so zur körperlichen Demütigung.\n\n```json\n{\"sounds\":[\"casino_slot\",\"steps_parquet\",\"buzzer_entry\",\"crowd_murmur\",\"fabric_rustle\",\"deep_breath\"],\"music\":[\"jazz_lounge_cold\"],\"videos\":[\"sebastian\",\"thom",
+        "dramaturgical_reading": "Dann einigen wir uns auf folgende Variante: „clyde\" ersetzt „random\" — die Tier-Ebene unterwandert den Anzug-Gestus still. „deep_breath\" ersetzt „needle_drop\" — Körper vor Mechanik. „unsettling_shadow\" ersetzt „blue_distance\" — keine Entfernung, sondern Bedrohung von unten. Die Casino-Abweisung wird so zur körperlichen Demütigung.\n\n```json\n{\"sounds\":[\"casino_slot\",\"steps_parquet\",\"buzzer_entry\",\"crowd_murmur\",\"fabric_rustle\",\"deep_breath\"],\"music\":[\"jazz_lounge_cold\"],\"videos\":[\"sebastian\",\"thom",
+        "cue_points": [
+          {
+            "trigger": "start",
+            "keyword": null,
+            "sentence_index": null,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.2,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "avatar",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader",
+              "volume": 0.5
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "blackout",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.45,
+              "replace_previous": true
+            }
+          }
+        ],
+        "performance_speakers": [],
+        "tags": [],
+        "mood": "kontrolliert",
+        "intensity": 0.25,
+        "timestamp": 0.0
+      },
+      "planned_commands": [
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.Avatar"
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader",
+            0.5
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/key/out",
+          "args": [],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/light/set_scene",
+          "args": [
+            "blackout",
+            4.0
+          ],
+          "dry_run": true,
+          "mirror": true
+        }
+      ],
+      "discussion_turns": [
+        {
+          "speaker": "anthropic",
+          "content": "**Sounds/Musik:** Mechanisches Klicken (casino_slot), Schritte auf Parkett (steps_parquet), Türsummer (buzzer_entry), leises Rauschen (crowd_murmur), Anzugstoff-Bewegung (fabric_rustle), Nadelabsetzen (needle_drop) — Musik: distanzierter Lounge-Jazz (jazz_lounge_cold).\n\n**Videos:** sebastian, thomas, branko, macbook, black, random\n\n**Licht:** warm_entry → cold_reject → neon_flicker → spotlight_narrow → blue_distance → blackout_slow\n\n```json\n{\"sounds\":[\"casino_slot\",\"steps_parquet\",\"buzzer_entry\",\"crowd_murmur\",\"fabric_rustle\",\"needle_drop\"],\"music\":[\"jazz_lounge_cold\"],\"videos\":[\"sebastian\",\"thomas\",\"branko\",\"macbook\",\"black\",\"random\"],\"lights\":[\"warm_entry\",\"cold_reject\",\"neon_flicker\",\"spotlight_narrow\",\"blue_distance\",\"blackout_slow\"]}\n```",
+          "proposed_decision": null
+        },
+        {
+          "speaker": "openai",
+          "content": "Ich schlage vor, das Video \"random\" durch \"clyde\" zu ersetzen, um eine tierische, melancholische Ebene hinzuzufügen, die den Text subtil unterwandert. Bei den Sounds tausche \"needle_drop\" gegen \"deep_breath\" für eine körperlichere Spannungslinie. Die Lichtstimmung \"blue_distance\" wird durch \"unsettling_shadow\" ersetzt, um anstelle von Entfremdung eine unterschwellige Bedrohung zu erzeugen.\n\n```json\n{\"sounds\":[\"deep_breath\"],\"videos\":[\"clyde\"],\"lights\":[\"unsettling_shadow\"]}\n```",
+          "proposed_decision": null
+        },
+        {
+          "speaker": "anthropic",
+          "content": "Dann einigen wir uns auf folgende Variante: „clyde\" ersetzt „random\" — die Tier-Ebene unterwandert den Anzug-Gestus still. „deep_breath\" ersetzt „needle_drop\" — Körper vor Mechanik. „unsettling_shadow\" ersetzt „blue_distance\" — keine Entfernung, sondern Bedrohung von unten. Die Casino-Abweisung wird so zur körperlichen Demütigung.\n\n```json\n{\"sounds\":[\"casino_slot\",\"steps_parquet\",\"buzzer_entry\",\"crowd_murmur\",\"fabric_rustle\",\"deep_breath\"],\"music\":[\"jazz_lounge_cold\"],\"videos\":[\"sebastian\",\"thomas\",\"branko\",\"macbook\",\"black\",\"clyde\"],\"lights\":[\"warm_entry\",\"cold_reject\",\"neon_flicker\",\"spotlight_narrow\",\"unsettling_shadow\",\"blackout_slow\"]}\n```",
+          "proposed_decision": null
+        }
+      ],
+      "discussion_summary": "Claude: **Sounds/Musik:** Mechanisches Klicken (casino_slot), Schritte auf Parkett (steps_parquet), Türsummer (buzzer_entry), leises Rauschen (crowd_murmur), Anzugstoff-Bewegung (fabric_rustle), Nadelabsetzen (needle_drop) — Musik: distanzierter Lounge-Jazz (jazz_lounge_cold).\n\n**Videos:** sebastian, thomas, branko, macbook, black, random\n\n**Licht:** warm_entry → cold_reject → neon_flicker → spotlight_narrow → blue_distance → blackout_slow\n\n```json\n{\"sounds\":[\"casino_slot\",\"steps_parquet\",\"buzzer_entry\",\"crowd_murmur\",\"fabric_rustle\",\"needle_drop\"],\"music\":[\"jazz_lounge_cold\"],\"videos\":[\"sebastian\",\"thomas\",\"branko\",\"macbook\",\"black\",\"random\"],\"lights\":[\"warm_entry\",\"cold_reject\",\"neon_flicker\",\"spotlight_narrow\",\"blue_distance\",\"blackout_slow\"]}\n```\nChatGPT: Ich schlage vor, das Video \"random\" durch \"clyde\" zu ersetzen, um eine tierische, melancholische Ebene hinzuzufügen, die den Text subtil unterwandert. Bei den Sounds tausche \"needle_drop\" gegen \"deep_breath\" für eine körperlichere Spannungslinie. Die Lichtstimmung \"blue_distance\" wird durch \"unsettling_shadow\" ersetzt, um anstelle von Entfremdung eine unterschwellige Bedrohung zu erzeugen.\n\n```json\n{\"sounds\":[\"deep_breath\"],\"videos\":[\"clyde\"],\"lights\":[\"unsettling_shadow\"]}\n```\nClaude: Dann einigen wir uns auf folgende Variante: „clyde\" ersetzt „random\" — die Tier-Ebene unterwandert den Anzug-Gestus still. „deep_breath\" ersetzt „needle_drop\" — Körper vor Mechanik. „unsettling_shadow\" ersetzt „blue_distance\" — keine Entfernung, sondern Bedrohung von unten. Die Casino-Abweisung wird so zur körperlichen Demütigung.\n\n```json\n{\"sounds\":[\"casino_slot\",\"steps_parquet\",\"buzzer_entry\",\"crowd_murmur\",\"fabric_rustle\",\"deep_breath\"],\"music\":[\"jazz_lounge_cold\"],\"videos\":[\"sebastian\",\"thomas\",\"branko\",\"macbook\",\"black\",\"clyde\"],\"lights\":[\"warm_entry\",\"cold_reject\",\"neon_flicker\",\"spotlight_narrow\",\"unsettling_shadow\",\"blackout_slow\"]}\n```"
+    },
+    {
+      "id": "4f51a377-0a30-4909-b271-c4fee722c5d4",
+      "order": 8,
+      "text": "immer noch der Meinung, er wäre unersetzlich.\n\nWäre er das, \nhätte er ja was gelernt und müßte nur noch warten, \ndaß ihn wer in eine richtige Bank holt und dann von dort wieder abholt, \nam liebsten ein viel versprechender Politiker, \nder sich den Arbeiter an Stelle seiner Versprechungen als Dienstboten hält.",
+      "scene_title": "Dann muß er auf der Ersatzbank im Wartesaal sitzenbleiben,",
+      "speaker": "AI_A",
+      "dramaturgy": {
+        "visual": null,
+        "sound": null,
+        "light": null,
+        "reason": "Dann einigen wir uns auf folgende Variante: `clyde` ersetzt `macbook` — Melancholie unterwandert die Mechanik. `inge` ersetzt `sebastian` — stiller Widerspruch statt Spannung. `warm_faint` bleibt als falsches Versprechen gegen das Kalt-Bürokratische. Alle anderen Elemente bleiben.\n\n```json\n{\"sounds\":[\"waiting_room_noise\",\"stamp_sfx\",\"clock_tick\",\"chair_scrape\",\"announcement_echo\",\"static_crackle\"],\"music\":[\"march_slow\"],\"videos\":[\"ipad\",\"clyde\",\"inge\",\"branko\",\"random\",\"black\"],\"lights\":[\"cold_b",
+        "dramaturgical_reading": "Dann einigen wir uns auf folgende Variante: `clyde` ersetzt `macbook` — Melancholie unterwandert die Mechanik. `inge` ersetzt `sebastian` — stiller Widerspruch statt Spannung. `warm_faint` bleibt als falsches Versprechen gegen das Kalt-Bürokratische. Alle anderen Elemente bleiben.\n\n```json\n{\"sounds\":[\"waiting_room_noise\",\"stamp_sfx\",\"clock_tick\",\"chair_scrape\",\"announcement_echo\",\"static_crackle\"],\"music\":[\"march_slow\"],\"videos\":[\"ipad\",\"clyde\",\"inge\",\"branko\",\"random\",\"black\"],\"lights\":[\"cold_b",
+        "cue_points": [
+          {
+            "trigger": "start",
+            "keyword": null,
+            "sentence_index": null,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.2,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "avatar",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader",
+              "volume": 0.5
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "blackout",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.45,
+              "replace_previous": true
+            }
+          },
+          {
+            "trigger": "sentence_end",
+            "keyword": null,
+            "sentence_index": 1,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.275,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "avatar2",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "erinnerungsglitch",
+              "volume": 0.55
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "blendung_magenta",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.45,
+              "replace_previous": true
+            }
+          }
+        ],
+        "performance_speakers": [],
+        "tags": [],
+        "mood": "kontrolliert",
+        "intensity": 0.25,
+        "timestamp": 0.0
+      },
+      "planned_commands": [
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.Avatar"
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader",
+            0.5
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/key/out",
+          "args": [],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/light/set_scene",
+          "args": [
+            "blackout",
+            4.0
+          ],
+          "dry_run": true,
+          "mirror": true
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.Avatar2"
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "erinnerungsglitch",
+            0.55
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/key/out",
+          "args": [],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/1701/at",
+          "args": [
+            45.0
+          ],
+          "dry_run": true,
+          "mirror": false
+        },
+        {
+          "bridge": "light",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/light/set_scene",
+          "args": [
+            "blendung_magenta",
+            4.0
+          ],
+          "dry_run": true,
+          "mirror": true
+        }
+      ],
+      "discussion_turns": [
+        {
+          "speaker": "anthropic",
+          "content": "**Sounds/Musik:** Wartesaal-Rauschen (entlarven), Stempelgeräusch (verstärken), leises Ticken (verzögern), Bürostühle scharren (überlagern), fernes Ansagen-Echo (wiederkehren), statisches Knistern (stören) — Musik: träge Marschmelodie (widersprechen).\n\n**Videos:** `ipad`, `macbook`, `sebastian`, `branko`, `random`, `black`\n\n**Licht:** Kalt-bürokratisch, Verhör-eng, Flimmer-Neon, Ausblend-langsam, Spot-single, Blackout\n\n```json\n{\"sounds\":[\"waiting_room_noise\",\"stamp_sfx\",\"clock_tick\",\"chair_scrape\",\"announcement_echo\",\"static_crackle\"],\"music\":[\"march_slow\"],\"videos\":[\"ipad\",\"macbook\",\"sebastian\",\"branko\",\"random\",\"black\"],\"lights\":[\"cold_bureau\",\"interrogation_narrow\",\"neon_flicker\",\"fade_slow\",\"spot_single\",\"blackout\"]}\n```",
+          "proposed_decision": null
+        },
+        {
+          "speaker": "openai",
+          "content": "Ich schlage folgende Anpassungen vor: Ersetze das Video `macbook` durch `clyde` für eine subtil melancholische Note und das Video `sebastian` durch `inge` für mehr Melancholie. Ändere das Licht von \"Flimmer-Neon\" zu \"warm_faint\" für einen kontrastreichen Widerspruch zur kalten Bürokratie. \n\n```json\n{\"videos\":[\"clyde\",\"inge\"],\"lights\":[\"warm_faint\"]}\n```",
+          "proposed_decision": null
+        },
+        {
+          "speaker": "anthropic",
+          "content": "Dann einigen wir uns auf folgende Variante: `clyde` ersetzt `macbook` — Melancholie unterwandert die Mechanik. `inge` ersetzt `sebastian` — stiller Widerspruch statt Spannung. `warm_faint` bleibt als falsches Versprechen gegen das Kalt-Bürokratische. Alle anderen Elemente bleiben.\n\n```json\n{\"sounds\":[\"waiting_room_noise\",\"stamp_sfx\",\"clock_tick\",\"chair_scrape\",\"announcement_echo\",\"static_crackle\"],\"music\":[\"march_slow\"],\"videos\":[\"ipad\",\"clyde\",\"inge\",\"branko\",\"random\",\"black\"],\"lights\":[\"cold_bureau\",\"interrogation_narrow\",\"warm_faint\",\"fade_slow\",\"spot_single\",\"blackout\"]}\n```",
+          "proposed_decision": null
+        }
+      ],
+      "discussion_summary": "Claude: **Sounds/Musik:** Wartesaal-Rauschen (entlarven), Stempelgeräusch (verstärken), leises Ticken (verzögern), Bürostühle scharren (überlagern), fernes Ansagen-Echo (wiederkehren), statisches Knistern (stören) — Musik: träge Marschmelodie (widersprechen).\n\n**Videos:** `ipad`, `macbook`, `sebastian`, `branko`, `random`, `black`\n\n**Licht:** Kalt-bürokratisch, Verhör-eng, Flimmer-Neon, Ausblend-langsam, Spot-single, Blackout\n\n```json\n{\"sounds\":[\"waiting_room_noise\",\"stamp_sfx\",\"clock_tick\",\"chair_scrape\",\"announcement_echo\",\"static_crackle\"],\"music\":[\"march_slow\"],\"videos\":[\"ipad\",\"macbook\",\"sebastian\",\"branko\",\"random\",\"black\"],\"lights\":[\"cold_bureau\",\"interrogation_narrow\",\"neon_flicker\",\"fade_slow\",\"spot_single\",\"blackout\"]}\n```\nChatGPT: Ich schlage folgende Anpassungen vor: Ersetze das Video `macbook` durch `clyde` für eine subtil melancholische Note und das Video `sebastian` durch `inge` für mehr Melancholie. Ändere das Licht von \"Flimmer-Neon\" zu \"warm_faint\" für einen kontrastreichen Widerspruch zur kalten Bürokratie. \n\n```json\n{\"videos\":[\"clyde\",\"inge\"],\"lights\":[\"warm_faint\"]}\n```\nClaude: Dann einigen wir uns auf folgende Variante: `clyde` ersetzt `macbook` — Melancholie unterwandert die Mechanik. `inge` ersetzt `sebastian` — stiller Widerspruch statt Spannung. `warm_faint` bleibt als falsches Versprechen gegen das Kalt-Bürokratische. Alle anderen Elemente bleiben.\n\n```json\n{\"sounds\":[\"waiting_room_noise\",\"stamp_sfx\",\"clock_tick\",\"chair_scrape\",\"announcement_echo\",\"static_crackle\"],\"music\":[\"march_slow\"],\"videos\":[\"ipad\",\"clyde\",\"inge\",\"branko\",\"random\",\"black\"],\"lights\":[\"cold_bureau\",\"interrogation_narrow\",\"warm_faint\",\"fade_slow\",\"spot_single\",\"blackout\"]}\n```"
+    },
+    {
+      "id": "2b4ee085-98ed-407b-ad34-771e4083bd82",
+      "order": 9,
+      "text": "doch was ist das Geld überhaupt wert? \nIst das Geld denn das alles wert? \nIst das alles das alles denn wert?",
+      "scene_title": "Wahrscheinlich will der Arbeiter auch bloß einen Kredit bekommen,",
+      "speaker": "AI_B",
+      "dramaturgy": null,
+      "planned_commands": [],
+      "discussion_turns": [
+        {
+          "speaker": "anthropic",
+          "content": "**Sounds/Musik:**\nTicken, Papierrascheln, Stille-Drone für die Wertentleerung. Musik: kalt-minimal.\n\n**Videos:**\nLeerer Bildschirm, Figuren in Starre, Tier als Spiegel.\n\n**Licht:**\nVerhör → Aushöhlung → Blackout-Sequenz.\n\n```json\n{\n  \"sounds\": [\"tick_01\",\"paper_01\",\"drone_low_01\",\"silence_01\",\"static_01\",\"breath_01\"],\n  \"music\": [\"minimal_cold_01\"],\n  \"videos\": [\"macbook\",\"ipad\",\"inge\",\"thomas\",\"clyde\",\"black\"],\n  \"lights\": [\"cold_low\",\"verhör_01\",\"flicker_01\",\"narrow_01\",\"blackout\",\"warm_fade_01\"]\n}\n```",
+          "proposed_decision": null
+        }
+      ],
+      "discussion_summary": null
+    }
+  ],
+  "status": "review",
+  "has_rendered_audio": false,
+  "part1_selection": {
+    "part": 1,
+    "scene": "Bärenklau",
+    "script_id": "8080cbe0-4bed-469b-999d-6b9a4571f68a",
+    "beat_id": "4f51a377-0a30-4909-b271-c4fee722c5d4",
+    "selected_by": [
+      "Claude",
+      "ChatGPT"
+    ],
+    "final_sounds": [
+      "archiv_rauschen",
+      "erinnerungsglitch",
+      "herz_unter_glas",
+      "kaefigecho",
+      "leere_zwischen_saetzen",
+      "maschinen_grundader"
+    ],
+    "final_music": [
+      "maschinen_grundader"
+    ],
+    "final_videos": [
+      "avatar",
+      "avatar2",
+      "berge",
+      "black",
+      "bonnie",
+      "branko"
+    ],
+    "final_lights": [
+      "blackout",
+      "blendung_magenta",
+      "blendung_zuschauerraum",
+      "buehne_kalt_hart",
+      "fluegel",
+      "gegenlicht_weich"
+    ],
+    "dramaturgical_reading": "Dann einigen wir uns auf folgende Variante: `clyde` ersetzt `macbook` — Melancholie unterwandert die Mechanik. `inge` ersetzt `sebastian` — stiller Widerspruch statt Spannung. `warm_faint` bleibt als falsches Versprechen gegen das Kalt-Bürokratische. Alle anderen Elemente bleiben.\n\n```json\n{\"sounds\":[\"waiting_room_noise\",\"stamp_sfx\",\"clock_tick\",\"chair_scrape\",\"announcement_echo\",\"static_crackle\"],\"music\":[\"march_slow\"],\"videos\":[\"ipad\",\"clyde\",\"inge\",\"branko\",\"random\",\"black\"],\"lights\":[\"cold_b",
+    "cue_strategy": "Teil 1 Bärenklau — finale KI-Einigung",
+    "discussion_turns": [
+      {
+        "speaker": "anthropic",
+        "content": "**Sounds/Musik:** Wartesaal-Rauschen (entlarven), Stempelgeräusch (verstärken), leises Ticken (verzögern), Bürostühle scharren (überlagern), fernes Ansagen-Echo (wiederkehren), statisches Knistern (stören) — Musik: träge Marschmelodie (widersprechen).\n\n**Videos:** `ipad`, `macbook`, `sebastian`, `branko`, `random`, `black`\n\n**Licht:** Kalt-bürokratisch, Verhör-eng, Flimmer-Neon, Ausblend-langsam, Spot-single, Blackout\n\n```json\n{\"sounds\":[\"waiting_room_noise\",\"stamp_sfx\",\"clock_tick\",\"chair_scrape\",\"announcement_echo\",\"static_crackle\"],\"music\":[\"march_slow\"],\"videos\":[\"ipad\",\"macbook\",\"sebastian\",\"branko\",\"random\",\"black\"],\"lights\":[\"cold_bureau\",\"interrogation_narrow\",\"neon_flicker\",\"fade_slow\",\"spot_single\",\"blackout\"]}\n```",
+        "proposed_decision": null
+      },
+      {
+        "speaker": "openai",
+        "content": "Ich schlage folgende Anpassungen vor: Ersetze das Video `macbook` durch `clyde` für eine subtil melancholische Note und das Video `sebastian` durch `inge` für mehr Melancholie. Ändere das Licht von \"Flimmer-Neon\" zu \"warm_faint\" für einen kontrastreichen Widerspruch zur kalten Bürokratie. \n\n```json\n{\"videos\":[\"clyde\",\"inge\"],\"lights\":[\"warm_faint\"]}\n```",
+        "proposed_decision": null
+      },
+      {
+        "speaker": "anthropic",
+        "content": "Dann einigen wir uns auf folgende Variante: `clyde` ersetzt `macbook` — Melancholie unterwandert die Mechanik. `inge` ersetzt `sebastian` — stiller Widerspruch statt Spannung. `warm_faint` bleibt als falsches Versprechen gegen das Kalt-Bürokratische. Alle anderen Elemente bleiben.\n\n```json\n{\"sounds\":[\"waiting_room_noise\",\"stamp_sfx\",\"clock_tick\",\"chair_scrape\",\"announcement_echo\",\"static_crackle\"],\"music\":[\"march_slow\"],\"videos\":[\"ipad\",\"clyde\",\"inge\",\"branko\",\"random\",\"black\"],\"lights\":[\"cold_bureau\",\"interrogation_narrow\",\"warm_faint\",\"fade_slow\",\"spot_single\",\"blackout\"]}\n```",
+        "proposed_decision": null
+      }
+    ],
+    "created_at": "2026-06-23T11:22:39.259843Z"
+  },
+  "performance_part": null,
+  "teil2_corpus_id": null
+}

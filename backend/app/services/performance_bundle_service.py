@@ -13,6 +13,7 @@ from app.schemas.performance import PERFORMANCE_FORMAT_VERSION, PerformanceAudio
 from app.schemas.script import ProductionScript, ScriptBeat
 from app.services.script_splitter import split_sentences
 from app.services.script_store import ScriptStore
+from app.services.spoken_text import spoken_discussion_text
 from app.services.tts.performance_voices import performance_speaker_for_sentence
 from app.services.tts_service import TTSService
 
@@ -55,7 +56,8 @@ class PerformanceBundleService:
         prefix = f"{beat.order:03d}"
 
         for index, turn in enumerate(beat.discussion_turns):
-            src = await self.tts.synthesize(turn.content, turn.speaker)
+            spoken = spoken_discussion_text(turn.content)
+            src = await self.tts.synthesize(spoken, turn.speaker, profile="dramaturg")
             ext = src.suffix.lstrip(".")
             rel = f"audio/{prefix}-discussion-{index}.{ext}"
             dest = audio_dir.parent / rel
@@ -83,7 +85,7 @@ class PerformanceBundleService:
                     beat.order,
                     pool=pool or None,
                 )
-                src = await self.tts.synthesize(sentence, speaker)
+                src = await self.tts.synthesize(sentence, speaker, profile="performance")
                 ext = src.suffix.lstrip(".")
                 rel = f"audio/{prefix}-performance-{sentence_index}.{ext}"
                 dest = audio_dir.parent / rel

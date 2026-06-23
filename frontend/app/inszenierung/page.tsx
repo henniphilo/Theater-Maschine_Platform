@@ -9,7 +9,8 @@ import {
   addScenesBatch,
   createCorpus,
   deleteScene,
-  fetchCorpus
+  fetchCorpus,
+  uploadSceneFiles
 } from "@/lib/api/inszenierung";
 import type { AnimalScene, SceneCorpus } from "@/lib/types/inszenierung";
 
@@ -20,6 +21,7 @@ export default function InszenierungPage() {
   const [sceneTitle, setSceneTitle] = useState("");
   const [sourceText, setSourceText] = useState("");
   const [batchJson, setBatchJson] = useState("");
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -59,6 +61,20 @@ export default function InszenierungPage() {
       setSourceText("");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Fehler");
+    }
+  }
+
+  async function handleUpload(files: FileList | null) {
+    if (!corpus || !files || files.length === 0) return;
+    setError("");
+    setUploading(true);
+    try {
+      const updated = await uploadSceneFiles(corpus.id, Array.from(files));
+      setCorpus(updated);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Upload fehlgeschlagen");
+    } finally {
+      setUploading(false);
     }
   }
 
@@ -160,7 +176,27 @@ export default function InszenierungPage() {
           </section>
 
           <section className="card col">
-            <h2>Batch-Import (JSON)</h2>
+            <h2>Dateien hochladen</h2>
+            <p className="textMuted">
+              Mehrere <code>.txt</code>- oder <code>.json</code>-Dateien auf einmal — je Datei eine Szene, oder eine
+              Datei mit mehreren Blöcken getrennt durch <code>---</code>.
+            </p>
+            <input
+              type="file"
+              multiple
+              accept=".txt,.json,text/plain,application/json"
+              disabled={uploading}
+              onChange={(e) => void handleUpload(e.target.files)}
+            />
+            {uploading ? <p className="textMuted">Importiere …</p> : null}
+          </section>
+
+          <section className="card col">
+            <h2>Batch-Import (JSON einfügen)</h2>
+            <p className="textMuted">
+              Alternative ohne Datei-Upload: JSON-Array direkt einfügen (Format in{" "}
+              <code>docs/teil2_inszenierung.md</code> im Projektordner).
+            </p>
             <textarea
               rows={6}
               value={batchJson}

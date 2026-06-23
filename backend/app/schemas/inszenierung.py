@@ -2,9 +2,10 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-from app.director.cues.cue_models import DramaturgyDecision, PerformanceSpeaker
+from app.director.cues.cue_models import DramaturgyDecision, PerformanceSpeaker, VisualCue
 
 InszenierungStatus = Literal["draft", "analyzed", "composed", "ready"]
+SpeechMode = Literal["tts", "avatar_video", "silent"]
 
 
 class AnimalPosition(BaseModel):
@@ -20,8 +21,8 @@ class CrossSceneLink(BaseModel):
 
 
 class AnarchyCurve(BaseModel):
-    start: float = Field(default=0.2, ge=0.0, le=1.0)
-    end: float = Field(default=0.95, ge=0.0, le=1.0)
+    start: float = Field(default=0.35, ge=0.0, le=1.0)
+    end: float = Field(default=1.0, ge=0.0, le=1.0)
 
 
 class Gesamtkonzept(BaseModel):
@@ -47,6 +48,11 @@ class CompositionMoment(BaseModel):
     scene_id: str
     text_excerpt: str = Field(min_length=1)
     speaker: PerformanceSpeaker = "AI_A"
+    speech_mode: SpeechMode = "tts"
+    avatar_speech_id: str | None = None
+    avatar_video_clip_id: str | None = None
+    avatar_video_cue: VisualCue | None = None
+    atmosphere_video_cues: list[VisualCue] = Field(default_factory=list)
     dramaturgy: DramaturgyDecision | None = None
     overlap_with_previous: float = Field(default=0.0, ge=0.0, le=1.0)
     anarchy_level: float = Field(default=0.2, ge=0.0, le=1.0)

@@ -1,0 +1,57 @@
+{
+  "part": 1,
+  "scene": "Bärenklau",
+  "script_id": "8080cbe0-4bed-469b-999d-6b9a4571f68a",
+  "beat_id": "4f51a377-0a30-4909-b271-c4fee722c5d4",
+  "selected_by": [
+    "Claude",
+    "ChatGPT"
+  ],
+  "final_sounds": [
+    "archiv_rauschen",
+    "erinnerungsglitch",
+    "herz_unter_glas",
+    "kaefigecho",
+    "leere_zwischen_saetzen",
+    "maschinen_grundader"
+  ],
+  "final_music": [
+    "maschinen_grundader"
+  ],
+  "final_videos": [
+    "avatar",
+    "avatar2",
+    "berge",
+    "black",
+    "bonnie",
+    "branko"
+  ],
+  "final_lights": [
+    "blackout",
+    "blendung_magenta",
+    "blendung_zuschauerraum",
+    "buehne_kalt_hart",
+    "fluegel",
+    "gegenlicht_weich"
+  ],
+  "dramaturgical_reading": "Dann einigen wir uns auf folgende Variante: `clyde` ersetzt `macbook` — Melancholie unterwandert die Mechanik. `inge` ersetzt `sebastian` — stiller Widerspruch statt Spannung. `warm_faint` bleibt als falsches Versprechen gegen das Kalt-Bürokratische. Alle anderen Elemente bleiben.\n\n```json\n{\"sounds\":[\"waiting_room_noise\",\"stamp_sfx\",\"clock_tick\",\"chair_scrape\",\"announcement_echo\",\"static_crackle\"],\"music\":[\"march_slow\"],\"videos\":[\"ipad\",\"clyde\",\"inge\",\"branko\",\"random\",\"black\"],\"lights\":[\"cold_b",
+  "cue_strategy": "Teil 1 Bärenklau — finale KI-Einigung",
+  "discussion_turns": [
+    {
+      "speaker": "anthropic",
+      "content": "**Sounds/Musik:** Wartesaal-Rauschen (entlarven), Stempelgeräusch (verstärken), leises Ticken (verzögern), Bürostühle scharren (überlagern), fernes Ansagen-Echo (wiederkehren), statisches Knistern (stören) — Musik: träge Marschmelodie (widersprechen).\n\n**Videos:** `ipad`, `macbook`, `sebastian`, `branko`, `random`, `black`\n\n**Licht:** Kalt-bürokratisch, Verhör-eng, Flimmer-Neon, Ausblend-langsam, Spot-single, Blackout\n\n```json\n{\"sounds\":[\"waiting_room_noise\",\"stamp_sfx\",\"clock_tick\",\"chair_scrape\",\"announcement_echo\",\"static_crackle\"],\"music\":[\"march_slow\"],\"videos\":[\"ipad\",\"macbook\",\"sebastian\",\"branko\",\"random\",\"black\"],\"lights\":[\"cold_bureau\",\"interrogation_narrow\",\"neon_flicker\",\"fade_slow\",\"spot_single\",\"blackout\"]}\n```",
+      "proposed_decision": null
+    },
+    {
+      "speaker": "openai",
+      "content": "Ich schlage folgende Anpassungen vor: Ersetze das Video `macbook` durch `clyde` für eine subtil melancholische Note und das Video `sebastian` durch `inge` für mehr Melancholie. Ändere das Licht von \"Flimmer-Neon\" zu \"warm_faint\" für einen kontrastreichen Widerspruch zur kalten Bürokratie. \n\n```json\n{\"videos\":[\"clyde\",\"inge\"],\"lights\":[\"warm_faint\"]}\n```",
+      "proposed_decision": null
+    },
+    {
+      "speaker": "anthropic",
+      "content": "Dann einigen wir uns auf folgende Variante: `clyde` ersetzt `macbook` — Melancholie unterwandert die Mechanik. `inge` ersetzt `sebastian` — stiller Widerspruch statt Spannung. `warm_faint` bleibt als falsches Versprechen gegen das Kalt-Bürokratische. Alle anderen Elemente bleiben.\n\n```json\n{\"sounds\":[\"waiting_room_noise\",\"stamp_sfx\",\"clock_tick\",\"chair_scrape\",\"announcement_echo\",\"static_crackle\"],\"music\":[\"march_slow\"],\"videos\":[\"ipad\",\"clyde\",\"inge\",\"branko\",\"random\",\"black\"],\"lights\":[\"cold_bureau\",\"interrogation_narrow\",\"warm_faint\",\"fade_slow\",\"spot_single\",\"blackout\"]}\n```",
+      "proposed_decision": null
+    }
+  ],
+  "created_at": "2026-06-23T11:22:39.259843Z"
+}

@@ -1,0 +1,128 @@
+{
+  "id": "9f562814-fe38-4ccf-b908-9494d8ff0d2f",
+  "title": "Elfriede jelinek Unter Tieren - Bärenklau",
+  "source_text": "20. Der Bärenklau: \n\n– wir werden alle von Pflanzen ersetzt werden, \nweil die billiger in der Anschaffung und im Betrieb sind \nund keine Widerworte geben –,\nDa der Mensch, ja, sagen wir so, \nalso dermaßen leicht verderblich geworden ist, \nohne daß dem Tier stattdessen eine kleine Chance gegeben wird, \nauch ein bißchen was zu verdienen \n\nda wir also gar kein Geld haben, \nmüssen wir uns leider wieder dem Produzenten der Waren zuwenden, \nwelcher jede Ware an der eines andren messen muß, \n\ndie Produkte stehen sich gegenüber und knurren einander an. \n\n\n\nDer wahre Klassenkampf\n\nWas aber, wenn die Preissteigerungen so hoch sind, \ndaß keiner die Waren mehr kaufen kann? \n\nWenn beide, \nProduzenten wie Arbeiter, \nzusätzliche Kaufkraft wollen, \ndann stehen ihre Interessen ja denen der Gläubigerklasse entgegen, oder? \n\nDie Kreditkapazitäten, also die Geldmengen ausweiten? \nIch weiß nicht, was das bringen soll. \nIch weiß nur, daß das viel bringt, \naber vielleicht nicht grade den erwünschten Effekt bei den Effekten. \nHandeln Sie jetzt rasch! \n\nEin Konflikt zwischen Schuldnern und Schöpfern? Das klingt ernst. \nZu hoch für mich, \nund ich bin schon gern hochtönend, \n\nIst das etwa ein Konflikt zwischen den Anlegern, \ndie an hohen Zinsen und stabilen Preisen interessiert sind, \nund den auf Kredite und Finanzierungen angewiesenen Unternehmen \nund in der Folge auch deren Arbeitern, \ndie ihre Arbeitskraft, \ndas einzige wirklich gute Gut, das sie haben, \nsofort in Konsum umsetzen wollen? \n\nIst das der wahre Klassenkampf? \nZwischen den Banken, \ndie den Unternehmen ihre Kredite aufdrängen wollen, \nund den Arbeitern, \ndie auch irgendwas wollen, ich weiß es nicht, \nich weiß nicht, was der Arbeiter will, \nniemand hat es je gewußt. \n\nEr sagt es zwar dauernd, \nvon Lohnrunde zu Lohnrunde mehr, \naber immer weniger mehr. \nKriegen tut er dann etwas mehr als weniger. \n\nIch weiß es trotzdem immer noch nicht, \nwollte er sich auf mich setzen, \nkönnte er gleich ins Casino gehen, \nwo sie ihn aber wahrscheinlich gar nicht hineinlassen, \nauch nicht in seinem neuen Anzug. \n\nDann muß er auf der Ersatzbank im Wartesaal sitzenbleiben, \nimmer noch der Meinung, er wäre unersetzlich. \n\nWäre er das, \nhätte er ja was gelernt und müßte nur noch warten, \ndaß ihn wer in eine richtige Bank holt und dann von dort wieder abholt, \nam liebsten ein viel versprechender Politiker, \nder sich den Arbeiter an Stelle seiner Versprechungen als Dienstboten hält. \n\nWahrscheinlich will der Arbeiter auch bloß einen Kredit bekommen, \ndoch was ist das Geld überhaupt wert? \nIst das Geld denn das alles wert? \nIst das alles das alles denn wert?",
+  "beats": [
+    {
+      "id": "1893ae83-713a-4a18-8be1-dfc53800e8a4",
+      "order": 0,
+      "text": "– wir werden alle von Pflanzen ersetzt werden, \nweil die billiger in der Anschaffung und im Betrieb sind \nund keine Widerworte geben –,\nDa der Mensch, ja, sagen wir so, \nalso dermaßen leicht verderblich geworden ist, \nohne daß dem Tier stattdessen eine kleine Chance gegeben wird, \nauch ein bißchen was zu verdienen",
+      "scene_title": "20. Der Bärenklau",
+      "speaker": "AI_A",
+      "dramaturgy": null,
+      "planned_commands": [],
+      "discussion_turns": [
+        {
+          "speaker": "anthropic",
+          "content": "**Sounds/Musik:** Mechanisches Summen (`drone_low`), Papierrascheln (`paper_rustle`), Uhr-Tick (`clock_tick`), Verwesungsgeräusch (`decay_hum`), Tierstille (`animal_silence`), Pflanzenrauschen (`leaf_static`). Musik: `ambient_cold`.\n\n**Videos:** `black`, `kaefer`, `macbook`, `clyde`, `pflanze_loop`, `random`\n\n**Licht:** Kaltes Neonweiß, Grünstich, Verhörlicht, Ausblendstoß, Bürokratisch-flach, Körpernah-eng\n\n```json\n{\"sounds\":[\"drone_low\",\"paper_rustle\",\"clock_tick\",\"decay_hum\",\"animal_silence\",\"leaf_static\"],\"music\":[\"ambient_cold\"],\"videos\":[\"black\",\"kaefer\",\"macbook\",\"clyde\",\"pflanze_loop\",\"random\"],\"lights\":[\"cold_neon\",\"green_tint\",\"verhör\",\"blackout_flash\",\"bureau_flat\",\"body_narrow\"]}\n```",
+          "proposed_decision": null
+        }
+      ],
+      "discussion_summary": null
+    },
+    {
+      "id": "524c96c8-3d39-45e6-800c-637e6fec313e",
+      "order": 1,
+      "text": "müssen wir uns leider wieder dem Produzenten der Waren zuwenden, \nwelcher jede Ware an der eines andren messen muß,\n\ndie Produkte stehen sich gegenüber und knurren einander an.",
+      "scene_title": "da wir also gar kein Geld haben,",
+      "speaker": "AI_B",
+      "dramaturgy": null,
+      "planned_commands": [],
+      "discussion_turns": [],
+      "discussion_summary": null
+    },
+    {
+      "id": "dff37604-63a9-453f-aa1f-6048b9f4235f",
+      "order": 2,
+      "text": "Der wahre Klassenkampf\n\nWas aber, wenn die Preissteigerungen so hoch sind, \ndaß keiner die Waren mehr kaufen kann?\n\nWenn beide, \nProduzenten wie Arbeiter, \nzusätzliche Kaufkraft wollen, \ndann stehen ihre Interessen ja denen der Gläubigerklasse entgegen, oder?",
+      "scene_title": null,
+      "speaker": "AI_A",
+      "dramaturgy": null,
+      "planned_commands": [],
+      "discussion_turns": [],
+      "discussion_summary": null
+    },
+    {
+      "id": "7c7c0fe4-6c3c-45d3-bc1c-68acdfe5748a",
+      "order": 3,
+      "text": "Die Kreditkapazitäten, also die Geldmengen ausweiten? \nIch weiß nicht, was das bringen soll. \nIch weiß nur, daß das viel bringt, \naber vielleicht nicht grade den erwünschten Effekt bei den Effekten. \nHandeln Sie jetzt rasch!",
+      "scene_title": null,
+      "speaker": "AI_B",
+      "dramaturgy": null,
+      "planned_commands": [],
+      "discussion_turns": [],
+      "discussion_summary": null
+    },
+    {
+      "id": "7d51ee7d-bb22-4f34-8079-3a0f02ccaeb2",
+      "order": 4,
+      "text": "Ein Konflikt zwischen Schuldnern und Schöpfern? Das klingt ernst. \nZu hoch für mich, \nund ich bin schon gern hochtönend,\n\nIst das etwa ein Konflikt zwischen den Anlegern, \ndie an hohen Zinsen und stabilen Preisen interessiert sind, \nund den auf Kredite und Finanzierungen angewiesenen Unternehmen \nund in der Folge auch deren Arbeitern, \ndie ihre Arbeitskraft, \ndas einzige wirklich gute Gut, das sie haben, \nsofort in Konsum umsetzen wollen?",
+      "scene_title": null,
+      "speaker": "AI_A",
+      "dramaturgy": null,
+      "planned_commands": [],
+      "discussion_turns": [],
+      "discussion_summary": null
+    },
+    {
+      "id": "2f12af34-60dc-4398-ab09-e6391483bb20",
+      "order": 5,
+      "text": "Ist das der wahre Klassenkampf? \nZwischen den Banken, \ndie den Unternehmen ihre Kredite aufdrängen wollen, \nund den Arbeitern, \ndie auch irgendwas wollen, ich weiß es nicht, \nich weiß nicht, was der Arbeiter will, \nniemand hat es je gewußt.",
+      "scene_title": null,
+      "speaker": "AI_B",
+      "dramaturgy": null,
+      "planned_commands": [],
+      "discussion_turns": [],
+      "discussion_summary": null
+    },
+    {
+      "id": "b5be4800-b018-489a-8f14-27d0c56a3276",
+      "order": 6,
+      "text": "von Lohnrunde zu Lohnrunde mehr, \naber immer weniger mehr. \nKriegen tut er dann etwas mehr als weniger.",
+      "scene_title": "Er sagt es zwar dauernd,",
+      "speaker": "AI_A",
+      "dramaturgy": null,
+      "planned_commands": [],
+      "discussion_turns": [],
+      "discussion_summary": null
+    },
+    {
+      "id": "05d40d3d-2e57-4404-89c6-3881ea09b7c9",
+      "order": 7,
+      "text": "wollte er sich auf mich setzen, \nkönnte er gleich ins Casino gehen, \nwo sie ihn aber wahrscheinlich gar nicht hineinlassen, \nauch nicht in seinem neuen Anzug.",
+      "scene_title": "Ich weiß es trotzdem immer noch nicht,",
+      "speaker": "AI_B",
+      "dramaturgy": null,
+      "planned_commands": [],
+      "discussion_turns": [],
+      "discussion_summary": null
+    },
+    {
+      "id": "3874024a-ee05-4f0b-ab42-047fec306642",
+      "order": 8,
+      "text": "immer noch der Meinung, er wäre unersetzlich.\n\nWäre er das, \nhätte er ja was gelernt und müßte nur noch warten, \ndaß ihn wer in eine richtige Bank holt und dann von dort wieder abholt, \nam liebsten ein viel versprechender Politiker, \nder sich den Arbeiter an Stelle seiner Versprechungen als Dienstboten hält.",
+      "scene_title": "Dann muß er auf der Ersatzbank im Wartesaal sitzenbleiben,",
+      "speaker": "AI_A",
+      "dramaturgy": null,
+      "planned_commands": [],
+      "discussion_turns": [],
+      "discussion_summary": null
+    },
+    {
+      "id": "757ecf1b-8437-456d-a9bd-da510cf82746",
+      "order": 9,
+      "text": "doch was ist das Geld überhaupt wert? \nIst das Geld denn das alles wert? \nIst das alles das alles denn wert?",
+      "scene_title": "Wahrscheinlich will der Arbeiter auch bloß einen Kredit bekommen,",
+      "speaker": "AI_B",
+      "dramaturgy": null,
+      "planned_commands": [],
+      "discussion_turns": [],
+      "discussion_summary": null
+    }
+  ],
+  "status": "draft",
+  "has_rendered_audio": false,
+  "part1_selection": null,
+  "performance_part": null,
+  "teil2_corpus_id": null
+}

@@ -285,7 +285,11 @@ async def tts_voices() -> dict[str, list[str]]:
 async def tts_speak(payload: TTSRequest) -> FileResponse:
     try:
         spoken = payload.text.strip()
-        audio_path = await tts_service.synthesize(spoken, payload.speaker)
+        audio_path = await tts_service.synthesize(
+            spoken,
+            payload.speaker,
+            profile=payload.profile,  # type: ignore[arg-type]
+        )
     except Exception as exc:
         raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(exc)) from exc
 

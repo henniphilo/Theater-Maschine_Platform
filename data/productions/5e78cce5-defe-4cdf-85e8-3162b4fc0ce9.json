@@ -1,0 +1,122 @@
+{
+  "id": "5e78cce5-defe-4cdf-85e8-3162b4fc0ce9",
+  "title": "Elfriede jelinek Unter Tieren - Bärenklau",
+  "source_text": "20. Der Bärenklau: \n\n– wir werden alle von Pflanzen ersetzt werden, \nweil die billiger in der Anschaffung und im Betrieb sind \nund keine Widerworte geben –,\nDa der Mensch, ja, sagen wir so, \nalso dermaßen leicht verderblich geworden ist, \nohne daß dem Tier stattdessen eine kleine Chance gegeben wird, \nauch ein bißchen was zu verdienen \n\nda wir also gar kein Geld haben, \nmüssen wir uns leider wieder dem Produzenten der Waren zuwenden, \nwelcher jede Ware an der eines andren messen muß, \n\ndie Produkte stehen sich gegenüber und knurren einander an. \n\n\n\nDer wahre Klassenkampf\n\nWas aber, wenn die Preissteigerungen so hoch sind, \ndaß keiner die Waren mehr kaufen kann? \n\nWenn beide, \nProduzenten wie Arbeiter, \nzusätzliche Kaufkraft wollen, \ndann stehen ihre Interessen ja denen der Gläubigerklasse entgegen, oder? \n\nDie Kreditkapazitäten, also die Geldmengen ausweiten? \nIch weiß nicht, was das bringen soll. \nIch weiß nur, daß das viel bringt, \naber vielleicht nicht grade den erwünschten Effekt bei den Effekten. \nHandeln Sie jetzt rasch! \n\nEin Konflikt zwischen Schuldnern und Schöpfern? Das klingt ernst. \nZu hoch für mich, \nund ich bin schon gern hochtönend, \n\nIst das etwa ein Konflikt zwischen den Anlegern, \ndie an hohen Zinsen und stabilen Preisen interessiert sind, \nund den auf Kredite und Finanzierungen angewiesenen Unternehmen \nund in der Folge auch deren Arbeitern, \ndie ihre Arbeitskraft, \ndas einzige wirklich gute Gut, das sie haben, \nsofort in Konsum umsetzen wollen? \n\nIst das der wahre Klassenkampf? \nZwischen den Banken, \ndie den Unternehmen ihre Kredite aufdrängen wollen, \nund den Arbeitern, \ndie auch irgendwas wollen, ich weiß es nicht, \nich weiß nicht, was der Arbeiter will, \nniemand hat es je gewußt. \n\nEr sagt es zwar dauernd, \nvon Lohnrunde zu Lohnrunde mehr, \naber immer weniger mehr. \nKriegen tut er dann etwas mehr als weniger. \n\nIch weiß es trotzdem immer noch nicht, \nwollte er sich auf mich setzen, \nkönnte er gleich ins Casino gehen, \nwo sie ihn aber wahrscheinlich gar nicht hineinlassen, \nauch nicht in seinem neuen Anzug. \n\nDann muß er auf der Ersatzbank im Wartesaal sitzenbleiben, \nimmer noch der Meinung, er wäre unersetzlich. \n\nWäre er das, \nhätte er ja was gelernt und müßte nur noch warten, \ndaß ihn wer in eine richtige Bank holt und dann von dort wieder abholt, \nam liebsten ein viel versprechender Politiker, \nder sich den Arbeiter an Stelle seiner Versprechungen als Dienstboten hält. \n\nWahrscheinlich will der Arbeiter auch bloß einen Kredit bekommen, \ndoch was ist das Geld überhaupt wert? \nIst das Geld denn das alles wert? \nIst das alles das alles denn wert?",
+  "beats": [
+    {
+      "id": "976e717f-0d62-446c-9357-5955cdaf3912",
+      "order": 0,
+      "text": "– wir werden alle von Pflanzen ersetzt werden, \nweil die billiger in der Anschaffung und im Betrieb sind \nund keine Widerworte geben –,\nDa der Mensch, ja, sagen wir so, \nalso dermaßen leicht verderblich geworden ist, \nohne daß dem Tier stattdessen eine kleine Chance gegeben wird, \nauch ein bißchen was zu verdienen",
+      "scene_title": "20. Der Bärenklau",
+      "speaker": "AI_A",
+      "dramaturgy": null,
+      "planned_commands": [],
+      "discussion_turns": [],
+      "discussion_summary": null
+    },
+    {
+      "id": "952adcb3-fd49-4c44-8ff5-ce12de5b9e33",
+      "order": 1,
+      "text": "müssen wir uns leider wieder dem Produzenten der Waren zuwenden, \nwelcher jede Ware an der eines andren messen muß,\n\ndie Produkte stehen sich gegenüber und knurren einander an.",
+      "scene_title": "da wir also gar kein Geld haben,",
+      "speaker": "AI_B",
+      "dramaturgy": null,
+      "planned_commands": [],
+      "discussion_turns": [],
+      "discussion_summary": null
+    },
+    {
+      "id": "bff1494b-5142-4b47-b0fd-a819a7ddf002",
+      "order": 2,
+      "text": "Der wahre Klassenkampf\n\nWas aber, wenn die Preissteigerungen so hoch sind, \ndaß keiner die Waren mehr kaufen kann?\n\nWenn beide, \nProduzenten wie Arbeiter, \nzusätzliche Kaufkraft wollen, \ndann stehen ihre Interessen ja denen der Gläubigerklasse entgegen, oder?",
+      "scene_title": null,
+      "speaker": "AI_A",
+      "dramaturgy": null,
+      "planned_commands": [],
+      "discussion_turns": [],
+      "discussion_summary": null
+    },
+    {
+      "id": "2f0868b3-daeb-4445-b885-8fb93c3e3a1e",
+      "order": 3,
+      "text": "Die Kreditkapazitäten, also die Geldmengen ausweiten? \nIch weiß nicht, was das bringen soll. \nIch weiß nur, daß das viel bringt, \naber vielleicht nicht grade den erwünschten Effekt bei den Effekten. \nHandeln Sie jetzt rasch!",
+      "scene_title": null,
+      "speaker": "AI_B",
+      "dramaturgy": null,
+      "planned_commands": [],
+      "discussion_turns": [],
+      "discussion_summary": null
+    },
+    {
+      "id": "89f686e4-e935-440e-8bd5-2863e99a70f1",
+      "order": 4,
+      "text": "Ein Konflikt zwischen Schuldnern und Schöpfern? Das klingt ernst. \nZu hoch für mich, \nund ich bin schon gern hochtönend,\n\nIst das etwa ein Konflikt zwischen den Anlegern, \ndie an hohen Zinsen und stabilen Preisen interessiert sind, \nund den auf Kredite und Finanzierungen angewiesenen Unternehmen \nund in der Folge auch deren Arbeitern, \ndie ihre Arbeitskraft, \ndas einzige wirklich gute Gut, das sie haben, \nsofort in Konsum umsetzen wollen?",
+      "scene_title": null,
+      "speaker": "AI_A",
+      "dramaturgy": null,
+      "planned_commands": [],
+      "discussion_turns": [],
+      "discussion_summary": null
+    },
+    {
+      "id": "87b43daf-0f7b-42ca-b561-bb668a78d364",
+      "order": 5,
+      "text": "Ist das der wahre Klassenkampf? \nZwischen den Banken, \ndie den Unternehmen ihre Kredite aufdrängen wollen, \nund den Arbeitern, \ndie auch irgendwas wollen, ich weiß es nicht, \nich weiß nicht, was der Arbeiter will, \nniemand hat es je gewußt.",
+      "scene_title": null,
+      "speaker": "AI_B",
+      "dramaturgy": null,
+      "planned_commands": [],
+      "discussion_turns": [],
+      "discussion_summary": null
+    },
+    {
+      "id": "ec3e0912-cdf4-417e-a92c-29902dfb208a",
+      "order": 6,
+      "text": "von Lohnrunde zu Lohnrunde mehr, \naber immer weniger mehr. \nKriegen tut er dann etwas mehr als weniger.",
+      "scene_title": "Er sagt es zwar dauernd,",
+      "speaker": "AI_A",
+      "dramaturgy": null,
+      "planned_commands": [],
+      "discussion_turns": [],
+      "discussion_summary": null
+    },
+    {
+      "id": "a0617788-6191-49ba-a128-fbc5ed218161",
+      "order": 7,
+      "text": "wollte er sich auf mich setzen, \nkönnte er gleich ins Casino gehen, \nwo sie ihn aber wahrscheinlich gar nicht hineinlassen, \nauch nicht in seinem neuen Anzug.",
+      "scene_title": "Ich weiß es trotzdem immer noch nicht,",
+      "speaker": "AI_B",
+      "dramaturgy": null,
+      "planned_commands": [],
+      "discussion_turns": [],
+      "discussion_summary": null
+    },
+    {
+      "id": "10bab82f-e8f7-456a-9ea1-7e4fc3be22b5",
+      "order": 8,
+      "text": "immer noch der Meinung, er wäre unersetzlich.\n\nWäre er das, \nhätte er ja was gelernt und müßte nur noch warten, \ndaß ihn wer in eine richtige Bank holt und dann von dort wieder abholt, \nam liebsten ein viel versprechender Politiker, \nder sich den Arbeiter an Stelle seiner Versprechungen als Dienstboten hält.",
+      "scene_title": "Dann muß er auf der Ersatzbank im Wartesaal sitzenbleiben,",
+      "speaker": "AI_A",
+      "dramaturgy": null,
+      "planned_commands": [],
+      "discussion_turns": [],
+      "discussion_summary": null
+    },
+    {
+      "id": "3acf17ce-ac4b-4624-94e6-f089479eb77f",
+      "order": 9,
+      "text": "doch was ist das Geld überhaupt wert? \nIst das Geld denn das alles wert? \nIst das alles das alles denn wert?",
+      "scene_title": "Wahrscheinlich will der Arbeiter auch bloß einen Kredit bekommen,",
+      "speaker": "AI_B",
+      "dramaturgy": null,
+      "planned_commands": [],
+      "discussion_turns": [],
+      "discussion_summary": null
+    }
+  ],
+  "status": "draft",
+  "has_rendered_audio": false,
+  "part1_selection": null,
+  "performance_part": null,
+  "teil2_corpus_id": null
+}

@@ -149,21 +149,28 @@ def beat_scene_label(beat: ScriptBeat) -> str:
     return f"Abschnitt {beat.order + 1}"
 
 
+def part1_scene_label(beat: ScriptBeat) -> str:
+    if beat.scene_title:
+        return beat.scene_title
+    return "Gesamttext"
+
+
 def dramaturgy_quote_excerpts(
     text: str,
     *,
-    max_excerpts: int = 4,
+    max_excerpts: int = 8,
     max_chars: int = 100,
 ) -> list[str]:
     sentences = [s.strip() for s in split_sentences(text) if len(s.strip()) >= 12]
     if not sentences:
         return []
 
-    indices: list[int] = [0]
-    if len(sentences) > 2:
-        indices.append(len(sentences) // 2)
-    if len(sentences) > 1:
-        indices.append(len(sentences) - 1)
+    count = len(sentences)
+    if count <= max_excerpts:
+        indices = list(range(count))
+    else:
+        step = (count - 1) / (max_excerpts - 1)
+        indices = [round(i * step) for i in range(max_excerpts)]
 
     excerpts: list[str] = []
     for index in dict.fromkeys(indices):
@@ -197,3 +204,21 @@ def build_beats_from_text(source_text: str) -> list[ScriptBeat]:
             )
         )
     return beats
+
+
+def build_part1_whole_beat(source_text: str) -> list[ScriptBeat]:
+    """Teil 1: ein Beat mit dem vollen Stücktext (kein Abschnitts-Split)."""
+    trimmed = source_text.strip()
+    if not trimmed:
+        return []
+
+    scene_title, body = extract_scene_title_and_body(trimmed)
+    return [
+        ScriptBeat(
+            id=str(uuid.uuid4()),
+            order=0,
+            text=body,
+            scene_title=scene_title,
+            speaker=default_speaker(0),
+        )
+    ]

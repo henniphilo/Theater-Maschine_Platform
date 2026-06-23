@@ -17,13 +17,31 @@ import {
   subscribeScriptBuffer,
   type ScriptBufferState
 } from "@/features/show/performanceBuffer";
+import { part1Beats } from "@/lib/show/baerenklauBeat";
 import {
   INITIAL_PLAYBACK_STATE,
-  runScriptPlayback,
+  runPart1ScriptPlayback,
   stopScriptPlayback,
   type PlaybackAudioOptions,
   type PlaybackState
 } from "@/features/show/scriptPlayback";
+import { resolvePerformancePart } from "@/lib/types/part1";
+import { fetchCorpus } from "@/lib/api/inszenierung";
+import { patchScript } from "@/lib/api/script";
+import {
+  INITIAL_ANARCHY_STATE,
+  runAnarchyPlayback,
+  stopAnarchyPlayback,
+  type AnarchyPlaybackState
+} from "@/features/inszenierung/anarchyPlayback";
+import {
+  bufferStatusLabel as inszenierungBufferLabel,
+  isInszenierungBuffered,
+  startInszenierungBuffer,
+  subscribeInszenierungBuffer,
+  type InszenierungBufferState
+} from "@/features/inszenierung/inszenierungBuffer";
+import type { SceneCorpus } from "@/lib/types/inszenierung";
 import { progressFromBeat } from "@/lib/show/performanceTimeline";
 import { fetchMediaCatalog } from "@/lib/api/media";
 import { buildMediaLookup, type MediaLookup } from "@/lib/types/media";
@@ -33,6 +51,8 @@ function AuffuehrungContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const scriptId = searchParams.get("id") ?? sessionStorage.getItem("currentScriptId") ?? "";
+  const corpusIdParam =
+    searchParams.get("corpus") ?? searchParams.get("corpus_id") ?? sessionStorage.getItem("currentCorpusId") ?? "";
   const importInputRef = useRef<HTMLInputElement>(null);
   const [script, setScript] = useState<ProductionScript | null>(null);
   const [playback, setPlayback] = useState<PlaybackState>(INITIAL_PLAYBACK_STATE);
@@ -45,8 +65,18 @@ function AuffuehrungContent() {
   const [exporting, setExporting] = useState(false);
   const [importing, setImporting] = useState(false);
   const [bufferState, setBufferState] = useState<ScriptBufferState | null>(null);
+  const [corpus, setCorpus] = useState<SceneCorpus | null>(null);
+  const [anarchyPlayback, setAnarchyPlayback] = useState<AnarchyPlaybackState>(INITIAL_ANARCHY_STATE);
+  const [inszenierungBuffer, setInszenierungBuffer] = useState<InszenierungBufferState | null>(null);
   const abortRef = useRef(false);
   const playbackGenRef = useRef(0);
+
+  const beatCount = script?.beats.length ?? 0;
+  const performancePart = script
+    ? resolvePerformancePart(script.performance_part, Boolean(script.part1_selection))
+    : "part1_baerenklau";
+  const part1OnlyBeats = script ? part1Beats(script.beats) : [];
+  const activeBeatCount = performancePart === "part1_baerenklau" ? part1OnlyBeats.length : beatCount;
 
   const load = useCallback(async () => {
     if (!scriptId) {
@@ -79,6 +109,23 @@ function AuffuehrungContent() {
     return subscribeScriptBuffer(setBufferState);
   }, [load]);
 
+  useEffect(() => {
+    const linkedId = script?.teil2_corpus_id ?? corpusIdParam;
+    if (!linkedId) {
+      setCorpus(null);
+      return;
+    }
+    void fetchCorpus(linkedId).then(setCorpus).catch(() => setCorpus(null));
+  }, [script?.teil2_corpus_id, corpusIdParam]);
+
+  useEffect(() => subscribeInszenierungBuffer(setInszenierungBuffer), []);
+
+  useEffect(() => {
+    if (!corpus?.composition?.moments?.length || !ttsAvailable) return;
+    if (isInszenierungBuffered(corpus.id, ttsAvailable)) return;
+    startInszenierungBuffer(corpus, ttsAvailable);
+  }, [corpus, ttsAvailable]);
+
   const ready = script?.status === "ready";
   const playbackAudio: PlaybackAudioOptions = useMemo(
     () => ({
@@ -90,8 +137,14 @@ function AuffuehrungContent() {
   );
   const bufferReady = script ? isPlaybackBuffered(script.id, playbackAudio) : false;
   const scriptReady = ready || Boolean(script?.has_rendered_audio);
-  const canPlay = scriptReady && bufferReady;
-  const beatCount = script?.beats.length ?? 0;
+  const canPlayTeil1 = scriptReady && bufferReady && !anarchyPlayback.running;
+  const canPlayTeil2 =
+    Boolean(corpus?.composition?.moments?.length) &&
+    teil2Ready &&
+    !playback.running;
+  const teil2Ready =
+    Boolean(corpus?.composition?.moments?.length) &&
+    (isInszenierungBuffered(corpus!.id, ttsAvailable) || !ttsAvailable);
   const showBufferStatus =
     scriptReady &&
     !script?.has_rendered_audio &&
@@ -114,23 +167,26 @@ function AuffuehrungContent() {
 
   const playFrom = useCallback(
     async (startIndex: number) => {
-      if (!script || !canPlay) return;
+      if (!script || !canPlayTeil1) return;
+      if (performancePart === "part2_delphin_to_mole") return;
       const gen = ++playbackGenRef.current;
       setError("");
       abortRef.current = false;
       setPlaybackPaused(false);
+      void patchScript(script.id, { performance_part: "part1_baerenklau" }).catch(() => undefined);
+      const beats = part1OnlyBeats;
       setPlayback((prev) => ({
         ...prev,
         beatIndex: startIndex,
         paused: false,
         completed: false,
         running: true,
-        timelineProgress: progressFromBeat(startIndex, script.beats.length, 0)
+        timelineProgress: progressFromBeat(startIndex, beats.length, 0)
       }));
 
       if (gen !== playbackGenRef.current || abortRef.current) return;
 
-      await runScriptPlayback(
+      await runPart1ScriptPlayback(
         script.beats,
         playbackAudio,
         startIndex,
@@ -140,14 +196,41 @@ function AuffuehrungContent() {
           }
         },
         () => abortRef.current,
-        script.title
+        `${script.title} — Teil 1`
       );
+
+      if (gen === playbackGenRef.current && !abortRef.current && script.teil2_corpus_id) {
+        setPlayback((prev) => ({ ...prev, completed: true, running: false }));
+      }
     },
-    [script, canPlay, playbackAudio]
+    [script, canPlayTeil1, playbackAudio, performancePart, part1OnlyBeats]
   );
 
-  function handlePlay() {
-    if (!script || !canPlay) return;
+  const playTeil2 = useCallback(async () => {
+    if (!corpus?.composition || !canPlayTeil2) return;
+    const gen = ++playbackGenRef.current;
+    abortRef.current = false;
+    setPlaybackPaused(false);
+    setAnarchyPlayback({ ...INITIAL_ANARCHY_STATE, running: true, paused: false });
+    if (script?.id) {
+      await patchScript(script.id, { performance_part: "part2_delphin_to_mole" }).catch(() => undefined);
+    }
+    await runAnarchyPlayback(
+      corpus,
+      corpus.composition,
+      ttsAvailable,
+      (patch) => {
+        if (gen === playbackGenRef.current) setAnarchyPlayback((prev) => ({ ...prev, ...patch }));
+      },
+      () => abortRef.current
+    );
+    if (gen === playbackGenRef.current) {
+      setAnarchyPlayback((prev) => ({ ...prev, running: false, completed: true }));
+    }
+  }, [corpus, canPlayTeil2, ttsAvailable, script]);
+
+  function handlePlayTeil1() {
+    if (!script || !canPlayTeil1) return;
     if (playback.running && playback.paused) {
       setPlaybackPaused(false);
       setPlayback((prev) => ({ ...prev, paused: false }));
@@ -173,6 +256,7 @@ function AuffuehrungContent() {
     abortRef.current = true;
     playbackGenRef.current += 1;
     stopScriptPlayback();
+    stopAnarchyPlayback();
     setPlayback((prev) => ({
       ...prev,
       running: false,
@@ -180,6 +264,7 @@ function AuffuehrungContent() {
       activeOscBridge: null,
       activeOscCommand: null
     }));
+    setAnarchyPlayback((prev) => ({ ...prev, running: false, paused: true }));
   }
 
   function handleSeek(progress: number) {
@@ -245,7 +330,8 @@ function AuffuehrungContent() {
         <AppNav />
       </div>
       <p className="textMuted">
-        Pro Abschnitt: Dramaturgen-Gespräch, dann Stücktext mit Cues. Steuerung unten auf der Zeitspur.
+        Teil 1 und Teil 2 laufen unabhängig: ▶ Teil 1 = Dramaturgen-Diskussion, dann Stücktext mit Cues. Teil 2 =
+        anarchische Inszenierung (eigener Start).
       </p>
 
       <section className="card col">
@@ -300,6 +386,10 @@ function AuffuehrungContent() {
         <>
           <section className="card col">
             <h2>{script.title}</h2>
+            <p className="textMuted" style={{ fontSize: "0.9rem" }}>
+              Aktueller Teil:{" "}
+              <strong>{performancePart === "part1_baerenklau" ? "Teil 1 — Bärenklau" : "Teil 2 — Anarchie"}</strong>
+            </p>
             {!scriptReady ? (
               <p className="textFaint">
                 Stück noch nicht bereit — Dramaturgie abschließen oder gespeicherte Aufführung importieren.
@@ -311,8 +401,45 @@ function AuffuehrungContent() {
                 Stimmen bereit — Play startet ohne Wartezeit.
               </p>
             ) : null}
-            {playback.completed ? (
-              <p className="textMuted">Aufführung beendet — Zeitspur nutzen zum erneuten Starten.</p>
+            <div className="row" style={{ gap: "0.75rem", flexWrap: "wrap" }}>
+              <button
+                type="button"
+                className="machineStartBtn"
+                onClick={handlePlayTeil1}
+                disabled={!canPlayTeil1 || playback.running}
+              >
+                {playback.running ? "Teil 1 läuft …" : "Teil 1 starten"}
+              </button>
+              {corpus?.composition?.moments?.length ? (
+                <button
+                  type="button"
+                  onClick={() => void playTeil2()}
+                  disabled={!canPlayTeil2 || anarchyPlayback.running}
+                >
+                  {anarchyPlayback.running ? "Teil 2 läuft …" : "Teil 2 starten"}
+                </button>
+              ) : (
+                <p className="textMuted" style={{ fontSize: "0.85rem", margin: 0 }}>
+                  Teil 2: Korpus in <Link href="/inszenierung">Inszenierung</Link> vorbereiten und verknüpfen, oder{" "}
+                  <code>?corpus=…</code> in der URL.
+                </p>
+              )}
+            </div>
+            {playback.completed && performancePart === "part1_baerenklau" ? (
+              <p className="textMuted">Teil 1 beendet.</p>
+            ) : null}
+            {anarchyPlayback.completed ? <p className="textMuted">Teil 2 beendet.</p> : null}
+            {inszenierungBuffer && !teil2Ready && script.teil2_corpus_id ? (
+              <p className="textMuted">{inszenierungBufferLabel(inszenierungBuffer)}</p>
+            ) : null}
+            {anarchyPlayback.running ? (
+              <p className="textMuted" style={{ fontSize: "0.9rem" }}>
+                Anarchie {Math.round(anarchyPlayback.anarchyLevel * 100)}% · Stimmen{" "}
+                {anarchyPlayback.activeVoices}
+              </p>
+            ) : null}
+            {playback.completed && !script.teil2_corpus_id && !corpusIdParam ? (
+              <p className="textMuted">Teil 1 beendet — erneut starten über die Buttons oben.</p>
             ) : null}
           </section>
 
@@ -332,16 +459,16 @@ function AuffuehrungContent() {
                   index === playback.beatIndex ? playback.discussionTurnIndex : undefined
                 }
                 sentenceIndex={index === playback.beatIndex ? playback.sentenceIndex : undefined}
-                clickable={canPlay}
+                clickable={canPlayTeil1}
                 onSelect={() => handleJumpToBeat(index)}
               />
             ))}
           </section>
 
           <PerformanceTransport
-            beats={script.beats}
+            beats={performancePart === "part1_baerenklau" ? part1OnlyBeats : script.beats}
             beatIndex={playback.beatIndex}
-            beatCount={beatCount}
+            beatCount={activeBeatCount}
             timelineProgress={
               playback.timelineProgress >= 0
                 ? playback.timelineProgress
@@ -350,14 +477,14 @@ function AuffuehrungContent() {
             running={playback.running}
             paused={playback.paused}
             completed={playback.completed}
-            canPlay={canPlay}
+            canPlay={canPlayTeil1}
             playBlockedReason={playBlockedReason}
             segmentPhase={playback.segmentPhase}
             discussionTurnIndex={playback.discussionTurnIndex}
             sentenceIndex={playback.sentenceIndex}
             showPhase={playback.showPhase}
             activeOscBridge={playback.activeOscBridge}
-            onPlay={handlePlay}
+            onPlay={handlePlayTeil1}
             onPause={handlePause}
             onStop={handleStop}
             onSeek={handleSeek}

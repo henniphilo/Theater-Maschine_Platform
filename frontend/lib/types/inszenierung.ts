@@ -36,12 +36,17 @@ export type Gesamtkonzept = {
   discussion_summary?: string | null;
 };
 
+export type SpeechMode = "tts" | "avatar_video" | "silent";
+
 export type CompositionMoment = {
   id: string;
   order: number;
   scene_id: string;
   text_excerpt: string;
   speaker: "AI_A" | "AI_B" | "narrator";
+  speech_mode?: SpeechMode;
+  avatar_speech_id?: string | null;
+  avatar_video_clip_id?: string | null;
   dramaturgy?: DramaturgyDecision | null;
   overlap_with_previous: number;
   anarchy_level: number;

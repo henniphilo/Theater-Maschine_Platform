@@ -28,6 +28,10 @@ class DebateResponse(BaseModel):
 class TTSRequest(BaseModel):
     text: str = Field(min_length=1, max_length=8000)
     speaker: str = Field(pattern="^(openai|anthropic|AI_A|AI_B|narrator)$")
+    profile: str | None = Field(
+        default=None,
+        pattern="^(dramaturg|performance|inszenierung)$",
+    )
 
 
 class TTSStatusResponse(BaseModel):

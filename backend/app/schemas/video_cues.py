@@ -1,4 +1,8 @@
+from typing import Literal
+
 from pydantic import BaseModel, Field, field_validator
+
+from app.director.cues.cue_models import ProjectorTarget, VideoType
 
 
 class VideoProjectorEntry(BaseModel):
@@ -22,6 +26,12 @@ class VideoClipEntry(BaseModel):
     moods: list[str] = Field(default_factory=list)
     intensity_min: float = Field(default=0.0, ge=0.0, le=1.0)
     intensity_max: float = Field(default=1.0, ge=0.0, le=1.0)
+    video_type: VideoType = "atmosphere"
+    projector_preference: ProjectorTarget | None = None
+    duration_ms: int | None = Field(default=None, ge=0)
+    text_content_id: str | None = None
+    animal: str | None = None
+    can_be_interrupted: bool = True
 
     @field_validator("id")
     @classmethod

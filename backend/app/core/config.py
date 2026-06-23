@@ -20,16 +20,22 @@ class Settings(BaseSettings):
     anthropic_api_key: str | None = None
 
     tts_provider: str = "auto"
-    tts_voice_openai: str = "Samantha"
-    tts_voice_anthropic: str = "Flo"
+    tts_voice_openai: str = "Petra (Premium)"
+    tts_voice_anthropic: str = "Viktor (Enhanced)"
     tts_voice_ai_a: str = "Anna"
     tts_voice_ai_b: str = "Martin"
     tts_voice_narrator: str = "Alex"
+    tts_voice_inszenierung_ai_a: str = "Eddy"
+    tts_voice_inszenierung_ai_b: str = "Sandy"
+    tts_voice_inszenierung_narrator: str = "Helena"
     tts_edge_voice_openai: str = "de-DE-ConradNeural"
     tts_edge_voice_anthropic: str = "de-DE-KatjaNeural"
     tts_edge_voice_ai_a: str = "de-DE-KillianNeural"
     tts_edge_voice_ai_b: str = "de-DE-SeraphinaMultilingualNeural"
     tts_edge_voice_narrator: str = "de-DE-AmalaNeural"
+    tts_edge_voice_inszenierung_ai_a: str = "de-DE-FlorianMultilingualNeural"
+    tts_edge_voice_inszenierung_ai_b: str = "de-DE-SeraphinaMultilingualNeural"
+    tts_edge_voice_inszenierung_narrator: str = "de-DE-KatjaNeural"
 
     director_enabled: bool = True
     director_dramaturgy_mode: Literal["llm", "rules"] = "llm"
@@ -63,8 +69,10 @@ class Settings(BaseSettings):
     dramaturgy_discussion_max_tokens: int = 400
     dramaturgy_decision_max_tokens: int = 1200
     dramaturgy_rules_excerpt_chars: int = 3500
+    dramaturgy_whole_text_max_chars: int = 8000
     dramaturgy_statements_per_dramaturg: int = 2
     dramaturgy_statement_max_chars: int = 450
+    part1_workshop_preview_hardware: bool = False
     sound_output: Literal["osc", "midi", "both"] = "midi"
     sound_osc_mirror: bool = False
     sound_midi_port: str | None = None

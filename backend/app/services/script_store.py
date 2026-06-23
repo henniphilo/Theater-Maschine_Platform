@@ -5,7 +5,8 @@ from fastapi import HTTPException, status
 
 from app.director.media.database import MediaDatabase
 from app.director.outputs.osc_commands import build_osc_commands
-from app.schemas.script import PatchScriptBeatRequest, ProductionScript, ScriptBeat
+from app.schemas.script import PatchScriptBeatRequest, PatchScriptRequest, ProductionScript, ScriptBeat
+from app.services.baerenklau_beat import find_baerenklau_beats, resolve_part1_beats
 
 
 class ScriptStore:
@@ -43,6 +44,14 @@ class ScriptStore:
         )
         return self.save(script)
 
+    def patch_script(self, script_id: str, payload: PatchScriptRequest) -> ProductionScript:
+        script = self.get(script_id)
+        if payload.performance_part is not None:
+            script.performance_part = payload.performance_part
+        if payload.teil2_corpus_id is not None:
+            script.teil2_corpus_id = payload.teil2_corpus_id or None
+        return self.save(script)
+
     def patch_beat(
         self,
         script_id: str,
@@ -77,9 +86,11 @@ class ScriptStore:
         if not script.beats:
             script.status = "draft"
             return script
-        all_have_dramaturgy = all(b.dramaturgy is not None for b in script.beats)
-        any_have_dramaturgy = any(b.dramaturgy is not None for b in script.beats)
-        if all_have_dramaturgy:
+        baerenklau = find_baerenklau_beats(script.beats)
+        required = resolve_part1_beats(script.beats)
+        all_have_dramaturgy = all(b.dramaturgy is not None for b in required)
+        any_have_dramaturgy = any(b.dramaturgy is not None for b in required)
+        if all_have_dramaturgy and (script.part1_selection is not None or not baerenklau):
             script.status = "ready"
         elif any_have_dramaturgy:
             script.status = "review"

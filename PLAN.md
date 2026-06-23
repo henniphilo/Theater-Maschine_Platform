@@ -824,7 +824,41 @@ Features:
 
 ---
 
-## 13. Wichtigste Designentscheidung
+## 13. Teil 2 — Anarchische Inszenierung (implementiert)
+
+Neben dem **Teil-1-Stücktext-Workflow** (`/dramaturgie` → `/stueck` → `/auffuehrung`) gibt es einen separaten Modus für **mehrere Tier-Szenen** mit eskalierender, überlagernder Aufführung — gedacht für Jelinek *Unter Tieren* / Thema **Geld**.
+
+### Ablauf
+
+```text
+/inszenierung              Korpus + Szenen-Import (TXT/JSON)
+        ↓
+/inszenierung/analyse      Gesamtkonzept, Geld-Achsen, Anarchie-Kurve (SSE)
+        ↓
+/inszenierung/komposition  Textausschnitte + Regie pro Moment (SSE)
+        ↓
+/inszenierung/auffuehrung  Anarchie-Player (parallele Stimmen, Layer-Cues)
+```
+
+Persistenz: `data/inszenierungen/{id}.json` (parallel zu Teil-1-Produktionen unter `data/productions/`).
+
+### Sprache & Medien
+
+| `speech_mode` | Quelle |
+|---------------|--------|
+| `avatar_video` | Pixera-Avatar-Clip (Text im Video, kein TTS) |
+| `tts` | KI-Stimmen Teil 2 (eigene Voice-Profile, getrennt von Teil 1) |
+| `silent` | Nur Cues |
+
+Avatar-Texte: [`media/video/Avatar Textzuordnung.csv`](media/video/Avatar%20Textzuordnung.csv) → `data/avatar_speech.json`. Die Komposition matcht Jelinek-Ausschnitte an Snippets (DEL/BK/LG/PET/WO) und steigert `anarchy_level` / `overlap_with_previous`.
+
+Technik: `POST /api/v1/director/execute-layered`, `VisualCue.blend_mode: "layer"`, Frontend `anarchyPlayback.ts` + `inszenierungBuffer.ts`.
+
+**Doku:** [`docs/teil2_inszenierung.md`](docs/teil2_inszenierung.md) · **Übersicht:** [`README.md`](README.md#teil-2--anarchische-inszenierung)
+
+---
+
+## 14. Wichtigste Designentscheidung
 
 Das System sollte drei Ebenen strikt trennen:
 
@@ -856,7 +890,7 @@ Diese Trennung macht das System stabiler, künstlerisch flexibler und leichter i
 
 ---
 
-## 14. Erste konkrete Version
+## 15. Erste konkrete Version
 
 Die allererste Version sollte nur Folgendes können:
 

@@ -1,0 +1,67 @@
+{
+  "part": 1,
+  "scene": "Bärenklau",
+  "script_id": "71f1eeeb-ab1e-4d34-83c7-0e33168a914c",
+  "beat_id": "0827222b-2d0a-4d54-92a9-42162fd3eb18",
+  "selected_by": [
+    "Claude",
+    "ChatGPT"
+  ],
+  "final_sounds": [
+    "archiv_rauschen",
+    "erinnerungsglitch",
+    "herz_unter_glas",
+    "kaefigecho",
+    "leere_zwischen_saetzen",
+    "maschinen_grundader"
+  ],
+  "final_music": [
+    "maschinen_grundader"
+  ],
+  "final_videos": [
+    "avatar",
+    "avatar2",
+    "berge",
+    "black",
+    "bonnie",
+    "branko"
+  ],
+  "final_lights": [
+    "blackout",
+    "blendung_magenta",
+    "blendung_zuschauerraum",
+    "buehne_kalt_hart",
+    "fluegel",
+    "gegenlicht_weich"
+  ],
+  "dramaturgical_reading": "Dann einigen wir uns auf folgende Variante für den gesamten Text:\n\n- **low_drone_01** — «billiger in der Anschaffung» / Verwaltungskälte\n- **cash_register** — «Ist das Geld das alles wert?» / Ökonomie\n- **typewriter** — «Lohnrunde» / Bürokratie\n- **crowd_murmur** — «niemand hat es je gewußt» / Anonymität\n- **glitch_static** — «nicht den erwünschten Effekt» / Systemstörung\n- **heartbeat_slow** — «leicht verderblich» / Körper\n- **minimal_piano** — Erschöpfung\n- **black, macbook, kaefer, branko, in",
+  "cue_strategy": "Teil 1 — Gesamttext, finale KI-Einigung nach Dramaturgen-Gespräch",
+  "discussion_turns": [
+    {
+      "speaker": "anthropic",
+      "content": "Jelinek treibt hier eine brutale Ökonomie des Ersatzes: «wir werden alle von Pflanzen ersetzt werden, weil die billiger in der Anschaffung sind» — und am Ende die erschöpfte Frage «Ist das alles das alles denn wert?» Die Sprache kreist maschinell, wiederholt sich, korrigiert sich. Kein Subjekt bleibt stabil. Grundstimmung: kalte Verwaltungslogik mit unterdrückter Verzweiflung darunter.",
+      "proposed_decision": null
+    },
+    {
+      "speaker": "openai",
+      "content": "ChatGPT: Ja, die herausstechende Thematik ist die unmenschliche Austauschbarkeit, denn «die Produkte stehen sich gegenüber und knurren einander an». Das verstärkt die kühle Ökonomie der Dinge. Ein Sound könnte hier mechanisch schnurren, um die kalte Konkurrenz zu verstärken. Ein Video zeigt vielleicht verfremdete Gesichter, das Licht kühl und distanziert. Thema: Entfremdung und Konkurrenzkampf.",
+      "proposed_decision": null
+    },
+    {
+      "speaker": "anthropic",
+      "content": "- low_drone_01 — «billiger in der Anschaffung» / Thema: Verwaltungskälte\n- cash_register — «Ist das Geld denn das alles wert?» / Thema: Ökonomie\n- typewriter — «von Lohnrunde zu Lohnrunde» / Thema: Bürokratie\n- crowd_murmur — «niemand hat es je gewußt» / Thema: Anonymität\n- glitch_static — «nicht grade den erwünschten Effekt» / Thema: Systemstörung\n- heartbeat_slow — «leicht verderblich geworden» / Thema: Körper/Vergänglichkeit\n- minimal_piano — «Ist das alles das alles denn wert?» / Thema: Erschöpfung\n- black — Blackout-Rahmen\n- macbook — «Kreditkapazitäten ausweiten» / Thema: Finanzlogik\n- kaefer — «Pflanzen ersetzt werden» / Thema: Ersetzbarkeit\n- branko — «der wahre Klassenkampf» / Thema: Arbeiterfigur\n- inge — «immer noch der Meinung, er wäre unersetzlich» / Thema: Selbsttäuschung\n- hundethiel — «Produkte knurren einander an» / Thema: Tierisierung\n- odyssee — «ins Casino gehen» / Thema: Irrfahrt ohne Ziel\n- cold_low — Grundstimmung Verw",
+      "proposed_decision": null
+    },
+    {
+      "speaker": "openai",
+      "content": "Claudes Auswahl ist passend für das entfremdete, maschinelle Setting. Ich würde jedoch den Sound \"low_drone_01\" durch \"machine_hum\" ersetzen, denn das Thema Verwaltungskälte erfordert eine kontinuierliche Präsenz. \"glitch_static\" tausche ich mit \"electronic_beep\" aus, um die wiederkehrende Systemstörung zu verdeutlichen. Übergang: Die Bühne verdunkelt sich, der Text hebt ab.",
+      "proposed_decision": null
+    },
+    {
+      "speaker": "anthropic",
+      "content": "Dann einigen wir uns auf folgende Variante für den gesamten Text:\n\n- **low_drone_01** — «billiger in der Anschaffung» / Verwaltungskälte\n- **cash_register** — «Ist das Geld das alles wert?» / Ökonomie\n- **typewriter** — «Lohnrunde» / Bürokratie\n- **crowd_murmur** — «niemand hat es je gewußt» / Anonymität\n- **glitch_static** — «nicht den erwünschten Effekt» / Systemstörung\n- **heartbeat_slow** — «leicht verderblich» / Körper\n- **minimal_piano** — Erschöpfung\n- **black, macbook, kaefer, branko, inge, hundethiel, odyssee** — Ersetzbarkeit, Finanzlogik, Tierkampf, Arbeit, Selbsttäuschung, Irrfahrt\n- **cold_low, narrow, flicker, warm_fade, blue_wash, blackout** — Kälte bis Auslöschung\n\nDer Stücktext wird jetzt aufgeführt. **Regie drückt Play wenn bereit.**\n\n```json",
+      "proposed_decision": null
+    }
+  ],
+  "created_at": "2026-06-23T21:03:34.236117Z"
+}

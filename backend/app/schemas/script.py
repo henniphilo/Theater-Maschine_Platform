@@ -3,16 +3,11 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 from app.director.cues.cue_models import DramaturgyDecision, OscCommand
+from app.schemas.discussion import DiscussionTurn, DramaturgSpeaker
+from app.schemas.part1_selection import Part1BaerenklauSelection, PerformancePart
 
 ScriptSpeaker = Literal["AI_A", "AI_B", "narrator"]
 ScriptStatus = Literal["draft", "review", "ready"]
-DramaturgSpeaker = Literal["openai", "anthropic"]
-
-
-class DiscussionTurn(BaseModel):
-    speaker: DramaturgSpeaker
-    content: str = Field(min_length=1)
-    proposed_decision: DramaturgyDecision | None = None
 
 
 class ScriptBeat(BaseModel):
@@ -34,6 +29,9 @@ class ProductionScript(BaseModel):
     beats: list[ScriptBeat] = Field(default_factory=list)
     status: ScriptStatus = "draft"
     has_rendered_audio: bool = False
+    part1_selection: Part1BaerenklauSelection | None = None
+    performance_part: PerformancePart | None = None
+    teil2_corpus_id: str | None = None
 
 
 class CreateScriptRequest(BaseModel):
@@ -44,6 +42,11 @@ class CreateScriptRequest(BaseModel):
 class PatchScriptBeatRequest(BaseModel):
     speaker: ScriptSpeaker | None = None
     dramaturgy: DramaturgyDecision | None = None
+
+
+class PatchScriptRequest(BaseModel):
+    performance_part: PerformancePart | None = None
+    teil2_corpus_id: str | None = Field(default=None, max_length=80)
 
 
 class DramaturgyStreamRequest(BaseModel):

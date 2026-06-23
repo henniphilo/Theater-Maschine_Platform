@@ -4,6 +4,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
+ProjectorTarget = Literal["adam", "eva", "rz21"]
+VideoType = Literal["avatar", "atmosphere", "regie"]
 PerformanceSpeaker = Literal["AI_A", "AI_B", "narrator"]
 
 
@@ -52,6 +54,12 @@ class VisualCue(BaseModel):
     blend_mode: Literal["replace", "layer"] = "replace"
     opacity: float = Field(default=0.8, ge=0.0, le=1.0)
     fade_time: float = Field(default=4.0, ge=0.0)
+    video_type: VideoType = "atmosphere"
+    projector: ProjectorTarget | None = None
+    duration_ms: int | None = Field(default=None, ge=0)
+    text_content_id: str | None = None
+    lock_until_finished: bool = False
+    can_be_interrupted: bool = True
 
 
 class SoundCue(BaseModel):

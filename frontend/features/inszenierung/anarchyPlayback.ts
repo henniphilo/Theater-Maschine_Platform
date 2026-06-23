@@ -1,4 +1,4 @@
-import type { OscCommand } from "@/lib/types/director";
+import { postDirectorExecuteLayered } from "@/lib/api/director";
 import type { CompositionMoment, CompositionPlan, SceneCorpus } from "@/lib/types/inszenierung";
 import { waitWhilePlaybackPaused } from "@/lib/api/client";
 import {
@@ -86,6 +86,20 @@ export async function runAnarchyPlayback(
       );
     }
 
+    const speechMode = moment.speech_mode ?? "tts";
+
+    if (speechMode === "avatar_video") {
+      const waitMs = moment.duration_hint_ms ?? 8000;
+      await sleep(waitMs);
+      continue;
+    }
+
+    if (speechMode === "silent") {
+      const waitMs = moment.duration_hint_ms ?? 4000;
+      await sleep(waitMs);
+      continue;
+    }
+
     if (!ttsAvailable) continue;
 
     await waitForVoiceSlot(maxVoices, shouldAbort);
@@ -93,7 +107,7 @@ export async function runAnarchyPlayback(
 
     const overlap = index > 0 ? moment.overlap_with_previous : 0;
     const volume = Math.min(1, 0.55 + moment.anarchy_level * 0.45);
-    const blob = await resolveMomentSpeech(corpus.id, moment, index);
+    const blob = await resolveMomentSpeech(corpus.id, moment);
     const speechPromise = playBlobLayered(blob, volume, shouldAbort);
 
     onUpdate({ activeVoices: activeLayeredVoiceCount() });
@@ -109,6 +123,23 @@ export async function runAnarchyPlayback(
   while (activeLayeredVoiceCount() > 0 && !shouldAbort()) {
     onUpdate({ activeVoices: activeLayeredVoiceCount() });
     await sleep(120);
+  }
+
+  if (!shouldAbort()) {
+    try {
+      await postDirectorExecuteLayered(
+        {
+          reason: "Teil 2 Kollaps",
+          visual: { clip_id: "black", blend_mode: "replace" },
+          light: { scene_id: "blackout", replace_previous: true },
+          intensity: 1
+        },
+        { anarchy_level: 1, stack: false, skip_interval_check: true, stagger: false }
+      );
+    } catch {
+      // playback continues even if collapse cues fail
+    }
+    await sleep(1200);
   }
 
   onUpdate({

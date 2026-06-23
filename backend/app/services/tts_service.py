@@ -4,7 +4,8 @@ from pathlib import Path
 from app.core.config import settings
 from app.services.tts.edge_provider import EdgeTTSProvider
 from app.services.tts.mac_say import MacSayProvider
-from app.services.tts.voice_map import voice_for_speaker
+from app.services.tts.voice_map import VoiceProfile, default_profile_for_speaker, voice_for_speaker
+from app.services.spoken_text import spoken_discussion_text
 
 
 class TTSService:
@@ -62,12 +63,21 @@ class TTSService:
             return MacSayProvider.list_voices()
         return await EdgeTTSProvider.list_voices()
 
-    async def synthesize(self, text: str, speaker: str) -> Path:
+    async def synthesize(
+        self,
+        text: str,
+        speaker: str,
+        *,
+        profile: VoiceProfile | None = None,
+    ) -> Path:
         provider = self.resolve_provider()
-        voice = voice_for_speaker(speaker, provider=provider)
+        resolved = profile or default_profile_for_speaker(speaker)
+        if resolved == "dramaturg":
+            text = spoken_discussion_text(text)
+        voice = voice_for_speaker(speaker, provider=provider, profile=resolved)
         if provider == "say":
-            return MacSayProvider.synthesize(text, speaker, voice=voice)
-        return await EdgeTTSProvider.synthesize(text, speaker, voice=voice)
+            return MacSayProvider.synthesize(text, speaker, voice=voice, profile=resolved)
+        return await EdgeTTSProvider.synthesize(text, speaker, voice=voice, profile=resolved)
 
     @property
     def platform(self) -> str:

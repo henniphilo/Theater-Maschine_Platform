@@ -17,6 +17,7 @@ import type { InszenierungBufferState } from "@/features/inszenierung/inszenieru
 import {
   bufferStatusLabel,
   isInszenierungBuffered,
+  momentSpeechLabel,
   startInszenierungBuffer,
   subscribeInszenierungBuffer
 } from "@/features/inszenierung/inszenierungBuffer";
@@ -88,6 +89,10 @@ function AuffuehrungContent() {
     setPlayback({ ...INITIAL_ANARCHY_STATE, paused: true });
   }
 
+  const sortedMoments = [...(corpus?.composition?.moments ?? [])].sort((a, b) => a.order - b.order);
+  const currentMoment =
+    playback.momentIndex >= 0 ? sortedMoments[playback.momentIndex] : undefined;
+
   return (
     <main className={`container col${corpus ? " pageWithPerformanceTransport" : ""}`}>
       <div className="row" style={{ justifyContent: "space-between", alignItems: "center" }}>
@@ -124,7 +129,7 @@ function AuffuehrungContent() {
                 : playback.running
                   ? playback.paused
                     ? "Pausiert"
-                    : `Läuft · Anarchie ${(playback.anarchyLevel * 100).toFixed(0)}%`
+                    : `${currentMoment ? momentSpeechLabel(currentMoment) : "Läuft"} · Anarchie ${(playback.anarchyLevel * 100).toFixed(0)}%`
                   : !bufferReady && ttsAvailable
                     ? bufferState
                       ? bufferStatusLabel(bufferState)

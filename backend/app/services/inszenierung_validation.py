@@ -63,8 +63,11 @@ def validate_moment(moment: CompositionMoment, corpus: SceneCorpus) -> None:
     scene = find_scene(corpus, moment.scene_id)
     if scene is None:
         raise ValueError(f"Unknown scene_id: {moment.scene_id}")
-    if not excerpt_in_scene(scene, moment.text_excerpt):
+    if moment.speech_mode != "silent" and not excerpt_in_scene(scene, moment.text_excerpt):
         raise ValueError(f"Excerpt not found in scene {scene.animal}: {moment.text_excerpt[:80]}…")
+    if moment.speech_mode == "avatar_video":
+        if not moment.avatar_speech_id and not moment.avatar_video_clip_id:
+            raise ValueError("avatar_video moment needs avatar_speech_id or avatar_video_clip_id")
 
 
 def validate_composition(plan: CompositionPlan, corpus: SceneCorpus) -> CompositionPlan:

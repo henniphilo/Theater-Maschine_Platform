@@ -2,10 +2,33 @@ from app.services.dramaturgy_workshop_service import _clamp_statement
 from app.services.script_splitter import (
     MIN_BEAT_LINES,
     build_beats_from_text,
+    build_part1_whole_beat,
     is_section_long_enough,
     merge_short_chunks,
     split_source_text,
 )
+
+
+def test_build_part1_whole_beat_single_block() -> None:
+    text = "Erster Satz mit Inhalt.\n\nZweiter Absatz mit mehr Text.\nDritter Satz hier."
+    beats = build_part1_whole_beat(text)
+    assert len(beats) == 1
+    assert "Erster Satz" in beats[0].text
+    assert "Zweiter Absatz" in beats[0].text
+    assert beats[0].order == 0
+    assert beats[0].speaker == "AI_A"
+
+
+def test_build_part1_whole_beat_preserves_scene_title() -> None:
+    text = "Szene 1: Im Keller\n\nVielleicht ist Erinnerung nur eine Störung."
+    beats = build_part1_whole_beat(text)
+    assert len(beats) == 1
+    assert beats[0].scene_title == "Szene 1: Im Keller"
+    assert "Erinnerung" in beats[0].text
+
+
+def test_build_part1_whole_beat_empty() -> None:
+    assert build_part1_whole_beat("   ") == []
 
 
 def test_split_by_paragraphs() -> None:
@@ -71,6 +94,17 @@ def test_dramaturgy_quote_excerpts() -> None:
     quotes = dramaturgy_quote_excerpts(text)
     assert len(quotes) >= 2
     assert quotes[0].startswith("Erster Satz")
+
+
+def test_dramaturgy_quote_excerpts_spreads_across_long_text() -> None:
+    from app.services.script_splitter import dramaturgy_quote_excerpts
+
+    sentences = [f"Satz Nummer {i} mit genug Inhalt für ein Zitat." for i in range(20)]
+    text = " ".join(sentences)
+    quotes = dramaturgy_quote_excerpts(text, max_excerpts=6)
+    assert len(quotes) == 6
+    assert quotes[0].startswith("Satz Nummer 0")
+    assert "Satz Nummer 19" in quotes[-1] or quotes[-1].startswith("Satz Nummer 1")
 
 
 def test_clamp_statement_at_sentence_boundary() -> None:
