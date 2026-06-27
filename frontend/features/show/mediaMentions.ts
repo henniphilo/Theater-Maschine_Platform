@@ -11,8 +11,15 @@ export type MediaAllowlist = {
   lights: Set<string>;
 };
 
-const MENTION_LINE = /^[\s]*[-*•]\s*([a-z][a-z0-9_]*)\s*(?:[—\-–:]|\s+)\s*(.+?)\s*$/gim;
-const BACKTICK_BULLET = /^[\s]*[-*•]\s*`([a-z][a-z0-9_]*)`(?:\s*[:—–-]\s*(.*))?\s*$/gim;
+const DASH_SEP = String.raw`(?:[:\u2014\u2013\-]|\s+)`;
+const MENTION_LINE = new RegExp(
+  String.raw`^[\s]*[-*•]\s*([a-z][a-z0-9_]*)\s*${DASH_SEP}\s*(.+?)\s*$`,
+  "gim"
+);
+const BACKTICK_BULLET = new RegExp(
+  String.raw`^[\s]*[-*•]\s*\`([a-z][a-z0-9_]*)\`(?:\s*[:\u2014\u2013\-]\s*(.*))?\s*$`,
+  "gim"
+);
 const BACKTICK_INLINE = /`([a-z][a-z0-9_]*)`/g;
 const QUOTE_RE = /«([^»]{2,80})»/;
 const THEMA_RE = /Thema:\s*([^/\n«]{2,80})/i;
@@ -221,6 +228,68 @@ function scorePool(
   return bestScore >= 2 ? best : null;
 }
 
+const MOOD_KEYWORD_RE = /«([^»]{2,80})»/g;
+const MEDIUM_IN_PARENS_RE = /\((Sounds?|Musik|Videos?|Licht(?:stimmungen)?)\)/gi;
+const MEDIUM_LABEL_RE = /(Sounds?|Musik|Videos?|Licht(?:stimmungen)?)\s*:\s*([^;«]+)/gi;
+const ID_BULLET_RE = /^[\s]*[-*•]\s*(?:`([a-z][a-z0-9_]*)`|([a-z][a-z0-9_]*))\s*(?:[:\u2014\u2013\-]|\s+)/i;
+
+function mediumFromLabel(label: string): MediaMentionMedium {
+  const lowered = label.toLowerCase();
+  if (lowered.startsWith("sound")) return "sound";
+  if (lowered === "musik") return "music";
+  if (lowered.startsWith("video")) return "video";
+  return "light";
+}
+
+function isIdBulletLine(line: string): boolean {
+  return ID_BULLET_RE.test(line.trim());
+}
+
+function parseMoodSegments(line: string): Array<{ medium: MediaMentionMedium; mood: string }> {
+  const segments: Array<{ medium: MediaMentionMedium; mood: string }> = [];
+  for (const match of line.matchAll(MEDIUM_LABEL_RE)) {
+    segments.push({ medium: mediumFromLabel(match[1]), mood: match[2].trim() });
+  }
+  for (const match of line.matchAll(MEDIUM_IN_PARENS_RE)) {
+    const medium = mediumFromLabel(match[1]);
+    let before = line.slice(0, match.index ?? 0);
+    if (before.includes("»")) {
+      before = before.split("»").slice(1).join("»");
+    }
+    const mood = before.trim().replace(/^[- \u2013\u2014:;,.]+|[- \u2013\u2014:;,.]+$/g, "");
+    if (mood) segments.push({ medium, mood });
+  }
+  if (segments.length > 0) return segments;
+
+  const quoteEnd = line.indexOf("»");
+  if (quoteEnd >= 0) {
+    const fallback = line.slice(quoteEnd + 1).trim().replace(/^[- \u2013\u2014:;,.]+|[- \u2013\u2014:;,.]+$/g, "");
+    if (fallback) segments.push({ medium: "sound", mood: fallback });
+  }
+  return segments;
+}
+
+function resolveMoodToMedia(
+  moodText: string,
+  medium: MediaMentionMedium,
+  allowlist: MediaAllowlist,
+  catalog?: MediaCatalog | null
+): { mediaId: string; medium: MediaMentionMedium } | null {
+  const query = moodText.trim();
+  if (!query) return null;
+  return resolveInventedFromCatalog(query, query, catalog ?? null, medium);
+}
+
+function spokenPhraseForMood(
+  keyword: string,
+  medium: MediaMentionMedium,
+  moodText: string
+): string {
+  const label = MEDIUM_LABEL[medium];
+  const cleanMood = moodText.replace(/[*_`]/g, "").trim().replace(/[.,;]+$/, "");
+  return `Beim Stichwort «${keyword}»: ${cleanMood} (${label}).`;
+}
+
 function keywordFromRest(rest: string): string | null {
   const quote = rest.match(QUOTE_RE);
   if (quote?.[1]) return quote[1].trim().slice(0, 80);
@@ -424,8 +493,29 @@ export function buildSpokenPlaybackWithMentions(
 
     sectionHint = mediumFromSection(line) ?? sectionHint;
 
-    const bullet = line.match(/^[\s]*[-*•]\s*`([a-z][a-z0-9_]*)`(?:\s*[:—–-]\s*(.*))?\s*$/i)
-      ?? line.match(/^[\s]*[-*•]\s*([a-z][a-z0-9_]*)\s*(?:[—\-–:]|\s+)\s*(.+?)\s*$/i);
+    const keywordMatch = line.match(/«([^»]{2,80})»/);
+    const moodSegments = keywordMatch ? parseMoodSegments(line) : [];
+    if (keywordMatch && moodSegments.length > 0 && !isIdBulletLine(stripped)) {
+      const keyword = keywordMatch[1].trim();
+      const lineStart = offset;
+      for (const { medium, mood } of moodSegments) {
+        const resolved = resolveMoodToMedia(mood, medium, allowlist, catalog);
+        if (!resolved) continue;
+        const phrase = spokenPhraseForMood(keyword, resolved.medium, mood);
+        appendMention(mentions, seen, {
+          medium: resolved.medium,
+          media_id: resolved.mediaId,
+          keyword,
+          char_offset: lineStart
+        });
+        spokenLines.push(phrase);
+        offset += phrase.length + 1;
+      }
+      continue;
+    }
+
+    const bullet = line.match(/^[\s]*[-*•]\s*`([a-z][a-z0-9_]*)`(?:\s*[:\u2014\u2013\-]\s*(.*))?\s*$/i)
+      ?? line.match(new RegExp(String.raw`^[\s]*[-*•]\s*([a-z][a-z0-9_]*)\s*${DASH_SEP}\s*(.+?)\s*$`, "i"));
 
     if (bullet) {
       const rest = bullet[2] ?? "";

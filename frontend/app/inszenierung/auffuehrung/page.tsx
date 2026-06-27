@@ -13,6 +13,7 @@ import {
   stopAnarchyPlayback,
   type AnarchyPlaybackState
 } from "@/features/inszenierung/anarchyPlayback";
+import { planRequiresTts } from "@/features/inszenierung/avatarCuePlayback";
 import type { InszenierungBufferState } from "@/features/inszenierung/inszenierungBuffer";
 import {
   bufferStatusLabel,
@@ -45,14 +46,15 @@ function AuffuehrungContent() {
       .catch(() => undefined);
   }, [corpusId]);
 
-  const bufferReady = corpus ? isInszenierungBuffered(corpus.id, ttsAvailable) : false;
   const hasPlan = (corpus?.composition?.moments?.length ?? 0) > 0;
-  const canPlay = hasPlan && (bufferReady || !ttsAvailable);
+  const needsTts = corpus?.composition ? planRequiresTts(corpus.composition) : false;
+  const bufferReady = corpus ? isInszenierungBuffered(corpus.id, ttsAvailable) : false;
+  const canPlay = hasPlan && (!needsTts || bufferReady || !ttsAvailable);
 
   useEffect(() => {
-    if (!corpus || !hasPlan || bufferReady) return;
+    if (!corpus || !hasPlan || bufferReady || !needsTts) return;
     if (ttsAvailable) startInszenierungBuffer(corpus, ttsAvailable);
-  }, [corpus, hasPlan, bufferReady, ttsAvailable]);
+  }, [corpus, hasPlan, bufferReady, ttsAvailable, needsTts]);
 
   const play = useCallback(async () => {
     if (!corpus?.composition || !canPlay) return;
@@ -104,15 +106,23 @@ function AuffuehrungContent() {
         <section className="card col">
           <h2>{corpus.title}</h2>
           {!hasPlan ? (
-            <p className="textFaint">Zuerst Komposition abschließen.</p>
-          ) : !bufferReady && ttsAvailable ? (
+            <p className="textFaint">Zuerst Timeline in der Komposition laden.</p>
+          ) : needsTts && !bufferReady && ttsAvailable ? (
             <p className="textMuted">{bufferState ? bufferStatusLabel(bufferState) : "Stimmen werden vorbereitet …"}</p>
           ) : (
             <p className="textMuted">
-              {corpus.composition?.moments.length} Momente · max. {corpus.composition?.max_concurrent_voices} Stimmen
-              parallel
+              {corpus.composition?.moments.length} Beats · Avatar-Video
+              {needsTts ? ` · max. ${corpus.composition?.max_concurrent_voices} KI-Stimmen` : ""}
             </p>
           )}
+          {currentMoment ? (
+            <p className="textMuted">
+              Aktiv: {momentSpeechLabel(currentMoment)}
+              {currentMoment.avatar_layers?.length
+                ? ` · Beamer: ${currentMoment.projector_mode === "all" ? "alle" : currentMoment.avatar_layers.map((l) => l.projector).join(", ")}`
+                : ""}
+            </p>
+          ) : null}
         </section>
       ) : null}
 
@@ -120,7 +130,7 @@ function AuffuehrungContent() {
         <div className="performanceTransportInner">
           <div className="performanceTransportMeta">
             <strong>
-              Moment {playback.momentIndex >= 0 ? playback.momentIndex + 1 : "—"} /{" "}
+              Beat {playback.momentIndex >= 0 ? playback.momentIndex + 1 : "—"} /{" "}
               {corpus?.composition?.moments.length ?? 0}
             </strong>
             <span className="textMuted performanceTransportDetail">
@@ -130,7 +140,7 @@ function AuffuehrungContent() {
                   ? playback.paused
                     ? "Pausiert"
                     : `${currentMoment ? momentSpeechLabel(currentMoment) : "Läuft"} · Anarchie ${(playback.anarchyLevel * 100).toFixed(0)}%`
-                  : !bufferReady && ttsAvailable
+                  : needsTts && !bufferReady && ttsAvailable
                     ? bufferState
                       ? bufferStatusLabel(bufferState)
                       : "Lädt …"

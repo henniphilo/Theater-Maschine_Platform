@@ -122,7 +122,6 @@ class CatalogMediaMatcher:
     @classmethod
     def load(cls) -> CatalogMediaMatcher:
         catalog = get_sound_cue_catalog_service().load()
-        video_catalog = get_video_cue_catalog_service().load()
         db = MediaDatabase()
         return cls(
             sound_play=tuple(c for c in catalog.cues if c.action == "play"),
@@ -291,7 +290,6 @@ def normalize_media_lists(
     matcher = get_catalog_media_matcher()
     catalog = get_sound_cue_catalog_service().load()
     play_by_id = {c.id: c for c in catalog.cues if c.action == "play"}
-    play_sounds = set(play_by_id.keys())
     music_ids = {c.id for c in play_by_id.values() if _is_music_cue(c)}
     video_ids = {c.id for c in get_video_cue_catalog_service().load(video_scope).clips}  # type: ignore[arg-type]
     light_ids = {s.id for s in MediaDatabase().light_scenes if s.id != "blackout"}
@@ -303,8 +301,6 @@ def normalize_media_lists(
 
     used_sounds: set[str] = set()
     used_music: set[str] = set()
-    used_videos: set[str] = set()
-    used_lights: set[str] = set()
 
     def remap_sound(item_id: str, used: set[str]) -> str | None:
         matched = matcher.best_sound(item_id, music=False, exclude=used)

@@ -1,5 +1,5 @@
 import type { DramaturgyDecision, OscCommand } from "@/lib/types/director";
-import { postDirectorExecuteLayered } from "@/lib/api/director";
+import { isDirectorPerformanceAborted, postDirectorExecuteLayered } from "@/lib/api/director";
 import { decisionFromCuePoint, normalizeCuePoints } from "@/features/show/cuePlayback";
 
 export async function executeLayeredCueSafely(
@@ -8,7 +8,7 @@ export async function executeLayeredCueSafely(
   onCommands: (commands: OscCommand[]) => Promise<void>,
   shouldAbort: () => boolean
 ): Promise<boolean> {
-  if (shouldAbort()) return false;
+  if (shouldAbort() || isDirectorPerformanceAborted()) return false;
   try {
     const result = await postDirectorExecuteLayered(decision, {
       anarchy_level: anarchyLevel,
@@ -16,23 +16,27 @@ export async function executeLayeredCueSafely(
       skip_interval_check: true,
       stagger: false
     });
-    if (!shouldAbort() && result.osc_commands.length > 0) {
-      await onCommands(result.osc_commands);
+    if (shouldAbort() || isDirectorPerformanceAborted()) return false;
+    if (result.osc_commands.length > 0) {
+      void onCommands(result.osc_commands).catch((err) => {
+        console.warn("Layered cue highlight failed (playback continues):", err);
+      });
     }
     return result.executed;
   } catch (err) {
+    if (err instanceof DOMException && err.name === "AbortError") return false;
     console.warn("Layered cue failed (playback continues):", err);
     return false;
   }
 }
 
-export async function fireLayeredMomentCues(
+export function fireLayeredMomentCues(
   dramaturgy: DramaturgyDecision,
   anarchyLevel: number,
   excerpt: string,
   onCommands: (commands: OscCommand[]) => Promise<void>,
   shouldAbort: () => boolean
-): Promise<void> {
+): void {
   const points = normalizeCuePoints(dramaturgy);
   if (points.length === 0) return;
 
@@ -42,6 +46,6 @@ export async function fireLayeredMomentCues(
   for (const point of targets) {
     if (shouldAbort()) return;
     const decision = decisionFromCuePoint(dramaturgy, point);
-    await executeLayeredCueSafely(decision, anarchyLevel, onCommands, shouldAbort);
+    void executeLayeredCueSafely(decision, anarchyLevel, onCommands, shouldAbort);
   }
 }

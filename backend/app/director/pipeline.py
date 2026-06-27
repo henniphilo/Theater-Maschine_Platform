@@ -101,6 +101,9 @@ class DirectorPipeline:
         force: bool = False,
         stagger: bool = True,
     ) -> DirectorResult:
+        if self.safety.emergency_stop_active:
+            return self._emergency_blocked_result(decision, "(script beat)")
+
         allowed, blocked_reason = self.scheduler.can_execute(decision)
         if force:
             allowed = True
@@ -143,7 +146,11 @@ class DirectorPipeline:
         stack: bool = True,
         skip_interval_check: bool = True,
         stagger: bool = False,
+        text_excerpt: str | None = None,
     ) -> DirectorResult:
+        if self.safety.emergency_stop_active:
+            return self._emergency_blocked_result(decision, "(inszenierung moment)")
+
         if stack and decision.visual:
             decision = decision.model_copy(deep=True)
             decision.visual = decision.visual.model_copy(
@@ -162,7 +169,7 @@ class DirectorPipeline:
         if not allowed_proj:
             allowed = False
             blocked_reason = projector_blocked
-        if skip_interval_check and allowed_proj:
+        elif skip_interval_check and allowed_proj:
             allowed = True
             blocked_reason = None
 
@@ -174,7 +181,15 @@ class DirectorPipeline:
             osc_commands = self._execute_commands(planned, stagger=stagger)
             self.scheduler.mark_executed(decision)
             if decision.visual:
-                self.projectors.lock_after_play(decision.visual)
+                excerpt = text_excerpt
+                if excerpt is None and decision.visual.video_type == "avatar":
+                    last = self.state.last_event
+                    if last and last.text and last.text != "(inszenierung moment)":
+                        excerpt = last.text
+                self.projectors.lock_after_play(
+                    decision.visual,
+                    text_excerpt=excerpt if decision.visual.video_type == "avatar" else None,
+                )
 
         event = self.state.last_event or DialogueEvent(
             speaker=DialogueSpeaker.AI_A,
@@ -204,6 +219,31 @@ class DirectorPipeline:
         if not force and planned_result.blocked_reason:
             return planned_result
         return self.execute(planned_result.decision, force=force)
+
+    def _emergency_blocked_result(
+        self,
+        decision: DramaturgyDecision,
+        text: str,
+    ) -> DirectorResult:
+        event = self.state.last_event or DialogueEvent(
+            speaker=DialogueSpeaker.AI_A,
+            text=text,
+            topic="",
+            mood=decision.mood,
+            intensity=decision.intensity,
+            tags=decision.tags,
+            timestamp=decision.timestamp,
+        )
+        result = DirectorResult(
+            event=event,
+            decision=decision,
+            executed=False,
+            blocked_reason="emergency_stop_active",
+            planned_commands=[],
+            osc_commands=[],
+        )
+        self._store_result(result, log_executed=False)
+        return result
 
     def _execute_commands(self, commands: list[OscCommand], *, stagger: bool) -> list[OscCommand]:
         bridges = {
@@ -246,11 +286,16 @@ class DirectorPipeline:
             self.state.history.append(result)
             self.state.history = self.state.history[-50:]
 
+    def clear_for_performance(self) -> None:
+        self.safety.clear_emergency_stop()
+        self.projectors.reset()
+
     def emergency_stop(self) -> None:
         from app.director.technik_hold import get_technik_hold_manager
 
         get_technik_hold_manager(self).stop()
         self.safety.emergency_stop()
+        self.projectors.reset()
         self.scheduler.clear_active()
         dry_run = settings.osc_dry_run
         if settings.visual_output in ("pixera", "both"):

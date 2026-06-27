@@ -1,0 +1,291 @@
+{
+  "part": 1,
+  "scene": "Bärenklau",
+  "script_id": "082768a9-0f5e-457b-9438-1c3fcb10e9e8",
+  "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+  "selected_by": [
+    "Claude",
+    "ChatGPT"
+  ],
+  "final_sounds": [
+    "archiv_rauschen",
+    "erinnerungsglitch",
+    "herz_unter_glas",
+    "kaefigecho",
+    "leere_zwischen_saetzen",
+    "maschinen_grundader"
+  ],
+  "final_music": [
+    "maschinen_grundader"
+  ],
+  "final_videos": [
+    "avatar",
+    "avatar2",
+    "black",
+    "bonnie",
+    "clyde",
+    "esel"
+  ],
+  "final_lights": [
+    "blackout",
+    "blendung_magenta",
+    "blendung_zuschauerraum",
+    "buehne_kalt_hart",
+    "fluegel",
+    "gegenlicht_weich"
+  ],
+  "dramaturgical_reading": "Dann einigen wir uns auf folgende Variante für den gesamten Text *„Der Bärenklau\"*:\n\n---\n\n---\n\nDer Stücktext *„Der Bärenklau\"* wird jetzt aufgeführt. Teil 2 (Anarchie) startet separat später. Die Regie drückt **Play**, wenn sie bereit ist.",
+  "cue_strategy": "Teil 1 — Gesamttext; Sounddesign: play/fade/layer aus Dramaturgen-Repertoire",
+  "discussion_turns": [
+    {
+      "speaker": "anthropic",
+      "content": "Claude eröffnet:.\nJelinek seziert hier die Warenlogik des Kapitalismus mit eiskalter Ironie — das Tier, der Arbeiter, die Pflanze werden ökonomisch gleichgesetzt: *„weil die billiger in der Anschaffung und im Betrieb sind.\"* Der Text kreist um Austauschbarkeit und Nicht-Wissen: *„Ist das alles das alles denn wert?\"* — eine Frage, die keinen Boden findet. Grundstimmung: bürokratisch, knurrend, existenziell leer.",
+      "proposed_decision": null,
+      "media_mentions": []
+    },
+    {
+      "speaker": "openai",
+      "content": "ChatGPT: Der Text offenbart eine kafkaeske Welt, in der ökonomische Mechanismen ins Absurde führen: „Ein Konflikt zwischen Schuldnern und Schöpfern? Das klingt ernst.“ Hier verschwimmen die Grenzen zwischen Mensch und Ware. Ein tiefes Brummen könnte die beklemmende Unsicherheit verstärken, während flackerndes Licht die instabile Wirklichkeit spiegelt. Video von kalten, anonymen Pflanzenlandschaften könnte die Entfremdung symbolisieren.",
+      "proposed_decision": null,
+      "media_mentions": []
+    },
+    {
+      "speaker": "anthropic",
+      "content": "Claude schlägt das Medienpaket vor:.\nDer Text ist ein maschineller Redeschwall über Austauschbarkeit — Tier, Pflanze, Arbeiter als ökonomische Einheiten. Die Dramaturgie braucht einen kalten Grundton, knurrende Akzente und eine Stille am Ende, die die letzte Frage verhallen lässt.\n---\nSOUNDS.\nSound maschinen grundader. „die Produkte stehen sich gegenüber und knurren einander an\" — Thema: Warenkonflikt als ti.\nSound erinnerungsglitch. „könnte er gleich ins Casino gehen\" — Thema: Glücksspiel-Ökonomie; Akzent wenn der Arbeite.\nSound leere zwischen saetzen. „Ist das alles das alles denn wert?\" — Thema: existenzielle Leere; nach der letzten Frage .\nMUSIK.\nMusik maschinen grundader. Thema: Kälte, Gleichförmigkeit des Systems; hält den gesamten Text in einem schwebenden, u.\n---\nVIDEOS.\nVideo kaefer. „wir werden alle von Pflanzen ersetzt werden\" — Thema: Tier als Ware, unheimliche Biologie.\nVideo macbook. „Die Kreditkapazitäten, also die Geldmengen ausweiten?\" — Thema: digitale Finanzwelt, Bild.\nVideo hundethiel. „die Produkte stehen sich gegenüber und knurren einander an\" — Thema: das Tier im System, .\nVideo black. „Ist das alles das alles denn wert?\" — Thema: Auslöschung, Antwortlosigkeit am Ende.\nVideo random. Thema: Zufallsprinzip als ökonomisches Bild — „könnte er gleich ins Casino gehen\".\n---\nLICHT.\nLicht buehne kalt hart. Grundstimmung: bürokratische Kälte des gesamten Texts.\nLicht blendung zuschauerraum. „Ein Konflikt zwischen Schuldnern und Schöpfern?\" — Thema: Instabilität des Systems.\nLicht saallicht. „muß er auf der Ersatzbank im Wartesaal sitzenbleiben\" — Thema: Einengung, Kontrollverlust.\n- neutral — Rückkehr zur Leere nach Überforderung — Reduzieren als dramaturgische Funktion\n---\n{\n\"sounds\": [\"knurren\", \"casino\", \"maschine\", \"stille\", \"tippen\", \"atem\"],\n\"music\": [\"drone\"],\n\"videos\": [\"kaefer\", \"macbook\", \"hundethiel\", \"black\", \"inge\", \"random\"],\n\"lights\": [\"kalt_blau\", \"verhoer\", \"flicker\", \"eng\", \"ausblende\", \"neutral\"]\n}\n---\nÜbergang: Das Medienpaket steht. Wenn die Regie bereit ist — Play.",
+      "proposed_decision": null,
+      "media_mentions": [
+        {
+          "medium": "sound",
+          "media_id": "maschinen_grundader",
+          "keyword": "Warenkonflikt als tierischer Instinkt; Grundton unter dem gesamten Text",
+          "char_offset": 294
+        },
+        {
+          "medium": "sound",
+          "media_id": "erinnerungsglitch",
+          "keyword": "Glücksspiel-Ökonomie; Akzent wenn der Arbeiter ins Absurde kippt",
+          "char_offset": 413
+        },
+        {
+          "medium": "sound",
+          "media_id": "leere_zwischen_saetzen",
+          "keyword": "existenzielle Leere; nach der letzten Frage schneidet alles ab",
+          "char_offset": 530
+        },
+        {
+          "medium": "music",
+          "media_id": "maschinen_grundader",
+          "keyword": "Kälte, Gleichförmigkeit des Systems; hält den gesamten Text in einem schwebenden",
+          "char_offset": 659
+        },
+        {
+          "medium": "video",
+          "media_id": "kaefer",
+          "keyword": "Tier als Ware, unheimliche Biologie",
+          "char_offset": 790
+        },
+        {
+          "medium": "video",
+          "media_id": "macbook",
+          "keyword": "digitale Finanzwelt, Bildschirm als kalte Oberfläche",
+          "char_offset": 896
+        },
+        {
+          "medium": "video",
+          "media_id": "hundethiel",
+          "keyword": "das Tier im System, unheimlich",
+          "char_offset": 1003
+        },
+        {
+          "medium": "video",
+          "media_id": "black",
+          "keyword": "Auslöschung, Antwortlosigkeit am Ende",
+          "char_offset": 1113
+        },
+        {
+          "medium": "video",
+          "media_id": "random",
+          "keyword": "Zufallsprinzip als ökonomisches Bild — *„könnte er gleich ins Casino gehen\"*",
+          "char_offset": 1211
+        },
+        {
+          "medium": "light",
+          "media_id": "buehne_kalt_hart",
+          "keyword": null,
+          "char_offset": 1319
+        },
+        {
+          "medium": "light",
+          "media_id": "blendung_zuschauerraum",
+          "keyword": "Instabilität des Systems",
+          "char_offset": 1398
+        },
+        {
+          "medium": "light",
+          "media_id": "saallicht",
+          "keyword": "Einengung, Kontrollverlust",
+          "char_offset": 1513
+        }
+      ]
+    },
+    {
+      "speaker": "openai",
+      "content": "Dieses Stück von Jelinek entfaltet eine düstere Vision von kapitalistischen Mechanismen, die den individuellen Menschen und die natürlichen Welt zu abstrakten, austauschbaren Teilen des Systems reduzieren. Claude hat bereits ein starkes Medienpaket vorgeschlagen, das die Kälte und Abstraktheit dieser Welt verstärkt. Dennoch gibt es einige zusätzliche Aspekte, die ich hervorheben möchte.\nSOUNDS.\nSound herz unter glas. «die Produkte stehen sich gegenüber und knurren einander an» — Dieses Geräusch betont den .\nSound maschinen grundader. «billiger in der Anschaffung und im Betrieb» — Die maschinenartigen Untertöne heben das Th.\nSound leere zwischen saetzen. «Ist das alles das alles denn wert?» — Ein Verstummen, das die existenzielle Frage im Raum.\n- casino — «könnte er gleich ins Casino gehen» — Das Gefühl des Zufalls und des Spiels im wirtschaftlichen System tritt wie ein plötzlicher Schock auf.\n- atem — «ich weiß nicht, was der Arbeiter will» — Atemgeräusche konterkarieren den abstrakten Diskurs und erinnern an die Körperlichkeit.\nMUSIK.\nMusik maschinen grundader. Die dronende Musik bleibt bestehen, verstärkt die konstante, kalte Grundstimmung des Syste.\nVIDEOS.\nVideo kaefer. «wir werden alle von Pflanzen ersetzt werden» — Stellt die Unheimlichkeit der Natur als Wa.\nVideo macbook. «Die Kreditkapazitäten, also die Geldmengen ausweiten?» — Der Bildschirm symbolisiert die .\nVideo hundethiel. «die Produkte stehen sich gegenüber und knurren einander an» — Zeigt das animalische im Sy.\nVideo black. «Ist das alles das alles denn wert?» — Das Auslöschen aller visuellen Reize am Ende des St.\nLICHT.\nLicht buehne kalt hart. Unterstreicht die Grundstimmung der Bürokratie.\nLicht warme buehnenflaeche. Akzent auf die Befehle und die Dringlichkeit im Text.\nLicht blendung zuschauerraum. Die Instabilität der wirtschaftlichen Mechanismen visualisiert.\nLicht warme buehnenflaeche. Vermittelt das Gefühl der Enge und des Ausgeliefertseins.\n- ausblende — Das finale Ausblenden hebt die Leere und Unsicherheit des Systems hervor.\nJSON Medienpaket:.\n{\n\"sounds\": [\"knurren\", \"casino\", \"maschine\", \"stille\", \"atem\", \"papier\"],\n\"music\": [\"drone\"],\n\"videos\": [\"kaefer\", \"macbook\", \"hundethiel\", \"black\", \"archive_cold_01\"],\n\"lights\": [\"kalt_blau\", \"verhoer\", \"flicker\", \"eng\", \"ausblende\", \"schaerfe\"]\n}\nNun ist das Medienpaket bereit. Wenn die Regie bereit ist, kann das Stück beginnen. Play.",
+      "proposed_decision": null,
+      "media_mentions": [
+        {
+          "medium": "sound",
+          "media_id": "herz_unter_glas",
+          "keyword": "die Produkte stehen sich gegenüber und knurren einander an",
+          "char_offset": 398
+        },
+        {
+          "medium": "sound",
+          "media_id": "maschinen_grundader",
+          "keyword": "billiger in der Anschaffung und im Betrieb",
+          "char_offset": 513
+        },
+        {
+          "medium": "sound",
+          "media_id": "leere_zwischen_saetzen",
+          "keyword": "Ist das alles das alles denn wert?",
+          "char_offset": 632
+        },
+        {
+          "medium": "music",
+          "media_id": "maschinen_grundader",
+          "keyword": null,
+          "char_offset": 1052
+        },
+        {
+          "medium": "video",
+          "media_id": "kaefer",
+          "keyword": "wir werden alle von Pflanzen ersetzt werden",
+          "char_offset": 1179
+        },
+        {
+          "medium": "video",
+          "media_id": "macbook",
+          "keyword": "Die Kreditkapazitäten, also die Geldmengen ausweiten?",
+          "char_offset": 1285
+        },
+        {
+          "medium": "video",
+          "media_id": "hundethiel",
+          "keyword": "die Produkte stehen sich gegenüber und knurren einander an",
+          "char_offset": 1392
+        },
+        {
+          "medium": "video",
+          "media_id": "black",
+          "keyword": "Ist das alles das alles denn wert?",
+          "char_offset": 1502
+        },
+        {
+          "medium": "light",
+          "media_id": "buehne_kalt_hart",
+          "keyword": null,
+          "char_offset": 1614
+        },
+        {
+          "medium": "light",
+          "media_id": "warme_buehnenflaeche",
+          "keyword": null,
+          "char_offset": 1686
+        },
+        {
+          "medium": "light",
+          "media_id": "blendung_zuschauerraum",
+          "keyword": null,
+          "char_offset": 1768
+        },
+        {
+          "medium": "light",
+          "media_id": "warme_buehnenflaeche",
+          "keyword": null,
+          "char_offset": 1862
+        }
+      ]
+    },
+    {
+      "speaker": "anthropic",
+      "content": "Claude fasst zusammen:.\nDann einigen wir uns auf folgende Variante für den gesamten Text *„Der Bärenklau\"*:\n---\nSOUNDS.\nSound maschinen grundader. «die Produkte stehen sich gegenüber und knurren einander an» — tierischer Grundton, läuft .\nSound erinnerungsglitch. «könnte er gleich ins Casino gehen» — Akzent: Zufallsökonomie, Absurdität des Systems.\nSound leere zwischen saetzen. «Ist das alles das alles denn wert?» — Thema: existenzielle Leere, finaler Cut.\nMUSIK.\nMusik maschinen grundader. Thema: gleichförmige Systemkälte, hält den gesamten Text in schwebender Spannung.\nVIDEOS.\nVideo kaefer. «wir werden alle von Pflanzen ersetzt werden» — unheimliche Biologie als Warenlogik.\nVideo macbook. «Die Kreditkapazitäten, also die Geldmengen ausweiten?» — digitale Finanzoberfläche, kühle.\nVideo hundethiel. «die Produkte stehen sich gegenüber und knurren einander an» — das Tier im System, unheiml.\n- inge — «ich weiß nicht, was der Arbeiter will» — melancholische Figur stellvertretend für das Nicht-Gewusste\nVideo random. «könnte er gleich ins Casino gehen» — Zufallsprinzip als ökonomisches Bild.\nVideo black. «Ist das alles das alles denn wert?» — Auslöschung, Antwortlosigkeit.\nLICHT.\nLicht buehne kalt hart. Thema: bürokratische Grundkälte des gesamten Texts.\n- verhoer — «Handeln Sie jetzt rasch!» — Imperativ, Druck, Verhöratmosphäre\nLicht blendung zuschauerraum. «Ein Konflikt zwischen Schuldnern und Schöpfern?» — Instabilität des Systems.\nLicht saallicht. «muß er auf der Ersatzbank im Wartesaal sitzenbleiben» — Einengung, Kontrollverlust.\n- ausblende — «Ist das alles das alles denn wert?» — finales Verblassen, Stille nach der Frage\n---\nDer Stücktext *„Der Bärenklau\"* wird jetzt aufgeführt. Teil 2 (Anarchie) startet separat später. Die Regie drückt Play, wenn sie bereit ist.\n{\n\"sounds\": [\"knurren\", \"maschine\", \"casino\", \"atem\", \"tippen\", \"stille\"],\n\"music\": [\"drone\"],\n\"videos\": [\"kaefer\", \"macbook\", \"hundethiel\", \"inge\", \"random\", \"black\"],\n\"lights\": [\"kalt_blau\", \"verhoer\", \"flicker\", \"eng\", \"ausblende\", \"neutral\"]\n}",
+      "proposed_decision": null,
+      "media_mentions": [
+        {
+          "medium": "sound",
+          "media_id": "maschinen_grundader",
+          "keyword": "die Produkte stehen sich gegenüber und knurren einander an",
+          "char_offset": 120
+        },
+        {
+          "medium": "sound",
+          "media_id": "erinnerungsglitch",
+          "keyword": "könnte er gleich ins Casino gehen",
+          "char_offset": 239
+        },
+        {
+          "medium": "sound",
+          "media_id": "leere_zwischen_saetzen",
+          "keyword": "Ist das alles das alles denn wert?",
+          "char_offset": 351
+        },
+        {
+          "medium": "music",
+          "media_id": "maschinen_grundader",
+          "keyword": "gleichförmige Systemkälte, hält den gesamten Text in schwebender Spannung",
+          "char_offset": 468
+        },
+        {
+          "medium": "video",
+          "media_id": "kaefer",
+          "keyword": "wir werden alle von Pflanzen ersetzt werden",
+          "char_offset": 585
+        },
+        {
+          "medium": "video",
+          "media_id": "macbook",
+          "keyword": "Die Kreditkapazitäten, also die Geldmengen ausweiten?",
+          "char_offset": 684
+        },
+        {
+          "medium": "video",
+          "media_id": "hundethiel",
+          "keyword": "die Produkte stehen sich gegenüber und knurren einander an",
+          "char_offset": 791
+        },
+        {
+          "medium": "video",
+          "media_id": "random",
+          "keyword": "könnte er gleich ins Casino gehen",
+          "char_offset": 1012
+        },
+        {
+          "medium": "video",
+          "media_id": "black",
+          "keyword": "Ist das alles das alles denn wert?",
+          "char_offset": 1102
+        },
+        {
+          "medium": "light",
+          "media_id": "buehne_kalt_hart",
+          "keyword": "bürokratische Grundkälte des gesamten Texts",
+          "char_offset": 1192
+        },
+        {
+          "medium": "light",
+          "media_id": "blendung_zuschauerraum",
+          "keyword": "Ein Konflikt zwischen Schuldnern und Schöpfern?",
+          "char_offset": 1344
+        },
+        {
+          "medium": "light",
+          "media_id": "saallicht",
+          "keyword": "muß er auf der Ersatzbank im Wartesaal sitzenbleiben",
+          "char_offset": 1452
+        }
+      ]
+    }
+  ],
+  "created_at": "2026-06-26T09:52:58.380523Z"
+}

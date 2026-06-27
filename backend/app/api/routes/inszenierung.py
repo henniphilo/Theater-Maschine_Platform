@@ -2,29 +2,64 @@ import json
 from collections.abc import AsyncIterator
 
 from fastapi import APIRouter, File, HTTPException, UploadFile, status
-from fastapi.responses import StreamingResponse
+from fastapi.responses import Response, StreamingResponse
 from pydantic import ValidationError
 
 from app.schemas.inszenierung import (
     AnalyseStreamRequest,
-    BatchAnimalScenesRequest,
     CompositionPlan,
-    CreateAnimalSceneRequest,
     CreateCorpusRequest,
     Gesamtkonzept,
     KompositionStreamRequest,
     PatchCorpusRequest,
     SceneCorpus,
+    ScriptBeatPreview,
+    Teil2ScriptResponse,
 )
 from app.services.inszenierung_analyse_service import InszenierungAnalyseService
 from app.services.inszenierung_komposition_service import InszenierungKompositionService
-from app.services.inszenierung_import import parse_uploaded_files
 from app.services.inszenierung_store import get_inszenierung_store
+from app.services.inszenierung_bundle_service import get_inszenierung_bundle_service
+from app.services.teil2_script_service import (
+    SCRIPT_SOURCE,
+    build_beat_previews,
+    load_canonical_script_text,
+    validate_cues_against_script,
+)
+from app.services.avatar_speech_catalog import get_avatar_speech_catalog_service
 
 router = APIRouter(prefix="/inszenierung", tags=["inszenierung"])
 _store = get_inszenierung_store()
 _analyse = InszenierungAnalyseService()
 _komposition = InszenierungKompositionService()
+_bundle = get_inszenierung_bundle_service()
+
+
+@router.get("/script", response_model=Teil2ScriptResponse)
+def get_script() -> Teil2ScriptResponse:
+    try:
+        text = load_canonical_script_text()
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
+    catalog = get_avatar_speech_catalog_service().load()
+    previews = build_beat_previews(catalog.cues)
+    warnings = validate_cues_against_script(catalog.cues, text)
+    return Teil2ScriptResponse(
+        script_source=SCRIPT_SOURCE,
+        text=text,
+        beat_count=len(previews),
+        beats_preview=[
+            ScriptBeatPreview(
+                order=p.order,
+                text=p.text,
+                avatar_ids=p.avatar_ids,
+                avatars=p.avatars,
+                is_chorus=p.is_chorus,
+            )
+            for p in previews
+        ],
+        validation_warnings=warnings,
+    )
 
 
 @router.post("", response_model=SceneCorpus, status_code=status.HTTP_201_CREATED)
@@ -42,47 +77,31 @@ def patch_corpus(corpus_id: str, payload: PatchCorpusRequest) -> SceneCorpus:
     return _store.patch(corpus_id, payload)
 
 
-@router.post("/{corpus_id}/scenes", response_model=SceneCorpus)
-def add_scene(corpus_id: str, payload: CreateAnimalSceneRequest) -> SceneCorpus:
-    return _store.add_scene(corpus_id, payload)
-
-
-@router.post("/{corpus_id}/scenes/batch", response_model=SceneCorpus)
-def add_scenes_batch(corpus_id: str, payload: BatchAnimalScenesRequest) -> SceneCorpus:
-    return _store.add_scenes_batch(corpus_id, payload.scenes)
-
-
-@router.post("/{corpus_id}/scenes/upload", response_model=SceneCorpus)
-async def upload_scenes(corpus_id: str, files: list[UploadFile] = File(...)) -> SceneCorpus:
-    if not files:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Keine Dateien hochgeladen")
-    parsed_files: list[tuple[str, str]] = []
-    for upload in files:
-        name = upload.filename or "szene.txt"
-        raw = await upload.read()
-        if not raw:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Leere Datei: {name}",
-            )
-        try:
-            content = raw.decode("utf-8-sig")
-        except UnicodeDecodeError as exc:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Datei {name} ist keine UTF-8-Textdatei",
-            ) from exc
-        parsed_files.append((name, content))
+@router.post("/{corpus_id}/compose-script", response_model=SceneCorpus)
+def compose_script(corpus_id: str) -> SceneCorpus:
+    corpus = _store.get(corpus_id)
     try:
-        scenes = parse_uploaded_files(parsed_files)
+        plan = _komposition.compose_plan(corpus)
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
-    return _store.add_scenes_batch(corpus_id, scenes)
+    return _store.set_composition(corpus_id, plan)
 
 
-@router.delete("/{corpus_id}/scenes/{scene_id}", response_model=SceneCorpus)
-def delete_scene(corpus_id: str, scene_id: str) -> SceneCorpus:
-    return _store.delete_scene(corpus_id, scene_id)
+@router.post("/{corpus_id}/export")
+def export_corpus(corpus_id: str) -> Response:
+    payload, filename = _bundle.export_zip(corpus_id)
+    return Response(
+        content=payload,
+        media_type="application/zip",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
+@router.post("/import", response_model=SceneCorpus, status_code=status.HTTP_201_CREATED)
+async def import_corpus(file: UploadFile = File(...)) -> SceneCorpus:
+    if not file.filename:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Keine Datei")
+    return await _bundle.import_zip(file)
 
 
 def _analyse_payload(event) -> dict:

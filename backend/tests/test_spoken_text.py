@@ -30,6 +30,13 @@ def test_spoken_discussion_text_keeps_intro_before_bullets() -> None:
     assert "sound_a" not in spoken
 
 
+def test_spoken_discussion_text_keeps_mood_lines() -> None:
+    raw = "«Bärenklau» — maschinelles Summen, Grundton (Sound)."
+    spoken = spoken_discussion_text(raw)
+    assert "Bärenklau" in spoken
+    assert "Summen" in spoken
+
+
 def test_needs_discussion_sanitization() -> None:
     assert needs_discussion_sanitization(MEDIA_TURN) is True
     assert needs_discussion_sanitization("Sound maschinen grundader.\nVideo clyde.") is False

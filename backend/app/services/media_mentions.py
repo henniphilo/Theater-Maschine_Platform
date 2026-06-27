@@ -8,7 +8,6 @@ from typing import Any
 
 from app.director.cues.cue_models import DramaturgyDecision, LightCue, SoundCue, VisualCue
 from app.schemas.media_mentions import MediaMention, MediaMentionMedium
-from app.services.catalog_media_resolver import get_catalog_media_matcher
 
 _MENTION_LINE = re.compile(
     r"^[\s]*[-*•]\s*(?P<id>[a-z][a-z0-9_]*)\s*(?:[—\-–:]|\s+)\s*(?P<rest>.+?)\s*$",
@@ -22,6 +21,19 @@ _BACKTICK_INLINE_RE = re.compile(r"`([a-z][a-z0-9_]*)`")
 _QUOTE_RE = re.compile(r"«([^»]{2,80})»")
 _THEMA_RE = re.compile(r"Thema:\s*([^/\n«]{2,80})", re.IGNORECASE)
 _JSON_LINE_RE = re.compile(r'^\s*\{[^{}]*"sounds"')
+_MOOD_KEYWORD_LINE = re.compile(r"«([^»]{2,80})»")
+_MEDIUM_IN_PARENS_RE = re.compile(
+    r"\((?P<medium>Sounds?|Musik|Videos?|Licht(?:stimmungen)?)\)",
+    re.IGNORECASE,
+)
+_MEDIUM_LABEL_RE = re.compile(
+    r"(?P<medium>Sounds?|Musik|Videos?|Licht(?:stimmungen)?)\s*:\s*(?P<mood>[^;«]+)",
+    re.IGNORECASE,
+)
+_ID_BULLET_RE = re.compile(
+    r"^[\s]*[-*•]\s*(?:`(?P<id>[a-z][a-z0-9_]*)`|(?P<id2>[a-z][a-z0-9_]*))\s*(?:[—\-–:]|\s+)",
+    re.IGNORECASE,
+)
 _MEDIUM_LABEL: dict[MediaMentionMedium, str] = {
     "sound": "Sound",
     "music": "Musik",
@@ -100,6 +112,8 @@ def resolve_media_id(
     ):
         return alias_index[normalized]
 
+    from app.services.catalog_media_resolver import get_catalog_media_matcher
+
     matcher = get_catalog_media_matcher()
     invented = matcher.resolve_invented(
         normalized,
@@ -111,6 +125,127 @@ def resolve_media_id(
         if allowlist.classify(media_id):
             return media_id, medium
     return None
+
+
+def _medium_from_label(label: str) -> MediaMentionMedium:
+    lowered = label.lower()
+    if lowered.startswith("sound"):
+        return "sound"
+    if lowered == "musik":
+        return "music"
+    if lowered.startswith("video"):
+        return "video"
+    return "light"
+
+
+def _resolve_mood_to_media(
+    mood_text: str,
+    medium: MediaMentionMedium,
+    allowlist: MediaAllowlist,
+) -> tuple[str, MediaMentionMedium] | None:
+    from app.services.catalog_media_resolver import get_catalog_media_matcher
+
+    matcher = get_catalog_media_matcher()
+    query = mood_text.strip()
+    if not query:
+        return None
+    if medium == "music":
+        media_id = matcher.best_sound(query, music=True)
+        if media_id and allowlist.classify(media_id):
+            return media_id, "music"
+        return None
+    if medium == "sound":
+        media_id = matcher.best_sound(query, music=False)
+        if media_id and allowlist.classify(media_id):
+            return media_id, "sound"
+        return None
+    if medium == "video":
+        media_id = matcher.best_video(query)
+        if media_id and allowlist.classify(media_id):
+            return media_id, "video"
+        return None
+    media_id = matcher.best_light(query)
+    if media_id and allowlist.classify(media_id):
+        return media_id, "light"
+    return None
+
+
+def _parse_mood_segments(line: str) -> list[tuple[MediaMentionMedium, str]]:
+    segments: list[tuple[MediaMentionMedium, str]] = []
+    for match in _MEDIUM_LABEL_RE.finditer(line):
+        segments.append((_medium_from_label(match.group("medium")), match.group("mood").strip()))
+
+    for match in _MEDIUM_IN_PARENS_RE.finditer(line):
+        medium = _medium_from_label(match.group("medium"))
+        before = line[: match.start()]
+        if "»" in before:
+            before = before.split("»", 1)[-1]
+        mood = before.strip(" —–-;,.:")
+        if mood:
+            segments.append((medium, mood))
+
+    if segments:
+        return segments
+
+    quote_end = line.find("»")
+    if quote_end >= 0:
+        fallback = line[quote_end + 1 :].strip(" —–-;,.:")
+        if fallback:
+            segments.append(("sound", fallback))
+    return segments
+
+
+def _is_id_bullet_line(line: str) -> bool:
+    return bool(_ID_BULLET_RE.match(line.strip()))
+
+
+def extract_mood_keyword_mentions(
+    text: str,
+    allowlist: MediaAllowlist,
+    *,
+    base_offset: int = 0,
+) -> list[MediaMention]:
+    mentions: list[MediaMention] = []
+    seen: set[tuple[str, int]] = set()
+    offset = base_offset
+    for line in text.splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("```") or _JSON_LINE_RE.match(stripped):
+            continue
+        if _is_id_bullet_line(stripped):
+            offset += len(line) + 1
+            continue
+        keyword_match = _MOOD_KEYWORD_LINE.search(line)
+        if not keyword_match:
+            offset += len(line) + 1
+            continue
+        keyword = keyword_match.group(1).strip()
+        segments = _parse_mood_segments(line)
+        if not segments:
+            offset += len(line) + 1
+            continue
+        line_start = offset
+        for medium, mood_text in segments:
+            resolved = _resolve_mood_to_media(mood_text, medium, allowlist)
+            if resolved is None:
+                continue
+            media_id, resolved_medium = resolved
+            _append_mention(
+                mentions,
+                seen,
+                medium=resolved_medium,
+                media_id=media_id,
+                char_offset=line_start,
+                keyword=keyword,
+            )
+        offset += len(line) + 1
+    return mentions
+
+
+def _spoken_phrase_for_mood(keyword: str, medium: MediaMentionMedium, mood_text: str) -> str:
+    label = _MEDIUM_LABEL[medium]
+    clean_mood = re.sub(r"[*_`]", "", mood_text).strip().rstrip(".,;")
+    return f"Beim Stichwort «{keyword}»: {clean_mood} ({label})."
 
 
 def _keyword_from_rest(rest: str) -> str | None:
@@ -245,6 +380,17 @@ def extract_media_mentions(
             keyword=None,
         )
 
+    mood_mentions = extract_mood_keyword_mentions(text, allowlist)
+    for mention in mood_mentions:
+        _append_mention(
+            mentions,
+            seen,
+            medium=mention.medium,
+            media_id=mention.media_id,
+            char_offset=mention.char_offset,
+            keyword=mention.keyword,
+        )
+
     mentions.sort(key=lambda item: item.char_offset)
     return mentions
 
@@ -254,7 +400,7 @@ def build_spoken_playback_with_mentions(
     allowlist: MediaAllowlist,
     alias_index: dict[str, tuple[str, MediaMentionMedium]],
 ) -> tuple[str, list[MediaMention]]:
-    """TTS text that speaks each catalog cue + offsets aligned for OSC sync."""
+    """TTS text with mood descriptions + offsets aligned for OSC sync."""
     spoken_lines: list[str] = []
     mentions: list[MediaMention] = []
     seen: set[tuple[str, int]] = set()
@@ -267,6 +413,29 @@ def build_spoken_playback_with_mentions(
             continue
 
         section_hint = _medium_from_section(line) or section_hint
+
+        keyword_match = _MOOD_KEYWORD_LINE.search(line)
+        mood_segments = _parse_mood_segments(line) if keyword_match else []
+        if keyword_match and mood_segments and not _is_id_bullet_line(stripped):
+            keyword = keyword_match.group(1).strip()
+            line_start = offset
+            for medium, mood_text in mood_segments:
+                resolved = _resolve_mood_to_media(mood_text, medium, allowlist)
+                if resolved is None:
+                    continue
+                media_id, resolved_medium = resolved
+                phrase = _spoken_phrase_for_mood(keyword, resolved_medium, mood_text)
+                _append_mention(
+                    mentions,
+                    seen,
+                    medium=resolved_medium,
+                    media_id=media_id,
+                    char_offset=line_start,
+                    keyword=keyword,
+                )
+                spoken_lines.append(phrase)
+                offset += len(phrase) + 1
+            continue
 
         bullet = _BACKTICK_BULLET_RE.match(line) or _MENTION_LINE.match(line)
         if bullet:

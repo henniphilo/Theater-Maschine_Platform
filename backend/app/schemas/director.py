@@ -54,6 +54,7 @@ class ExecuteLayeredRequest(BaseModel):
     stack: bool = True
     skip_interval_check: bool = True
     stagger: bool = False
+    text_excerpt: str | None = None
 
 
 class ExecuteResponse(BaseModel):

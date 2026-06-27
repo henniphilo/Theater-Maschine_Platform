@@ -10,7 +10,8 @@ import type { DramaturgyDecision } from "@/lib/types/director";
 
 vi.mock("@/lib/api/director", () => ({
   postDirectorDialogueEvent: vi.fn(),
-  postDirectorExecute: vi.fn()
+  postDirectorExecute: vi.fn(),
+  isDirectorPerformanceAborted: vi.fn(() => false)
 }));
 
 import { postDirectorDialogueEvent, postDirectorExecute } from "@/lib/api/director";
@@ -48,9 +49,10 @@ describe("executeDiscussionCue", () => {
       commands.push(cmds);
     }, () => false);
 
-    await executeDiscussionCue(ctx, decisionA);
-    await executeDiscussionCue(ctx, decisionA);
-    await executeDiscussionCue(ctx, decisionB);
+    executeDiscussionCue(ctx, decisionA);
+    executeDiscussionCue(ctx, decisionA);
+    executeDiscussionCue(ctx, decisionB);
+    await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(postDirectorExecute).toHaveBeenCalledTimes(2);
     expect(commands).toHaveLength(2);
@@ -84,7 +86,7 @@ describe("scheduleDiscussionCue", () => {
     });
   });
 
-  it("fires cue in background without blocking on proposed_decision", () => {
+  it("fires cue in background without blocking on proposed_decision", async () => {
     const ctx = createDiscussionCueContext(async () => undefined, () => false);
     const turn = {
       speaker: "openai" as const,
@@ -93,6 +95,7 @@ describe("scheduleDiscussionCue", () => {
     };
 
     scheduleDiscussionCue(ctx, turn, "Text", "Thema");
+    await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(postDirectorExecute).toHaveBeenCalled();
   });

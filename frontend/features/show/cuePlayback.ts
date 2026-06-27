@@ -1,5 +1,5 @@
 import type { CuePoint, DramaturgyDecision, OscCommand } from "@/lib/types/director";
-import { postDirectorExecute } from "@/lib/api/director";
+import { isDirectorPerformanceAborted, postDirectorExecute } from "@/lib/api/director";
 import { splitSentences } from "@/lib/text/splitSentences";
 
 /** Execute cues without aborting playback when the director/OSC path fails. */
@@ -8,14 +8,18 @@ export async function executeCueSafely(
   onCommands: (commands: OscCommand[]) => Promise<void>,
   shouldAbort: () => boolean
 ): Promise<boolean> {
-  if (shouldAbort()) return false;
+  if (shouldAbort() || isDirectorPerformanceAborted()) return false;
   try {
     const result = await postDirectorExecute(decision, { force: true, stagger: true });
-    if (!shouldAbort() && result.osc_commands.length > 0) {
-      await onCommands(result.osc_commands);
+    if (shouldAbort() || isDirectorPerformanceAborted()) return false;
+    if (result.osc_commands.length > 0) {
+      void onCommands(result.osc_commands).catch((err) => {
+        console.warn("Cue highlight failed (playback continues):", err);
+      });
     }
     return result.executed;
   } catch (err) {
+    if (err instanceof DOMException && err.name === "AbortError") return false;
     console.warn("Cue execute failed (playback continues):", err);
     return false;
   }
@@ -69,35 +73,35 @@ function cueKey(point: CuePoint, suffix = ""): string {
   return `${point.trigger}:${point.keyword ?? ""}:${point.sentence_index ?? ""}:${point.time_offset_sec}${suffix}`;
 }
 
-export async function fireCuePoint(ctx: CuePlaybackContext, point: CuePoint): Promise<void> {
+export function fireCuePoint(ctx: CuePlaybackContext, point: CuePoint): void {
   const key = cueKey(point);
   if (ctx.fired.has(key) || ctx.shouldAbort()) return;
   ctx.fired.add(key);
   const decision = decisionFromCuePoint(ctx.dramaturgy, point);
-  await executeCueSafely(decision, ctx.onCommands, ctx.shouldAbort);
+  void executeCueSafely(decision, ctx.onCommands, ctx.shouldAbort);
 }
 
-export async function fireStartCues(ctx: CuePlaybackContext): Promise<void> {
+export function fireStartCues(ctx: CuePlaybackContext): void {
   const starts = normalizeCuePoints(ctx.dramaturgy).filter((p) => p.trigger === "start");
   for (const point of starts) {
-    await fireCuePoint(ctx, point);
+    fireCuePoint(ctx, point);
   }
 }
 
-export async function fireTimeCues(ctx: CuePlaybackContext, currentTime: number): Promise<void> {
+export function fireTimeCues(ctx: CuePlaybackContext, currentTime: number): void {
   const timed = normalizeCuePoints(ctx.dramaturgy).filter(
     (p) => p.trigger === "time" && (p.time_offset_sec ?? 0) <= currentTime
   );
   for (const point of timed) {
-    await fireCuePoint(ctx, point);
+    fireCuePoint(ctx, point);
   }
 }
 
-export async function fireSentenceCues(
+export function fireSentenceCues(
   ctx: CuePlaybackContext,
   sentenceIndex: number,
   sentenceText: string
-): Promise<void> {
+): void {
   const points = normalizeCuePoints(ctx.dramaturgy);
   const sentencePoints = points.filter(
     (p) =>
@@ -105,13 +109,13 @@ export async function fireSentenceCues(
       (p.sentence_index === undefined || p.sentence_index === sentenceIndex)
   );
   for (const point of sentencePoints) {
-    await fireCuePoint(ctx, point);
+    fireCuePoint(ctx, point);
   }
 
   const keywordPoints = points.filter((p) => p.trigger === "keyword" && p.keyword);
   for (const point of keywordPoints) {
     if (point.keyword && sentenceText.toLowerCase().includes(point.keyword.toLowerCase())) {
-      await fireCuePoint(ctx, point);
+      fireCuePoint(ctx, point);
     }
   }
 }
@@ -149,9 +153,9 @@ export function neutralResetDecision(): DramaturgyDecision {
   };
 }
 
-export async function fireNeutralReset(
+export function fireNeutralReset(
   onCommands: (commands: OscCommand[]) => Promise<void>,
   shouldAbort: () => boolean
-): Promise<void> {
-  await executeCueSafely(neutralResetDecision(), onCommands, shouldAbort);
+): void {
+  void executeCueSafely(neutralResetDecision(), onCommands, shouldAbort);
 }

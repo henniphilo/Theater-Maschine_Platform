@@ -14,6 +14,8 @@ from app.schemas.inszenierung import (
     SceneCorpus,
 )
 
+SCRIPT_SCENE_ID = "avatar-delfin-wolf"
+
 
 def normalize_whitespace(text: str) -> str:
     return re.sub(r"\s+", " ", text.strip())
@@ -59,6 +61,11 @@ def apply_anarchy_curve(moments: list[CompositionMoment], curve: AnarchyCurve) -
 
 
 def validate_moment(moment: CompositionMoment, corpus: SceneCorpus) -> None:
+    if moment.scene_id == SCRIPT_SCENE_ID:
+        if moment.speech_mode == "avatar_video":
+            if not moment.avatar_layers and not moment.avatar_speech_id and not moment.avatar_video_clip_id:
+                raise ValueError("avatar_video moment needs avatar_layers or avatar_speech_id")
+        return
     scene = find_scene(corpus, moment.scene_id)
     if scene is None:
         raise ValueError(f"Unknown scene_id: {moment.scene_id}")

@@ -96,6 +96,7 @@ def post_execute_layered(payload: ExecuteLayeredRequest) -> ExecuteResponse:
         stack=payload.stack,
         skip_interval_check=payload.skip_interval_check,
         stagger=payload.stagger,
+        text_excerpt=payload.text_excerpt,
     )
     return ExecuteResponse(
         executed=result.executed,
@@ -369,7 +370,7 @@ def emergency_stop() -> DirectorStatusResponse:
 @router.post("/emergency-clear", response_model=DirectorStatusResponse)
 def emergency_clear() -> DirectorStatusResponse:
     _ensure_enabled()
-    _pipeline.safety.clear_emergency_stop()
+    _pipeline.clear_for_performance()
     return _status_response()
 
 

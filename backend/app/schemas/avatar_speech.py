@@ -11,6 +11,7 @@ class AvatarSpeechCue(BaseModel):
     text: str = Field(min_length=1)
     video_clip_id: str = Field(min_length=1)
     scene_ref: str | None = None
+    duration_ms: int | None = Field(default=None, ge=0)
 
 
 class AvatarSpeechCatalog(BaseModel):

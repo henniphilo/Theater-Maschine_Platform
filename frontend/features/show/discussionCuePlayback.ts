@@ -82,28 +82,40 @@ export function scheduleDiscussionCue(
   });
 }
 
-export async function executeDiscussionCue(
+export function executeDiscussionCue(
   ctx: DiscussionCueContext,
   decision: DramaturgyDecision
-): Promise<boolean> {
-  if (ctx.shouldAbort() || !hasExecutableCues(decision)) return false;
+): void {
+  if (ctx.shouldAbort() || !hasExecutableCues(decision)) return;
 
   const signature = decisionSignature(decision);
-  if (signature === ctx.lastSignature) return false;
+  if (signature === ctx.lastSignature) return;
   ctx.lastSignature = signature;
 
-  return executeCueSafely(decision, ctx.onCommands, ctx.shouldAbort);
+  void executeCueSafely(decision, ctx.onCommands, ctx.shouldAbort);
 }
 
-export async function executeDiscussionMediaMention(
+export function executeDiscussionMediaMention(
   ctx: DiscussionCueContext,
   mention: MediaMention,
   fired: Set<string>
-): Promise<void> {
+): void {
   const key = mentionKey(mention);
   if (fired.has(key) || ctx.shouldAbort()) return;
   fired.add(key);
-  await executeDiscussionCue(ctx, decisionForMediaMention(mention));
+  executeDiscussionCue(ctx, decisionForMediaMention(mention));
+}
+
+export function fireDiscussionMentionsAtPosition(
+  ctx: DiscussionCueContext,
+  mentions: MediaMention[],
+  textPosition: number,
+  fired: Set<string>
+): void {
+  const due = mentionsDueAtPosition(mentions, textPosition, fired);
+  for (const mention of due) {
+    executeDiscussionMediaMention(ctx, mention, fired);
+  }
 }
 
 export function resolveTurnMentions(
@@ -114,16 +126,6 @@ export function resolveTurnMentions(
   if (turn.media_mentions?.length) return turn.media_mentions;
   if (!allowlist) return [];
   return extractMediaMentions(rawFallback ?? turn.content, allowlist);
-}
-
-export async function fireDiscussionMentionsAtPosition(
-  ctx: DiscussionCueContext,
-  mentions: MediaMention[],
-  textPosition: number,
-  fired: Set<string>
-): Promise<void> {
-  const due = mentionsDueAtPosition(mentions, textPosition, fired);
-  await Promise.all(due.map((mention) => executeDiscussionMediaMention(ctx, mention, fired)));
 }
 
 export { textPositionForPlayback };

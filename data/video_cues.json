@@ -31,362 +31,16 @@
   ],
   "clips": [
     {
-      "id": "black",
-      "pixera_name": "Black",
-      "label": "Black",
-      "description": "Schwarz / Aus",
+      "id": "automassendrohnenflug",
+      "pixera_name": "AutomassenDrohnenflug",
+      "label": "AutomassenDrohnenflug",
+      "description": "AutomassenDrohnenflug",
       "tags": [
-        "blackout",
-        "aus"
-      ],
-      "moods": [
-        "neutral"
-      ],
-      "intensity_min": 0.0,
-      "intensity_max": 1.0,
-      "video_type": "atmosphere",
-      "projector_preference": null,
-      "duration_ms": null,
-      "text_content_id": null,
-      "animal": null,
-      "can_be_interrupted": true
-    },
-    {
-      "id": "clyde",
-      "pixera_name": "Clyde",
-      "label": "Clyde",
-      "description": "Clip Clyde",
-      "tags": [
-        "clyde",
-        "tier"
-      ],
-      "moods": [
-        "neutral",
-        "melancholisch"
-      ],
-      "intensity_min": 0.0,
-      "intensity_max": 1.0,
-      "video_type": "atmosphere",
-      "projector_preference": null,
-      "duration_ms": null,
-      "text_content_id": null,
-      "animal": null,
-      "can_be_interrupted": true
-    },
-    {
-      "id": "bonnie",
-      "pixera_name": "Bonnie",
-      "label": "Bonnie",
-      "description": "Clip Bonnie",
-      "tags": [
-        "bonnie",
-        "tier"
-      ],
-      "moods": [
-        "neutral",
-        "warm"
-      ],
-      "intensity_min": 0.0,
-      "intensity_max": 1.0,
-      "video_type": "atmosphere",
-      "projector_preference": null,
-      "duration_ms": null,
-      "text_content_id": null,
-      "animal": null,
-      "can_be_interrupted": true
-    },
-    {
-      "id": "macbook",
-      "pixera_name": "Macbook",
-      "label": "Macbook",
-      "description": "Macbook-Motiv",
-      "tags": [
-        "technik",
-        "bildschirm"
+        "automassendrohnenflug"
       ],
       "moods": [
         "neutral",
         "spannung"
-      ],
-      "intensity_min": 0.0,
-      "intensity_max": 1.0,
-      "video_type": "atmosphere",
-      "projector_preference": null,
-      "duration_ms": null,
-      "text_content_id": null,
-      "animal": null,
-      "can_be_interrupted": true
-    },
-    {
-      "id": "ipad",
-      "pixera_name": "IPad",
-      "label": "IPad",
-      "description": "Tablet-Motiv",
-      "tags": [
-        "technik",
-        "bildschirm"
-      ],
-      "moods": [
-        "neutral"
-      ],
-      "intensity_min": 0.0,
-      "intensity_max": 1.0,
-      "video_type": "atmosphere",
-      "projector_preference": null,
-      "duration_ms": null,
-      "text_content_id": null,
-      "animal": null,
-      "can_be_interrupted": true
-    },
-    {
-      "id": "inge",
-      "pixera_name": "Inge",
-      "label": "Inge",
-      "description": "Figur Inge",
-      "tags": [
-        "figur",
-        "inge"
-      ],
-      "moods": [
-        "melancholisch"
-      ],
-      "intensity_min": 0.0,
-      "intensity_max": 1.0,
-      "video_type": "atmosphere",
-      "projector_preference": null,
-      "duration_ms": null,
-      "text_content_id": null,
-      "animal": null,
-      "can_be_interrupted": true
-    },
-    {
-      "id": "sebastian",
-      "pixera_name": "Sebastian",
-      "label": "Sebastian",
-      "description": "Figur Sebastian",
-      "tags": [
-        "figur",
-        "sebastian"
-      ],
-      "moods": [
-        "spannung"
-      ],
-      "intensity_min": 0.0,
-      "intensity_max": 1.0,
-      "video_type": "atmosphere",
-      "projector_preference": null,
-      "duration_ms": null,
-      "text_content_id": null,
-      "animal": null,
-      "can_be_interrupted": true
-    },
-    {
-      "id": "thomas",
-      "pixera_name": "Thomas",
-      "label": "Thomas",
-      "description": "Figur Thomas",
-      "tags": [
-        "figur",
-        "thomas"
-      ],
-      "moods": [
-        "neutral"
-      ],
-      "intensity_min": 0.0,
-      "intensity_max": 1.0,
-      "video_type": "atmosphere",
-      "projector_preference": null,
-      "duration_ms": null,
-      "text_content_id": null,
-      "animal": null,
-      "can_be_interrupted": true
-    },
-    {
-      "id": "nicolas",
-      "pixera_name": "Nicolas",
-      "label": "Nicolas",
-      "description": "Figur Nicolas",
-      "tags": [
-        "figur",
-        "nicolas"
-      ],
-      "moods": [
-        "neutral",
-        "spannung"
-      ],
-      "intensity_min": 0.0,
-      "intensity_max": 1.0,
-      "video_type": "atmosphere",
-      "projector_preference": null,
-      "duration_ms": null,
-      "text_content_id": null,
-      "animal": null,
-      "can_be_interrupted": true
-    },
-    {
-      "id": "branko",
-      "pixera_name": "Branko",
-      "label": "Branko",
-      "description": "Figur Branko",
-      "tags": [
-        "figur",
-        "branko"
-      ],
-      "moods": [
-        "neutral",
-        "spannung"
-      ],
-      "intensity_min": 0.0,
-      "intensity_max": 1.0,
-      "video_type": "atmosphere",
-      "projector_preference": null,
-      "duration_ms": null,
-      "text_content_id": null,
-      "animal": null,
-      "can_be_interrupted": true
-    },
-    {
-      "id": "thiemo",
-      "pixera_name": "Thiemo",
-      "label": "Thiemo",
-      "description": "Figur Thiemo",
-      "tags": [
-        "figur",
-        "thiemo"
-      ],
-      "moods": [
-        "neutral",
-        "spannung"
-      ],
-      "intensity_min": 0.0,
-      "intensity_max": 1.0,
-      "video_type": "atmosphere",
-      "projector_preference": null,
-      "duration_ms": null,
-      "text_content_id": null,
-      "animal": null,
-      "can_be_interrupted": true
-    },
-    {
-      "id": "musiker",
-      "pixera_name": "Musiker",
-      "label": "Musiker",
-      "description": "Musiker-Motiv",
-      "tags": [
-        "figur",
-        "musik"
-      ],
-      "moods": [
-        "neutral",
-        "spannung"
-      ],
-      "intensity_min": 0.0,
-      "intensity_max": 1.0,
-      "video_type": "atmosphere",
-      "projector_preference": null,
-      "duration_ms": null,
-      "text_content_id": null,
-      "animal": null,
-      "can_be_interrupted": true
-    },
-    {
-      "id": "hundethiel",
-      "pixera_name": "HundeThiel",
-      "label": "HundeThiel",
-      "description": "Hunde Thiel",
-      "tags": [
-        "figur",
-        "thiel",
-        "tier"
-      ],
-      "moods": [
-        "unheimlich"
-      ],
-      "intensity_min": 0.0,
-      "intensity_max": 1.0,
-      "video_type": "atmosphere",
-      "projector_preference": null,
-      "duration_ms": null,
-      "text_content_id": null,
-      "animal": null,
-      "can_be_interrupted": true
-    },
-    {
-      "id": "odyssee",
-      "pixera_name": "Odyssee",
-      "label": "Odyssee",
-      "description": "Odyssee-Motiv",
-      "tags": [
-        "narrativ",
-        "reise"
-      ],
-      "moods": [
-        "weit",
-        "melancholisch"
-      ],
-      "intensity_min": 0.0,
-      "intensity_max": 1.0,
-      "video_type": "atmosphere",
-      "projector_preference": null,
-      "duration_ms": null,
-      "text_content_id": null,
-      "animal": null,
-      "can_be_interrupted": true
-    },
-    {
-      "id": "kaefer",
-      "pixera_name": "Kaefer",
-      "label": "Kaefer",
-      "description": "Käfer-Motiv",
-      "tags": [
-        "tier",
-        "insekt"
-      ],
-      "moods": [
-        "unheimlich"
-      ],
-      "intensity_min": 0.0,
-      "intensity_max": 1.0,
-      "video_type": "atmosphere",
-      "projector_preference": null,
-      "duration_ms": null,
-      "text_content_id": null,
-      "animal": null,
-      "can_be_interrupted": true
-    },
-    {
-      "id": "random",
-      "pixera_name": "Random",
-      "label": "Random",
-      "description": "Zufalls-/Mix-Clip",
-      "tags": [
-        "mix",
-        "abstrakt"
-      ],
-      "moods": [
-        "neutral",
-        "spannung"
-      ],
-      "intensity_min": 0.0,
-      "intensity_max": 1.0,
-      "video_type": "atmosphere",
-      "projector_preference": null,
-      "duration_ms": null,
-      "text_content_id": null,
-      "animal": null,
-      "can_be_interrupted": true
-    },
-    {
-      "id": "mehlwurm",
-      "pixera_name": "Mehlwurm",
-      "label": "Mehlwurm",
-      "description": "Mehlwurm-Motiv",
-      "tags": [
-        "tier",
-        "insekt"
-      ],
-      "moods": [
-        "unheimlich"
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
@@ -442,6 +96,451 @@
       "can_be_interrupted": true
     },
     {
+      "id": "berge",
+      "pixera_name": "Berge",
+      "label": "Berge",
+      "description": "Landschaft Berge",
+      "tags": [
+        "natur",
+        "landschaft"
+      ],
+      "moods": [
+        "weit",
+        "melancholisch"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "bk1_caro",
+      "pixera_name": "BK1_Caro",
+      "label": "BK1_Caro",
+      "description": "BK1_Caro",
+      "tags": [
+        "bk1_caro"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "bk1_caroline",
+      "pixera_name": "BK1_Caroline",
+      "label": "BK1_Caroline",
+      "description": "BK1_Caroline",
+      "tags": [
+        "bk1_caroline"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "bk1_thomas",
+      "pixera_name": "BK1_Thomas",
+      "label": "BK1_Thomas",
+      "description": "BK1_Thomas",
+      "tags": [
+        "bk1_thomas"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "bk2_hundswolf",
+      "pixera_name": "BK2_Hundswolf",
+      "label": "BK2_Hundswolf",
+      "description": "BK2_Hundswolf",
+      "tags": [
+        "bk2_hundswolf"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "bk2_mavie",
+      "pixera_name": "BK2_Mavie",
+      "label": "BK2_Mavie",
+      "description": "BK2_Mavie",
+      "tags": [
+        "bk2_mavie"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "bk3_thomas",
+      "pixera_name": "BK3_Thomas",
+      "label": "BK3_Thomas",
+      "description": "BK3_Thomas",
+      "tags": [
+        "bk3_thomas"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "bk5_nicolas",
+      "pixera_name": "BK5_Nicolas",
+      "label": "BK5_Nicolas",
+      "description": "BK5_Nicolas",
+      "tags": [
+        "bk5_nicolas"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "bk6_branko",
+      "pixera_name": "BK6_Branko",
+      "label": "BK6_Branko",
+      "description": "BK6_Branko",
+      "tags": [
+        "bk6_branko"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "bk7_caroline",
+      "pixera_name": "BK7_Caroline",
+      "label": "BK7_Caroline",
+      "description": "BK7_Caroline",
+      "tags": [
+        "bk7_caroline"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "bk7_nasenfisch",
+      "pixera_name": "BK7_Nasenfisch",
+      "label": "BK7_Nasenfisch",
+      "description": "BK7_Nasenfisch",
+      "tags": [
+        "bk7_nasenfisch"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "bk8_haischaedel",
+      "pixera_name": "BK8_HaiSchaedel",
+      "label": "BK8_HaiSchaedel",
+      "description": "BK8_HaiSchaedel",
+      "tags": [
+        "bk8_haischaedel"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "bk8_mavie",
+      "pixera_name": "BK8_Mavie",
+      "label": "BK8_Mavie",
+      "description": "BK8_Mavie",
+      "tags": [
+        "bk8_mavie"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "bk8_mavie1",
+      "pixera_name": "BK8_Mavie1",
+      "label": "BK8_Mavie1",
+      "description": "BK8_Mavie1",
+      "tags": [
+        "bk8_mavie1"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "bk9_thiemo",
+      "pixera_name": "BK9_Thiemo",
+      "label": "BK9_Thiemo",
+      "description": "BK9_Thiemo",
+      "tags": [
+        "bk9_thiemo"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "black",
+      "pixera_name": "Black",
+      "label": "Black",
+      "description": "Schwarz / Aus",
+      "tags": [
+        "blackout",
+        "aus"
+      ],
+      "moods": [
+        "neutral"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "bonnie",
+      "pixera_name": "Bonnie",
+      "label": "Bonnie",
+      "description": "Clip Bonnie",
+      "tags": [
+        "bonnie",
+        "tier"
+      ],
+      "moods": [
+        "neutral",
+        "warm"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "branko",
+      "pixera_name": "Branko",
+      "label": "Branko",
+      "description": "Figur Branko",
+      "tags": [
+        "figur",
+        "branko"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "clyde",
+      "pixera_name": "Clyde",
+      "label": "Clyde",
+      "description": "Clip Clyde",
+      "tags": [
+        "clyde",
+        "tier"
+      ],
+      "moods": [
+        "neutral",
+        "melancholisch"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "daslammgottes",
+      "pixera_name": "DasLammGottes",
+      "label": "DasLammGottes",
+      "description": "DasLammGottes",
+      "tags": [
+        "daslammgottes"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "derhaseverlaesstdiebuehne",
+      "pixera_name": "DerHaseVerlaesstDieBuehne",
+      "label": "DerHaseVerlaesstDieBuehne",
+      "description": "DerHaseVerlaesstDieBuehne",
+      "tags": [
+        "derhaseverlaesstdiebuehne"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
       "id": "esel",
       "pixera_name": "Esel",
       "label": "Esel",
@@ -474,6 +573,602 @@
       "moods": [
         "unheimlich",
         "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "hierunterdererde",
+      "pixera_name": "HierUnterDerErde",
+      "label": "HierUnterDerErde",
+      "description": "HierUnterDerErde",
+      "tags": [
+        "hierunterdererde"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "hundethiel",
+      "pixera_name": "HundeThiel",
+      "label": "HundeThiel",
+      "description": "Hunde Thiel",
+      "tags": [
+        "figur",
+        "thiel",
+        "tier"
+      ],
+      "moods": [
+        "unheimlich"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "inge",
+      "pixera_name": "Inge",
+      "label": "Inge",
+      "description": "Figur Inge",
+      "tags": [
+        "figur",
+        "inge"
+      ],
+      "moods": [
+        "melancholisch"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "ipad",
+      "pixera_name": "Ipad",
+      "label": "Ipad",
+      "description": "Tablet-Motiv",
+      "tags": [
+        "technik",
+        "bildschirm"
+      ],
+      "moods": [
+        "neutral"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "kaefer",
+      "pixera_name": "Kaefer",
+      "label": "Kaefer",
+      "description": "Käfer-Motiv",
+      "tags": [
+        "tier",
+        "insekt"
+      ],
+      "moods": [
+        "unheimlich"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "kurzthiel",
+      "pixera_name": "KurzThiel",
+      "label": "KurzThiel",
+      "description": "Kurzsequenz Thiel",
+      "tags": [
+        "figur",
+        "thiel",
+        "kurz"
+      ],
+      "moods": [
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "kuscheltierschlachtung",
+      "pixera_name": "KuscheltierSchlachtung",
+      "label": "KuscheltierSchlachtung",
+      "description": "KuscheltierSchlachtung",
+      "tags": [
+        "kuscheltierschlachtung"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "lg2_inge",
+      "pixera_name": "LG2_Inge",
+      "label": "LG2_Inge",
+      "description": "LG2_Inge",
+      "tags": [
+        "lg2_inge"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "lg3_seb",
+      "pixera_name": "LG3_Seb",
+      "label": "LG3_Seb",
+      "description": "LG3_Seb",
+      "tags": [
+        "lg3_seb"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "lg4_azaria",
+      "pixera_name": "LG4_Azaria",
+      "label": "LG4_Azaria",
+      "description": "LG4_Azaria",
+      "tags": [
+        "lg4_azaria"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "lg5_henrike",
+      "pixera_name": "LG5_Henrike",
+      "label": "LG5_Henrike",
+      "description": "LG5_Henrike",
+      "tags": [
+        "lg5_henrike"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "lg6_hai",
+      "pixera_name": "LG6_Hai",
+      "label": "LG6_Hai",
+      "description": "LG6_Hai",
+      "tags": [
+        "lg6_hai"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "macbook",
+      "pixera_name": "Macbook",
+      "label": "Macbook",
+      "description": "Macbook-Motiv",
+      "tags": [
+        "technik",
+        "bildschirm"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "mehlw_rmer",
+      "pixera_name": "Mehlwürmer",
+      "label": "Mehlwürmer",
+      "description": "Mehlwürmer",
+      "tags": [
+        "mehlw_rmer"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "mehlwurm",
+      "pixera_name": "Mehlwurm",
+      "label": "Mehlwurm",
+      "description": "Mehlwurm-Motiv",
+      "tags": [
+        "tier",
+        "insekt"
+      ],
+      "moods": [
+        "unheimlich"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "musiker",
+      "pixera_name": "Musiker",
+      "label": "Musiker",
+      "description": "Musiker-Motiv",
+      "tags": [
+        "figur",
+        "musik"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "nicolas",
+      "pixera_name": "Nicolas",
+      "label": "Nicolas",
+      "description": "Figur Nicolas",
+      "tags": [
+        "figur",
+        "nicolas"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "odyssee",
+      "pixera_name": "Odyssee",
+      "label": "Odyssee",
+      "description": "Odyssee-Motiv",
+      "tags": [
+        "narrativ",
+        "reise"
+      ],
+      "moods": [
+        "weit",
+        "melancholisch"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "pet1_azaria",
+      "pixera_name": "PET1_Azaria",
+      "label": "PET1_Azaria",
+      "description": "PET1_Azaria",
+      "tags": [
+        "pet1_azaria"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "pet1_thomas",
+      "pixera_name": "PET1_Thomas",
+      "label": "PET1_Thomas",
+      "description": "PET1_Thomas",
+      "tags": [
+        "pet1_thomas"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "pet2_inge",
+      "pixera_name": "PET2_Inge",
+      "label": "PET2_Inge",
+      "description": "PET2_Inge",
+      "tags": [
+        "pet2_inge"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "pet3_caroline",
+      "pixera_name": "PET3_Caroline",
+      "label": "PET3_Caroline",
+      "description": "PET3_Caroline",
+      "tags": [
+        "pet3_caroline"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "pet3_koala",
+      "pixera_name": "PET3_Koala",
+      "label": "PET3_Koala",
+      "description": "PET3_Koala",
+      "tags": [
+        "pet3_koala"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "pet4_sebastian",
+      "pixera_name": "PET4_Sebastian",
+      "label": "PET4_Sebastian",
+      "description": "PET4_Sebastian",
+      "tags": [
+        "pet4_sebastian"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "pet5_azaria",
+      "pixera_name": "PET5_Azaria",
+      "label": "PET5_Azaria",
+      "description": "PET5_Azaria",
+      "tags": [
+        "pet5_azaria"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "random",
+      "pixera_name": "Random",
+      "label": "Random",
+      "description": "Zufalls-/Mix-Clip",
+      "tags": [
+        "mix",
+        "abstrakt"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "sebastian",
+      "pixera_name": "Sebastian",
+      "label": "Sebastian",
+      "description": "Figur Sebastian",
+      "tags": [
+        "figur",
+        "sebastian"
+      ],
+      "moods": [
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "strand",
+      "pixera_name": "Strand",
+      "label": "Strand",
+      "description": "Landschaft Strand",
+      "tags": [
+        "natur",
+        "wasser"
+      ],
+      "moods": [
+        "ruhig",
+        "melancholisch"
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
@@ -548,16 +1243,16 @@
       "can_be_interrupted": true
     },
     {
-      "id": "kurzthiel",
-      "pixera_name": "KurzThiel",
-      "label": "KurzThiel",
-      "description": "Kurzsequenz Thiel",
+      "id": "thiemo",
+      "pixera_name": "Thiemo",
+      "label": "Thiemo",
+      "description": "Figur Thiemo",
       "tags": [
         "figur",
-        "thiel",
-        "kurz"
+        "thiemo"
       ],
       "moods": [
+        "neutral",
         "spannung"
       ],
       "intensity_min": 0.0,
@@ -570,17 +1265,16 @@
       "can_be_interrupted": true
     },
     {
-      "id": "berge",
-      "pixera_name": "Berge",
-      "label": "Berge",
-      "description": "Landschaft Berge",
+      "id": "thomas",
+      "pixera_name": "Thomas",
+      "label": "Thomas",
+      "description": "Figur Thomas",
       "tags": [
-        "natur",
-        "landschaft"
+        "figur",
+        "thomas"
       ],
       "moods": [
-        "weit",
-        "melancholisch"
+        "neutral"
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
@@ -592,17 +1286,184 @@
       "can_be_interrupted": true
     },
     {
-      "id": "strand",
-      "pixera_name": "Strand",
-      "label": "Strand",
-      "description": "Landschaft Strand",
+      "id": "wo1_kaenguru",
+      "pixera_name": "WO1_Kaenguru",
+      "label": "WO1_Kaenguru",
+      "description": "WO1_Kaenguru",
       "tags": [
-        "natur",
-        "wasser"
+        "wo1_kaenguru"
       ],
       "moods": [
-        "ruhig",
-        "melancholisch"
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "wo2_branko",
+      "pixera_name": "WO2_Branko",
+      "label": "WO2_Branko",
+      "description": "WO2_Branko",
+      "tags": [
+        "wo2_branko"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "wo3_seb_musik",
+      "pixera_name": "WO3_Seb_Musik",
+      "label": "WO3_Seb_Musik",
+      "description": "WO3_Seb_Musik",
+      "tags": [
+        "wo3_seb_musik"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "wo4_nicolas",
+      "pixera_name": "WO4_Nicolas",
+      "label": "WO4_Nicolas",
+      "description": "WO4_Nicolas",
+      "tags": [
+        "wo4_nicolas"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "wo4_schimpanse",
+      "pixera_name": "WO4_Schimpanse",
+      "label": "WO4_Schimpanse",
+      "description": "WO4_Schimpanse",
+      "tags": [
+        "wo4_schimpanse"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "wo5_thiemo",
+      "pixera_name": "WO5_Thiemo",
+      "label": "WO5_Thiemo",
+      "description": "WO5_Thiemo",
+      "tags": [
+        "wo5_thiemo"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "wo6_mavie",
+      "pixera_name": "WO6_Mavie",
+      "label": "WO6_Mavie",
+      "description": "WO6_Mavie",
+      "tags": [
+        "wo6_mavie"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "wo6_schimpanse",
+      "pixera_name": "WO6_Schimpanse",
+      "label": "WO6_Schimpanse",
+      "description": "WO6_Schimpanse",
+      "tags": [
+        "wo6_schimpanse"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
+      ],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": null,
+      "text_content_id": null,
+      "animal": null,
+      "can_be_interrupted": true
+    },
+    {
+      "id": "wo7_sebastian",
+      "pixera_name": "WO7_Sebastian",
+      "label": "WO7_Sebastian",
+      "description": "WO7_Sebastian",
+      "tags": [
+        "wo7_sebastian"
+      ],
+      "moods": [
+        "neutral",
+        "spannung"
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,

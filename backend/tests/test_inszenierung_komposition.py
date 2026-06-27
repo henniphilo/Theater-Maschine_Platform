@@ -1,30 +1,30 @@
-from app.schemas.inszenierung import CompositionMoment
+from app.schemas.inszenierung import Gesamtkonzept, SceneCorpus
 from app.services.inszenierung_komposition_service import InszenierungKompositionService
+from app.services.teil2_script_service import SCRIPT_SOURCE, load_canonical_script_text
 
 
-def test_apply_speech_fields_prefers_avatar_for_low_anarchy() -> None:
+def test_compose_plan_uses_avatar_video_for_all_beats() -> None:
     service = InszenierungKompositionService()
-    moment = CompositionMoment(
-        id="m1",
-        order=0,
-        scene_id="s1",
-        text_excerpt="die Kurse steigen rasant ich springe vor Freude in die Luft",
-        anarchy_level=0.25,
+    corpus = SceneCorpus(
+        id="c1",
+        title="AVATAR Text Delfin bis Wolf",
+        script_source=SCRIPT_SOURCE,
+        script_text=load_canonical_script_text(),
+        gesamtkonzept=Gesamtkonzept(thesis="Geld"),
     )
-    service._apply_speech_fields(moment, None, 0)
-    assert moment.speech_mode == "avatar_video"
-    assert moment.avatar_speech_id == "DEL3"
+    plan = service.compose_plan(corpus)
+    assert len(plan.moments) >= 30
+    assert all(moment.speech_mode == "avatar_video" for moment in plan.moments)
+    assert plan.moments[0].avatar_layers
 
 
-def test_apply_speech_fields_uses_tts_when_no_match() -> None:
+def test_compose_plan_includes_dramaturgy_per_beat() -> None:
     service = InszenierungKompositionService()
-    moment = CompositionMoment(
-        id="m2",
-        order=1,
-        scene_id="s1",
-        text_excerpt="xyz abc qqq einzigartig ohne treffer",
-        anarchy_level=0.25,
+    corpus = SceneCorpus(
+        id="c2",
+        title="AVATAR Text Delfin bis Wolf",
+        script_source=SCRIPT_SOURCE,
+        script_text=load_canonical_script_text(),
     )
-    service._apply_speech_fields(moment, None, 1)
-    assert moment.speech_mode == "tts"
-    assert moment.avatar_speech_id is None
+    plan = service.compose_plan(corpus)
+    assert all(moment.dramaturgy is not None for moment in plan.moments)

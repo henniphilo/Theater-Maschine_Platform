@@ -1,6 +1,6 @@
 "use client";
 
-import type { SegmentPhase } from "@/features/show/scriptPlayback";
+import type { PlaybackMode, SegmentPhase } from "@/features/show/scriptPlayback";
 import {
   beatIndexFromProgress,
   formatTimelineLabel,
@@ -25,6 +25,7 @@ type PerformanceTransportProps = {
   sentenceIndex?: number;
   showPhase?: ShowPhase;
   activeOscBridge?: string | null;
+  playbackMode?: PlaybackMode;
   onPlay: () => void;
   onPause: () => void;
   onStop: () => void;
@@ -37,9 +38,16 @@ function phaseDetail(
   discussionTurnIndex?: number,
   sentenceIndex?: number,
   showPhase?: ShowPhase,
-  activeOscBridge?: string | null
+  activeOscBridge?: string | null,
+  playbackMode?: PlaybackMode
 ): string {
-  if (!beat) return "";
+  const modeLabel =
+    playbackMode === "discussion"
+      ? "Nur Dramaturgie"
+      : playbackMode === "performance"
+        ? "Nur Stücktext"
+        : null;
+  if (!beat) return modeLabel ?? "";
   if (segmentPhase === "discussion") {
     const n = beat.discussion_turns?.length ?? 0;
     const turn = discussionTurnIndex !== undefined ? discussionTurnIndex + 1 : 1;
@@ -48,13 +56,15 @@ function phaseDetail(
       showPhase === "cues_active" && activeOscBridge
         ? ` · Probe-Cues (${activeOscBridge})`
         : "";
-    return `Dramaturgie · Turn ${turn}${n ? `/${n}` : ""}${speaker ? ` · ${dramaturgSpeakerLabel(speaker)}` : ""}${cueHint}`;
+    return `Dramaturgie · Turn ${turn}${n ? `/${n}` : ""}${speaker ? ` · ${dramaturgSpeakerLabel(speaker)}` : ""}${cueHint}${modeLabel ? ` · ${modeLabel}` : ""}`;
   }
   if (segmentPhase === "performance") {
-    return `Stücktext · ${speakerLabel(beat.speaker)}${sentenceIndex !== undefined ? ` · Satz ${sentenceIndex + 1}` : ""}`;
+    return `Stücktext · ${speakerLabel(beat.speaker)}${sentenceIndex !== undefined ? ` · Satz ${sentenceIndex + 1}` : ""}${modeLabel ? ` · ${modeLabel}` : ""}`;
   }
-  if (beat.discussion_turns?.length) return "Bereit · mit Dramaturgie";
-  return `Stücktext · ${speakerLabel(beat.speaker)}`;
+  if (beat.discussion_turns?.length) {
+    return modeLabel ? `${modeLabel} · Bereit` : "Bereit · mit Dramaturgie";
+  }
+  return `${modeLabel ? `${modeLabel} · ` : ""}Stücktext · ${speakerLabel(beat.speaker)}`;
 }
 
 export function PerformanceTransport({
@@ -72,6 +82,7 @@ export function PerformanceTransport({
   sentenceIndex,
   showPhase,
   activeOscBridge,
+  playbackMode,
   onPlay,
   onPause,
   onStop,
@@ -97,7 +108,7 @@ export function PerformanceTransport({
                   : "Läuft"
                 : playBlockedReason || "Bereit"}
             {currentBeat
-              ? ` · ${phaseDetail(segmentPhase, currentBeat, discussionTurnIndex, sentenceIndex, showPhase, activeOscBridge)}`
+              ? ` · ${phaseDetail(segmentPhase, currentBeat, discussionTurnIndex, sentenceIndex, showPhase, activeOscBridge, playbackMode)}`
               : ""}
           </span>
         </div>

@@ -61,6 +61,25 @@ def _tokenize(text: str) -> set[str]:
     return {t for t in re.findall(r"[a-zäöüß]{4,}", normalized) if len(t) >= 4}
 
 
+def infer_avatar_role(cue_id: str, avatar_raw: str) -> AvatarRole:
+    valid_avatars = {"delphin", "baerenklau", "lamm", "petya", "wolf"}
+    if avatar_raw in valid_avatars:
+        return avatar_raw  # type: ignore[return-value]
+    upper = cue_id.upper()
+    if upper.startswith("BK"):
+        return "baerenklau"
+    if upper.startswith("LG"):
+        return "lamm"
+    if upper.startswith("PET"):
+        return "petya"
+    if upper.startswith("WO"):
+        return "wolf"
+    prefix_match = re.match(r"^([A-Z]+)", upper)
+    prefix = prefix_match.group(1) if prefix_match else ""
+    default_avatar, _ = PREFIX_AVATAR.get(prefix, ("delphin", "avatar"))
+    return default_avatar  # type: ignore[return-value]
+
+
 def parse_avatar_csv(path: Path) -> AvatarSpeechCatalog:
     cues: list[AvatarSpeechCue] = []
     seen_ids: dict[str, int] = {}
@@ -79,21 +98,24 @@ def parse_avatar_csv(path: Path) -> AvatarSpeechCatalog:
                 suffix = chr(ord("a") + seen_ids[raw_id] - 2)
                 cue_id = f"{raw_id}{suffix}"
             avatar_raw = (row.get("avatar") or "").strip().lower()
-            clip_raw = (row.get("video_clip_id") or "").strip().lower()
-            prefix_match = re.match(r"^([A-Z]+)", raw_id.upper())
-            prefix = prefix_match.group(1) if prefix_match else "DEL"
-            default_avatar, default_clip = PREFIX_AVATAR.get(prefix, ("delphin", "avatar"))
-            valid_avatars = {"delphin", "baerenklau", "lamm", "petya", "wolf"}
-            avatar: AvatarRole = avatar_raw if avatar_raw in valid_avatars else default_avatar  # type: ignore[assignment]
-            video_clip_id = clip_raw or default_clip
+            clip_raw = (row.get("video_clip_id") or row.get("scene_ref") or "").strip().lower()
+            if not clip_raw:
+                prefix_match = re.match(r"^([A-Z]+)", raw_id.upper())
+                prefix = prefix_match.group(1) if prefix_match else "DEL"
+                _, default_clip = PREFIX_AVATAR.get(prefix, ("delphin", "avatar"))
+                clip_raw = default_clip
+            avatar = infer_avatar_role(cue_id, avatar_raw)
             scene_ref = (row.get("scene_ref") or "").strip() or None
+            duration_raw = (row.get("duration_ms") or "").strip()
+            duration_ms = int(duration_raw) if duration_raw.isdigit() else None
             cues.append(
                 AvatarSpeechCue(
                     id=cue_id,
                     avatar=avatar,
                     text=text,
-                    video_clip_id=video_clip_id,
+                    video_clip_id=clip_raw,
                     scene_ref=scene_ref,
+                    duration_ms=duration_ms,
                 )
             )
     return AvatarSpeechCatalog(cues=cues)

@@ -1,10 +1,17 @@
 import type {
   AnalyseStreamEvent,
   KompositionStreamEvent,
-  SceneCorpus
+  SceneCorpus,
+  Teil2ScriptResponse
 } from "@/lib/types/inszenierung";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api/v1";
+
+export async function fetchScript(): Promise<Teil2ScriptResponse> {
+  const res = await fetch(`${API_BASE}/inszenierung/script`);
+  if (!res.ok) throw new Error("Skript konnte nicht geladen werden");
+  return res.json();
+}
 
 export async function createCorpus(title: string): Promise<SceneCorpus> {
   const res = await fetch(`${API_BASE}/inszenierung`, {
@@ -22,53 +29,41 @@ export async function fetchCorpus(corpusId: string): Promise<SceneCorpus> {
   return res.json();
 }
 
-export async function addScene(
-  corpusId: string,
-  scene: { animal: string; title?: string; source_text: string; play_reference?: string }
-): Promise<SceneCorpus> {
-  const res = await fetch(`${API_BASE}/inszenierung/${corpusId}/scenes`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(scene)
+export async function composeScript(corpusId: string): Promise<SceneCorpus> {
+  const res = await fetch(`${API_BASE}/inszenierung/${corpusId}/compose-script`, {
+    method: "POST"
   });
-  if (!res.ok) throw new Error("Szene konnte nicht hinzugefügt werden");
-  return res.json();
-}
-
-export async function addScenesBatch(
-  corpusId: string,
-  scenes: { animal: string; title?: string; source_text: string; play_reference?: string }[]
-): Promise<SceneCorpus> {
-  const res = await fetch(`${API_BASE}/inszenierung/${corpusId}/scenes/batch`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ scenes })
-  });
-  if (!res.ok) throw new Error("Szenen-Batch fehlgeschlagen");
-  return res.json();
-}
-
-export async function uploadSceneFiles(corpusId: string, files: File[]): Promise<SceneCorpus> {
-  const form = new FormData();
-  for (const file of files) {
-    form.append("files", file);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: "Timeline konnte nicht geladen werden" }));
+    throw new Error(typeof err.detail === "string" ? err.detail : "Timeline konnte nicht geladen werden");
   }
-  const res = await fetch(`${API_BASE}/inszenierung/${corpusId}/scenes/upload`, {
+  return res.json();
+}
+
+export async function exportTeil2(corpusId: string): Promise<{ blob: Blob; filename: string }> {
+  const res = await fetch(`${API_BASE}/inszenierung/${corpusId}/export`, { method: "POST" });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ detail: "Export fehlgeschlagen" }));
+    throw new Error(body.detail ?? "Export fehlgeschlagen");
+  }
+  const disposition = res.headers.get("Content-Disposition") ?? "";
+  const match = disposition.match(/filename="([^"]+)"/);
+  const filename = match?.[1] ?? "teil2.tmteil2.zip";
+  const blob = await res.blob();
+  return { blob, filename };
+}
+
+export async function importTeil2(file: File): Promise<SceneCorpus> {
+  const form = new FormData();
+  form.append("file", file);
+  const res = await fetch(`${API_BASE}/inszenierung/import`, {
     method: "POST",
     body: form
   });
   if (!res.ok) {
-    const err = await res.json().catch(() => ({ detail: "Upload fehlgeschlagen" }));
-    throw new Error(typeof err.detail === "string" ? err.detail : "Upload fehlgeschlagen");
+    const body = await res.json().catch(() => ({ detail: "Import fehlgeschlagen" }));
+    throw new Error(body.detail ?? "Import fehlgeschlagen");
   }
-  return res.json();
-}
-
-export async function deleteScene(corpusId: string, sceneId: string): Promise<SceneCorpus> {
-  const res = await fetch(`${API_BASE}/inszenierung/${corpusId}/scenes/${sceneId}`, {
-    method: "DELETE"
-  });
-  if (!res.ok) throw new Error("Szene konnte nicht gelöscht werden");
   return res.json();
 }
 

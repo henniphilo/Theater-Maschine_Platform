@@ -49,6 +49,36 @@ def test_extract_backtick_bullet_mention() -> None:
     assert ids == {"clyde", "maschinen_grundader"}
 
 
+def test_mood_keyword_spoken_without_catalog_ids() -> None:
+    allowlist = MediaAllowlist(
+        sounds=frozenset({c.id for c in get_catalog_media_matcher().sound_play if c.action == "play"}),
+        music=frozenset(),
+        videos=frozenset({v["id"] for v in get_catalog_media_matcher().videos}),
+        lights=frozenset(),
+    )
+    raw = "«Bärenklau» — maschinelles Summen, Grundader-Ton (Sound)."
+    spoken, mentions = build_spoken_playback_with_mentions(raw, allowlist, {})
+    assert "maschinen_grundader" not in spoken
+    assert "Beim Stichwort" in spoken
+    assert len(mentions) >= 1
+    assert mentions[0].keyword == "Bärenklau"
+
+
+def test_extract_mood_keyword_mentions() -> None:
+    allowlist = MediaAllowlist(
+        sounds=frozenset({c.id for c in get_catalog_media_matcher().sound_play if c.action == "play"}),
+        music=frozenset(),
+        videos=frozenset(),
+        lights=frozenset(),
+    )
+    text = "«Keller» — Sound: knurrend, unheimlich; Video: kalte Flächen"
+    from app.services.media_mentions import extract_mood_keyword_mentions
+
+    mentions = extract_mood_keyword_mentions(text, allowlist)
+    assert len(mentions) >= 1
+    assert mentions[0].keyword == "Keller"
+
+
 def test_build_spoken_playback_aligns_offsets() -> None:
     allowlist = MediaAllowlist(
         sounds=frozenset({"maschinen_grundader"}),

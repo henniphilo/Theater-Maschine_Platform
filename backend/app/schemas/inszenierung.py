@@ -2,10 +2,17 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-from app.director.cues.cue_models import DramaturgyDecision, PerformanceSpeaker, VisualCue
+from app.director.cues.cue_models import (
+    DramaturgyDecision,
+    PerformanceSpeaker,
+    VisualCue,
+    VisualOutputAssignment,
+)
 
 InszenierungStatus = Literal["draft", "analyzed", "composed", "ready"]
 SpeechMode = Literal["tts", "avatar_video", "silent"]
+ScriptSource = Literal["avatar_delfin_wolf"]
+ProjectorMode = Literal["single", "all"]
 
 
 class AnimalPosition(BaseModel):
@@ -42,6 +49,15 @@ class AnimalScene(BaseModel):
     play_reference: str | None = None
 
 
+class AvatarSpeechLayer(BaseModel):
+    avatar_speech_id: str
+    avatar: str
+    video_clip_id: str
+    projector: str | None = None
+    outputs: list[VisualOutputAssignment] = Field(default_factory=list)
+    visual_cue: VisualCue | None = None
+
+
 class CompositionMoment(BaseModel):
     id: str
     order: int
@@ -51,6 +67,8 @@ class CompositionMoment(BaseModel):
     speech_mode: SpeechMode = "tts"
     avatar_speech_id: str | None = None
     avatar_video_clip_id: str | None = None
+    avatar_layers: list[AvatarSpeechLayer] = Field(default_factory=list)
+    projector_mode: ProjectorMode = "single"
     avatar_video_cue: VisualCue | None = None
     atmosphere_video_cues: list[VisualCue] = Field(default_factory=list)
     dramaturgy: DramaturgyDecision | None = None
@@ -71,9 +89,27 @@ class SceneCorpus(BaseModel):
     id: str
     title: str
     scenes: list[AnimalScene] = Field(default_factory=list)
+    script_source: ScriptSource | None = None
+    script_text: str | None = None
     status: InszenierungStatus = "draft"
     gesamtkonzept: Gesamtkonzept | None = None
     composition: CompositionPlan | None = None
+
+
+class ScriptBeatPreview(BaseModel):
+    order: int
+    text: str
+    avatar_ids: list[str] = Field(default_factory=list)
+    avatars: list[str] = Field(default_factory=list)
+    is_chorus: bool = False
+
+
+class Teil2ScriptResponse(BaseModel):
+    script_source: ScriptSource
+    text: str
+    beat_count: int
+    beats_preview: list[ScriptBeatPreview] = Field(default_factory=list)
+    validation_warnings: list[str] = Field(default_factory=list)
 
 
 class CreateCorpusRequest(BaseModel):

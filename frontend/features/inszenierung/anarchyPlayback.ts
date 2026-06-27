@@ -1,4 +1,4 @@
-import { postDirectorExecuteLayered } from "@/lib/api/director";
+import { armDirectorForPerformance, postDirectorExecuteLayered, stopDirectorPerformance } from "@/lib/api/director";
 import type { CompositionMoment, CompositionPlan, SceneCorpus } from "@/lib/types/inszenierung";
 import { waitWhilePlaybackPaused } from "@/lib/api/client";
 import {
@@ -7,6 +7,7 @@ import {
   stopAllLayeredAudio,
   waitForVoiceSlot
 } from "@/features/inszenierung/audioLayerManager";
+import { fireAvatarMomentCues, planRequiresTts } from "@/features/inszenierung/avatarCuePlayback";
 import { fireLayeredMomentCues } from "@/features/inszenierung/layeredCuePlayback";
 import { resolveMomentSpeech } from "@/features/inszenierung/inszenierungBuffer";
 
@@ -34,13 +35,39 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+async function sleepAbortable(ms: number, shouldAbort: () => boolean): Promise<void> {
+  const step = 100;
+  let remaining = ms;
+  while (remaining > 0 && !shouldAbort()) {
+    await sleep(Math.min(step, remaining));
+    remaining -= step;
+  }
+}
+
 export function computeMomentDelayMs(moment: CompositionMoment, index: number): number {
+  if (moment.speech_mode === "avatar_video") {
+    return Math.max(0, moment.start_delay_ms);
+  }
   const overlap = index > 0 ? moment.overlap_with_previous : 0;
   return Math.max(0, moment.start_delay_ms - Math.round(overlap * 1200));
 }
 
+export function avatarBeatHoldMs(moment: CompositionMoment): number {
+  if (moment.duration_hint_ms != null && moment.duration_hint_ms > 0) {
+    return moment.duration_hint_ms;
+  }
+  const fromLayers = (moment.avatar_layers ?? [])
+    .map((layer) => layer.visual_cue?.duration_ms)
+    .filter((duration): duration is number => duration != null && duration > 0);
+  if (fromLayers.length > 0) {
+    return Math.max(...fromLayers);
+  }
+  return 8000;
+}
+
 export function stopAnarchyPlayback(): void {
   stopAllLayeredAudio();
+  stopDirectorPerformance();
 }
 
 export async function runAnarchyPlayback(
@@ -50,8 +77,10 @@ export async function runAnarchyPlayback(
   onUpdate: (patch: Partial<AnarchyPlaybackState>) => void,
   shouldAbort: () => boolean
 ): Promise<void> {
+  armDirectorForPerformance();
   const moments = [...plan.moments].sort((a, b) => a.order - b.order);
   const maxVoices = plan.max_concurrent_voices ?? 3;
+  const needsTts = planRequiresTts(plan);
 
   for (let index = 0; index < moments.length; index++) {
     if (shouldAbort()) break;
@@ -67,40 +96,45 @@ export async function runAnarchyPlayback(
     });
 
     if (delay > 0) {
-      await sleep(delay);
+      await sleepAbortable(delay, shouldAbort);
       if (shouldAbort()) break;
     }
 
+    const speechMode = moment.speech_mode ?? "tts";
+    const onCommands = async (commands: { bridge?: string }[]) => {
+      const bridge = commands[0]?.bridge ?? null;
+      onUpdate({ activeOscBridge: bridge });
+      await sleep(150);
+      onUpdate({ activeOscBridge: null });
+    };
+
+    if (speechMode === "avatar_video") {
+      await fireAvatarMomentCues(moment, moment.anarchy_level, onCommands, shouldAbort);
+      if (shouldAbort()) break;
+    }
     if (moment.dramaturgy) {
-      void fireLayeredMomentCues(
+      fireLayeredMomentCues(
         moment.dramaturgy,
         moment.anarchy_level,
         moment.text_excerpt,
-        async (commands) => {
-          const bridge = commands[0]?.bridge ?? null;
-          onUpdate({ activeOscBridge: bridge });
-          await sleep(150);
-          onUpdate({ activeOscBridge: null });
-        },
+        onCommands,
         shouldAbort
       );
     }
 
-    const speechMode = moment.speech_mode ?? "tts";
-
     if (speechMode === "avatar_video") {
-      const waitMs = moment.duration_hint_ms ?? 8000;
-      await sleep(waitMs);
+      const waitMs = avatarBeatHoldMs(moment);
+      await sleepAbortable(waitMs, shouldAbort);
       continue;
     }
 
     if (speechMode === "silent") {
       const waitMs = moment.duration_hint_ms ?? 4000;
-      await sleep(waitMs);
+      await sleepAbortable(waitMs, shouldAbort);
       continue;
     }
 
-    if (!ttsAvailable) continue;
+    if (!ttsAvailable || !needsTts) continue;
 
     await waitForVoiceSlot(maxVoices, shouldAbort);
     if (shouldAbort()) break;

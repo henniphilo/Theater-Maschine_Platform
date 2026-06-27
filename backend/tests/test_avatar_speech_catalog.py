@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 from app.services.avatar_speech_catalog import (
     match_avatar_cues,
     normalize_avatar_text,
@@ -19,22 +18,22 @@ def _avatar_csv_path() -> Path:
     return FIXTURE_CSV
 
 
-def test_avatar_csv_loads_and_maps_prefixes() -> None:
+def test_avatar_csv_loads_delphin_and_baerenklau_clips() -> None:
     catalog = parse_avatar_csv(_avatar_csv_path())
-    assert len(catalog.cues) >= 3
-    del_cue = next(c for c in catalog.cues if c.id == "DEL1")
-    assert del_cue.avatar == "delphin"
-    assert del_cue.video_clip_id == "avatar"
-    bk_cue = next(c for c in catalog.cues if c.id == "BK1")
-    assert bk_cue.avatar == "baerenklau"
-    assert bk_cue.video_clip_id == "avatar2"
+    assert len(catalog.cues) >= 40
+    nicolas = next(c for c in catalog.cues if c.id == "nicolas")
+    assert nicolas.avatar == "delphin"
+    assert nicolas.video_clip_id == "nicolas"
+    bk = next(c for c in catalog.cues if c.id == "bk1_caro")
+    assert bk.avatar == "baerenklau"
+    assert bk.video_clip_id == "bk1_caro"
 
 
-def test_pet5_duplicate_gets_suffix() -> None:
+def test_chorus_rows_share_text_in_catalog() -> None:
     catalog = parse_avatar_csv(_avatar_csv_path())
-    pet_ids = [c.id for c in catalog.cues if c.id.startswith("PET5")]
-    assert "PET5" in pet_ids
-    assert "PET5a" in pet_ids
+    caro = next(c for c in catalog.cues if c.id == "bk1_caro")
+    caroline = next(c for c in catalog.cues if c.id == "bk1_caroline")
+    assert caro.text == caroline.text
 
 
 def test_normalize_avatar_text_strips_control_chars() -> None:
@@ -43,6 +42,6 @@ def test_normalize_avatar_text_strips_control_chars() -> None:
 
 def test_match_avatar_cues_finds_overlap() -> None:
     catalog = parse_avatar_csv(_avatar_csv_path())
-    bk3 = next(c for c in catalog.cues if c.id == "BK3")
+    bk3 = next(c for c in catalog.cues if c.id == "bk3_thomas")
     matches = match_avatar_cues(bk3.text[:80])
-    assert any(m.id == "BK3" for m in matches)
+    assert any(m.id == "bk3_thomas" for m in matches)

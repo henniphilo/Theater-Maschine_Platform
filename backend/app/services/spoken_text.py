@@ -2,15 +2,16 @@
 
 import re
 
-_MEDIA_BULLET_RE = re.compile(
-    r"^\s*-\s+[`']?[\w][\w_-]*[`']?\s*[—–-]\s*.+$",
-    re.MULTILINE,
+_ID_MEDIA_BULLET_RE = re.compile(
+    r"^\s*-\s+[`']?[a-z][a-z0-9_]*[`']?\s*[—–-]\s*.+$",
+    re.MULTILINE | re.IGNORECASE,
 )
 _MEDIA_HEADER_RE = re.compile(r"^\s*\*\*[^*]+\*\*\s*$", re.MULTILINE)
 
 
-def _is_media_bullet_line(line: str) -> bool:
-    return bool(_MEDIA_BULLET_RE.match(line.strip()))
+def _is_id_media_bullet_line(line: str) -> bool:
+    """Catalog-ID bullet lines (old format) — not mood+keyword lines."""
+    return bool(_ID_MEDIA_BULLET_RE.match(line.strip()))
 
 
 def _strip_json_blocks(text: str) -> str:
@@ -18,8 +19,8 @@ def _strip_json_blocks(text: str) -> str:
     return re.sub(r"\{[^{}]*\"sounds\"[^{}]*\}", "", text, flags=re.DOTALL).strip()
 
 
-def _intro_before_media_bullets(raw: str) -> str:
-    match = _MEDIA_BULLET_RE.search(raw)
+def _intro_before_id_bullets(raw: str) -> str:
+    match = _ID_MEDIA_BULLET_RE.search(raw)
     if not match:
         return ""
     intro = _strip_json_blocks(raw[: match.start()]).strip()
@@ -36,10 +37,10 @@ def _media_list_fallback() -> str:
 
 
 def needs_discussion_sanitization(raw: str) -> bool:
-    """True when raw LLM output still has catalog bullets or JSON — skip for pre-built TTS."""
+    """True when raw LLM output still has catalog-ID bullets or JSON — skip for pre-built TTS."""
     if not raw.strip():
         return False
-    if _MEDIA_BULLET_RE.search(raw):
+    if _ID_MEDIA_BULLET_RE.search(raw):
         return True
     if '"sounds"' in raw or "```json" in raw.lower():
         return True
@@ -47,16 +48,16 @@ def needs_discussion_sanitization(raw: str) -> bool:
 
 
 def spoken_discussion_text(raw: str) -> str:
-    """Spoken version for TTS: no JSON, no media-catalog bullet lines."""
+    """Spoken version for TTS: no JSON, no catalog-ID bullet lines; mood lines kept."""
     if not raw.strip():
         return ""
 
-    had_media_bullets = bool(_MEDIA_BULLET_RE.search(raw))
+    had_id_bullets = bool(_ID_MEDIA_BULLET_RE.search(raw))
     text = _strip_json_blocks(raw)
 
     kept_lines: list[str] = []
     for line in text.splitlines():
-        if _is_media_bullet_line(line):
+        if _is_id_media_bullet_line(line):
             continue
         if _MEDIA_HEADER_RE.match(line):
             continue
@@ -65,8 +66,8 @@ def spoken_discussion_text(raw: str) -> str:
     text = "\n".join(kept_lines).strip()
     text = re.sub(r"\n{3,}", "\n\n", text).strip()
 
-    if len(text) < 30 and had_media_bullets:
-        intro = _intro_before_media_bullets(raw)
+    if len(text) < 30 and had_id_bullets:
+        intro = _intro_before_id_bullets(raw)
         if len(intro) >= 20:
             return intro
         return _media_list_fallback()

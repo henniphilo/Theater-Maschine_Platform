@@ -12,6 +12,10 @@ from app.schemas.inszenierung import (
     PatchCorpusRequest,
     SceneCorpus,
 )
+from app.services.teil2_script_service import (
+    SCRIPT_SOURCE,
+    load_canonical_script_text,
+)
 
 
 class InszenierungStore:
@@ -40,10 +44,16 @@ class InszenierungStore:
         return SceneCorpus.model_validate_json(path.read_text(encoding="utf-8"))
 
     def create(self, title: str) -> SceneCorpus:
+        try:
+            script_text = load_canonical_script_text()
+        except FileNotFoundError:
+            script_text = None
         corpus = SceneCorpus(
             id=str(uuid4()),
             title=title.strip() or "Unter Tieren — Geld",
             status="draft",
+            script_source=SCRIPT_SOURCE if script_text else None,
+            script_text=script_text,
         )
         return self.save(corpus)
 
@@ -104,7 +114,9 @@ class InszenierungStore:
 
     @staticmethod
     def _recompute_status(corpus: SceneCorpus) -> SceneCorpus:
-        if not corpus.scenes:
+        has_script = bool(corpus.script_source and corpus.script_text)
+        has_scenes = bool(corpus.scenes)
+        if not has_script and not has_scenes:
             corpus.status = "draft"
         elif corpus.composition and corpus.composition.moments and corpus.gesamtkonzept:
             corpus.status = "ready"
@@ -112,6 +124,8 @@ class InszenierungStore:
             corpus.status = "composed"
         elif corpus.gesamtkonzept and corpus.gesamtkonzept.thesis:
             corpus.status = "analyzed"
+        elif has_script:
+            corpus.status = "draft"
         else:
             corpus.status = "draft"
         return corpus

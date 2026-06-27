@@ -80,10 +80,9 @@ def _avatar_clip_ids() -> set[str]:
     name_to_id = {clip.pixera_name: clip.id for clip in base.clips}
     ids: set[str] = set()
     for _prefix, pixera_name in _parse_osc_pairs([avatar_path]):
-        if pixera_name in _AVATAR_PIXERA_NAMES or pixera_name == "HundeThiel":
-            clip_id = name_to_id.get(pixera_name)
-            if clip_id:
-                ids.add(clip_id)
+        clip_id = name_to_id.get(pixera_name)
+        if clip_id:
+            ids.add(clip_id)
     return ids
 
 

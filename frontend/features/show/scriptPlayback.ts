@@ -1,6 +1,7 @@
 import { getCachedSpeech, prefetchSpeech } from "@/lib/tts/prefetch";
 import { performanceAudioUrl, prefetchPrerenderedSpeech } from "@/lib/api/performance";
 import { playBlob, setPlaybackPaused, stopPlayback, waitWhilePlaybackPaused } from "@/lib/api/client";
+import { armDirectorForPerformance, stopDirectorPerformance } from "@/lib/api/director";
 import { sentenceIndexForProgress } from "@/lib/text/splitSentences";
 import { speakerForPerformanceSentence } from "@/lib/show/performanceVoices";
 import { progressFromBeat } from "@/lib/show/performanceTimeline";
@@ -34,6 +35,7 @@ const DISCUSSION_FALLBACK_MS = 1500;
 export const PERFORMANCE_PREP_PAUSE_MS = 800;
 
 export type SegmentPhase = "discussion" | "performance";
+export type PlaybackMode = "full" | "discussion" | "performance";
 
 export type PlaybackAudioOptions = {
   ttsAvailable: boolean;
@@ -58,6 +60,7 @@ export type PlaybackState = {
   showPhase?: ShowPhase;
   completed: boolean;
   timelineProgress: number;
+  playbackMode?: PlaybackMode;
 };
 
 export const INITIAL_PLAYBACK_STATE: PlaybackState = {
@@ -68,7 +71,8 @@ export const INITIAL_PLAYBACK_STATE: PlaybackState = {
   activeOscBridge: null,
   activeOscCommand: null,
   completed: false,
-  timelineProgress: 0
+  timelineProgress: 0,
+  playbackMode: "full"
 };
 
 function sleep(ms: number) {
@@ -415,7 +419,7 @@ async function playDiscussionPhase(
     scheduleDiscussionCue(discussionCueCtx, turn, beat.text, topic);
 
     if (!audioReady(options)) {
-      await fireDiscussionMentionsAtPosition(
+      fireDiscussionMentionsAtPosition(
         discussionCueCtx,
         mentions,
         spoken.length,
@@ -446,7 +450,7 @@ async function playDiscussionPhase(
           );
         }
       });
-      await fireDiscussionMentionsAtPosition(
+      fireDiscussionMentionsAtPosition(
         discussionCueCtx,
         mentions,
         spoken.length,
@@ -500,9 +504,7 @@ async function playLegacyPerformanceBlob(
         if (cuesStarted) return;
         cuesStarted = true;
         onState({ showPhase: "cues_active" });
-        void fireStartCues(cueCtx).then(() => {
-          if (!shouldAbort()) onState({ showPhase: "sent" });
-        });
+        void fireStartCues(cueCtx);
       },
       onTimeUpdate: (current, duration) => {
         if (shouldAbort()) return;
@@ -519,9 +521,9 @@ async function playLegacyPerformanceBlob(
 
     if (!cuesStarted) {
       onState({ showPhase: "cues_active" });
-      await fireStartCues(cueCtx);
+      fireStartCues(cueCtx);
       for (let i = 0; i < sentences.length; i++) {
-        await fireSentenceCues(cueCtx, i, sentences[i]);
+        fireSentenceCues(cueCtx, i, sentences[i]);
       }
     }
     return !shouldAbort();
@@ -571,12 +573,12 @@ async function playPerformancePhase(
 
   if (!audioReady(options)) {
     onState({ showPhase: "cues_active" });
-    await fireStartCues(cueCtx);
+    fireStartCues(cueCtx);
     for (let i = 0; i < sentences.length; i++) {
       if (shouldAbort()) return false;
       const speaker = beatPerformanceSpeaker(beat, i);
       onState({ sentenceIndex: i, performanceSpeaker: speaker });
-      await fireSentenceCues(cueCtx, i, sentences[i]);
+      fireSentenceCues(cueCtx, i, sentences[i]);
       await sleep(800);
     }
     onState({ showPhase: "sent" });
@@ -619,10 +621,10 @@ async function playPerformancePhase(
 
     if (i === 0) {
       onState({ showPhase: "cues_active" });
-      await fireStartCues(cueCtx);
+      fireStartCues(cueCtx);
       cuesStarted = true;
     }
-    await fireSentenceCues(cueCtx, i, sentence);
+    fireSentenceCues(cueCtx, i, sentence);
 
     const nextSentence = sentences[i + 1];
     if (nextSentence) {
@@ -679,18 +681,22 @@ async function playBeat(
   onState: (state: Partial<PlaybackState>) => void,
   shouldAbort: () => boolean,
   topic: string,
-  part1Selection?: Part1BaerenklauSelection | null
+  part1Selection: Part1BaerenklauSelection | null | undefined,
+  mode: PlaybackMode
 ): Promise<boolean> {
   if (!beat.dramaturgy) return true;
 
   const nextBeat = beats[beatIndex + 1];
   if (nextBeat) {
     prefetchBeatStart(nextBeat, options, beatIndex + 1);
-    void warmBeatPlayback(nextBeat, options);
+    void warmBeatPlayback(nextBeat, options, part1Selection);
   }
 
   const turns = beat.discussion_turns ?? [];
-  if (turns.length > 0) {
+  const playDiscussion = mode === "full" || mode === "discussion";
+  const playPerformance = mode === "full" || mode === "performance";
+
+  if (playDiscussion && turns.length > 0) {
     const discussionOk = await playDiscussionPhase(
       turns,
       beat,
@@ -704,14 +710,18 @@ async function playBeat(
     );
     if (!discussionOk) return false;
 
-    setPlaybackPaused(false);
-    await sleep(PERFORMANCE_PREP_PAUSE_MS);
-  } else {
+    if (playPerformance) {
+      setPlaybackPaused(false);
+      await sleep(PERFORMANCE_PREP_PAUSE_MS);
+    }
+  } else if (playPerformance) {
     prefetchPerformanceSentences(options, beat, beatIndex);
   }
 
+  if (!playPerformance) return true;
+
   setPlaybackPaused(false);
-  const performanceOk = await playPerformancePhase(
+  return playPerformancePhase(
     beat,
     beatIndex,
     beats.length,
@@ -719,7 +729,6 @@ async function playBeat(
     onState,
     shouldAbort
   );
-  return performanceOk;
 }
 
 export function prefetchBeatStart(
@@ -743,10 +752,62 @@ export async function runPart1ScriptPlayback(
   onState: (state: Partial<PlaybackState>) => void,
   shouldAbort: () => boolean,
   topic = "Teil 1 — Bärenklau",
-  part1Selection?: Part1BaerenklauSelection | null
+  part1Selection?: Part1BaerenklauSelection | null,
+  mode: PlaybackMode = "full"
 ): Promise<void> {
   const part1 = part1Beats(beats);
-  return runScriptPlayback(part1, options, startBeatIndex, onState, shouldAbort, topic, part1Selection);
+  return runScriptPlayback(
+    part1,
+    options,
+    startBeatIndex,
+    onState,
+    shouldAbort,
+    topic,
+    part1Selection,
+    mode
+  );
+}
+
+export async function runPart1DiscussionPlayback(
+  beats: ScriptBeat[],
+  options: PlaybackAudioOptions,
+  startBeatIndex: number,
+  onState: (state: Partial<PlaybackState>) => void,
+  shouldAbort: () => boolean,
+  topic = "Teil 1 — Bärenklau",
+  part1Selection?: Part1BaerenklauSelection | null
+): Promise<void> {
+  return runPart1ScriptPlayback(
+    beats,
+    options,
+    startBeatIndex,
+    onState,
+    shouldAbort,
+    topic,
+    part1Selection,
+    "discussion"
+  );
+}
+
+export async function runPart1PerformancePlayback(
+  beats: ScriptBeat[],
+  options: PlaybackAudioOptions,
+  startBeatIndex: number,
+  onState: (state: Partial<PlaybackState>) => void,
+  shouldAbort: () => boolean,
+  topic = "Teil 1 — Bärenklau",
+  part1Selection?: Part1BaerenklauSelection | null
+): Promise<void> {
+  return runPart1ScriptPlayback(
+    beats,
+    options,
+    startBeatIndex,
+    onState,
+    shouldAbort,
+    topic,
+    part1Selection,
+    "performance"
+  );
 }
 
 export async function runScriptPlayback(
@@ -756,8 +817,10 @@ export async function runScriptPlayback(
   onState: (state: Partial<PlaybackState>) => void,
   shouldAbort: () => boolean,
   topic = "Aufführung",
-  part1Selection?: Part1BaerenklauSelection | null
+  part1Selection?: Part1BaerenklauSelection | null,
+  mode: PlaybackMode = "full"
 ): Promise<void> {
+  armDirectorForPerformance();
   const start = Math.max(0, Math.min(startBeatIndex, beats.length - 1));
   onState({
     running: true,
@@ -771,6 +834,7 @@ export async function runScriptPlayback(
     performanceSpeaker: undefined,
     activeOscBridge: null,
     activeOscCommand: null,
+    playbackMode: mode,
     timelineProgress: progressFromBeat(start, beats.length, 0)
   });
 
@@ -786,7 +850,17 @@ export async function runScriptPlayback(
       return;
     }
 
-    const ok = await playBeat(beats[index], index, beats, options, onState, shouldAbort, topic, part1Selection);
+    const ok = await playBeat(
+      beats[index],
+      index,
+      beats,
+      options,
+      onState,
+      shouldAbort,
+      topic,
+      part1Selection,
+      mode
+    );
     if (!ok) {
       onState({
         running: false,
@@ -817,4 +891,5 @@ export async function runScriptPlayback(
 
 export function stopScriptPlayback() {
   stopPlayback();
+  stopDirectorPerformance();
 }

@@ -32,6 +32,8 @@ from app.services.media_mentions import (
     build_media_alias_index,
     build_spoken_playback_with_mentions,
 )
+from app.services.part1_selection_builder import build_selection_from_discussion
+from app.services.dramaturgy_text import clamp_statement, strip_limit_complaints
 from app.services.spoken_text import spoken_discussion_text
 
 _logger = logging.getLogger("theatermaschine.part1.workshop")
@@ -80,20 +82,26 @@ class Part1WorkshopEvent:
 
 def _system_prompt() -> str:
     rules = dramaturgy_rules_excerpt(max_chars=settings.dramaturgy_rules_excerpt_chars)
+    max_chars = settings.dramaturgy_statement_max_chars
     return f"""Ihr seid Claude und ChatGPT — zwei KI-Dramaturgen für Teil 1 einer Theateraufführung.
 Analysiert den **gesamten** Stücktext als Ganzes (nicht in Abschnitte zerlegen).
 Führt ein lebendiges Gespräch auf Deutsch: Thema, Stimmung, mindestens 2 Zitate aus verschiedenen Stellen.
-Begründet **jede einzelne** Medienwahl dramaturgisch mit «Zitat aus dem Text» oder Thema: … (z. B. Kälte, Verwaltung, Ökonomie).
-**Sounds:** Diskutiert ausführlich, welche Geräusche und Musikstücke aus dem Katalog zum Text passen — Grundton, Akzente, Stille-Momente.
-Die technische Mischung (Einblenden, Layern, Ausblenden, Cut) übernimmt später ein Sounddesigner automatisch; ihr wählt nur die **play**-IDs.
-Format pro Medium: - `katalog_sound_id` — Beschreibung / «Zitat» / Thema: …
-Nur **play**-IDs aus dem Katalog — keine erfundenen Namen. Beschreibt die Wirkung (kühl, knurrend, bürokratisch …) im Text; die ID muss aus der Liste stammen.
-Kein JSON in den ersten beiden Beiträgen. Ab dem Medienpaket-Vorschlag am Ende optional ein JSON-Block:
+
+**Wichtig — Stichwort + Stimmung statt Medienliste:**
+- Nennt **keine** Katalog-IDs, keine `sound_id`-Aufzählungen, keine erfundenen Mediennamen.
+- Beschreibt pro **Stichwort** (wörtliche Passage aus dem Text in «…») die gewünschte **Stimmung/Wirkung** pro Medium.
+- Format: «Stichwort aus dem Text» — Stimmungsbeschreibung (Sound). Oder: «Stichwort» — Sound: dröhnend, kalt; Video: kalte Flächen; Licht: enges Verhörlicht.
+- Stichworte müssen **wörtlich** im Stücktext vorkommen — wählt kurze Passagen aus dem Text.
+- Die technische Mischung (Einblenden, Layern, Ausblenden) übernimmt später Sounddesign und Regie automatisch.
+
+Jeder Beitrag: maximal {max_chars} Zeichen, 2–4 Sätze. Erwähnt Zeichenlimits **nie** und beschwert euch nicht darüber.
+
+Optional am Ende (nur letzte Turns, wird nicht vorgelesen): kompakter JSON-Fallback:
 ```json
 {{"sounds":["id",...],"music":["id"],"videos":["id",...],"lights":["id",...]}}
 ```
-Nur IDs aus dem Katalog — keine erfundenen Namen wie drone_low. Mindestens 6 Sounds, 1 Musik, 6 Videos, 6 Lichtstimmungen im finalen Paket.
-Thema-Diskussion: kurz (2–4 Sätze). Medienpaket: alle Katalog-IDs mit Begründung — dort ist ausreichend Platz; nicht über Zeichenlimits klagen.
+Nur echte Katalog-IDs — keine erfundenen Namen.
+
 Schließt mit einem klaren Übergang: der Stücktext wird gleich aufgeführt — die Regie drückt Play wenn sie bereit ist.
 
 === REGELWERK ===
@@ -194,7 +202,6 @@ class Part1WorkshopService:
         discussion_lines: list[str],
         instruction: str,
         include_json_hint: bool = False,
-        media_package: bool = False,
     ) -> str:
         scene_label = part1_scene_label(beat)
         quotes = dramaturgy_quote_excerpts(beat.text)
@@ -202,27 +209,18 @@ class Part1WorkshopService:
         context = "\n\n".join(discussion_lines) if discussion_lines else "(noch keine Diskussion)"
         text_excerpt = beat.text[: settings.dramaturgy_whole_text_max_chars]
         json_note = (
-            " Am Ende ein JSON-Block mit sounds/music/videos/lights."
+            " Optional am Ende ein kompakter JSON-Block (wird nicht vorgelesen)."
             if include_json_hint
-            else " Kein JSON in dieser Antwort — nur Gespräch."
+            else " Kein JSON in dieser Antwort."
         )
-        if media_package:
-            length_note = (
-                f"Medienpaket: nenne alle gewählten Katalog-IDs mit Begründung "
-                f"(bis {settings.dramaturgy_media_package_max_chars} Zeichen). "
-                "Kurze Einleitung, dann Sounds/Musik/Videos/Licht mit `- `id` — «Zitat»`."
-            )
-            max_tokens = settings.dramaturgy_media_package_max_tokens
-        else:
-            length_note = (
-                f"Kurz halten: maximal {settings.dramaturgy_statement_max_chars} Zeichen, "
-                "2–4 Sätze — noch keine Medienliste."
-            )
-            max_tokens = settings.dramaturgy_discussion_max_tokens
+        length_note = (
+            f"Maximal {settings.dramaturgy_statement_max_chars} Zeichen, 2–4 Sätze. "
+            "Keine Katalog-IDs nennen — nur Stichworte und Stimmungen."
+        )
         prompt = (
             f"Stück: {title}\n{scene_label}:\n{text_excerpt}\n\n"
             f"Zitate/Stichworte aus dem Gesamttext:\n{quote_block}\n\n"
-            f"Medien-Katalog (Auszug):\n{catalog_hint}\n\n"
+            f"Medien-Katalog (intern, nicht vorlesen):\n{catalog_hint}\n\n"
             f"Bisheriges Gespräch:\n{context}\n\n{instruction}{json_note}\n\n{length_note}"
         )
         raw = await self.ai.generate(
@@ -232,9 +230,10 @@ class Part1WorkshopService:
                 {"role": "system", "content": _system_prompt()},
                 {"role": "user", "content": prompt},
             ],
-            max_tokens=max_tokens,
+            max_tokens=settings.dramaturgy_discussion_max_tokens,
         )
-        return raw.strip()
+        cleaned = strip_limit_complaints(raw.strip())
+        return clamp_statement(cleaned)
 
     def _media_allowlist(self) -> MediaAllowlist:
         from app.services.part1_selection_validation import _music_cue_ids
@@ -258,7 +257,7 @@ class Part1WorkshopService:
         *,
         speaker: Literal["openai", "anthropic"],
         raw: str,
-    ) -> None:
+    ) -> str:
         label = CLAUDE_LABEL if speaker == "anthropic" else CHATGPT_LABEL
         discussion_lines.append(f"{label}: {raw}")
         allowlist = self._media_allowlist()
@@ -271,6 +270,7 @@ class Part1WorkshopService:
                 media_mentions=mentions,
             )
         )
+        return spoken
 
     async def _preview_lists(
         self,
@@ -301,7 +301,7 @@ class Part1WorkshopService:
         *,
         beat: ScriptBeat,
         speaker: Literal["openai", "anthropic"],
-        raw: str,
+        spoken: str,
         discussion_turns: list[DiscussionTurn],
         workshop_phase: WorkshopPhase,
         media_selection: MediaSelectionLists | None = None,
@@ -311,7 +311,7 @@ class Part1WorkshopService:
             "beat_id": beat.id,
             "beat_order": beat.order,
             "speaker": speaker,
-            "content": raw,
+            "content": spoken,
             "discussion_turns": [t.model_dump(mode="json") for t in discussion_turns],
             "workshop_phase": workshop_phase,
         }
@@ -352,14 +352,16 @@ class Part1WorkshopService:
                 instruction=(
                     f"Du bist {CLAUDE_LABEL} und eröffnest das Gespräch über den **gesamten** Text. "
                     "Nenne das übergreifende Thema in 2–3 Sätzen, zitiere mindestens 2 kurze Stellen aus verschiedenen Passagen. "
-                    "Skizziere die Grundstimmung — noch keine konkrete Medienliste."
+                    "Skizziere die Grundstimmung — noch keine Stichwort-Stimmungs-Zuordnungen."
                 ),
             )
-            self._record_turn(discussion_lines, discussion_turns, speaker="anthropic", raw=claude_theme)
+            claude_spoken = self._record_turn(
+                discussion_lines, discussion_turns, speaker="anthropic", raw=claude_theme
+            )
             yield await self._discussion_event(
                 beat=beat,
                 speaker="anthropic",
-                raw=claude_theme,
+                spoken=claude_spoken,
                 discussion_turns=discussion_turns,
                 workshop_phase="theme_discussion",
             )
@@ -380,15 +382,17 @@ class Part1WorkshopService:
                 catalog_hint=catalog_hint,
                 discussion_lines=discussion_lines,
                 instruction=(
-                    f"Du bist {CHATGPT_LABEL}. Greife {CLAUDE_LABEL}s Gesamtlektüre auf, ergänze ein weiteres Zitat oder Thema, "
-                    "und formuliere 1–2 dramaturgische Impulse für Sound/Video/Licht — noch ohne feste IDs."
+                    f"Du bist {CHATGPT_LABEL}. Greife {CLAUDE_LABEL}s Gesamtlektüre auf, ergänze ein weiteres Zitat, "
+                    "und formuliere 1–2 dramaturgische Stimmungsimpulse — noch ohne Stichwort-Zuordnung."
                 ),
             )
-            self._record_turn(discussion_lines, discussion_turns, speaker="openai", raw=gpt_theme)
+            gpt_spoken = self._record_turn(
+                discussion_lines, discussion_turns, speaker="openai", raw=gpt_theme
+            )
             yield await self._discussion_event(
                 beat=beat,
                 speaker="openai",
-                raw=gpt_theme,
+                spoken=gpt_spoken,
                 discussion_turns=discussion_turns,
                 workshop_phase="chatgpt_theme",
             )
@@ -409,22 +413,21 @@ class Part1WorkshopService:
                 catalog_hint=catalog_hint,
                 discussion_lines=discussion_lines,
                 instruction=(
-                    f"Du bist {CLAUDE_LABEL}. Schlage ein konkretes Medienpaket für den **gesamten** Text vor: "
-                    "6 Sounds, 1 Musik, 6 Videos, 6 Lichtstimmungen. "
-                    "Bei Sounds: besprecht welche Geräusche wann dramaturgisch wirken (Grundton, Akzent, Stille) — "
-                    "nur **play**-IDs aus dem Katalog; Ein-/Ausblenden und Layering macht der Sounddesigner. "
-                    "Begründe **jede einzelne** Wahl mit «Zitat» oder Thema: … im Format `- `sound_id` — «…» / Thema: …`. "
-                    "Reihenfolge: Sounds/Musik, Videos, Licht."
+                    f"Du bist {CLAUDE_LABEL}. Schlage 2–3 Stichwort-Stimmungs-Zuordnungen für den **gesamten** Text vor. "
+                    "Format: «Stichwort aus dem Text» — Stimmungsbeschreibung (Sound/Video/Licht). "
+                    "Keine Katalog-IDs — nur Stimmungen und Wirkungen."
                 ),
-                include_json_hint=True,
-                media_package=True,
             )
-            claude_lists = _validate_or_fallback(_parse_media_json(claude_raw))
-            self._record_turn(discussion_lines, discussion_turns, speaker="anthropic", raw=claude_raw)
+            claude_spoken = self._record_turn(
+                discussion_lines, discussion_turns, speaker="anthropic", raw=claude_raw
+            )
+            claude_lists = build_selection_from_discussion(
+                discussion_turns, beat.text, json_fallback=_parse_media_json(claude_raw)
+            )
             yield await self._discussion_event(
                 beat=beat,
                 speaker="anthropic",
-                raw=claude_raw,
+                spoken=claude_spoken,
                 discussion_turns=discussion_turns,
                 workshop_phase="claude_proposal",
                 media_selection=claude_lists,
@@ -446,27 +449,24 @@ class Part1WorkshopService:
                 catalog_hint=catalog_hint,
                 discussion_lines=discussion_lines,
                 instruction=(
-                    f"Du bist {CHATGPT_LABEL}. Reagiere auf {CLAUDE_LABEL}s Paket: "
-                    "was passt, was würdest du tauschen und warum (jeweils mit «Zitat» oder Thema). "
-                    "Liefere das verhandelte Gesamtpaket im JSON."
+                    f"Du bist {CHATGPT_LABEL}. Reagiere auf {CLAUDE_LABEL}s Stichwort-Stimmungen: "
+                    "was passt, was würdest du schärfen — jeweils mit «Stichwort» und Stimmungsbeschreibung. "
+                    "Keine Katalog-IDs."
                 ),
                 include_json_hint=True,
-                media_package=True,
             )
-            gpt_lists = _parse_media_json(gpt_raw)
-            merged = _validate_or_fallback(
-                MediaSelectionLists(
-                    sounds=(gpt_lists.sounds if gpt_lists else []) or claude_lists.sounds,
-                    music=(gpt_lists.music if gpt_lists else []) or claude_lists.music,
-                    videos=(gpt_lists.videos if gpt_lists else []) or claude_lists.videos,
-                    lights=(gpt_lists.lights if gpt_lists else []) or claude_lists.lights,
-                )
+            gpt_spoken = self._record_turn(
+                discussion_lines, discussion_turns, speaker="openai", raw=gpt_raw
             )
-            self._record_turn(discussion_lines, discussion_turns, speaker="openai", raw=gpt_raw)
+            merged = build_selection_from_discussion(
+                discussion_turns,
+                beat.text,
+                json_fallback=_parse_media_json(gpt_raw) or claude_lists,
+            )
             yield await self._discussion_event(
                 beat=beat,
                 speaker="openai",
-                raw=gpt_raw,
+                spoken=gpt_spoken,
                 discussion_turns=discussion_turns,
                 workshop_phase="chatgpt_delta",
                 media_selection=merged,
@@ -488,22 +488,27 @@ class Part1WorkshopService:
                 catalog_hint=catalog_hint,
                 discussion_lines=discussion_lines,
                 instruction=(
-                    f"Du bist {CLAUDE_LABEL}. Fasst die finale Einigung für den **gesamten** Text zusammen (sinngemäß: "
-                    "«Dann einigen wir uns auf folgende Variante …»). "
-                    "Jede Medien-ID nochmals mit «Zitat» oder Thema begründen. "
-                    "Erkläre kurz, dass der Stücktext jetzt aufgeführt wird — die Regie startet mit Play, "
-                    "wenn sie bereit ist. Teil 2 (Anarchie) startet separat später. "
-                    "JSON mit den finalen Medien-IDs."
+                    f"Du bist {CLAUDE_LABEL}. Fasst die finale Einigung zusammen (sinngemäß: "
+                    "«Dann einigen wir uns …»). 2–3 Stichwort-Stimmungs-Paare nochmals kurz. "
+                    "Erkläre, dass der Stücktext jetzt aufgeführt wird — die Regie startet mit Play. "
+                    "Optional JSON-Fallback am Ende."
                 ),
                 include_json_hint=True,
-                media_package=True,
             )
-            final_lists = _validate_or_fallback(_parse_media_json(final_raw) or merged)
-            self._record_turn(discussion_lines, discussion_turns, speaker="anthropic", raw=final_raw)
+            final_spoken = self._record_turn(
+                discussion_lines, discussion_turns, speaker="anthropic", raw=final_raw
+            )
+            final_lists = _validate_or_fallback(
+                build_selection_from_discussion(
+                    discussion_turns,
+                    beat.text,
+                    json_fallback=_parse_media_json(final_raw) or merged,
+                )
+            )
             yield await self._discussion_event(
                 beat=beat,
                 speaker="anthropic",
-                raw=final_raw,
+                spoken=final_spoken,
                 discussion_turns=discussion_turns,
                 workshop_phase="claude_handoff",
                 media_selection=final_lists,
@@ -521,7 +526,7 @@ class Part1WorkshopService:
                 final_videos=final_lists.videos,
                 final_lights=final_lists.lights,
                 dramaturgical_reading=spoken_discussion_text(final_raw)[:500],
-                cue_strategy="Teil 1 — Gesamttext; Sounddesign: play/fade/layer aus Dramaturgen-Repertoire",
+                cue_strategy="Teil 1 — Gesamttext; Stichwort-Cues aus Dramaturgen-Stimmungen",
                 discussion_turns=discussion_turns,
                 created_at=datetime.now(UTC),
             )

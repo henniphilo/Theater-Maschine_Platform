@@ -6,9 +6,7 @@ from app.director.outputs.osc_commands import build_osc_commands, send_osc_comma
 from app.director.outputs.pixera import PixeraBridge
 from app.director.media.video_inventory import (
     load_video_cues_from_csv,
-    parse_osc_befehlliste,
     parse_osc_befehlliste_files,
-    resolve_osc_befehlliste_path,
     resolve_osc_befehlliste_paths_for_scope,
     resolve_video_overview_paths,
 )
@@ -49,6 +47,15 @@ def test_osc_befehlliste_matches_video_overview() -> None:
         assert service.pixera_cue_name(output_id, clip_id) == f"{prefix}.{clip_name}"
 
 
+def test_led_projector_in_part2_osc_availability() -> None:
+    from app.services.video_scope import osc_availability_by_clip
+
+    avail = osc_availability_by_clip("part2")
+    assert "led" in avail.get("nicolas", set())
+    assert "led" in avail.get("clyde", set())
+    assert "led" in avail.get("black", set())
+
+
 def test_pixera_cue_name_mapping() -> None:
     service = get_video_cue_catalog_service()
     assert service.pixera_cue_name("rz21", "clyde") == "KI_RZ21.Clyde"
@@ -83,6 +90,8 @@ def test_pixera_bridge_sends_apply(mock_client_cls: MagicMock) -> None:
 
 
 def test_send_osc_commands_routes_pixera() -> None:
+    from app.services.video_scope import osc_availability_by_clip
+
     pixera = MagicMock()
     commands = build_osc_commands(
         DramaturgyDecision(visual=VisualCue(action=VisualAction.PLAY_CLIP, clip_id="clyde")),
@@ -90,7 +99,8 @@ def test_send_osc_commands_routes_pixera() -> None:
     )
     assert commands
     pixera_cmds = [c for c in commands if c.bridge == "pixera"]
-    assert len(pixera_cmds) == 4
+    expected_outputs = len(osc_availability_by_clip("part2").get("clyde", set()))
+    assert len(pixera_cmds) == expected_outputs
     sent = send_osc_commands(
         commands,
         {
@@ -101,4 +111,4 @@ def test_send_osc_commands_routes_pixera() -> None:
         },
     )
     assert sent == commands
-    assert pixera.apply_cue.call_count == 4
+    assert pixera.apply_cue.call_count == expected_outputs

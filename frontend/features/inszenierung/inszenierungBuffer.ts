@@ -145,6 +145,10 @@ export function bufferStatusLabel(s: InszenierungBufferState): string {
 export function momentSpeechLabel(moment: CompositionMoment): string {
   const mode = moment.speech_mode ?? "tts";
   if (mode === "avatar_video") {
+    if (moment.avatar_layers && moment.avatar_layers.length > 1) {
+      const ids = moment.avatar_layers.map((l) => l.avatar_speech_id).join(", ");
+      return `Chorus ${ids}`;
+    }
     return moment.avatar_speech_id ? `Avatar ${moment.avatar_speech_id}` : "Avatar-Video";
   }
   if (mode === "silent") return "Stumm";

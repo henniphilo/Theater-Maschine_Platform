@@ -2,6 +2,36 @@ import type { DramaturgyDecision, OscCommand } from "@/lib/types/director";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api/v1";
 
+let performanceOscAbort: AbortController | null = null;
+
+export function isDirectorPerformanceAborted(): boolean {
+  return performanceOscAbort?.signal.aborted ?? false;
+}
+
+/** Re-enable director outputs and reset abort handle before a performance run. */
+export function armDirectorForPerformance(): void {
+  performanceOscAbort?.abort();
+  performanceOscAbort = new AbortController();
+  void postDirectorEmergencyClear().catch(() => undefined);
+  void patchDirectorSafety({
+    autopilot_enabled: true,
+    visuals_enabled: true,
+    sound_enabled: true,
+    lights_enabled: true
+  }).catch(() => undefined);
+}
+
+/** Cancel in-flight cue requests and block further OSC during performance stop. */
+export function stopDirectorPerformance(): void {
+  performanceOscAbort?.abort();
+  performanceOscAbort = null;
+  void postDirectorEmergencyStop().catch(() => undefined);
+}
+
+function directorPerformanceSignal(): AbortSignal | undefined {
+  return performanceOscAbort?.signal;
+}
+
 export type DirectorSafety = {
   autopilot_enabled: boolean;
   visuals_enabled: boolean;
@@ -277,7 +307,8 @@ export async function postDirectorExecute(
       decision,
       force: options?.force ?? false,
       stagger: options?.stagger ?? true
-    })
+    }),
+    signal: directorPerformanceSignal()
   });
   if (!res.ok) throw new Error("Director execute failed");
   return res.json();
@@ -290,6 +321,7 @@ export async function postDirectorExecuteLayered(
     stack?: boolean;
     skip_interval_check?: boolean;
     stagger?: boolean;
+    text_excerpt?: string;
   }
 ): Promise<ExecuteResponse> {
   const res = await fetch(`${API_BASE}/director/execute-layered`, {
@@ -300,8 +332,10 @@ export async function postDirectorExecuteLayered(
       anarchy_level: options?.anarchy_level ?? 0.5,
       stack: options?.stack ?? true,
       skip_interval_check: options?.skip_interval_check ?? true,
-      stagger: options?.stagger ?? false
-    })
+      stagger: options?.stagger ?? false,
+      text_excerpt: options?.text_excerpt
+    }),
+    signal: directorPerformanceSignal()
   });
   if (!res.ok) throw new Error("Director layered execute failed");
   return res.json();

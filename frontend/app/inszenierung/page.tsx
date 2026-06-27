@@ -4,28 +4,18 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { AppNav } from "@/components/layout/AppNav";
-import {
-  addScene,
-  addScenesBatch,
-  createCorpus,
-  deleteScene,
-  fetchCorpus,
-  uploadSceneFiles
-} from "@/lib/api/inszenierung";
-import type { AnimalScene, SceneCorpus } from "@/lib/types/inszenierung";
+import { createCorpus, fetchCorpus, fetchScript } from "@/lib/api/inszenierung";
+import type { SceneCorpus, ScriptBeatPreview, Teil2ScriptResponse } from "@/lib/types/inszenierung";
 
 export default function InszenierungPage() {
   const [corpus, setCorpus] = useState<SceneCorpus | null>(null);
-  const [title, setTitle] = useState("Unter Tieren — Geld");
-  const [animal, setAnimal] = useState("");
-  const [sceneTitle, setSceneTitle] = useState("");
-  const [sourceText, setSourceText] = useState("");
-  const [batchJson, setBatchJson] = useState("");
-  const [uploading, setUploading] = useState(false);
+  const [script, setScript] = useState<Teil2ScriptResponse | null>(null);
+  const [title, setTitle] = useState("AVATAR Text Delfin bis Wolf");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    void fetchScript().then(setScript).catch(() => setError("Skript konnte nicht geladen werden"));
     const id = sessionStorage.getItem("currentCorpusId");
     if (id) {
       void fetchCorpus(id).then(setCorpus).catch(() => sessionStorage.removeItem("currentCorpusId"));
@@ -46,62 +36,7 @@ export default function InszenierungPage() {
     }
   }
 
-  async function handleAddScene() {
-    if (!corpus || !animal.trim() || !sourceText.trim()) return;
-    setError("");
-    try {
-      const updated = await addScene(corpus.id, {
-        animal: animal.trim(),
-        title: sceneTitle.trim(),
-        source_text: sourceText.trim()
-      });
-      setCorpus(updated);
-      setAnimal("");
-      setSceneTitle("");
-      setSourceText("");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Fehler");
-    }
-  }
-
-  async function handleUpload(files: FileList | null) {
-    if (!corpus || !files || files.length === 0) return;
-    setError("");
-    setUploading(true);
-    try {
-      const updated = await uploadSceneFiles(corpus.id, Array.from(files));
-      setCorpus(updated);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload fehlgeschlagen");
-    } finally {
-      setUploading(false);
-    }
-  }
-
-  async function handleBatch() {
-    if (!corpus || !batchJson.trim()) return;
-    setError("");
-    try {
-      const scenes = JSON.parse(batchJson) as {
-        animal: string;
-        title?: string;
-        source_text: string;
-      }[];
-      const updated = await addScenesBatch(corpus.id, scenes);
-      setCorpus(updated);
-      setBatchJson("");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Batch-JSON ungültig");
-    }
-  }
-
-  async function handleDelete(scene: AnimalScene) {
-    if (!corpus) return;
-    const updated = await deleteScene(corpus.id, scene.id);
-    setCorpus(updated);
-  }
-
-  const canAnalyse = corpus && corpus.scenes.length > 0;
+  const canAnalyse = Boolean(corpus?.script_text);
   const canKomposition = corpus?.gesamtkonzept?.thesis;
   const canShow = corpus?.composition?.moments?.length;
 
@@ -112,8 +47,8 @@ export default function InszenierungPage() {
         <AppNav />
       </div>
       <p className="textMuted">
-        Jelinek «Unter Tieren»: mehrere Tier-Szenen über Geld importieren, KI-Analyse, Komposition, anarchische
-        Aufführung.
+        Fester Skriptablauf «AVATAR Text Delfin bis Wolf»: Avatar-CSV steuert Sprechtexte und Beamer, parallel
+        eskalieren Sound, Video und Licht.
       </p>
 
       {!corpus ? (
@@ -126,115 +61,52 @@ export default function InszenierungPage() {
           </button>
         </section>
       ) : (
+        <section className="card col">
+          <h2>{corpus.title}</h2>
+          <p className="textMuted">
+            Status: {corpus.status}
+            {script ? ` · ${script.beat_count} Beats` : ""}
+          </p>
+          <div className="row" style={{ gap: "0.5rem", flexWrap: "wrap" }}>
+            {canAnalyse ? (
+              <Link className="machineStartBtn" href={`/inszenierung/analyse?id=${corpus.id}`}>
+                Analyse →
+              </Link>
+            ) : null}
+            {canKomposition ? (
+              <Link className="machineStartBtn" href={`/inszenierung/komposition?id=${corpus.id}`}>
+                Komposition →
+              </Link>
+            ) : null}
+            {canShow ? (
+              <Link className="machineStartBtn" href={`/inszenierung/auffuehrung?id=${corpus.id}`}>
+                Aufführung →
+              </Link>
+            ) : null}
+          </div>
+        </section>
+      )}
+
+      {script ? (
         <>
           <section className="card col">
-            <h2>{corpus.title}</h2>
+            <h2>Skriptablauf</h2>
             <p className="textMuted">
-              Status: {corpus.status} · {corpus.scenes.length} Szenen
+              Quelle: Textzuordnung Del-Wolf · Timeline aus Avatar Textzuordnung.csv · OSC 2026-06-27
             </p>
-            <div className="row" style={{ gap: "0.5rem", flexWrap: "wrap" }}>
-              {canAnalyse ? (
-                <Link className="machineStartBtn" href={`/inszenierung/analyse?id=${corpus.id}`}>
-                  Analyse →
-                </Link>
-              ) : null}
-              {canKomposition ? (
-                <Link className="machineStartBtn" href={`/inszenierung/komposition?id=${corpus.id}`}>
-                  Komposition →
-                </Link>
-              ) : null}
-              {canShow ? (
-                <Link className="machineStartBtn" href={`/inszenierung/auffuehrung?id=${corpus.id}`}>
-                  Aufführung →
-                </Link>
-              ) : null}
-            </div>
+            {script.validation_warnings.length > 0 ? (
+              <p className="textError" role="alert">
+                {script.validation_warnings.length} Abweichung(en) zwischen CSV und Skripttext
+              </p>
+            ) : null}
           </section>
 
           <section className="card col">
-            <h2>Szene hinzufügen</h2>
-            <label htmlFor="animal">Tier</label>
-            <input id="animal" value={animal} onChange={(e) => setAnimal(e.target.value)} placeholder="z. B. Bär" />
-            <label htmlFor="scene-title">Szentitel</label>
-            <input
-              id="scene-title"
-              value={sceneTitle}
-              onChange={(e) => setSceneTitle(e.target.value)}
-              placeholder="z. B. Szene 20: Der Bärenklau"
-            />
-            <label htmlFor="scene-text">Text</label>
-            <textarea
-              id="scene-text"
-              rows={8}
-              value={sourceText}
-              onChange={(e) => setSourceText(e.target.value)}
-              placeholder="Auszug aus Unter Tieren — Tier spricht über Geld …"
-            />
-            <button type="button" onClick={() => void handleAddScene()} disabled={!animal.trim() || !sourceText.trim()}>
-              Szene speichern
-            </button>
-          </section>
-
-          <section className="card col">
-            <h2>Dateien hochladen</h2>
-            <p className="textMuted">
-              Mehrere <code>.txt</code>- oder <code>.json</code>-Dateien auf einmal — je Datei eine Szene, oder eine
-              Datei mit mehreren Blöcken getrennt durch <code>---</code>.
-            </p>
-            <input
-              type="file"
-              multiple
-              accept=".txt,.json,text/plain,application/json"
-              disabled={uploading}
-              onChange={(e) => void handleUpload(e.target.files)}
-            />
-            {uploading ? <p className="textMuted">Importiere …</p> : null}
-          </section>
-
-          <section className="card col">
-            <h2>Batch-Import (JSON einfügen)</h2>
-            <p className="textMuted">
-              Alternative ohne Datei-Upload: JSON-Array direkt einfügen (Format in{" "}
-              <code>docs/teil2_inszenierung.md</code> im Projektordner).
-            </p>
-            <textarea
-              rows={6}
-              value={batchJson}
-              onChange={(e) => setBatchJson(e.target.value)}
-              placeholder={'[{"animal":"Bär","title":"Szene 1","source_text":"…"}]'}
-            />
-            <button type="button" onClick={() => void handleBatch()} disabled={!batchJson.trim()}>
-              Batch importieren
-            </button>
-          </section>
-
-          <section className="card col">
-            <h2>Szenen</h2>
-            {corpus.scenes.length === 0 ? (
-              <p className="textFaint">Noch keine Szenen.</p>
-            ) : (
-              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                {corpus.scenes.map((scene) => (
-                  <li key={scene.id} className="card" style={{ marginBottom: "0.5rem", padding: "0.75rem" }}>
-                    <strong>{scene.animal}</strong>
-                    {scene.title ? ` — ${scene.title}` : ""}
-                    <span className="textMuted" style={{ marginLeft: "0.5rem" }}>
-                      ({scene.source_text.length} Zeichen)
-                    </span>
-                    <button
-                      type="button"
-                      style={{ marginLeft: "0.75rem" }}
-                      onClick={() => void handleDelete(scene)}
-                    >
-                      Entfernen
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <h2>Beat-Vorschau ({script.beats_preview.length})</h2>
+            <BeatList beats={script.beats_preview} />
           </section>
         </>
-      )}
+      ) : null}
 
       {error ? (
         <div className="textError" role="alert">
@@ -242,5 +114,27 @@ export default function InszenierungPage() {
         </div>
       ) : null}
     </main>
+  );
+}
+
+function BeatList({ beats }: { beats: ScriptBeatPreview[] }) {
+  if (beats.length === 0) return <p className="textFaint">Keine Beats.</p>;
+  return (
+    <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+      {beats.map((beat) => (
+        <li key={beat.order} className="card" style={{ marginBottom: "0.5rem", padding: "0.75rem" }}>
+          <strong>
+            #{beat.order + 1}
+            {beat.is_chorus ? " · Chorus" : ""}
+          </strong>
+          <span className="textMuted" style={{ marginLeft: "0.5rem" }}>
+            {beat.avatars.join(", ")} ({beat.avatar_ids.join(", ")})
+          </span>
+          <p style={{ margin: "0.35rem 0 0", fontStyle: "italic" }}>
+            {beat.text.length > 160 ? `${beat.text.slice(0, 160)}…` : beat.text}
+          </p>
+        </li>
+      ))}
+    </ul>
   );
 }

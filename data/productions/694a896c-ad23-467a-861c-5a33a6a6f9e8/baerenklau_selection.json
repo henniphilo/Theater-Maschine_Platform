@@ -1,0 +1,111 @@
+{
+  "part": 1,
+  "scene": "Bärenklau",
+  "script_id": "694a896c-ad23-467a-861c-5a33a6a6f9e8",
+  "beat_id": "5856e81e-ed23-4f92-9550-22b458dc5174",
+  "selected_by": [
+    "Claude",
+    "ChatGPT"
+  ],
+  "final_sounds": [
+    "maschinen_grundader",
+    "leere_zwischen_saetzen",
+    "unter_tiere_chor",
+    "archiv_rauschen",
+    "erinnerungsglitch",
+    "herz_unter_glas",
+    "kaefigecho",
+    "metallseufzer",
+    "stallluft_digital"
+  ],
+  "final_music": [
+    "maschinen_grundader"
+  ],
+  "final_videos": [
+    "clyde",
+    "black",
+    "kaefer",
+    "avatar",
+    "avatar2",
+    "bonnie",
+    "esel"
+  ],
+  "final_lights": [
+    "buehne_kalt_hart",
+    "warme_buehnenflaeche",
+    "blendung_magenta",
+    "blendung_zuschauerraum",
+    "fluegel",
+    "gegenlicht_weich",
+    "klavier",
+    "lautsprecher_buehne"
+  ],
+  "dramaturgical_reading": "**Claude:** Dann einigen wir uns: «wir werden alle von Pflanzen ersetzt werden» — organisch-kalt, wurzelnd, ohne Wärme. «niemand hat es je gewußt» — brüchige Stille, Licht zieht sich zusammen. «Ist das alles das alles denn wert?» — Blackout, totale Reduktion. Der Text ist bereit. Regie: Play.",
+  "cue_strategy": "Teil 1 — Gesamttext; Stichwort-Cues aus Dramaturgen-Stimmungen",
+  "discussion_turns": [
+    {
+      "speaker": "anthropic",
+      "content": "Claude: Jelinek treibt hier die Warenlogik bis ins Absurde: Der Mensch ist „leicht verderblich\", der Arbeiter weiß selbst nicht, was er will — und am Ende hängt alles an der Frage „Ist das alles das alles denn wert?\" Der Text oszilliert zwischen ökonomischer Kälte und zynischem Witz, zwischen Klassenkampf-Analyse und totalem Erkenntniszusammenbruch. Die Grundstimmung: maschinell, zermürbend, leise grotesk.",
+      "proposed_decision": null,
+      "media_mentions": []
+    },
+    {
+      "speaker": "openai",
+      "content": "Beim Stichwort «Wenn beide, Produzenten wie Arbeiter, zusätzliche Kaufkraft wollen...»: Das hinterlässt ein Gefühl der Verzweiflung und Überforderung, verstärkt durch den ironischen Grundton (Sound).",
+      "proposed_decision": null,
+      "media_mentions": [
+        {
+          "medium": "sound",
+          "media_id": "maschinen_grundader",
+          "keyword": "Wenn beide, Produzenten wie Arbeiter, zusätzliche Kaufkraft wollen...",
+          "char_offset": 0
+        }
+      ]
+    },
+    {
+      "speaker": "anthropic",
+      "content": "Claude: Drei Stimmungsvorschläge für den Gesamttext:\nBeim Stichwort «wir werden alle von Pflanzen ersetzt werden»: grünlich-kalt, gleichmäßig, ohne Wärme (Licht).\nBeim Stichwort «Ist das alles das alles denn wert?»: abrupter Schnitt, Stille (Sound).\nBeim Stichwort «niemand hat es je gewußt»: leises (Sound).",
+      "proposed_decision": null,
+      "media_mentions": [
+        {
+          "medium": "light",
+          "media_id": "buehne_kalt_hart",
+          "keyword": "wir werden alle von Pflanzen ersetzt werden",
+          "char_offset": 53
+        },
+        {
+          "medium": "sound",
+          "media_id": "leere_zwischen_saetzen",
+          "keyword": "Ist das alles das alles denn wert?",
+          "char_offset": 163
+        },
+        {
+          "medium": "sound",
+          "media_id": "leere_zwischen_saetzen",
+          "keyword": "niemand hat es je gewußt",
+          "char_offset": 250
+        }
+      ]
+    },
+    {
+      "speaker": "openai",
+      "content": "«wir werden alle von Pflanzen ersetzt werden» — Ich stimme deinem Vorschlag zu, aber würde das Licht mit flüchtigen Schatten von Blättern beleben, das ein Gefühl der unaufhaltsamen Natur erzeugt.\n\n«Ist das alles das alles denn wert?» — Perfekt! Der abrupte Schnitt lässt die Frage wie einen dunklen Abgrund wirken.",
+      "proposed_decision": null,
+      "media_mentions": []
+    },
+    {
+      "speaker": "anthropic",
+      "content": "Beim Stichwort «wir werden alle von Pflanzen ersetzt werden»: organisch-kalt, wurzelnd, ohne Wärme. «niemand hat es je gewußt» — brüchige Stille, Licht zieht sich zusammen. «Ist das alles das alles denn wert?» — Blackout, totale Reduktion. Der Text ist bereit. Regie: Play (Sound).",
+      "proposed_decision": null,
+      "media_mentions": [
+        {
+          "medium": "sound",
+          "media_id": "leere_zwischen_saetzen",
+          "keyword": "wir werden alle von Pflanzen ersetzt werden",
+          "char_offset": 0
+        }
+      ]
+    }
+  ],
+  "created_at": "2026-06-27T08:43:08.144659Z"
+}

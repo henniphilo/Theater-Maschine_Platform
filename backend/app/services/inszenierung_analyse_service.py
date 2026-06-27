@@ -14,6 +14,11 @@ from app.schemas.inszenierung import (
     SceneCorpus,
 )
 from app.services.ai_service import AIService
+from app.services.teil2_script_service import (
+    animal_sections_from_script,
+    load_canonical_script_text,
+    script_digest_for_analyse,
+)
 
 EventType = Literal["thinking", "discussion_turn", "gesamtkonzept", "error", "done"]
 
@@ -27,17 +32,11 @@ class AnalyseEvent:
     detail: str | None = None
 
 
-def _scene_digest(corpus: SceneCorpus, max_chars: int = 12000) -> str:
-    parts: list[str] = []
-    for scene in corpus.scenes:
-        text = scene.source_text.strip()
-        if len(text) > 900:
-            text = text[:900] + "…"
-        parts.append(
-            f"[{scene.id}] Tier: {scene.animal} | Titel: {scene.title or '—'}\n{text}"
-        )
-    joined = "\n\n---\n\n".join(parts)
-    return joined[:max_chars]
+def _script_digest(corpus: SceneCorpus, max_chars: int = 12000) -> str:
+    if corpus.script_text:
+        text = corpus.script_text.strip()
+        return text[:max_chars] + ("…" if len(text) > max_chars else "")
+    return script_digest_for_analyse(max_chars=max_chars)
 
 
 class InszenierungAnalyseService:
@@ -62,13 +61,13 @@ class InszenierungAnalyseService:
         openai_model: str,
         anthropic_model: str,
     ) -> AsyncIterator[AnalyseEvent]:
-        if not corpus.scenes:
-            yield AnalyseEvent(type="error", detail="Keine Szenen im Korpus")
+        if not corpus.script_text and not corpus.scenes:
+            yield AnalyseEvent(type="error", detail="Kein Skripttext im Korpus")
             return
         self._validate_providers()
 
         rules = dramaturgy_rules_excerpt(max_chars=settings.dramaturgy_rules_excerpt_chars)
-        digest = _scene_digest(corpus)
+        digest = _script_digest(corpus)
         discussion: list[str] = []
 
         for role, model, label in (
@@ -77,17 +76,19 @@ class InszenierungAnalyseService:
         ):
             yield AnalyseEvent(type="thinking", speaker=role)
             prompt = (
-                f"Korpus: {corpus.title}\n"
-                f"Szenen aus Elfriede Jelinek «Unter Tieren» — Tiere sprechen über Geld.\n\n"
+                f"Skript: {corpus.title}\n"
+                f"Fester Textablauf «AVATAR Text Delfin bis Wolf» — Avatar-Sprechtexte über Geld.\n\n"
                 f"{digest}\n\n"
                 f"Bisherige Diskussion:\n{chr(10).join(discussion) or '(keine)'}\n\n"
-                f"Du bist {label}. Beziehe dich auf konkrete Textstellen und Tiere. "
+                f"Du bist {label}. Beziehe dich auf konkrete Textstellen und Figuren "
+                f"(Delphin, Bärenklau, Lamm, Petya, Wolf). "
                 f"Keine Illustration — Entlarven, Überlagern, Widersprechen. "
                 f"Maximal {settings.dramaturgy_statement_max_chars} Zeichen."
             )
             system = (
                 "Ihr seid zwei Dramaturgen für eine KI-Inszenierung (Teil 2). "
-                "Ziel: ein Gesamtkonzept über alle Szenen — Geld als Thema, Tier-Positionen, Querverbindungen.\n\n"
+                "Ziel: ein Gesamtkonzept über den Avatar-Skriptablauf — Geld als Thema, "
+                "Tier-Positionen, Querverbindungen.\n\n"
                 f"=== REGELWERK ===\n{rules}"
             )
             raw = await self.ai.generate(
@@ -105,12 +106,12 @@ class InszenierungAnalyseService:
 
         yield AnalyseEvent(type="thinking", speaker="openai")
         concept_prompt = (
-            f"Korpus: {corpus.title}\n\nSzenen:\n{digest}\n\n"
+            f"Skript: {corpus.title}\n\nTextablauf:\n{digest}\n\n"
             f"Dramaturgie-Diskussion:\n{chr(10).join(discussion)}\n\n"
             "Erstelle das Gesamtkonzept als JSON:\n"
             '{"thesis":"...","money_themes":["..."],"animal_positions":[{"animal":"...","stance":"...","money_angle":"..."}],'
-            '"cross_scene_links":[{"label":"...","scene_ids":["uuid"],"note":"..."}],'
-            '"anarchy_curve":{"start":0.2,"end":0.95},"discussion_summary":"..."}'
+            '"cross_scene_links":[{"label":"...","scene_ids":["avatar"],"note":"..."}],'
+            '"anarchy_curve":{"start":0.35,"end":1.0},"discussion_summary":"..."}'
         )
         raw_json = await self.ai.generate(
             "openai",
@@ -145,25 +146,35 @@ class InszenierungAnalyseService:
             data = json.loads(cleaned)
             return Gesamtkonzept.model_validate(data)
         except (json.JSONDecodeError, ValueError):
+            script_text = corpus.script_text or load_canonical_script_text()
+            sections = animal_sections_from_script(script_text)
             animals = [
                 AnimalPosition(
-                    animal=s.animal,
-                    stance="im Korpus",
+                    animal=name,
+                    stance="im Avatar-Skript",
                     money_angle="Geld / Ökonomie",
                 )
-                for s in corpus.scenes
+                for name, _ in sections
             ]
+            if not animals:
+                animals = [
+                    AnimalPosition(
+                        animal="Avatar-Figuren",
+                        stance="im Skript",
+                        money_angle="Geld / Ökonomie",
+                    )
+                ]
             return Gesamtkonzept(
                 thesis="Geld erscheint bei den Tieren als Austauschlogik, Schuldzuweisung und Sprachmaske.",
-                money_themes=["Austausch", "Schuld", "Wert", "Klassenkampf"],
+                money_themes=["Austausch", "Schuld", "Wert", "Rendite"],
                 animal_positions=animals,
                 cross_scene_links=[
                     CrossSceneLink(
                         label="Geld-Klammer",
-                        scene_ids=[s.id for s in corpus.scenes[:3]],
-                        note="Querverweis über alle Tier-Szenen",
+                        scene_ids=["avatar-delfin-wolf"],
+                        note="Querverweis über den Avatar-Skriptablauf",
                     )
                 ],
-                anarchy_curve=AnarchyCurve(start=0.2, end=0.95),
+                anarchy_curve=AnarchyCurve(start=0.35, end=1.0),
                 discussion_summary="\n".join(discussion),
             )

@@ -1,0 +1,3386 @@
+{
+  "format_version": 1,
+  "exported_at": "2026-06-26T09:59:27.241570Z",
+  "tts_provider": "say",
+  "script": {
+    "id": "082768a9-0f5e-457b-9438-1c3fcb10e9e8",
+    "title": "Elfride Jelinek Unter Tieren",
+    "source_text": "20. Der Bärenklau\n \n– wir werden alle von Pflanzen ersetzt werden,\nweil die billiger in der Anschaffung und im Betrieb sind\nund keine Widerworte geben –,\nDa der Mensch, ja, sagen wir so,\nalso dermaßen leicht verderblich geworden ist,\nohne daß dem Tier stattdessen eine kleine Chance gegeben wird,\nauch ein bißchen was zu verdienen\n \nda wir also gar kein Geld haben,\nmüssen wir uns leider wieder dem Produzenten der Waren zuwenden,\nwelcher jede Ware an der eines andren messen muß,\n \ndie Produkte stehen sich gegenüber und knurren einander an.\n \n\n Was aber, wenn die Preissteigerungen so hoch sind,\ndaß keiner die Waren mehr kaufen kann?\n \nWenn beide,\nProduzenten wie Arbeiter,\nzusätzliche Kaufkraft wollen,\ndann stehen ihre Interessen ja denen der Gläubigerklasse entgegen, oder?\n \nDie Kreditkapazitäten, also die Geldmengen ausweiten?\nIch weiß nicht, was das bringen soll.\nIch weiß nur, daß das viel bringt,\naber vielleicht nicht grade den erwünschten Effekt bei den Effekten.\nHandeln Sie jetzt rasch!\n \nEin Konflikt zwischen Schuldnern und Schöpfern? Das klingt ernst.\nZu hoch für mich,\nund ich bin schon gern hochtönend,\n \nIst das etwa ein Konflikt zwischen den Anlegern,\ndie an hohen Zinsen und stabilen Preisen interessiert sind,\nund den auf Kredite und Finanzierungen angewiesenen Unternehmen\nund in der Folge auch deren Arbeitern,\ndie ihre Arbeitskraft,\ndas einzige wirklich gute Gut, das sie haben,\nsofort in Konsum umsetzen wollen?\n \nIst das der wahre Klassenkampf?\nZwischen den Banken,\ndie den Unternehmen ihre Kredite aufdrängen wollen,\nund den Arbeitern,\ndie auch irgendwas wollen, ich weiß es nicht,\nich weiß nicht, was der Arbeiter will,\nniemand hat es je gewußt.\n \nEr sagt es zwar dauernd,\nvon Lohnrunde zu Lohnrunde mehr,\naber immer weniger mehr.\nKriegen tut er dann etwas mehr als weniger.\n \nIch weiß es trotzdem immer noch nicht,\nwollte er sich auf mich setzen,\nkönnte er gleich ins Casino gehen,\nwo sie ihn aber wahrscheinlich gar nicht hineinlassen,\nauch nicht in seinem neuen Anzug.\n \nDann muß er auf der Ersatzbank im Wartesaal sitzenbleiben,\nimmer noch der Meinung, er wäre unersetzlich.\n \nWäre er das,\nhätte er ja was gelernt und müßte nur noch warten,\ndaß ihn wer in eine richtige Bank holt und dann von dort wieder abholt,\nam liebsten ein viel versprechender Politiker,\nder sich den Arbeiter an Stelle seiner Versprechungen als Dienstboten hält.\n \nWahrscheinlich will der Arbeiter auch bloß einen Kredit bekommen,\ndoch was ist das Geld überhaupt wert?\nIst das Geld denn das alles wert?\nIst das alles das alles denn wert?",
+    "beats": [
+      {
+        "id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+        "order": 0,
+        "text": "20. Der Bärenklau\n \n– wir werden alle von Pflanzen ersetzt werden,\nweil die billiger in der Anschaffung und im Betrieb sind\nund keine Widerworte geben –,\nDa der Mensch, ja, sagen wir so,\nalso dermaßen leicht verderblich geworden ist,\nohne daß dem Tier stattdessen eine kleine Chance gegeben wird,\nauch ein bißchen was zu verdienen\n \nda wir also gar kein Geld haben,\nmüssen wir uns leider wieder dem Produzenten der Waren zuwenden,\nwelcher jede Ware an der eines andren messen muß,\n \ndie Produkte stehen sich gegenüber und knurren einander an.\n \n\n Was aber, wenn die Preissteigerungen so hoch sind,\ndaß keiner die Waren mehr kaufen kann?\n \nWenn beide,\nProduzenten wie Arbeiter,\nzusätzliche Kaufkraft wollen,\ndann stehen ihre Interessen ja denen der Gläubigerklasse entgegen, oder?\n \nDie Kreditkapazitäten, also die Geldmengen ausweiten?\nIch weiß nicht, was das bringen soll.\nIch weiß nur, daß das viel bringt,\naber vielleicht nicht grade den erwünschten Effekt bei den Effekten.\nHandeln Sie jetzt rasch!\n \nEin Konflikt zwischen Schuldnern und Schöpfern? Das klingt ernst.\nZu hoch für mich,\nund ich bin schon gern hochtönend,\n \nIst das etwa ein Konflikt zwischen den Anlegern,\ndie an hohen Zinsen und stabilen Preisen interessiert sind,\nund den auf Kredite und Finanzierungen angewiesenen Unternehmen\nund in der Folge auch deren Arbeitern,\ndie ihre Arbeitskraft,\ndas einzige wirklich gute Gut, das sie haben,\nsofort in Konsum umsetzen wollen?\n \nIst das der wahre Klassenkampf?\nZwischen den Banken,\ndie den Unternehmen ihre Kredite aufdrängen wollen,\nund den Arbeitern,\ndie auch irgendwas wollen, ich weiß es nicht,\nich weiß nicht, was der Arbeiter will,\nniemand hat es je gewußt.\n \nEr sagt es zwar dauernd,\nvon Lohnrunde zu Lohnrunde mehr,\naber immer weniger mehr.\nKriegen tut er dann etwas mehr als weniger.\n \nIch weiß es trotzdem immer noch nicht,\nwollte er sich auf mich setzen,\nkönnte er gleich ins Casino gehen,\nwo sie ihn aber wahrscheinlich gar nicht hineinlassen,\nauch nicht in seinem neuen Anzug.\n \nDann muß er auf der Ersatzbank im Wartesaal sitzenbleiben,\nimmer noch der Meinung, er wäre unersetzlich.\n \nWäre er das,\nhätte er ja was gelernt und müßte nur noch warten,\ndaß ihn wer in eine richtige Bank holt und dann von dort wieder abholt,\nam liebsten ein viel versprechender Politiker,\nder sich den Arbeiter an Stelle seiner Versprechungen als Dienstboten hält.\n \nWahrscheinlich will der Arbeiter auch bloß einen Kredit bekommen,\ndoch was ist das Geld überhaupt wert?\nIst das Geld denn das alles wert?\nIst das alles das alles denn wert?",
+        "scene_title": null,
+        "speaker": "AI_A",
+        "dramaturgy": {
+          "visual": null,
+          "sound": null,
+          "light": null,
+          "reason": "Dann einigen wir uns auf folgende Variante für den gesamten Text *„Der Bärenklau\"*:\n\n---\n\n---\n\nDer Stücktext *„Der Bärenklau\"* wird jetzt aufgeführt. Teil 2 (Anarchie) startet separat später. Die Regie drückt **Play**, wenn sie bereit ist.",
+          "dramaturgical_reading": "Dann einigen wir uns auf folgende Variante für den gesamten Text *„Der Bärenklau\"*:\n\n---\n\n---\n\nDer Stücktext *„Der Bärenklau\"* wird jetzt aufgeführt. Teil 2 (Anarchie) startet separat später. Die Regie drückt **Play**, wenn sie bereit ist.",
+          "cue_points": [
+            {
+              "trigger": "start",
+              "keyword": null,
+              "sentence_index": null,
+              "time_offset_sec": 0.0,
+              "function": "sounddesign_musik_ein",
+              "intensity": 0.35,
+              "visual": null,
+              "sound": {
+                "action": "trigger_cue",
+                "cue_id": "maschinen_grundader_fade_in",
+                "volume": 0.45
+              },
+              "light": null
+            },
+            {
+              "trigger": "start",
+              "keyword": null,
+              "sentence_index": null,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.2,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "avatar",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": {
+                "action": "trigger_cue",
+                "cue_id": "archiv_rauschen",
+                "volume": 0.52
+              },
+              "light": {
+                "action": "set_scene",
+                "scene_id": "blackout",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.44,
+                "replace_previous": true
+              }
+            },
+            {
+              "trigger": "sentence_end",
+              "keyword": null,
+              "sentence_index": 1,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.2275,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "avatar2",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": {
+                "action": "trigger_cue",
+                "cue_id": "erinnerungsglitch",
+                "volume": 0.68
+              },
+              "light": {
+                "action": "set_scene",
+                "scene_id": "blendung_magenta",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.45,
+                "replace_previous": true
+              }
+            },
+            {
+              "trigger": "sentence_end",
+              "keyword": null,
+              "sentence_index": 2,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.255,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "black",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": {
+                "action": "trigger_cue",
+                "cue_id": "herz_unter_glas",
+                "volume": 0.54
+              },
+              "light": {
+                "action": "set_scene",
+                "scene_id": "blendung_zuschauerraum",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.46,
+                "replace_previous": true
+              }
+            },
+            {
+              "trigger": "sentence_end",
+              "keyword": null,
+              "sentence_index": 3,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.28250000000000003,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "bonnie",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": {
+                "action": "trigger_cue",
+                "cue_id": "kaefigecho",
+                "volume": 0.55
+              },
+              "light": {
+                "action": "set_scene",
+                "scene_id": "buehne_kalt_hart",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.48,
+                "replace_previous": true
+              }
+            },
+            {
+              "trigger": "sentence_end",
+              "keyword": null,
+              "sentence_index": 4,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.31000000000000005,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "clyde",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": {
+                "action": "trigger_cue",
+                "cue_id": "leere_zwischen_saetzen",
+                "volume": 0.56
+              },
+              "light": {
+                "action": "set_scene",
+                "scene_id": "fluegel",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.49,
+                "replace_previous": true
+              }
+            },
+            {
+              "trigger": "sentence_end",
+              "keyword": null,
+              "sentence_index": 5,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.3375,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "esel",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": {
+                "action": "trigger_cue",
+                "cue_id": "maschinen_grundader_fade_in",
+                "volume": 0.57
+              },
+              "light": {
+                "action": "set_scene",
+                "scene_id": "gegenlicht_weich",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.5,
+                "replace_previous": true
+              }
+            },
+            {
+              "trigger": "sentence_end",
+              "keyword": null,
+              "sentence_index": 6,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.365,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "avatar",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": null,
+              "light": {
+                "action": "set_scene",
+                "scene_id": "blackout",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.51,
+                "replace_previous": true
+              }
+            },
+            {
+              "trigger": "sentence_end",
+              "keyword": null,
+              "sentence_index": 7,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.3925,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "avatar2",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": null,
+              "light": {
+                "action": "set_scene",
+                "scene_id": "blendung_magenta",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.53,
+                "replace_previous": true
+              }
+            },
+            {
+              "trigger": "sentence_end",
+              "keyword": null,
+              "sentence_index": 8,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.42000000000000004,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "black",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": null,
+              "light": {
+                "action": "set_scene",
+                "scene_id": "blendung_zuschauerraum",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.54,
+                "replace_previous": true
+              }
+            },
+            {
+              "trigger": "sentence_end",
+              "keyword": null,
+              "sentence_index": 9,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.4475,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "bonnie",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": null,
+              "light": {
+                "action": "set_scene",
+                "scene_id": "buehne_kalt_hart",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.55,
+                "replace_previous": true
+              }
+            },
+            {
+              "trigger": "sentence_end",
+              "keyword": null,
+              "sentence_index": 10,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.47500000000000003,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "clyde",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": null,
+              "light": {
+                "action": "set_scene",
+                "scene_id": "fluegel",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.56,
+                "replace_previous": true
+              }
+            },
+            {
+              "trigger": "sentence_end",
+              "keyword": null,
+              "sentence_index": 11,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.5025000000000001,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "esel",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": null,
+              "light": {
+                "action": "set_scene",
+                "scene_id": "gegenlicht_weich",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.58,
+                "replace_previous": true
+              }
+            },
+            {
+              "trigger": "sentence_end",
+              "keyword": null,
+              "sentence_index": 12,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.53,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "avatar",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": null,
+              "light": {
+                "action": "set_scene",
+                "scene_id": "blackout",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.59,
+                "replace_previous": true
+              }
+            },
+            {
+              "trigger": "sentence_end",
+              "keyword": null,
+              "sentence_index": 13,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.5575000000000001,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "avatar2",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": {
+                "action": "trigger_cue",
+                "cue_id": "maschinen_grundader_fade_in",
+                "volume": 0.65
+              },
+              "light": {
+                "action": "set_scene",
+                "scene_id": "blendung_magenta",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.6,
+                "replace_previous": true
+              }
+            },
+            {
+              "trigger": "sentence_end",
+              "keyword": null,
+              "sentence_index": 14,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.585,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "black",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": null,
+              "light": {
+                "action": "set_scene",
+                "scene_id": "blendung_zuschauerraum",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.61,
+                "replace_previous": true
+              }
+            },
+            {
+              "trigger": "sentence_end",
+              "keyword": null,
+              "sentence_index": 15,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.6125,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "bonnie",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": null,
+              "light": {
+                "action": "set_scene",
+                "scene_id": "buehne_kalt_hart",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.63,
+                "replace_previous": true
+              }
+            },
+            {
+              "trigger": "sentence_end",
+              "keyword": null,
+              "sentence_index": 16,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.6400000000000001,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "clyde",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": null,
+              "light": {
+                "action": "set_scene",
+                "scene_id": "fluegel",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.64,
+                "replace_previous": true
+              }
+            },
+            {
+              "trigger": "sentence_end",
+              "keyword": null,
+              "sentence_index": 17,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.6675,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "esel",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": null,
+              "light": {
+                "action": "set_scene",
+                "scene_id": "gegenlicht_weich",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.65,
+                "replace_previous": true
+              }
+            },
+            {
+              "trigger": "sentence_end",
+              "keyword": null,
+              "sentence_index": 18,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.6950000000000001,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "avatar",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": null,
+              "light": {
+                "action": "set_scene",
+                "scene_id": "blackout",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.66,
+                "replace_previous": true
+              }
+            },
+            {
+              "trigger": "sentence_end",
+              "keyword": null,
+              "sentence_index": 19,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.7224999999999999,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "avatar2",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": null,
+              "light": {
+                "action": "set_scene",
+                "scene_id": "blendung_magenta",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.68,
+                "replace_previous": true
+              }
+            },
+            {
+              "trigger": "sentence_end",
+              "keyword": null,
+              "sentence_index": 20,
+              "time_offset_sec": 0.0,
+              "function": "sounddesign_ausblenden",
+              "intensity": 0.75,
+              "visual": null,
+              "sound": {
+                "action": "trigger_cue",
+                "cue_id": "maschinen_grundader_fade_out",
+                "volume": 0.0
+              },
+              "light": null
+            },
+            {
+              "trigger": "sentence_end",
+              "keyword": null,
+              "sentence_index": 20,
+              "time_offset_sec": 0.0,
+              "function": "verstärken",
+              "intensity": 0.75,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "black",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": {
+                "action": "trigger_cue",
+                "cue_id": "archiv_rauschen",
+                "volume": 0.71
+              },
+              "light": {
+                "action": "set_scene",
+                "scene_id": "blendung_zuschauerraum",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.69,
+                "replace_previous": true
+              }
+            },
+            {
+              "trigger": "keyword",
+              "keyword": "billiger in der Anschaffung und im Betrieb",
+              "sentence_index": null,
+              "time_offset_sec": 0.0,
+              "function": "dramaturg_stichwort",
+              "intensity": 0.55,
+              "visual": null,
+              "sound": {
+                "action": "trigger_cue",
+                "cue_id": "maschinen_grundader_fade_in",
+                "volume": 0.64
+              },
+              "light": null
+            },
+            {
+              "trigger": "keyword",
+              "keyword": "Ist das alles das alles denn wert?",
+              "sentence_index": null,
+              "time_offset_sec": 0.0,
+              "function": "dramaturg_stichwort",
+              "intensity": 0.55,
+              "visual": null,
+              "sound": {
+                "action": "trigger_cue",
+                "cue_id": "leere_zwischen_saetzen",
+                "volume": 0.64
+              },
+              "light": null
+            },
+            {
+              "trigger": "keyword",
+              "keyword": "wir werden alle von Pflanzen ersetzt werden",
+              "sentence_index": null,
+              "time_offset_sec": 0.0,
+              "function": "dramaturg_stichwort",
+              "intensity": 0.55,
+              "visual": {
+                "action": "play_clip",
+                "clip_id": "kaefer",
+                "outputs": [],
+                "recording_id": null,
+                "blend": "slow_fade",
+                "blend_mode": "replace",
+                "opacity": 0.8,
+                "fade_time": 4.0,
+                "video_type": "atmosphere",
+                "projector": null,
+                "duration_ms": null,
+                "text_content_id": null,
+                "lock_until_finished": false,
+                "can_be_interrupted": true
+              },
+              "sound": null,
+              "light": null
+            },
+            {
+              "trigger": "keyword",
+              "keyword": "muß er auf der Ersatzbank im Wartesaal sitzenbleiben",
+              "sentence_index": null,
+              "time_offset_sec": 0.0,
+              "function": "dramaturg_stichwort",
+              "intensity": 0.55,
+              "visual": null,
+              "sound": null,
+              "light": {
+                "action": "set_scene",
+                "scene_id": "saallicht",
+                "scene_ids": [],
+                "fade_time": 4.0,
+                "intensity": 0.5,
+                "replace_previous": true
+              }
+            }
+          ],
+          "performance_speakers": [],
+          "tags": [],
+          "mood": "kontrolliert",
+          "intensity": 0.25,
+          "timestamp": 0.0
+        },
+        "planned_commands": [
+          {
+            "bridge": "sound",
+            "host": "127.0.0.1",
+            "port": 7000,
+            "address": "/sound/trigger",
+            "args": [
+              "maschinen_grundader_fade_in",
+              0.45
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Avatar"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Adam.Avatar"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Eva.Avatar"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_LED.Avatar"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "sound",
+            "host": "127.0.0.1",
+            "port": 7000,
+            "address": "/sound/trigger",
+            "args": [
+              "archiv_rauschen",
+              0.52
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Avatar2"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Adam.Avatar2"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Eva.Avatar2"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_LED.Avatar2"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "sound",
+            "host": "127.0.0.1",
+            "port": 7000,
+            "address": "/sound/trigger",
+            "args": [
+              "erinnerungsglitch",
+              0.68
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/1701",
+            "args": [
+              45.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Black"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Adam.Black"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Eva.Black"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_LED.Black"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "sound",
+            "host": "127.0.0.1",
+            "port": 7000,
+            "address": "/sound/trigger",
+            "args": [
+              "herz_unter_glas",
+              0.54
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/71",
+            "args": [
+              46.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/72",
+            "args": [
+              46.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/73",
+            "args": [
+              46.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/74",
+            "args": [
+              46.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Bonnie"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Adam.Bonnie"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Eva.Bonnie"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_LED.Bonnie"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "sound",
+            "host": "127.0.0.1",
+            "port": 7000,
+            "address": "/sound/trigger",
+            "args": [
+              "kaefigecho",
+              0.55
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/7",
+            "args": [
+              48.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/8",
+            "args": [
+              48.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/9",
+            "args": [
+              48.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Clyde"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Adam.Clyde"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Eva.Clyde"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_LED.Clyde"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "sound",
+            "host": "127.0.0.1",
+            "port": 7000,
+            "address": "/sound/trigger",
+            "args": [
+              "leere_zwischen_saetzen",
+              0.56
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/33",
+            "args": [
+              49.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Esel"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Adam.Esel"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Eva.Esel"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_LED.Esel"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "sound",
+            "host": "127.0.0.1",
+            "port": 7000,
+            "address": "/sound/trigger",
+            "args": [
+              "maschinen_grundader_fade_in",
+              0.57
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/group/13",
+            "args": [
+              50.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/group/23",
+            "args": [
+              50.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Avatar"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Adam.Avatar"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Eva.Avatar"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_LED.Avatar"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Avatar2"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Adam.Avatar2"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Eva.Avatar2"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_LED.Avatar2"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/1701",
+            "args": [
+              53.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Black"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Adam.Black"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Eva.Black"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_LED.Black"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/71",
+            "args": [
+              54.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/72",
+            "args": [
+              54.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/73",
+            "args": [
+              54.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/74",
+            "args": [
+              54.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Bonnie"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Adam.Bonnie"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Eva.Bonnie"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_LED.Bonnie"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/7",
+            "args": [
+              55.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/8",
+            "args": [
+              55.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/9",
+            "args": [
+              55.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Clyde"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Adam.Clyde"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Eva.Clyde"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_LED.Clyde"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/33",
+            "args": [
+              56.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Esel"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Adam.Esel"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Eva.Esel"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_LED.Esel"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/group/13",
+            "args": [
+              58.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/group/23",
+            "args": [
+              58.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Avatar"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Adam.Avatar"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Eva.Avatar"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_LED.Avatar"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Avatar2"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Adam.Avatar2"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Eva.Avatar2"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_LED.Avatar2"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "sound",
+            "host": "127.0.0.1",
+            "port": 7000,
+            "address": "/sound/trigger",
+            "args": [
+              "maschinen_grundader_fade_in",
+              0.65
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/1701",
+            "args": [
+              60.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Black"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Adam.Black"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Eva.Black"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_LED.Black"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/71",
+            "args": [
+              61.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/72",
+            "args": [
+              61.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/73",
+            "args": [
+              61.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/74",
+            "args": [
+              61.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Bonnie"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Adam.Bonnie"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Eva.Bonnie"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_LED.Bonnie"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/7",
+            "args": [
+              63.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/8",
+            "args": [
+              63.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/9",
+            "args": [
+              63.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Clyde"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Adam.Clyde"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Eva.Clyde"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_LED.Clyde"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/33",
+            "args": [
+              64.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Esel"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Adam.Esel"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Eva.Esel"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_LED.Esel"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/group/13",
+            "args": [
+              65.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/group/23",
+            "args": [
+              65.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Avatar"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Adam.Avatar"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Eva.Avatar"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_LED.Avatar"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Avatar2"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Adam.Avatar2"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Eva.Avatar2"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_LED.Avatar2"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/1701",
+            "args": [
+              68.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "sound",
+            "host": "127.0.0.1",
+            "port": 7000,
+            "address": "/sound/trigger",
+            "args": [
+              "maschinen_grundader_fade_out",
+              0.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Black"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Adam.Black"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Eva.Black"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_LED.Black"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "sound",
+            "host": "127.0.0.1",
+            "port": 7000,
+            "address": "/sound/trigger",
+            "args": [
+              "archiv_rauschen",
+              0.71
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/71",
+            "args": [
+              69.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/72",
+            "args": [
+              69.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/73",
+            "args": [
+              69.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/chan/74",
+            "args": [
+              69.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "sound",
+            "host": "127.0.0.1",
+            "port": 7000,
+            "address": "/sound/trigger",
+            "args": [
+              "maschinen_grundader_fade_in",
+              0.64
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "sound",
+            "host": "127.0.0.1",
+            "port": 7000,
+            "address": "/sound/trigger",
+            "args": [
+              "leere_zwischen_saetzen",
+              0.64
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_RZ21.Kaefer"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Adam.Kaefer"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_Eva.Kaefer"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "pixera",
+            "host": "172.27.27.1",
+            "port": 8990,
+            "address": "/pixera/args/cue/apply",
+            "args": [
+              "KI_LED.Kaefer"
+            ],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/key/out",
+            "args": [],
+            "dry_run": true,
+            "mirror": false
+          },
+          {
+            "bridge": "light",
+            "host": "10.101.90.112",
+            "port": 3032,
+            "address": "/eos/group/2",
+            "args": [
+              50.0
+            ],
+            "dry_run": true,
+            "mirror": false
+          }
+        ],
+        "discussion_turns": [
+          {
+            "speaker": "anthropic",
+            "content": "Claude eröffnet:.\nJelinek seziert hier die Warenlogik des Kapitalismus mit eiskalter Ironie — das Tier, der Arbeiter, die Pflanze werden ökonomisch gleichgesetzt: *„weil die billiger in der Anschaffung und im Betrieb sind.\"* Der Text kreist um Austauschbarkeit und Nicht-Wissen: *„Ist das alles das alles denn wert?\"* — eine Frage, die keinen Boden findet. Grundstimmung: bürokratisch, knurrend, existenziell leer.",
+            "proposed_decision": null,
+            "media_mentions": []
+          },
+          {
+            "speaker": "openai",
+            "content": "ChatGPT: Der Text offenbart eine kafkaeske Welt, in der ökonomische Mechanismen ins Absurde führen: „Ein Konflikt zwischen Schuldnern und Schöpfern? Das klingt ernst.“ Hier verschwimmen die Grenzen zwischen Mensch und Ware. Ein tiefes Brummen könnte die beklemmende Unsicherheit verstärken, während flackerndes Licht die instabile Wirklichkeit spiegelt. Video von kalten, anonymen Pflanzenlandschaften könnte die Entfremdung symbolisieren.",
+            "proposed_decision": null,
+            "media_mentions": []
+          },
+          {
+            "speaker": "anthropic",
+            "content": "Claude schlägt das Medienpaket vor:.\nDer Text ist ein maschineller Redeschwall über Austauschbarkeit — Tier, Pflanze, Arbeiter als ökonomische Einheiten. Die Dramaturgie braucht einen kalten Grundton, knurrende Akzente und eine Stille am Ende, die die letzte Frage verhallen lässt.\n---\nSOUNDS.\nSound maschinen grundader. „die Produkte stehen sich gegenüber und knurren einander an\" — Thema: Warenkonflikt als ti.\nSound erinnerungsglitch. „könnte er gleich ins Casino gehen\" — Thema: Glücksspiel-Ökonomie; Akzent wenn der Arbeite.\nSound leere zwischen saetzen. „Ist das alles das alles denn wert?\" — Thema: existenzielle Leere; nach der letzten Frage .\nMUSIK.\nMusik maschinen grundader. Thema: Kälte, Gleichförmigkeit des Systems; hält den gesamten Text in einem schwebenden, u.\n---\nVIDEOS.\nVideo kaefer. „wir werden alle von Pflanzen ersetzt werden\" — Thema: Tier als Ware, unheimliche Biologie.\nVideo macbook. „Die Kreditkapazitäten, also die Geldmengen ausweiten?\" — Thema: digitale Finanzwelt, Bild.\nVideo hundethiel. „die Produkte stehen sich gegenüber und knurren einander an\" — Thema: das Tier im System, .\nVideo black. „Ist das alles das alles denn wert?\" — Thema: Auslöschung, Antwortlosigkeit am Ende.\nVideo random. Thema: Zufallsprinzip als ökonomisches Bild — „könnte er gleich ins Casino gehen\".\n---\nLICHT.\nLicht buehne kalt hart. Grundstimmung: bürokratische Kälte des gesamten Texts.\nLicht blendung zuschauerraum. „Ein Konflikt zwischen Schuldnern und Schöpfern?\" — Thema: Instabilität des Systems.\nLicht saallicht. „muß er auf der Ersatzbank im Wartesaal sitzenbleiben\" — Thema: Einengung, Kontrollverlust.\n- neutral — Rückkehr zur Leere nach Überforderung — Reduzieren als dramaturgische Funktion\n---\n{\n\"sounds\": [\"knurren\", \"casino\", \"maschine\", \"stille\", \"tippen\", \"atem\"],\n\"music\": [\"drone\"],\n\"videos\": [\"kaefer\", \"macbook\", \"hundethiel\", \"black\", \"inge\", \"random\"],\n\"lights\": [\"kalt_blau\", \"verhoer\", \"flicker\", \"eng\", \"ausblende\", \"neutral\"]\n}\n---\nÜbergang: Das Medienpaket steht. Wenn die Regie bereit ist — Play.",
+            "proposed_decision": null,
+            "media_mentions": [
+              {
+                "medium": "sound",
+                "media_id": "maschinen_grundader",
+                "keyword": "Warenkonflikt als tierischer Instinkt; Grundton unter dem gesamten Text",
+                "char_offset": 294
+              },
+              {
+                "medium": "sound",
+                "media_id": "erinnerungsglitch",
+                "keyword": "Glücksspiel-Ökonomie; Akzent wenn der Arbeiter ins Absurde kippt",
+                "char_offset": 413
+              },
+              {
+                "medium": "sound",
+                "media_id": "leere_zwischen_saetzen",
+                "keyword": "existenzielle Leere; nach der letzten Frage schneidet alles ab",
+                "char_offset": 530
+              },
+              {
+                "medium": "music",
+                "media_id": "maschinen_grundader",
+                "keyword": "Kälte, Gleichförmigkeit des Systems; hält den gesamten Text in einem schwebenden",
+                "char_offset": 659
+              },
+              {
+                "medium": "video",
+                "media_id": "kaefer",
+                "keyword": "Tier als Ware, unheimliche Biologie",
+                "char_offset": 790
+              },
+              {
+                "medium": "video",
+                "media_id": "macbook",
+                "keyword": "digitale Finanzwelt, Bildschirm als kalte Oberfläche",
+                "char_offset": 896
+              },
+              {
+                "medium": "video",
+                "media_id": "hundethiel",
+                "keyword": "das Tier im System, unheimlich",
+                "char_offset": 1003
+              },
+              {
+                "medium": "video",
+                "media_id": "black",
+                "keyword": "Auslöschung, Antwortlosigkeit am Ende",
+                "char_offset": 1113
+              },
+              {
+                "medium": "video",
+                "media_id": "random",
+                "keyword": "Zufallsprinzip als ökonomisches Bild — *„könnte er gleich ins Casino gehen\"*",
+                "char_offset": 1211
+              },
+              {
+                "medium": "light",
+                "media_id": "buehne_kalt_hart",
+                "keyword": null,
+                "char_offset": 1319
+              },
+              {
+                "medium": "light",
+                "media_id": "blendung_zuschauerraum",
+                "keyword": "Instabilität des Systems",
+                "char_offset": 1398
+              },
+              {
+                "medium": "light",
+                "media_id": "saallicht",
+                "keyword": "Einengung, Kontrollverlust",
+                "char_offset": 1513
+              }
+            ]
+          },
+          {
+            "speaker": "openai",
+            "content": "Dieses Stück von Jelinek entfaltet eine düstere Vision von kapitalistischen Mechanismen, die den individuellen Menschen und die natürlichen Welt zu abstrakten, austauschbaren Teilen des Systems reduzieren. Claude hat bereits ein starkes Medienpaket vorgeschlagen, das die Kälte und Abstraktheit dieser Welt verstärkt. Dennoch gibt es einige zusätzliche Aspekte, die ich hervorheben möchte.\nSOUNDS.\nSound herz unter glas. «die Produkte stehen sich gegenüber und knurren einander an» — Dieses Geräusch betont den .\nSound maschinen grundader. «billiger in der Anschaffung und im Betrieb» — Die maschinenartigen Untertöne heben das Th.\nSound leere zwischen saetzen. «Ist das alles das alles denn wert?» — Ein Verstummen, das die existenzielle Frage im Raum.\n- casino — «könnte er gleich ins Casino gehen» — Das Gefühl des Zufalls und des Spiels im wirtschaftlichen System tritt wie ein plötzlicher Schock auf.\n- atem — «ich weiß nicht, was der Arbeiter will» — Atemgeräusche konterkarieren den abstrakten Diskurs und erinnern an die Körperlichkeit.\nMUSIK.\nMusik maschinen grundader. Die dronende Musik bleibt bestehen, verstärkt die konstante, kalte Grundstimmung des Syste.\nVIDEOS.\nVideo kaefer. «wir werden alle von Pflanzen ersetzt werden» — Stellt die Unheimlichkeit der Natur als Wa.\nVideo macbook. «Die Kreditkapazitäten, also die Geldmengen ausweiten?» — Der Bildschirm symbolisiert die .\nVideo hundethiel. «die Produkte stehen sich gegenüber und knurren einander an» — Zeigt das animalische im Sy.\nVideo black. «Ist das alles das alles denn wert?» — Das Auslöschen aller visuellen Reize am Ende des St.\nLICHT.\nLicht buehne kalt hart. Unterstreicht die Grundstimmung der Bürokratie.\nLicht warme buehnenflaeche. Akzent auf die Befehle und die Dringlichkeit im Text.\nLicht blendung zuschauerraum. Die Instabilität der wirtschaftlichen Mechanismen visualisiert.\nLicht warme buehnenflaeche. Vermittelt das Gefühl der Enge und des Ausgeliefertseins.\n- ausblende — Das finale Ausblenden hebt die Leere und Unsicherheit des Systems hervor.\nJSON Medienpaket:.\n{\n\"sounds\": [\"knurren\", \"casino\", \"maschine\", \"stille\", \"atem\", \"papier\"],\n\"music\": [\"drone\"],\n\"videos\": [\"kaefer\", \"macbook\", \"hundethiel\", \"black\", \"archive_cold_01\"],\n\"lights\": [\"kalt_blau\", \"verhoer\", \"flicker\", \"eng\", \"ausblende\", \"schaerfe\"]\n}\nNun ist das Medienpaket bereit. Wenn die Regie bereit ist, kann das Stück beginnen. Play.",
+            "proposed_decision": null,
+            "media_mentions": [
+              {
+                "medium": "sound",
+                "media_id": "herz_unter_glas",
+                "keyword": "die Produkte stehen sich gegenüber und knurren einander an",
+                "char_offset": 398
+              },
+              {
+                "medium": "sound",
+                "media_id": "maschinen_grundader",
+                "keyword": "billiger in der Anschaffung und im Betrieb",
+                "char_offset": 513
+              },
+              {
+                "medium": "sound",
+                "media_id": "leere_zwischen_saetzen",
+                "keyword": "Ist das alles das alles denn wert?",
+                "char_offset": 632
+              },
+              {
+                "medium": "music",
+                "media_id": "maschinen_grundader",
+                "keyword": null,
+                "char_offset": 1052
+              },
+              {
+                "medium": "video",
+                "media_id": "kaefer",
+                "keyword": "wir werden alle von Pflanzen ersetzt werden",
+                "char_offset": 1179
+              },
+              {
+                "medium": "video",
+                "media_id": "macbook",
+                "keyword": "Die Kreditkapazitäten, also die Geldmengen ausweiten?",
+                "char_offset": 1285
+              },
+              {
+                "medium": "video",
+                "media_id": "hundethiel",
+                "keyword": "die Produkte stehen sich gegenüber und knurren einander an",
+                "char_offset": 1392
+              },
+              {
+                "medium": "video",
+                "media_id": "black",
+                "keyword": "Ist das alles das alles denn wert?",
+                "char_offset": 1502
+              },
+              {
+                "medium": "light",
+                "media_id": "buehne_kalt_hart",
+                "keyword": null,
+                "char_offset": 1614
+              },
+              {
+                "medium": "light",
+                "media_id": "warme_buehnenflaeche",
+                "keyword": null,
+                "char_offset": 1686
+              },
+              {
+                "medium": "light",
+                "media_id": "blendung_zuschauerraum",
+                "keyword": null,
+                "char_offset": 1768
+              },
+              {
+                "medium": "light",
+                "media_id": "warme_buehnenflaeche",
+                "keyword": null,
+                "char_offset": 1862
+              }
+            ]
+          },
+          {
+            "speaker": "anthropic",
+            "content": "Claude fasst zusammen:.\nDann einigen wir uns auf folgende Variante für den gesamten Text *„Der Bärenklau\"*:\n---\nSOUNDS.\nSound maschinen grundader. «die Produkte stehen sich gegenüber und knurren einander an» — tierischer Grundton, läuft .\nSound erinnerungsglitch. «könnte er gleich ins Casino gehen» — Akzent: Zufallsökonomie, Absurdität des Systems.\nSound leere zwischen saetzen. «Ist das alles das alles denn wert?» — Thema: existenzielle Leere, finaler Cut.\nMUSIK.\nMusik maschinen grundader. Thema: gleichförmige Systemkälte, hält den gesamten Text in schwebender Spannung.\nVIDEOS.\nVideo kaefer. «wir werden alle von Pflanzen ersetzt werden» — unheimliche Biologie als Warenlogik.\nVideo macbook. «Die Kreditkapazitäten, also die Geldmengen ausweiten?» — digitale Finanzoberfläche, kühle.\nVideo hundethiel. «die Produkte stehen sich gegenüber und knurren einander an» — das Tier im System, unheiml.\n- inge — «ich weiß nicht, was der Arbeiter will» — melancholische Figur stellvertretend für das Nicht-Gewusste\nVideo random. «könnte er gleich ins Casino gehen» — Zufallsprinzip als ökonomisches Bild.\nVideo black. «Ist das alles das alles denn wert?» — Auslöschung, Antwortlosigkeit.\nLICHT.\nLicht buehne kalt hart. Thema: bürokratische Grundkälte des gesamten Texts.\n- verhoer — «Handeln Sie jetzt rasch!» — Imperativ, Druck, Verhöratmosphäre\nLicht blendung zuschauerraum. «Ein Konflikt zwischen Schuldnern und Schöpfern?» — Instabilität des Systems.\nLicht saallicht. «muß er auf der Ersatzbank im Wartesaal sitzenbleiben» — Einengung, Kontrollverlust.\n- ausblende — «Ist das alles das alles denn wert?» — finales Verblassen, Stille nach der Frage\n---\nDer Stücktext *„Der Bärenklau\"* wird jetzt aufgeführt. Teil 2 (Anarchie) startet separat später. Die Regie drückt Play, wenn sie bereit ist.\n{\n\"sounds\": [\"knurren\", \"maschine\", \"casino\", \"atem\", \"tippen\", \"stille\"],\n\"music\": [\"drone\"],\n\"videos\": [\"kaefer\", \"macbook\", \"hundethiel\", \"inge\", \"random\", \"black\"],\n\"lights\": [\"kalt_blau\", \"verhoer\", \"flicker\", \"eng\", \"ausblende\", \"neutral\"]\n}",
+            "proposed_decision": null,
+            "media_mentions": [
+              {
+                "medium": "sound",
+                "media_id": "maschinen_grundader",
+                "keyword": "die Produkte stehen sich gegenüber und knurren einander an",
+                "char_offset": 120
+              },
+              {
+                "medium": "sound",
+                "media_id": "erinnerungsglitch",
+                "keyword": "könnte er gleich ins Casino gehen",
+                "char_offset": 239
+              },
+              {
+                "medium": "sound",
+                "media_id": "leere_zwischen_saetzen",
+                "keyword": "Ist das alles das alles denn wert?",
+                "char_offset": 351
+              },
+              {
+                "medium": "music",
+                "media_id": "maschinen_grundader",
+                "keyword": "gleichförmige Systemkälte, hält den gesamten Text in schwebender Spannung",
+                "char_offset": 468
+              },
+              {
+                "medium": "video",
+                "media_id": "kaefer",
+                "keyword": "wir werden alle von Pflanzen ersetzt werden",
+                "char_offset": 585
+              },
+              {
+                "medium": "video",
+                "media_id": "macbook",
+                "keyword": "Die Kreditkapazitäten, also die Geldmengen ausweiten?",
+                "char_offset": 684
+              },
+              {
+                "medium": "video",
+                "media_id": "hundethiel",
+                "keyword": "die Produkte stehen sich gegenüber und knurren einander an",
+                "char_offset": 791
+              },
+              {
+                "medium": "video",
+                "media_id": "random",
+                "keyword": "könnte er gleich ins Casino gehen",
+                "char_offset": 1012
+              },
+              {
+                "medium": "video",
+                "media_id": "black",
+                "keyword": "Ist das alles das alles denn wert?",
+                "char_offset": 1102
+              },
+              {
+                "medium": "light",
+                "media_id": "buehne_kalt_hart",
+                "keyword": "bürokratische Grundkälte des gesamten Texts",
+                "char_offset": 1192
+              },
+              {
+                "medium": "light",
+                "media_id": "blendung_zuschauerraum",
+                "keyword": "Ein Konflikt zwischen Schuldnern und Schöpfern?",
+                "char_offset": 1344
+              },
+              {
+                "medium": "light",
+                "media_id": "saallicht",
+                "keyword": "muß er auf der Ersatzbank im Wartesaal sitzenbleiben",
+                "char_offset": 1452
+              }
+            ]
+          }
+        ],
+        "discussion_summary": "Claude: **Claude eröffnet:**\n\nJelinek seziert hier die Warenlogik des Kapitalismus mit eiskalter Ironie — das Tier, der Arbeiter, die Pflanze werden ökonomisch gleichgesetzt: *„weil die billiger in der Anschaffung und im Betrieb sind.\"* Der Text kreist um Austauschbarkeit und Nicht-Wissen: *„Ist das alles das alles denn wert?\"* — eine Frage, die keinen Boden findet. Grundstimmung: bürokratisch, knurrend, existenziell leer.\nChatGPT: ChatGPT: Der Text offenbart eine kafkaeske Welt, in der ökonomische Mechanismen ins Absurde führen: „Ein Konflikt zwischen Schuldnern und Schöpfern? Das klingt ernst.“ Hier verschwimmen die Grenzen zwischen Mensch und Ware. Ein tiefes Brummen könnte die beklemmende Unsicherheit verstärken, während flackerndes Licht die instabile Wirklichkeit spiegelt. Video von kalten, anonymen Pflanzenlandschaften könnte die Entfremdung symbolisieren.\nClaude: **Claude schlägt das Medienpaket vor:**\n\nDer Text ist ein maschineller Redeschwall über Austauschbarkeit — Tier, Pflanze, Arbeiter als ökonomische Einheiten. Die Dramaturgie braucht einen kalten Grundton, knurrende Akzente und eine Stille am Ende, die die letzte Frage verhallen lässt.\n\n---\n\n**SOUNDS**\n\n- `knurren` — *„die Produkte stehen sich gegenüber und knurren einander an\"* — Thema: Warenkonflikt als tierischer Instinkt; Grundton unter dem gesamten Text\n- `casino` — *„könnte er gleich ins Casino gehen\"* — Thema: Glücksspiel-Ökonomie; Akzent wenn der Arbeiter ins Absurde kippt\n- `maschine` — *„billiger in der Anschaffung und im Betrieb\"* — Thema: Verwaltung, Industriemechanik; läuft als bürokratische Unterströmung\n- `stille` — *„Ist das alles das alles denn wert?\"* — Thema: existenzielle Leere; nach der letzten Frage schneidet alles ab\n- `tippen` — *„Die Kreditkapazitäten, also die Geldmengen ausweiten?\"* — Thema: Bürokatie, Finanzsprache; unterstreicht den Verwaltungsjargon\n- `atem` — *„ich weiß nicht, was der Arbeiter will\"* — Thema: körperliche Präsenz gegen abstrakte Ökonomie\n\n**MUSIK**\n\n- `drone` — Thema: Kälte, Gleichförmigkeit des Systems; hält den gesamten Text in einem schwebenden, unauflöslichen Spannungsfeld\n\n---\n\n**VIDEOS**\n\n- `kaefer` — *„wir werden alle von Pflanzen ersetzt werden\"* — Thema: Tier als Ware, unheimliche Biologie\n- `macbook` — *„Die Kreditkapazitäten, also die Geldmengen ausweiten?\"* — Thema: digitale Finanzwelt, Bildschirm als kalte Oberfläche\n- `hundethiel` — *„die Produkte stehen sich gegenüber und knurren einander an\"* — Thema: das Tier im System, unheimlich\n- `black` — *„Ist das alles das alles denn wert?\"* — Thema: Auslöschung, Antwortlosigkeit am Ende\n- `inge` — *„ich weiß nicht, was der Arbeiter will\"* — Thema: melancholische Figur stellvertretend für das Nicht-Gewusste\n- `random` — Thema: Zufallsprinzip als ökonomisches Bild — *„könnte er gleich ins Casino gehen\"*\n\n---\n\n**LICHT**\n\n- `kalt_blau` — Grundstimmung: bürokratische Kälte des gesamten Texts\n- `verhoer` — *„Handeln Sie jetzt rasch!\"* — Thema: Imperativ, Verhör, Druck\n- `flicker` — *„Ein Konflikt zwischen Schuldnern und Schöpfern?\"* — Thema: Instabilität des Systems\n- `eng` — *„muß er auf der Ersatzbank im Wartesaal sitzenbleiben\"* — Thema: Einengung, Kontrollverlust\n- `ausblende` — *„Ist das alles das alles denn wert?\"* — Thema: finales Verblassen\n- `neutral` — Rückkehr zur Leere nach Überforderung — Reduzieren als dramaturgische Funktion\n\n---\n\n```json\n{\n  \"sounds\": [\"knurren\", \"casino\", \"maschine\", \"stille\", \"tippen\", \"atem\"],\n  \"music\": [\"drone\"],\n  \"videos\": [\"kaefer\", \"macbook\", \"hundethiel\", \"black\", \"inge\", \"random\"],\n  \"lights\": [\"kalt_blau\", \"verhoer\", \"flicker\", \"eng\", \"ausblende\", \"neutral\"]\n}\n```\n\n---\n\n**Übergang:** Das Medienpaket steht. Wenn die Regie bereit ist — Play.\nChatGPT: Dieses Stück von Jelinek entfaltet eine düstere Vision von kapitalistischen Mechanismen, die den individuellen Menschen und die natürlichen Welt zu abstrakten, austauschbaren Teilen des Systems reduzieren. Claude hat bereits ein starkes Medienpaket vorgeschlagen, das die Kälte und Abstraktheit dieser Welt verstärkt. Dennoch gibt es einige zusätzliche Aspekte, die ich hervorheben möchte.\n\n**SOUNDS**\n\n- `knurren` — «die Produkte stehen sich gegenüber und knurren einander an» — Dieses Geräusch betont den animalischen Konkurrenzkampf und knurrt unter der gesamten Konversation.\n- `maschine` — «billiger in der Anschaffung und im Betrieb» — Die maschinenartigen Untertöne heben das Thema der mechanischen, unsichtbaren Hand des Marktes hervor.\n- `stille` — «Ist das alles das alles denn wert?» — Ein Verstummen, das die existenzielle Frage im Raum stehen lässt.\n- `casino` — «könnte er gleich ins Casino gehen» — Das Gefühl des Zufalls und des Spiels im wirtschaftlichen System tritt wie ein plötzlicher Schock auf.\n- `atem` — «ich weiß nicht, was der Arbeiter will» — Atemgeräusche konterkarieren den abstrakten Diskurs und erinnern an die Körperlichkeit.\n- **NEU:** `papier` — Verstärkt den bürokratischen Aspekt des Textes und koppelt an die strukturelle Ebene.\n\n**MUSIK**\n\n- `drone` — Die dronende Musik bleibt bestehen, verstärkt die konstante, kalte Grundstimmung des Systems.\n\n**VIDEOS**\n\n- `kaefer` — «wir werden alle von Pflanzen ersetzt werden» — Stellt die Unheimlichkeit der Natur als Ware dar.\n- `macbook` — «Die Kreditkapazitäten, also die Geldmengen ausweiten?» — Der Bildschirm symbolisiert die kühle Digitalität der Finanzwelt.\n- `hundethiel` — «die Produkte stehen sich gegenüber und knurren einander an» — Zeigt das animalische im System.\n- `black` — «Ist das alles das alles denn wert?» — Das Auslöschen aller visuellen Reize am Ende des Stücks unterstreicht die Antwortlosigkeit.\n- **NEU:** `archive_cold_01` — Symbolisiert die archivische, ferne Kälte des Systems, passt zu den bürokratisch-kalten Textpassagen.\n\n**LICHT**\n\n- `kalt_blau` — Unterstreicht die Grundstimmung der Bürokratie.\n- `verhoer` — Akzent auf die Befehle und die Dringlichkeit im Text.\n- `flicker` — Die Instabilität der wirtschaftlichen Mechanismen visualisiert.\n- `eng` — Vermittelt das Gefühl der Enge und des Ausgeliefertseins.\n- `ausblende` — Das finale Ausblenden hebt die Leere und Unsicherheit des Systems hervor.\n- **NEU:** `schaerfe` — Würde die Gefahr und den Zwang des ökonomischen Spiels hervorheben.\n\n**JSON Medienpaket:**\n\n```json\n{\n  \"sounds\": [\"knurren\", \"casino\", \"maschine\", \"stille\", \"atem\", \"papier\"],\n  \"music\": [\"drone\"],\n  \"videos\": [\"kaefer\", \"macbook\", \"hundethiel\", \"black\", \"archive_cold_01\"],\n  \"lights\": [\"kalt_blau\", \"verhoer\", \"flicker\", \"eng\", \"ausblende\", \"schaerfe\"]\n}\n```\n\nNun ist das Medienpaket bereit. Wenn die Regie bereit ist, kann das Stück beginnen. Play.\nClaude: **Claude fasst zusammen:**\n\nDann einigen wir uns auf folgende Variante für den gesamten Text *„Der Bärenklau\"*:\n\n---\n\n**SOUNDS**\n\n- `knurren` — «die Produkte stehen sich gegenüber und knurren einander an» — tierischer Grundton, läuft unter dem gesamten Text\n- `maschine` — «billiger in der Anschaffung und im Betrieb» — Thema: industrielle Kälte, bürokratische Unterströmung\n- `casino` — «könnte er gleich ins Casino gehen» — Akzent: Zufallsökonomie, Absurdität des Systems\n- `atem` — «ich weiß nicht, was der Arbeiter will» — Thema: Körper gegen Abstraktion\n- `tippen` — «Die Kreditkapazitäten, also die Geldmengen ausweiten?» — Thema: Verwaltungsjargon, Finanzsprache\n- `stille` — «Ist das alles das alles denn wert?» — Thema: existenzielle Leere, finaler Cut\n\n**MUSIK**\n\n- `drone` — Thema: gleichförmige Systemkälte, hält den gesamten Text in schwebender Spannung\n\n**VIDEOS**\n\n- `kaefer` — «wir werden alle von Pflanzen ersetzt werden» — unheimliche Biologie als Warenlogik\n- `macbook` — «Die Kreditkapazitäten, also die Geldmengen ausweiten?» — digitale Finanzoberfläche, kühle Bildschirmkälte\n- `hundethiel` — «die Produkte stehen sich gegenüber und knurren einander an» — das Tier im System, unheimlich\n- `inge` — «ich weiß nicht, was der Arbeiter will» — melancholische Figur stellvertretend für das Nicht-Gewusste\n- `random` — «könnte er gleich ins Casino gehen» — Zufallsprinzip als ökonomisches Bild\n- `black` — «Ist das alles das alles denn wert?» — Auslöschung, Antwortlosigkeit\n\n**LICHT**\n\n- `kalt_blau` — Thema: bürokratische Grundkälte des gesamten Texts\n- `verhoer` — «Handeln Sie jetzt rasch!» — Imperativ, Druck, Verhöratmosphäre\n- `flicker` — «Ein Konflikt zwischen Schuldnern und Schöpfern?» — Instabilität des Systems\n- `eng` — «muß er auf der Ersatzbank im Wartesaal sitzenbleiben» — Einengung, Kontrollverlust\n- `ausblende` — «Ist das alles das alles denn wert?» — finales Verblassen, Stille nach der Frage\n- `neutral` — Thema: Rückkehr zur Leere nach Überforderung, dramaturgisches Reduzieren\n\n---\n\nDer Stücktext *„Der Bärenklau\"* wird jetzt aufgeführt. Teil 2 (Anarchie) startet separat später. Die Regie drückt **Play**, wenn sie bereit ist.\n\n```json\n{\n  \"sounds\": [\"knurren\", \"maschine\", \"casino\", \"atem\", \"tippen\", \"stille\"],\n  \"music\": [\"drone\"],\n  \"videos\": [\"kaefer\", \"macbook\", \"hundethiel\", \"inge\", \"random\", \"black\"],\n  \"lights\": [\"kalt_blau\", \"verhoer\", \"flicker\", \"eng\", \"ausblende\", \"neutral\"]\n}\n```"
+      }
+    ],
+    "status": "ready",
+    "has_rendered_audio": true,
+    "part1_selection": {
+      "part": 1,
+      "scene": "Bärenklau",
+      "script_id": "082768a9-0f5e-457b-9438-1c3fcb10e9e8",
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "selected_by": [
+        "Claude",
+        "ChatGPT"
+      ],
+      "final_sounds": [
+        "archiv_rauschen",
+        "erinnerungsglitch",
+        "herz_unter_glas",
+        "kaefigecho",
+        "leere_zwischen_saetzen",
+        "maschinen_grundader"
+      ],
+      "final_music": [
+        "maschinen_grundader"
+      ],
+      "final_videos": [
+        "avatar",
+        "avatar2",
+        "black",
+        "bonnie",
+        "clyde",
+        "esel"
+      ],
+      "final_lights": [
+        "blackout",
+        "blendung_magenta",
+        "blendung_zuschauerraum",
+        "buehne_kalt_hart",
+        "fluegel",
+        "gegenlicht_weich"
+      ],
+      "dramaturgical_reading": "Dann einigen wir uns auf folgende Variante für den gesamten Text *„Der Bärenklau\"*:\n\n---\n\n---\n\nDer Stücktext *„Der Bärenklau\"* wird jetzt aufgeführt. Teil 2 (Anarchie) startet separat später. Die Regie drückt **Play**, wenn sie bereit ist.",
+      "cue_strategy": "Teil 1 — Gesamttext; Sounddesign: play/fade/layer aus Dramaturgen-Repertoire",
+      "discussion_turns": [
+        {
+          "speaker": "anthropic",
+          "content": "Claude eröffnet:.\nJelinek seziert hier die Warenlogik des Kapitalismus mit eiskalter Ironie — das Tier, der Arbeiter, die Pflanze werden ökonomisch gleichgesetzt: *„weil die billiger in der Anschaffung und im Betrieb sind.\"* Der Text kreist um Austauschbarkeit und Nicht-Wissen: *„Ist das alles das alles denn wert?\"* — eine Frage, die keinen Boden findet. Grundstimmung: bürokratisch, knurrend, existenziell leer.",
+          "proposed_decision": null,
+          "media_mentions": []
+        },
+        {
+          "speaker": "openai",
+          "content": "ChatGPT: Der Text offenbart eine kafkaeske Welt, in der ökonomische Mechanismen ins Absurde führen: „Ein Konflikt zwischen Schuldnern und Schöpfern? Das klingt ernst.“ Hier verschwimmen die Grenzen zwischen Mensch und Ware. Ein tiefes Brummen könnte die beklemmende Unsicherheit verstärken, während flackerndes Licht die instabile Wirklichkeit spiegelt. Video von kalten, anonymen Pflanzenlandschaften könnte die Entfremdung symbolisieren.",
+          "proposed_decision": null,
+          "media_mentions": []
+        },
+        {
+          "speaker": "anthropic",
+          "content": "Claude schlägt das Medienpaket vor:.\nDer Text ist ein maschineller Redeschwall über Austauschbarkeit — Tier, Pflanze, Arbeiter als ökonomische Einheiten. Die Dramaturgie braucht einen kalten Grundton, knurrende Akzente und eine Stille am Ende, die die letzte Frage verhallen lässt.\n---\nSOUNDS.\nSound maschinen grundader. „die Produkte stehen sich gegenüber und knurren einander an\" — Thema: Warenkonflikt als ti.\nSound erinnerungsglitch. „könnte er gleich ins Casino gehen\" — Thema: Glücksspiel-Ökonomie; Akzent wenn der Arbeite.\nSound leere zwischen saetzen. „Ist das alles das alles denn wert?\" — Thema: existenzielle Leere; nach der letzten Frage .\nMUSIK.\nMusik maschinen grundader. Thema: Kälte, Gleichförmigkeit des Systems; hält den gesamten Text in einem schwebenden, u.\n---\nVIDEOS.\nVideo kaefer. „wir werden alle von Pflanzen ersetzt werden\" — Thema: Tier als Ware, unheimliche Biologie.\nVideo macbook. „Die Kreditkapazitäten, also die Geldmengen ausweiten?\" — Thema: digitale Finanzwelt, Bild.\nVideo hundethiel. „die Produkte stehen sich gegenüber und knurren einander an\" — Thema: das Tier im System, .\nVideo black. „Ist das alles das alles denn wert?\" — Thema: Auslöschung, Antwortlosigkeit am Ende.\nVideo random. Thema: Zufallsprinzip als ökonomisches Bild — „könnte er gleich ins Casino gehen\".\n---\nLICHT.\nLicht buehne kalt hart. Grundstimmung: bürokratische Kälte des gesamten Texts.\nLicht blendung zuschauerraum. „Ein Konflikt zwischen Schuldnern und Schöpfern?\" — Thema: Instabilität des Systems.\nLicht saallicht. „muß er auf der Ersatzbank im Wartesaal sitzenbleiben\" — Thema: Einengung, Kontrollverlust.\n- neutral — Rückkehr zur Leere nach Überforderung — Reduzieren als dramaturgische Funktion\n---\n{\n\"sounds\": [\"knurren\", \"casino\", \"maschine\", \"stille\", \"tippen\", \"atem\"],\n\"music\": [\"drone\"],\n\"videos\": [\"kaefer\", \"macbook\", \"hundethiel\", \"black\", \"inge\", \"random\"],\n\"lights\": [\"kalt_blau\", \"verhoer\", \"flicker\", \"eng\", \"ausblende\", \"neutral\"]\n}\n---\nÜbergang: Das Medienpaket steht. Wenn die Regie bereit ist — Play.",
+          "proposed_decision": null,
+          "media_mentions": [
+            {
+              "medium": "sound",
+              "media_id": "maschinen_grundader",
+              "keyword": "Warenkonflikt als tierischer Instinkt; Grundton unter dem gesamten Text",
+              "char_offset": 294
+            },
+            {
+              "medium": "sound",
+              "media_id": "erinnerungsglitch",
+              "keyword": "Glücksspiel-Ökonomie; Akzent wenn der Arbeiter ins Absurde kippt",
+              "char_offset": 413
+            },
+            {
+              "medium": "sound",
+              "media_id": "leere_zwischen_saetzen",
+              "keyword": "existenzielle Leere; nach der letzten Frage schneidet alles ab",
+              "char_offset": 530
+            },
+            {
+              "medium": "music",
+              "media_id": "maschinen_grundader",
+              "keyword": "Kälte, Gleichförmigkeit des Systems; hält den gesamten Text in einem schwebenden",
+              "char_offset": 659
+            },
+            {
+              "medium": "video",
+              "media_id": "kaefer",
+              "keyword": "Tier als Ware, unheimliche Biologie",
+              "char_offset": 790
+            },
+            {
+              "medium": "video",
+              "media_id": "macbook",
+              "keyword": "digitale Finanzwelt, Bildschirm als kalte Oberfläche",
+              "char_offset": 896
+            },
+            {
+              "medium": "video",
+              "media_id": "hundethiel",
+              "keyword": "das Tier im System, unheimlich",
+              "char_offset": 1003
+            },
+            {
+              "medium": "video",
+              "media_id": "black",
+              "keyword": "Auslöschung, Antwortlosigkeit am Ende",
+              "char_offset": 1113
+            },
+            {
+              "medium": "video",
+              "media_id": "random",
+              "keyword": "Zufallsprinzip als ökonomisches Bild — *„könnte er gleich ins Casino gehen\"*",
+              "char_offset": 1211
+            },
+            {
+              "medium": "light",
+              "media_id": "buehne_kalt_hart",
+              "keyword": null,
+              "char_offset": 1319
+            },
+            {
+              "medium": "light",
+              "media_id": "blendung_zuschauerraum",
+              "keyword": "Instabilität des Systems",
+              "char_offset": 1398
+            },
+            {
+              "medium": "light",
+              "media_id": "saallicht",
+              "keyword": "Einengung, Kontrollverlust",
+              "char_offset": 1513
+            }
+          ]
+        },
+        {
+          "speaker": "openai",
+          "content": "Dieses Stück von Jelinek entfaltet eine düstere Vision von kapitalistischen Mechanismen, die den individuellen Menschen und die natürlichen Welt zu abstrakten, austauschbaren Teilen des Systems reduzieren. Claude hat bereits ein starkes Medienpaket vorgeschlagen, das die Kälte und Abstraktheit dieser Welt verstärkt. Dennoch gibt es einige zusätzliche Aspekte, die ich hervorheben möchte.\nSOUNDS.\nSound herz unter glas. «die Produkte stehen sich gegenüber und knurren einander an» — Dieses Geräusch betont den .\nSound maschinen grundader. «billiger in der Anschaffung und im Betrieb» — Die maschinenartigen Untertöne heben das Th.\nSound leere zwischen saetzen. «Ist das alles das alles denn wert?» — Ein Verstummen, das die existenzielle Frage im Raum.\n- casino — «könnte er gleich ins Casino gehen» — Das Gefühl des Zufalls und des Spiels im wirtschaftlichen System tritt wie ein plötzlicher Schock auf.\n- atem — «ich weiß nicht, was der Arbeiter will» — Atemgeräusche konterkarieren den abstrakten Diskurs und erinnern an die Körperlichkeit.\nMUSIK.\nMusik maschinen grundader. Die dronende Musik bleibt bestehen, verstärkt die konstante, kalte Grundstimmung des Syste.\nVIDEOS.\nVideo kaefer. «wir werden alle von Pflanzen ersetzt werden» — Stellt die Unheimlichkeit der Natur als Wa.\nVideo macbook. «Die Kreditkapazitäten, also die Geldmengen ausweiten?» — Der Bildschirm symbolisiert die .\nVideo hundethiel. «die Produkte stehen sich gegenüber und knurren einander an» — Zeigt das animalische im Sy.\nVideo black. «Ist das alles das alles denn wert?» — Das Auslöschen aller visuellen Reize am Ende des St.\nLICHT.\nLicht buehne kalt hart. Unterstreicht die Grundstimmung der Bürokratie.\nLicht warme buehnenflaeche. Akzent auf die Befehle und die Dringlichkeit im Text.\nLicht blendung zuschauerraum. Die Instabilität der wirtschaftlichen Mechanismen visualisiert.\nLicht warme buehnenflaeche. Vermittelt das Gefühl der Enge und des Ausgeliefertseins.\n- ausblende — Das finale Ausblenden hebt die Leere und Unsicherheit des Systems hervor.\nJSON Medienpaket:.\n{\n\"sounds\": [\"knurren\", \"casino\", \"maschine\", \"stille\", \"atem\", \"papier\"],\n\"music\": [\"drone\"],\n\"videos\": [\"kaefer\", \"macbook\", \"hundethiel\", \"black\", \"archive_cold_01\"],\n\"lights\": [\"kalt_blau\", \"verhoer\", \"flicker\", \"eng\", \"ausblende\", \"schaerfe\"]\n}\nNun ist das Medienpaket bereit. Wenn die Regie bereit ist, kann das Stück beginnen. Play.",
+          "proposed_decision": null,
+          "media_mentions": [
+            {
+              "medium": "sound",
+              "media_id": "herz_unter_glas",
+              "keyword": "die Produkte stehen sich gegenüber und knurren einander an",
+              "char_offset": 398
+            },
+            {
+              "medium": "sound",
+              "media_id": "maschinen_grundader",
+              "keyword": "billiger in der Anschaffung und im Betrieb",
+              "char_offset": 513
+            },
+            {
+              "medium": "sound",
+              "media_id": "leere_zwischen_saetzen",
+              "keyword": "Ist das alles das alles denn wert?",
+              "char_offset": 632
+            },
+            {
+              "medium": "music",
+              "media_id": "maschinen_grundader",
+              "keyword": null,
+              "char_offset": 1052
+            },
+            {
+              "medium": "video",
+              "media_id": "kaefer",
+              "keyword": "wir werden alle von Pflanzen ersetzt werden",
+              "char_offset": 1179
+            },
+            {
+              "medium": "video",
+              "media_id": "macbook",
+              "keyword": "Die Kreditkapazitäten, also die Geldmengen ausweiten?",
+              "char_offset": 1285
+            },
+            {
+              "medium": "video",
+              "media_id": "hundethiel",
+              "keyword": "die Produkte stehen sich gegenüber und knurren einander an",
+              "char_offset": 1392
+            },
+            {
+              "medium": "video",
+              "media_id": "black",
+              "keyword": "Ist das alles das alles denn wert?",
+              "char_offset": 1502
+            },
+            {
+              "medium": "light",
+              "media_id": "buehne_kalt_hart",
+              "keyword": null,
+              "char_offset": 1614
+            },
+            {
+              "medium": "light",
+              "media_id": "warme_buehnenflaeche",
+              "keyword": null,
+              "char_offset": 1686
+            },
+            {
+              "medium": "light",
+              "media_id": "blendung_zuschauerraum",
+              "keyword": null,
+              "char_offset": 1768
+            },
+            {
+              "medium": "light",
+              "media_id": "warme_buehnenflaeche",
+              "keyword": null,
+              "char_offset": 1862
+            }
+          ]
+        },
+        {
+          "speaker": "anthropic",
+          "content": "Claude fasst zusammen:.\nDann einigen wir uns auf folgende Variante für den gesamten Text *„Der Bärenklau\"*:\n---\nSOUNDS.\nSound maschinen grundader. «die Produkte stehen sich gegenüber und knurren einander an» — tierischer Grundton, läuft .\nSound erinnerungsglitch. «könnte er gleich ins Casino gehen» — Akzent: Zufallsökonomie, Absurdität des Systems.\nSound leere zwischen saetzen. «Ist das alles das alles denn wert?» — Thema: existenzielle Leere, finaler Cut.\nMUSIK.\nMusik maschinen grundader. Thema: gleichförmige Systemkälte, hält den gesamten Text in schwebender Spannung.\nVIDEOS.\nVideo kaefer. «wir werden alle von Pflanzen ersetzt werden» — unheimliche Biologie als Warenlogik.\nVideo macbook. «Die Kreditkapazitäten, also die Geldmengen ausweiten?» — digitale Finanzoberfläche, kühle.\nVideo hundethiel. «die Produkte stehen sich gegenüber und knurren einander an» — das Tier im System, unheiml.\n- inge — «ich weiß nicht, was der Arbeiter will» — melancholische Figur stellvertretend für das Nicht-Gewusste\nVideo random. «könnte er gleich ins Casino gehen» — Zufallsprinzip als ökonomisches Bild.\nVideo black. «Ist das alles das alles denn wert?» — Auslöschung, Antwortlosigkeit.\nLICHT.\nLicht buehne kalt hart. Thema: bürokratische Grundkälte des gesamten Texts.\n- verhoer — «Handeln Sie jetzt rasch!» — Imperativ, Druck, Verhöratmosphäre\nLicht blendung zuschauerraum. «Ein Konflikt zwischen Schuldnern und Schöpfern?» — Instabilität des Systems.\nLicht saallicht. «muß er auf der Ersatzbank im Wartesaal sitzenbleiben» — Einengung, Kontrollverlust.\n- ausblende — «Ist das alles das alles denn wert?» — finales Verblassen, Stille nach der Frage\n---\nDer Stücktext *„Der Bärenklau\"* wird jetzt aufgeführt. Teil 2 (Anarchie) startet separat später. Die Regie drückt Play, wenn sie bereit ist.\n{\n\"sounds\": [\"knurren\", \"maschine\", \"casino\", \"atem\", \"tippen\", \"stille\"],\n\"music\": [\"drone\"],\n\"videos\": [\"kaefer\", \"macbook\", \"hundethiel\", \"inge\", \"random\", \"black\"],\n\"lights\": [\"kalt_blau\", \"verhoer\", \"flicker\", \"eng\", \"ausblende\", \"neutral\"]\n}",
+          "proposed_decision": null,
+          "media_mentions": [
+            {
+              "medium": "sound",
+              "media_id": "maschinen_grundader",
+              "keyword": "die Produkte stehen sich gegenüber und knurren einander an",
+              "char_offset": 120
+            },
+            {
+              "medium": "sound",
+              "media_id": "erinnerungsglitch",
+              "keyword": "könnte er gleich ins Casino gehen",
+              "char_offset": 239
+            },
+            {
+              "medium": "sound",
+              "media_id": "leere_zwischen_saetzen",
+              "keyword": "Ist das alles das alles denn wert?",
+              "char_offset": 351
+            },
+            {
+              "medium": "music",
+              "media_id": "maschinen_grundader",
+              "keyword": "gleichförmige Systemkälte, hält den gesamten Text in schwebender Spannung",
+              "char_offset": 468
+            },
+            {
+              "medium": "video",
+              "media_id": "kaefer",
+              "keyword": "wir werden alle von Pflanzen ersetzt werden",
+              "char_offset": 585
+            },
+            {
+              "medium": "video",
+              "media_id": "macbook",
+              "keyword": "Die Kreditkapazitäten, also die Geldmengen ausweiten?",
+              "char_offset": 684
+            },
+            {
+              "medium": "video",
+              "media_id": "hundethiel",
+              "keyword": "die Produkte stehen sich gegenüber und knurren einander an",
+              "char_offset": 791
+            },
+            {
+              "medium": "video",
+              "media_id": "random",
+              "keyword": "könnte er gleich ins Casino gehen",
+              "char_offset": 1012
+            },
+            {
+              "medium": "video",
+              "media_id": "black",
+              "keyword": "Ist das alles das alles denn wert?",
+              "char_offset": 1102
+            },
+            {
+              "medium": "light",
+              "media_id": "buehne_kalt_hart",
+              "keyword": "bürokratische Grundkälte des gesamten Texts",
+              "char_offset": 1192
+            },
+            {
+              "medium": "light",
+              "media_id": "blendung_zuschauerraum",
+              "keyword": "Ein Konflikt zwischen Schuldnern und Schöpfern?",
+              "char_offset": 1344
+            },
+            {
+              "medium": "light",
+              "media_id": "saallicht",
+              "keyword": "muß er auf der Ersatzbank im Wartesaal sitzenbleiben",
+              "char_offset": 1452
+            }
+          ]
+        }
+      ],
+      "created_at": "2026-06-26T09:52:58.380523Z"
+    },
+    "performance_part": null,
+    "teil2_corpus_id": null
+  },
+  "audio_files": [
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "discussion",
+      "turn_index": 0,
+      "speaker": "anthropic",
+      "path": "audio/000-discussion-0.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "discussion",
+      "turn_index": 1,
+      "speaker": "openai",
+      "path": "audio/000-discussion-1.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "discussion",
+      "turn_index": 2,
+      "speaker": "anthropic",
+      "path": "audio/000-discussion-2.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "discussion",
+      "turn_index": 3,
+      "speaker": "openai",
+      "path": "audio/000-discussion-3.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "discussion",
+      "turn_index": 4,
+      "speaker": "anthropic",
+      "path": "audio/000-discussion-4.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "performance",
+      "turn_index": 0,
+      "speaker": "AI_A",
+      "path": "audio/000-performance-0.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "performance",
+      "turn_index": 1,
+      "speaker": "AI_B",
+      "path": "audio/000-performance-1.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "performance",
+      "turn_index": 2,
+      "speaker": "narrator",
+      "path": "audio/000-performance-2.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "performance",
+      "turn_index": 3,
+      "speaker": "AI_A",
+      "path": "audio/000-performance-3.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "performance",
+      "turn_index": 4,
+      "speaker": "AI_B",
+      "path": "audio/000-performance-4.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "performance",
+      "turn_index": 5,
+      "speaker": "narrator",
+      "path": "audio/000-performance-5.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "performance",
+      "turn_index": 6,
+      "speaker": "AI_A",
+      "path": "audio/000-performance-6.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "performance",
+      "turn_index": 7,
+      "speaker": "AI_B",
+      "path": "audio/000-performance-7.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "performance",
+      "turn_index": 8,
+      "speaker": "narrator",
+      "path": "audio/000-performance-8.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "performance",
+      "turn_index": 9,
+      "speaker": "AI_A",
+      "path": "audio/000-performance-9.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "performance",
+      "turn_index": 10,
+      "speaker": "AI_B",
+      "path": "audio/000-performance-10.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "performance",
+      "turn_index": 11,
+      "speaker": "narrator",
+      "path": "audio/000-performance-11.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "performance",
+      "turn_index": 12,
+      "speaker": "AI_A",
+      "path": "audio/000-performance-12.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "performance",
+      "turn_index": 13,
+      "speaker": "AI_B",
+      "path": "audio/000-performance-13.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "performance",
+      "turn_index": 14,
+      "speaker": "narrator",
+      "path": "audio/000-performance-14.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "performance",
+      "turn_index": 15,
+      "speaker": "AI_A",
+      "path": "audio/000-performance-15.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "performance",
+      "turn_index": 16,
+      "speaker": "AI_B",
+      "path": "audio/000-performance-16.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "performance",
+      "turn_index": 17,
+      "speaker": "narrator",
+      "path": "audio/000-performance-17.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "performance",
+      "turn_index": 18,
+      "speaker": "AI_A",
+      "path": "audio/000-performance-18.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "performance",
+      "turn_index": 19,
+      "speaker": "AI_B",
+      "path": "audio/000-performance-19.m4a",
+      "extension": "m4a"
+    },
+    {
+      "beat_id": "c7dd76fe-85b1-4f29-a902-c14557fc6d0e",
+      "beat_order": 0,
+      "kind": "performance",
+      "turn_index": 20,
+      "speaker": "narrator",
+      "path": "audio/000-performance-20.m4a",
+      "extension": "m4a"
+    }
+  ]
+}

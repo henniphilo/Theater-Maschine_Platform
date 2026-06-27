@@ -37,6 +37,17 @@ export type Gesamtkonzept = {
 };
 
 export type SpeechMode = "tts" | "avatar_video" | "silent";
+export type ProjectorMode = "single" | "all";
+export type ScriptSource = "avatar_delfin_wolf";
+
+export type AvatarSpeechLayer = {
+  avatar_speech_id: string;
+  avatar: string;
+  video_clip_id: string;
+  projector?: string | null;
+  outputs?: { output_id: string; clip_id?: string | null }[];
+  visual_cue?: DramaturgyDecision["visual"] | null;
+};
 
 export type CompositionMoment = {
   id: string;
@@ -47,6 +58,8 @@ export type CompositionMoment = {
   speech_mode?: SpeechMode;
   avatar_speech_id?: string | null;
   avatar_video_clip_id?: string | null;
+  avatar_layers?: AvatarSpeechLayer[];
+  projector_mode?: ProjectorMode;
   dramaturgy?: DramaturgyDecision | null;
   overlap_with_previous: number;
   anarchy_level: number;
@@ -65,9 +78,27 @@ export type SceneCorpus = {
   id: string;
   title: string;
   scenes: AnimalScene[];
+  script_source?: ScriptSource | null;
+  script_text?: string | null;
   status: InszenierungStatus;
   gesamtkonzept: Gesamtkonzept | null;
   composition: CompositionPlan | null;
+};
+
+export type ScriptBeatPreview = {
+  order: number;
+  text: string;
+  avatar_ids: string[];
+  avatars: string[];
+  is_chorus: boolean;
+};
+
+export type Teil2ScriptResponse = {
+  script_source: ScriptSource;
+  text: string;
+  beat_count: number;
+  beats_preview: ScriptBeatPreview[];
+  validation_warnings: string[];
 };
 
 export type AnalyseStreamEvent = {

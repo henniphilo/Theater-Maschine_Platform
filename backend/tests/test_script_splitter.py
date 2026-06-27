@@ -1,4 +1,4 @@
-from app.services.dramaturgy_workshop_service import _clamp_statement
+from app.services.dramaturgy_text import clamp_statement
 from app.services.script_splitter import (
     MIN_BEAT_LINES,
     build_beats_from_text,
@@ -109,11 +109,11 @@ def test_dramaturgy_quote_excerpts_spreads_across_long_text() -> None:
 
 def test_clamp_statement_at_sentence_boundary() -> None:
     long = ". ".join([f"Satz Nummer {i} mit Inhalt" for i in range(80)])
-    clamped = _clamp_statement(long, max_chars=450)
+    clamped = clamp_statement(long, max_chars=450)
     assert len(clamped) <= 450
     assert clamped.endswith(".")
 
 
 def test_clamp_statement_short_unchanged() -> None:
     short = "Kurz und knapp."
-    assert _clamp_statement(short, max_chars=450) == short
+    assert clamp_statement(short, max_chars=450) == short

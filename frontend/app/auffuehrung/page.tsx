@@ -11,6 +11,33 @@ import { fetchTTSStatus, setPlaybackPaused, stopPlayback } from "@/lib/api/clien
 import { downloadBlob, exportPerformance, importPerformance } from "@/lib/api/performance";
 import { fetchScript } from "@/lib/api/script";
 import {
+  composeScript,
+  createCorpus,
+  exportTeil2,
+  fetchCorpus,
+  importTeil2
+} from "@/lib/api/inszenierung";
+import { patchScript } from "@/lib/api/script";
+import {
+  INITIAL_ANARCHY_STATE,
+  runAnarchyPlayback,
+  stopAnarchyPlayback,
+  type AnarchyPlaybackState
+} from "@/features/inszenierung/anarchyPlayback";
+import {
+  planNeedsAvatarVisualRefresh,
+  planRequiresTts
+} from "@/features/inszenierung/avatarCuePlayback";
+import {
+  bufferStatusLabel as inszenierungBufferLabel,
+  isInszenierungBuffered,
+  momentSpeechLabel,
+  startInszenierungBuffer,
+  subscribeInszenierungBuffer,
+  type InszenierungBufferState
+} from "@/features/inszenierung/inszenierungBuffer";
+import type { CompositionMoment, SceneCorpus } from "@/lib/types/inszenierung";
+import {
   bufferStatusLabel,
   isPlaybackBuffered,
   startScriptBuffer,
@@ -23,25 +50,10 @@ import {
   runPart1ScriptPlayback,
   stopScriptPlayback,
   type PlaybackAudioOptions,
+  type PlaybackMode,
   type PlaybackState
 } from "@/features/show/scriptPlayback";
 import { resolvePerformancePart } from "@/lib/types/part1";
-import { fetchCorpus } from "@/lib/api/inszenierung";
-import { patchScript } from "@/lib/api/script";
-import {
-  INITIAL_ANARCHY_STATE,
-  runAnarchyPlayback,
-  stopAnarchyPlayback,
-  type AnarchyPlaybackState
-} from "@/features/inszenierung/anarchyPlayback";
-import {
-  bufferStatusLabel as inszenierungBufferLabel,
-  isInszenierungBuffered,
-  startInszenierungBuffer,
-  subscribeInszenierungBuffer,
-  type InszenierungBufferState
-} from "@/features/inszenierung/inszenierungBuffer";
-import type { SceneCorpus } from "@/lib/types/inszenierung";
 import { progressFromBeat } from "@/lib/show/performanceTimeline";
 import { fetchMediaCatalog } from "@/lib/api/media";
 import type { MediaCatalog } from "@/lib/types/media";
@@ -55,6 +67,7 @@ function AuffuehrungContent() {
   const scriptId = searchParams.get("id") ?? sessionStorage.getItem("currentScriptId") ?? "";
   const corpusIdParam =
     searchParams.get("corpus") ?? searchParams.get("corpus_id") ?? sessionStorage.getItem("currentCorpusId") ?? "";
+  const importTeil2InputRef = useRef<HTMLInputElement>(null);
   const importInputRef = useRef<HTMLInputElement>(null);
   const [script, setScript] = useState<ProductionScript | null>(null);
   const [playback, setPlayback] = useState<PlaybackState>(INITIAL_PLAYBACK_STATE);
@@ -69,6 +82,9 @@ function AuffuehrungContent() {
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [exportingTeil2, setExportingTeil2] = useState(false);
+  const [importingTeil2, setImportingTeil2] = useState(false);
+  const [preparingTeil2, setPreparingTeil2] = useState(false);
   const [bufferState, setBufferState] = useState<ScriptBufferState | null>(null);
   const [corpus, setCorpus] = useState<SceneCorpus | null>(null);
   const [anarchyPlayback, setAnarchyPlayback] = useState<AnarchyPlaybackState>(INITIAL_ANARCHY_STATE);
@@ -85,10 +101,22 @@ function AuffuehrungContent() {
     [script]
   );
   const activeBeatCount = performancePart === "part1_baerenklau" ? part1OnlyBeats.length : beatCount;
+  const teil2Moments = useMemo(
+    () => [...(corpus?.composition?.moments ?? [])].sort((a, b) => a.order - b.order),
+    [corpus?.composition?.moments]
+  );
+  const teil2NeedsTts = corpus?.composition ? planRequiresTts(corpus.composition) : false;
+  const teil2BeatCount = teil2Moments.length;
+  const teil2Only = Boolean(corpusIdParam && !scriptId);
+  const activeTeil2Moment =
+    anarchyPlayback.momentIndex >= 0 ? teil2Moments[anarchyPlayback.momentIndex] : undefined;
 
   const load = useCallback(async () => {
-    if (!scriptId) {
+    if (!scriptId && !corpusIdParam) {
       setLoading(false);
+      return;
+    }
+    if (!scriptId) {
       return;
     }
     try {
@@ -124,21 +152,51 @@ function AuffuehrungContent() {
   }, [load, performancePart]);
 
   useEffect(() => {
+    let cancelled = false;
     const linkedId = script?.teil2_corpus_id ?? corpusIdParam;
     if (!linkedId) {
       setCorpus(null);
+      if (!scriptId) setLoading(false);
       return;
     }
-    void fetchCorpus(linkedId).then(setCorpus).catch(() => setCorpus(null));
-  }, [script?.teil2_corpus_id, corpusIdParam]);
-
-  useEffect(() => subscribeInszenierungBuffer(setInszenierungBuffer), []);
+    if (!scriptId) setLoading(true);
+    void (async () => {
+      try {
+        let data = await fetchCorpus(linkedId);
+        if (cancelled) return;
+        if (data.script_text && !(data.composition?.moments?.length ?? 0)) {
+          try {
+            data = await composeScript(data.id);
+          } catch (err) {
+            if (!cancelled) {
+              setError(err instanceof Error ? err.message : "Teil-2-Timeline konnte nicht geladen werden");
+            }
+          }
+        }
+        if (cancelled) return;
+        setCorpus(data);
+        sessionStorage.setItem("currentCorpusId", data.id);
+        if (script?.id && script.teil2_corpus_id !== data.id) {
+          await patchScript(script.id, { teil2_corpus_id: data.id }).catch(() => undefined);
+        }
+      } catch {
+        if (!cancelled) setCorpus(null);
+      } finally {
+        if (!cancelled && !scriptId) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [script?.teil2_corpus_id, script?.id, corpusIdParam, scriptId]);
 
   useEffect(() => {
-    if (!corpus?.composition?.moments?.length || !ttsAvailable) return;
+    if (!corpus?.composition?.moments?.length || !ttsAvailable || !teil2NeedsTts) return;
     if (isInszenierungBuffered(corpus.id, ttsAvailable)) return;
     startInszenierungBuffer(corpus, ttsAvailable);
-  }, [corpus, ttsAvailable]);
+  }, [corpus, ttsAvailable, teil2NeedsTts]);
+
+  useEffect(() => subscribeInszenierungBuffer(setInszenierungBuffer), []);
 
   const ready = script?.status === "ready";
   const playbackAudio: PlaybackAudioOptions = useMemo(
@@ -156,7 +214,15 @@ function AuffuehrungContent() {
   const scriptReady = ready || Boolean(script?.has_rendered_audio);
   const teil2Ready =
     Boolean(corpus?.composition?.moments?.length) &&
-    (isInszenierungBuffered(corpus!.id, ttsAvailable) || !ttsAvailable);
+    (!teil2NeedsTts || isInszenierungBuffered(corpus!.id, ttsAvailable) || !ttsAvailable);
+  const teil2BlockedReason =
+    corpus?.composition?.moments?.length && teil2NeedsTts && ttsAvailable && !teil2Ready
+      ? inszenierungBuffer && inszenierungBuffer.corpusId === corpus.id
+        ? inszenierungBufferLabel(inszenierungBuffer)
+        : "Stimmen werden vorbereitet …"
+      : !corpus?.composition?.moments?.length && corpus
+        ? "Timeline fehlt — Komposition laden oder vorbereiten."
+        : undefined;
   const canPlayTeil1 = scriptReady && bufferReady && !anarchyPlayback.running;
   const canPlayTeil2 =
     Boolean(corpus?.composition?.moments?.length) &&
@@ -183,7 +249,7 @@ function AuffuehrungContent() {
   }, [script, scriptReady, bufferReady, playbackAudio]);
 
   const playFrom = useCallback(
-    async (startIndex: number) => {
+    async (startIndex: number, mode: PlaybackMode = "full") => {
       if (!script || !canPlayTeil1) return;
       if (performancePart === "part2_delphin_to_mole") return;
       const gen = ++playbackGenRef.current;
@@ -198,6 +264,7 @@ function AuffuehrungContent() {
         paused: false,
         completed: false,
         running: true,
+        playbackMode: mode,
         timelineProgress: progressFromBeat(startIndex, beats.length, 0)
       }));
 
@@ -214,7 +281,8 @@ function AuffuehrungContent() {
         },
         () => abortRef.current,
         `${script.title} — Teil 1`,
-        script.part1_selection ?? null
+        script.part1_selection ?? null,
+        mode
       );
 
       if (gen === playbackGenRef.current && !abortRef.current && script.teil2_corpus_id) {
@@ -233,9 +301,21 @@ function AuffuehrungContent() {
     if (script?.id) {
       await patchScript(script.id, { performance_part: "part2_delphin_to_mole" }).catch(() => undefined);
     }
+    let activeCorpus = corpus;
+    try {
+      activeCorpus = await composeScript(corpus.id);
+      if (gen === playbackGenRef.current) setCorpus(activeCorpus);
+    } catch (err) {
+      if (planNeedsAvatarVisualRefresh(corpus.composition)) {
+        setError(err instanceof Error ? err.message : "Teil-2-Timeline konnte nicht geladen werden");
+        setAnarchyPlayback((prev) => ({ ...prev, running: false }));
+        return;
+      }
+    }
+    if (!activeCorpus.composition) return;
     await runAnarchyPlayback(
-      corpus,
-      corpus.composition,
+      activeCorpus,
+      activeCorpus.composition,
       ttsAvailable,
       (patch) => {
         if (gen === playbackGenRef.current) setAnarchyPlayback((prev) => ({ ...prev, ...patch }));
@@ -247,7 +327,7 @@ function AuffuehrungContent() {
     }
   }, [corpus, canPlayTeil2, ttsAvailable, script]);
 
-  function handlePlayTeil1() {
+  function handlePlayTeil1(mode: PlaybackMode = "full") {
     if (!script || !canPlayTeil1) return;
     if (playback.running && playback.paused) {
       setPlaybackPaused(false);
@@ -261,10 +341,25 @@ function AuffuehrungContent() {
         : playback.beatIndex >= 0
           ? playback.beatIndex
           : 0;
-    void playFrom(from);
+    void playFrom(from, mode);
+  }
+
+  function handlePlayTeil2() {
+    if (anarchyPlayback.running && anarchyPlayback.paused) {
+      setPlaybackPaused(false);
+      setAnarchyPlayback((prev) => ({ ...prev, paused: false }));
+      return;
+    }
+    if (anarchyPlayback.running) return;
+    void playTeil2();
   }
 
   function handlePause() {
+    if (anarchyPlayback.running && !anarchyPlayback.paused) {
+      setPlaybackPaused(true);
+      setAnarchyPlayback((prev) => ({ ...prev, paused: true }));
+      return;
+    }
     if (!playback.running || playback.paused) return;
     setPlaybackPaused(true);
     setPlayback((prev) => ({ ...prev, paused: true }));
@@ -301,7 +396,7 @@ function AuffuehrungContent() {
       playbackGenRef.current += 1;
       stopScriptPlayback();
       setPlaybackPaused(false);
-      void playFrom(index);
+      void playFrom(index, playback.playbackMode ?? "full");
     }
   }
 
@@ -341,8 +436,74 @@ function AuffuehrungContent() {
     }
   }
 
+  async function handleExportTeil2() {
+    if (!corpus?.composition?.moments?.length) return;
+    setExportingTeil2(true);
+    setError("");
+    try {
+      const { blob, filename } = await exportTeil2(corpus.id);
+      downloadBlob(blob, filename);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Teil-2-Export fehlgeschlagen");
+    } finally {
+      setExportingTeil2(false);
+    }
+  }
+
+  async function handleImportTeil2File(file: File | null) {
+    if (!file) return;
+    setImportingTeil2(true);
+    setError("");
+    try {
+      const imported = await importTeil2(file);
+      setCorpus(imported);
+      sessionStorage.setItem("currentCorpusId", imported.id);
+      const href = scriptId
+        ? `/auffuehrung?id=${scriptId}&corpus=${imported.id}`
+        : `/auffuehrung?corpus=${imported.id}`;
+      router.push(href);
+      if (script?.id) {
+        await patchScript(script.id, { teil2_corpus_id: imported.id }).catch(() => undefined);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Teil-2-Import fehlgeschlagen");
+    } finally {
+      setImportingTeil2(false);
+      if (importTeil2InputRef.current) importTeil2InputRef.current.value = "";
+    }
+  }
+
+  async function handlePrepareTeil2() {
+    setPreparingTeil2(true);
+    setError("");
+    try {
+      let next = corpus;
+      if (!next) {
+        next = await createCorpus("Teil 2 — Delphin bis Wolf");
+      }
+      if (!(next.composition?.moments?.length ?? 0)) {
+        next = await composeScript(next.id);
+      }
+      setCorpus(next);
+      sessionStorage.setItem("currentCorpusId", next.id);
+      const href = scriptId
+        ? `/auffuehrung?id=${scriptId}&corpus=${next.id}`
+        : `/auffuehrung?corpus=${next.id}`;
+      router.push(href);
+      if (script?.id) {
+        await patchScript(script.id, { teil2_corpus_id: next.id }).catch(() => undefined);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Teil 2 konnte nicht vorbereitet werden");
+    } finally {
+      setPreparingTeil2(false);
+    }
+  }
+
   return (
-    <main className={`container col${script ? " pageWithPerformanceTransport" : ""}`}>
+    <main
+      className={`container col${script || corpus ? " pageWithPerformanceTransport" : ""}`}
+    >
       <div className="row" style={{ justifyContent: "space-between", alignItems: "center" }}>
         <h1 style={{ margin: 0 }}>Aufführung</h1>
         <AppNav />
@@ -354,9 +515,13 @@ function AuffuehrungContent() {
 
       <section className="card col">
         <h2>Aufführung laden / speichern</h2>
-        <div className="row">
+        <p className="textMuted" style={{ fontSize: "0.85rem", marginTop: 0 }}>
+          Teil 1: <code>.zip</code> mit Stück und Stimmen · Teil 2: <code>.tmteil2.zip</code> mit Korpus und
+          Timeline
+        </p>
+        <div className="row" style={{ flexWrap: "wrap", gap: "0.5rem" }}>
           <button type="button" onClick={() => importInputRef.current?.click()} disabled={importing}>
-            {importing ? "Import läuft …" : "Aufführung importieren (.zip)"}
+            {importing ? "Import läuft …" : "Teil 1 importieren (.zip)"}
           </button>
           <input
             ref={importInputRef}
@@ -367,7 +532,26 @@ function AuffuehrungContent() {
           />
           {script && ready ? (
             <button type="button" onClick={() => void handleExport()} disabled={exporting || playback.running}>
-              {exporting ? "Export rendert Stimmen …" : "Aufführung exportieren"}
+              {exporting ? "Export rendert Stimmen …" : "Teil 1 exportieren"}
+            </button>
+          ) : null}
+          <button type="button" onClick={() => importTeil2InputRef.current?.click()} disabled={importingTeil2}>
+            {importingTeil2 ? "Import läuft …" : "Teil 2 importieren (.tmteil2.zip)"}
+          </button>
+          <input
+            ref={importTeil2InputRef}
+            type="file"
+            accept=".tmteil2.zip,.zip,application/zip"
+            hidden
+            onChange={(e) => void handleImportTeil2File(e.target.files?.[0] ?? null)}
+          />
+          {corpus?.composition?.moments?.length ? (
+            <button
+              type="button"
+              onClick={() => void handleExportTeil2()}
+              disabled={exportingTeil2 || anarchyPlayback.running}
+            >
+              {exportingTeil2 ? "Export läuft …" : "Teil 2 exportieren"}
             </button>
           ) : null}
         </div>
@@ -388,15 +572,19 @@ function AuffuehrungContent() {
         )}
       </section>
 
-      {loading ? <p className="textFaint">Lade Stück …</p> : null}
+      {loading ? <p className="textFaint">Lade Aufführung …</p> : null}
       {error ? (
         <div className="textError" role="alert">
           {error}
         </div>
       ) : null}
-      {!scriptId && !loading ? (
+      {!scriptId && !corpusIdParam && !loading ? (
         <p className="textFaint">
-          Kein Stück geladen — oben importieren oder <Link href="/dramaturgie">Dramaturgie</Link> starten.
+          Kein Stück oder Teil-2-Korpus geladen — oben importieren,{" "}
+          <button type="button" onClick={() => void handlePrepareTeil2()} disabled={preparingTeil2}>
+            {preparingTeil2 ? "Teil 2 wird vorbereitet …" : "Teil 2 vorbereiten"}
+          </button>
+          , oder <Link href="/dramaturgie">Dramaturgie</Link> starten.
         </p>
       ) : null}
 
@@ -423,37 +611,74 @@ function AuffuehrungContent() {
               <button
                 type="button"
                 className="machineStartBtn"
-                onClick={handlePlayTeil1}
+                onClick={() => handlePlayTeil1("full")}
                 disabled={!canPlayTeil1 || playback.running}
               >
-                {playback.running ? "Teil 1 läuft …" : "Teil 1 starten"}
+                {playback.running && playback.playbackMode === "full"
+                  ? "Komplett läuft …"
+                  : "▶ Komplett"}
+              </button>
+              <button
+                type="button"
+                onClick={() => handlePlayTeil1("discussion")}
+                disabled={!canPlayTeil1 || playback.running}
+              >
+                {playback.running && playback.playbackMode === "discussion"
+                  ? "Dramaturgie läuft …"
+                  : "▶ Nur Dramaturgie"}
+              </button>
+              <button
+                type="button"
+                onClick={() => handlePlayTeil1("performance")}
+                disabled={!canPlayTeil1 || playback.running}
+              >
+                {playback.running && playback.playbackMode === "performance"
+                  ? "Stücktext läuft …"
+                  : "▶ Nur Stücktext"}
               </button>
               {corpus?.composition?.moments?.length ? (
                 <button
                   type="button"
-                  onClick={() => void playTeil2()}
-                  disabled={!canPlayTeil2 || anarchyPlayback.running}
+                  onClick={handlePlayTeil2}
+                  disabled={!canPlayTeil2 || (anarchyPlayback.running && !anarchyPlayback.paused)}
                 >
-                  {anarchyPlayback.running ? "Teil 2 läuft …" : "Teil 2 starten"}
+                  {anarchyPlayback.running
+                    ? anarchyPlayback.paused
+                      ? "Teil 2 pausiert"
+                      : "Teil 2 läuft …"
+                    : "Teil 2 starten"}
                 </button>
               ) : (
-                <p className="textMuted" style={{ fontSize: "0.85rem", margin: 0 }}>
-                  Teil 2: Korpus in <Link href="/inszenierung">Inszenierung</Link> vorbereiten und verknüpfen, oder{" "}
-                  <code>?corpus=…</code> in der URL.
-                </p>
+                <button type="button" onClick={() => void handlePrepareTeil2()} disabled={preparingTeil2}>
+                  {preparingTeil2 ? "Teil 2 wird vorbereitet …" : "Teil 2 vorbereiten"}
+                </button>
               )}
             </div>
             {playback.completed && performancePart === "part1_baerenklau" ? (
               <p className="textMuted">Teil 1 beendet.</p>
             ) : null}
             {anarchyPlayback.completed ? <p className="textMuted">Teil 2 beendet.</p> : null}
-            {inszenierungBuffer && !teil2Ready && script.teil2_corpus_id ? (
+            {inszenierungBuffer && teil2NeedsTts && !teil2Ready && corpus ? (
               <p className="textMuted">{inszenierungBufferLabel(inszenierungBuffer)}</p>
+            ) : null}
+            {teil2BlockedReason && !anarchyPlayback.running ? (
+              <p className="textMuted" style={{ fontSize: "0.85rem" }}>
+                {teil2BlockedReason}
+              </p>
             ) : null}
             {anarchyPlayback.running ? (
               <p className="textMuted" style={{ fontSize: "0.9rem" }}>
-                Anarchie {Math.round(anarchyPlayback.anarchyLevel * 100)}% · Stimmen{" "}
-                {anarchyPlayback.activeVoices}
+                Beat {anarchyPlayback.momentIndex + 1}/{teil2BeatCount}
+                {activeTeil2Moment ? ` · ${momentSpeechLabel(activeTeil2Moment)}` : ""}
+                {activeTeil2Moment?.avatar_layers?.length
+                  ? ` · Beamer: ${
+                      activeTeil2Moment.projector_mode === "all"
+                        ? "alle"
+                        : activeTeil2Moment.avatar_layers.map((l) => l.projector).join(", ")
+                    }`
+                  : ""}
+                {" · "}Anarchie {Math.round(anarchyPlayback.anarchyLevel * 100)}%
+                {anarchyPlayback.activeVoices > 0 ? ` · ${anarchyPlayback.activeVoices} Stimmen` : ""}
               </p>
             ) : null}
             {playback.completed && !script.teil2_corpus_id && !corpusIdParam ? (
@@ -483,31 +708,153 @@ function AuffuehrungContent() {
             ))}
           </section>
 
-          <PerformanceTransport
-            beats={performancePart === "part1_baerenklau" ? part1OnlyBeats : script.beats}
-            beatIndex={playback.beatIndex}
-            beatCount={activeBeatCount}
-            timelineProgress={
-              playback.timelineProgress >= 0
-                ? playback.timelineProgress
-                : progressFromBeat(Math.max(playback.beatIndex, 0), beatCount, 0)
-            }
-            running={playback.running}
-            paused={playback.paused}
-            completed={playback.completed}
-            canPlay={canPlayTeil1}
-            playBlockedReason={playBlockedReason}
-            segmentPhase={playback.segmentPhase}
-            discussionTurnIndex={playback.discussionTurnIndex}
-            sentenceIndex={playback.sentenceIndex}
-            showPhase={playback.showPhase}
-            activeOscBridge={playback.activeOscBridge}
-            onPlay={handlePlayTeil1}
-            onPause={handlePause}
-            onStop={handleStop}
-            onSeek={handleSeek}
-          />
+          {!anarchyPlayback.running && !anarchyPlayback.paused ? (
+            <PerformanceTransport
+              beats={performancePart === "part1_baerenklau" ? part1OnlyBeats : script.beats}
+              beatIndex={playback.beatIndex}
+              beatCount={activeBeatCount}
+              timelineProgress={
+                playback.timelineProgress >= 0
+                  ? playback.timelineProgress
+                  : progressFromBeat(Math.max(playback.beatIndex, 0), beatCount, 0)
+              }
+              running={playback.running}
+              paused={playback.paused}
+              completed={playback.completed}
+              canPlay={canPlayTeil1}
+              playBlockedReason={playBlockedReason}
+              segmentPhase={playback.segmentPhase}
+              discussionTurnIndex={playback.discussionTurnIndex}
+              sentenceIndex={playback.sentenceIndex}
+              showPhase={playback.showPhase}
+              activeOscBridge={playback.activeOscBridge}
+              playbackMode={playback.playbackMode}
+              onPlay={() => handlePlayTeil1(playback.playbackMode ?? "full")}
+              onPause={handlePause}
+              onStop={handleStop}
+              onSeek={handleSeek}
+            />
+          ) : null}
         </>
+      ) : null}
+
+      {corpus && (teil2Only || !script) ? (
+        <>
+          <section className="card col">
+            <h2>{corpus.title || "Teil 2 — Anarchie"}</h2>
+            <p className="textMuted" style={{ fontSize: "0.9rem" }}>
+              {teil2BeatCount > 0
+                ? `${teil2BeatCount} Beats · Avatar-Video parallel zu Anarchie-OSC`
+                : "Noch keine Timeline — Komposition laden oder vorbereiten."}
+            </p>
+            <div className="row" style={{ gap: "0.75rem", flexWrap: "wrap" }}>
+              {teil2BeatCount > 0 ? (
+                <button
+                  type="button"
+                  className="machineStartBtn"
+                  onClick={handlePlayTeil2}
+                  disabled={!canPlayTeil2 || (anarchyPlayback.running && !anarchyPlayback.paused)}
+                >
+                  {anarchyPlayback.running
+                    ? anarchyPlayback.paused
+                      ? "▶ Fortsetzen"
+                      : "Teil 2 läuft …"
+                    : "▶ Teil 2 starten"}
+                </button>
+              ) : (
+                <button type="button" onClick={() => void handlePrepareTeil2()} disabled={preparingTeil2}>
+                  {preparingTeil2 ? "Wird vorbereitet …" : "Timeline laden"}
+                </button>
+              )}
+              <Link href={`/inszenierung/komposition?id=${corpus.id}`}>Komposition bearbeiten</Link>
+            </div>
+            {activeTeil2Moment ? (
+              <p className="textMuted" style={{ fontSize: "0.9rem" }}>
+                Aktiv: {momentSpeechLabel(activeTeil2Moment)}
+              </p>
+            ) : null}
+            {teil2BlockedReason && !anarchyPlayback.running ? (
+              <p className="textMuted">{teil2BlockedReason}</p>
+            ) : null}
+          </section>
+
+          {teil2BeatCount > 0 ? (
+            <section className="card col">
+              <h2>Teil-2-Beats</h2>
+              <ol style={{ margin: 0, paddingLeft: "1.25rem" }}>
+                {teil2Moments.map((moment, index) => (
+                  <li
+                    key={moment.id}
+                    style={{
+                      marginBottom: "0.5rem",
+                      opacity: anarchyPlayback.momentIndex === index && anarchyPlayback.running ? 1 : 0.85
+                    }}
+                  >
+                    <strong>{momentSpeechLabel(moment)}</strong>
+                    <span className="textMuted" style={{ fontSize: "0.85rem" }}>
+                      {" "}
+                      · Anarchie {(moment.anarchy_level * 100).toFixed(0)}%
+                      {moment.avatar_layers?.length
+                        ? ` · ${moment.projector_mode === "all" ? "alle Beamer" : moment.avatar_layers.map((l) => l.projector).join(", ")}`
+                        : ""}
+                    </span>
+                    {moment.text_excerpt ? (
+                      <p className="textMuted" style={{ fontSize: "0.85rem", margin: "0.15rem 0 0" }}>
+                        {moment.text_excerpt}
+                      </p>
+                    ) : null}
+                  </li>
+                ))}
+              </ol>
+            </section>
+          ) : null}
+        </>
+      ) : null}
+
+      {corpus && teil2BeatCount > 0 &&
+      (teil2Only || !script || anarchyPlayback.running || anarchyPlayback.paused) ? (
+        <footer className="performanceTransport" aria-label="Teil-2-Steuerung">
+          <div className="performanceTransportInner">
+              <div className="performanceTransportMeta">
+                <strong>
+                  Beat {anarchyPlayback.momentIndex >= 0 ? anarchyPlayback.momentIndex + 1 : "—"} / {teil2BeatCount}
+                </strong>
+                <span className="textMuted performanceTransportDetail">
+                  {anarchyPlayback.completed
+                    ? "Beendet"
+                    : anarchyPlayback.running
+                      ? anarchyPlayback.paused
+                        ? "Pausiert"
+                        : `${activeTeil2Moment ? momentSpeechLabel(activeTeil2Moment) : "Läuft"} · Anarchie ${(anarchyPlayback.anarchyLevel * 100).toFixed(0)}%`
+                      : teil2BlockedReason ?? "Bereit"}
+                </span>
+              </div>
+              <div className="performanceTransportControls">
+                {!anarchyPlayback.running || anarchyPlayback.paused ? (
+                  <button
+                    type="button"
+                    className="machineStartBtn"
+                    disabled={!canPlayTeil2}
+                    onClick={handlePlayTeil2}
+                  >
+                    {anarchyPlayback.paused ? "▶ Fortsetzen" : "▶ Play"}
+                  </button>
+                ) : (
+                  <button type="button" onClick={handlePause}>
+                    ⏸ Pause
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className="machineStopBtn"
+                  onClick={handleStop}
+                  disabled={!anarchyPlayback.running && !anarchyPlayback.paused}
+                >
+                  ⏹ Stop
+                </button>
+              </div>
+            </div>
+        </footer>
       ) : null}
     </main>
   );

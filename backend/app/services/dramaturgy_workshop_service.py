@@ -11,6 +11,7 @@ from app.director.dramaturgy.llm_director import LLMDirector
 from app.director.outputs.osc_commands import build_osc_commands
 from app.schemas.script import DiscussionTurn, ScriptBeat
 from app.services.ai_service import AIService
+from app.services.dramaturgy_text import clamp_statement
 from app.services.script_splitter import beat_scene_label, dramaturgy_quote_excerpts
 
 
@@ -32,21 +33,6 @@ Jeder Beitrag: maximal {max_chars} Zeichen, 2–3 kurze Sätze — wie am Regiet
 OPENAI_DRAMATURGE = "Dramaturg A (GPT)"
 ANTHROPIC_DRAMATURGE = "Dramaturg B (Claude)"
 
-
-def _clamp_statement(text: str, max_chars: int | None = None) -> str:
-    limit = max_chars if max_chars is not None else settings.dramaturgy_statement_max_chars
-    trimmed = text.strip()
-    if len(trimmed) <= limit:
-        return trimmed
-    cut = trimmed[:limit]
-    for sep in (". ", "! ", "? ", "… "):
-        idx = cut.rfind(sep)
-        if idx >= limit // 2:
-            return cut[: idx + 1].strip()
-    last_space = cut.rfind(" ")
-    if last_space >= limit // 2:
-        return cut[:last_space].strip()
-    return cut.strip()
 
 EventType = Literal["thinking", "discussion_turn", "dramaturgy_decision", "beat_done", "error", "done"]
 
@@ -144,7 +130,7 @@ class DramaturgyWorkshopService:
             ],
             max_tokens=settings.dramaturgy_discussion_max_tokens,
         )
-        return _clamp_statement(raw)
+        return clamp_statement(raw)
 
     def _proposed_decision_for_turn(
         self,

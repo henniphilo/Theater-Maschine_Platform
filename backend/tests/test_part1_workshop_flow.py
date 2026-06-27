@@ -106,25 +106,26 @@ def test_part1_workshop_discussion_before_preview(workshop: Part1WorkshopService
     assert "```json" not in turns[0].discussion_turns[0]["content"]
 
 
-def test_part1_workshop_media_turn_spoken_with_catalog_cues(workshop: Part1WorkshopService) -> None:
+def _mood_proposal() -> str:
+    return (
+        "«Bärenklau» — maschinelles Summen, Grundader-Ton (Sound).\n"
+        "«Keller» — kalte Bildschirmflächen (Video)."
+    )
+
+
+def test_part1_workshop_mood_turn_spoken_without_ids(workshop: Part1WorkshopService) -> None:
     workshop.llm.catalog_allowlist.return_value = {
-        "sounds": [{"id": "maschinen_grundader", "tags": []}],
+        "sounds": [{"id": "maschinen_grundader", "tags": ["drone", "grundton"]}],
         "videos": [{"id": "macbook", "tags": []}],
         "lights": [],
     }
-    media_with_bullets = (
-        "Paket für den Gesamttext:\n"
-        "- `maschinen_grundader` — «billiger» / Thema: Kälte\n"
-        "- `macbook` — «Kredit» / Thema: Finanz\n"
-        + _media_json()
-    )
     ai = workshop.ai
     ai.generate = AsyncMock(
         side_effect=[
             _theme_text(),
             _theme_text(),
-            media_with_bullets,
-            media_with_bullets,
+            _mood_proposal(),
+            _mood_proposal(),
             _handoff_text(),
         ]
     )
@@ -145,10 +146,10 @@ def test_part1_workshop_media_turn_spoken_with_catalog_cues(workshop: Part1Works
     turns = [e for e in events if e.type == "discussion_turn"]
     stored = turns[2].discussion_turns[2]
     spoken = stored["content"]
-    assert "maschinen grundader" in spoken.lower() or "maschinen_grundader" in spoken
-    assert "macbook" in spoken.lower()
+    assert "maschinen_grundader" not in spoken
+    assert "Beim Stichwort" in spoken
     mentions = stored["media_mentions"]
-    assert len(mentions) >= 2
+    assert len(mentions) >= 1
     assert all(m["char_offset"] < len(spoken) for m in mentions)
 
 

@@ -37,14 +37,12 @@ function AnalyseContent() {
             setThinking(event.speaker === "openai" ? "ChatGPT denkt …" : "Claude denkt …");
           }
           if (event.type === "discussion_turn" && event.content && event.speaker) {
-            const turnContent = event.content;
-            const turnSpeaker = event.speaker;
             setThinking(null);
             setChat((prev) => [
               ...prev,
               {
-                speaker: turnSpeaker === "openai" ? "ChatGPT" : "Claude",
-                content: turnContent
+                speaker: event.speaker === "openai" ? "ChatGPT" : "Claude",
+                content: event.content!
               }
             ]);
           }
@@ -71,6 +69,7 @@ function AnalyseContent() {
   }
 
   const displayConcept = concept ?? corpus?.gesamtkonzept;
+  const hasScript = Boolean(corpus?.script_text);
 
   return (
     <main className="container col">
@@ -79,14 +78,18 @@ function AnalyseContent() {
         <AppNav />
       </div>
       <p className="textMuted">
-        Dramaturgen diskutieren alle Tier-Szenen zum Thema Geld und formen ein Gesamtkonzept.
+        Dramaturgen diskutieren den festen Avatar-Skriptablauf zum Thema Geld und formen ein Gesamtkonzept.
       </p>
 
       {corpus ? (
         <section className="card col">
           <h2>{corpus.title}</h2>
-          <p className="textMuted">{corpus.scenes.length} Szenen</p>
-          <button type="button" onClick={() => void startAnalyse()} disabled={loading || corpus.scenes.length === 0}>
+          <p className="textMuted">
+            {hasScript
+              ? `${(corpus.script_text ?? "").length} Zeichen Skripttext`
+              : "Kein Skripttext geladen"}
+          </p>
+          <button type="button" onClick={() => void startAnalyse()} disabled={loading || !hasScript}>
             {loading ? "Analyse läuft …" : "Analyse starten"}
           </button>
           {displayConcept?.thesis ? (
