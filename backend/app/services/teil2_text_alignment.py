@@ -13,6 +13,24 @@ from app.services.inszenierung_validation import normalize_whitespace
 from app.services.teil2_projector_assignment import assign_projectors_for_layers, build_avatar_visual_cue
 from app.services.text_split import sentence_char_ranges, sentence_index_at_offset
 
+_UNICODE_BREAK_CHARS = frozenset(
+    {
+        "\u00a0",  # NBSP (Numbers)
+        "\u2028",  # line separator (Numbers «Zeilenumbruch»)
+        "\u2029",  # paragraph separator
+        "\u200b",  # zero-width space
+        "\ufeff",  # BOM
+    }
+)
+
+
+def _is_break_char(char: str) -> bool:
+    if char in "\r\n\t":
+        return True
+    if char in _UNICODE_BREAK_CHARS:
+        return True
+    return unicodedata.category(char) == "Zs"
+
 
 def _normalize_key(text: str) -> str:
     cleaned = normalize_whitespace(normalize_avatar_text(text))
@@ -26,7 +44,7 @@ def _build_normalized_map(script_text: str) -> tuple[str, list[int]]:
     index_map: list[int] = []
     last_space = False
     for index, char in enumerate(script_text):
-        if char in "\r\n\t":
+        if _is_break_char(char):
             if not last_space:
                 norm_chars.append(" ")
                 index_map.append(index)
@@ -47,12 +65,29 @@ def _build_normalized_map(script_text: str) -> tuple[str, list[int]]:
     return "".join(norm_chars).strip(), index_map
 
 
+def _find_line_anchor_offset(script_text: str, cue_text: str) -> int | None:
+    """Match short CSV snippets that are a full script line (e.g. «Ja,»)."""
+    stripped = cue_text.strip()
+    if not stripped:
+        return None
+    needle = _normalize_key(stripped)
+    for line in script_text.splitlines():
+        if _normalize_key(line) == needle:
+            return script_text.find(line)
+    return None
+
+
 def find_text_offset(script_text: str, cue_text: str) -> int | None:
+    line_offset = _find_line_anchor_offset(script_text, cue_text)
+    if line_offset is not None:
+        return line_offset
     needle = _normalize_key(cue_text)
-    if len(needle) < 12:
+    if len(needle) < 3:
         return None
     haystack, index_map = _build_normalized_map(script_text)
     pos = haystack.find(needle)
+    if pos >= 0 and len(needle) < 12 and haystack.count(needle) != 1:
+        pos = -1
     if pos < 0:
         first_line = needle.split(" ", 8)[0]
         if len(first_line) >= 8:

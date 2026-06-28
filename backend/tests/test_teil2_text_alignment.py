@@ -67,3 +67,23 @@ def test_missing_text_emits_warning():
     segments, warnings = align_avatar_csv_to_script(script, cues)
     assert not segments
     assert any("DEL1" in warning for warning in warnings)
+
+
+def test_align_numbers_unicode_separators_and_short_anchors():
+    script = (
+        "21 Der Bärenklau:\n\n"
+        "– wir werden alle von Pflanzen ersetzt werden,\u2028weil die billiger sind,\n\n"
+        "27 Der Wolf\n\n"
+        "Ja,\n\n"
+        "Erst zaghaft, dann wie eine Flut rauscht es heran. \n\xa0\nDas Wasser schießt ein.\n"
+    )
+    cues = [
+        _cue("bak1", "– wir werden alle von Pflanzen ersetzt werden,\u2028weil die billiger sind,"),
+        _cue("wo1", "27 Der Wolf", "wolf", "wo1"),
+        _cue("bk6", "Ja,", "baerenklau", "bk6"),
+        _cue("sch2", "Erst zaghaft, dann wie eine Flut rauscht es heran. \n\xa0\nDas Wasser schießt ein."),
+    ]
+    segments, warnings = align_avatar_csv_to_script(script, cues)
+    assert not warnings, warnings
+    assert len(segments) == 4
+    assert {s.csv_cue_ids[0] for s in segments} == {"bak1", "wo1", "bk6", "sch2"}

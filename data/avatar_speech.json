@@ -3,60 +3,124 @@
   "_source": "/Users/multimediapc146/Documents/Code/Theatermaschine/media/video/Avatar Textzuordnung.csv",
   "cues": [
     {
-      "id": "nicolas",
-      "avatar": "delphin",
-      "text": "23 Der Delphin? Man hat mich dazu gezwungen, ihn einzusetzen. Der Delphin, aber nur kurz",
-      "video_clip_id": "nicolas",
-      "scene_ref": "Nicolas",
-      "duration_ms": 420000
+      "id": "bak1_nicolaspflanzen3",
+      "avatar": "baerenklau",
+      "text": "21 Der Bärenklau: – wir werden alle von Pflanzen ersetzt werden, weil die billiger in der Anschaffung und im Betrieb sind und keine Widerworte geben –, Da der Mensch, ja, sagen wir so, also dermaßen leicht verderblich geworden ist, da wir also gar kein Geld haben, müssen wir uns leider wieder dem Produzenten der Waren zuwenden,",
+      "video_clip_id": "bak1_nicolaspflanzen3",
+      "scene_ref": "BAK1_NicolasPflanzen3",
+      "duration_ms": 24000
     },
     {
-      "id": "branko",
+      "id": "bak2_krabbe",
+      "avatar": "baerenklau",
+      "text": "die Produkte stehen sich gegenüber und knurren einander an. Der wahre Klassenkampf",
+      "video_clip_id": "bak2_krabbe",
+      "scene_ref": "BAK2_Krabbe",
+      "duration_ms": 6000
+    },
+    {
+      "id": "bak3_hasen",
+      "avatar": "baerenklau",
+      "text": "Was aber, wenn die Preissteigerungen so hoch sind, daß keiner die Waren mehr kaufen kann? Wenn beide, Produzenten wie Arbeiter, zusätzliche Kaufkraft wollen, Die Kreditkapazitäten, also die Geldmengen ausweiten? Ich weiß nicht, was das bringen soll. Ich weiß nur, daß das viel bringt,",
+      "video_clip_id": "bak3_hasen",
+      "scene_ref": "BAK3_Hasen",
+      "duration_ms": 20000
+    },
+    {
+      "id": "bak3_mavie",
+      "avatar": "baerenklau",
+      "text": "Was aber, wenn die Preissteigerungen so hoch sind, daß keiner die Waren mehr kaufen kann? Wenn beide, Produzenten wie Arbeiter, zusätzliche Kaufkraft wollen, Die Kreditkapazitäten, also die Geldmengen ausweiten? Ich weiß nicht, was das bringen soll. Ich weiß nur, daß das viel bringt,",
+      "video_clip_id": "bak3_mavie",
+      "scene_ref": "BAK3_Mavie",
+      "duration_ms": 20000
+    },
+    {
+      "id": "bak4_inge",
+      "avatar": "baerenklau",
+      "text": "Ein Konflikt zwischen Schuldnern und Schöpfern? Zu hoch für mich, und ich bin schon gern hochtönend,",
+      "video_clip_id": "bak4_inge",
+      "scene_ref": "BAK4_Inge",
+      "duration_ms": 8000
+    },
+    {
+      "id": "bak5_thiemo",
+      "avatar": "baerenklau",
+      "text": "Ist das der wahre Klassenkampf? Zwischen den Banken, die den Unternehmen ihre Kredite aufdrängen wollen, und den Arbeitern, die auch irgendwas wollen, ich weiß es nicht, ich weiß nicht, was der Arbeiter will, Er sagt es zwar dauernd, von Lohnrunde zu Lohnrunde mehr, Ich weiß es trotzdem immer noch nicht,",
+      "video_clip_id": "bak5_thiemo",
+      "scene_ref": "BAK5_Thiemo",
+      "duration_ms": 15000
+    },
+    {
+      "id": "bak6_azaria",
+      "avatar": "baerenklau",
+      "text": "Wahrscheinlich will der Arbeiter auch bloß einen Kredit bekommen, doch was ist das Geld überhaupt wert? doch was ist das Geld überhaupt wert? Ist das Geld denn das alles wert? Ist das alles das alles denn wert?",
+      "video_clip_id": "bak6_azaria",
+      "scene_ref": "BAK6_Azaria",
+      "duration_ms": 12000
+    },
+    {
+      "id": "del1_nicolas",
+      "avatar": "delphin",
+      "text": "22 Der Delphin?",
+      "video_clip_id": "del1_nicolas",
+      "scene_ref": "DEL1_Nicolas",
+      "duration_ms": 3000
+    },
+    {
+      "id": "del2",
       "avatar": "delphin",
       "text": "Vorhin haben Sie mir die Zahlen gezeigt, jetzt zeigen Sie mir andre, noch höhere, das müssen Götter sein am andren Ende, welch wunderbare Vermehrung!",
-      "video_clip_id": "branko",
-      "scene_ref": "Branko",
-      "duration_ms": 540000
+      "video_clip_id": "del2",
+      "scene_ref": "DEL2",
+      "duration_ms": 9000
     },
     {
-      "id": "thiemo",
+      "id": "del3",
       "avatar": "delphin",
       "text": "die Kurse steigen rasant, ich springe vor Freude in die Luft, ich werde doch jetzt nicht aussteigen!, im Gegenteil, ich springe noch höher,",
-      "video_clip_id": "thiemo",
-      "scene_ref": "Thiemo",
-      "duration_ms": 420000
+      "video_clip_id": "del3",
+      "scene_ref": "DEL3",
+      "duration_ms": 7000
     },
     {
-      "id": "musiker",
+      "id": "del4",
       "avatar": "delphin",
       "text": "unter mir Tote, neben mir konzertierte Seerettungsaktionen, Ich nehme also einen Kredit auf, während ich der Bank beim Wachsen zusehe, kann vielleicht der Bärenklau von vorhin wieder übernehmen,",
-      "video_clip_id": "musiker",
-      "scene_ref": "Musiker",
-      "duration_ms": 780000
+      "video_clip_id": "del4",
+      "scene_ref": "DEL4",
+      "duration_ms": 13000
+    },
+    {
+      "id": "bk0_waran",
+      "avatar": "baerenklau",
+      "text": "23 Der Bärenkalauer",
+      "video_clip_id": "bk0_waran",
+      "scene_ref": "BK0_Waran",
+      "duration_ms": 3000
     },
     {
       "id": "bk1_caro",
       "avatar": "baerenklau",
-      "text": "24 Der Bärenkalauer Ich steige mit, ich steige hoch, ich wachse, mit allem, was ich habe, Ich schieße Geld nach, alles wird mehr werden, Egal, es wird mehr werden, alles wird mehr werden,",
+      "text": "Ich steige mit, ich steige hoch, ich wachse, mit allem, was ich habe, Ich schieße Geld nach, alles wird mehr werden, Egal, es wird mehr werden, alles wird mehr werden,",
       "video_clip_id": "bk1_caro",
       "scene_ref": "BK1_Caro",
-      "duration_ms": 900000
+      "duration_ms": 12000
     },
     {
       "id": "bk1_caroline",
       "avatar": "baerenklau",
-      "text": "24 Der Bärenkalauer Ich steige mit, ich steige hoch, ich wachse, mit allem, was ich habe, Ich schieße Geld nach, alles wird mehr werden, Egal, es wird mehr werden, alles wird mehr werden,",
+      "text": "Ich steige mit, ich steige hoch, ich wachse, mit allem, was ich habe, Ich schieße Geld nach, alles wird mehr werden, Egal, es wird mehr werden, alles wird mehr werden,",
       "video_clip_id": "bk1_caroline",
       "scene_ref": "BK1_Caroline",
-      "duration_ms": 900000
+      "duration_ms": 12000
     },
     {
       "id": "bk1_thomas",
       "avatar": "baerenklau",
-      "text": "24 Der Bärenkalauer Ich steige mit, ich steige hoch, ich wachse, mit allem, was ich habe, Ich schieße Geld nach, alles wird mehr werden, Egal, es wird mehr werden, alles wird mehr werden,",
+      "text": "Ich steige mit, ich steige hoch, ich wachse, mit allem, was ich habe, Ich schieße Geld nach, alles wird mehr werden, Egal, es wird mehr werden, alles wird mehr werden,",
       "video_clip_id": "bk1_thomas",
       "scene_ref": "BK1_Thomas",
-      "duration_ms": 900000
+      "duration_ms": 12000
     },
     {
       "id": "bk2_hundswolf",
@@ -64,7 +128,7 @@
       "text": "schließlich hat sich die globale Geldmenge in den letzten vierzig Jahren fast ins Unendliche vermehrt, was bleibt mir übrig, als auch mein Guthaben zu vermehren, damit es noch besser wird, größer, noch wirksamer, kein Guthaben mehr, schon ein Besserhaben, das Geld soll es bei mir besser haben,",
       "video_clip_id": "bk2_hundswolf",
       "scene_ref": "BK2_Hundswolf",
-      "duration_ms": 1260000
+      "duration_ms": 21000
     },
     {
       "id": "bk2_mavie",
@@ -72,7 +136,7 @@
       "text": "schließlich hat sich die globale Geldmenge in den letzten vierzig Jahren fast ins Unendliche vermehrt, was bleibt mir übrig, als auch mein Guthaben zu vermehren, damit es noch besser wird, größer, noch wirksamer, kein Guthaben mehr, schon ein Besserhaben, das Geld soll es bei mir besser haben,",
       "video_clip_id": "bk2_mavie",
       "scene_ref": "BK2_Mavie",
-      "duration_ms": 1260000
+      "duration_ms": 21000
     },
     {
       "id": "bk3_thomas",
@@ -80,15 +144,15 @@
       "text": "und Sie gründen immer neue Firmen, hohle Männer, wie Tote, Männer aus Stroh, diesmal werde ich endlich kein Opfer, das ist nicht meine Rolle, ich werde Opfer bringen, aber keins sein, nie mehr!",
       "video_clip_id": "bk3_thomas",
       "scene_ref": "BK3_Thomas",
-      "duration_ms": 1260000
+      "duration_ms": 21000
     },
     {
       "id": "daslammgottes",
       "avatar": "lamm",
-      "text": "25 Das Lamm Gottes",
+      "text": "24 Das Lamm Gottes",
       "video_clip_id": "daslammgottes",
       "scene_ref": "DasLammGottes",
-      "duration_ms": 180000
+      "duration_ms": 4000
     },
     {
       "id": "lg2_inge",
@@ -96,7 +160,7 @@
       "text": "von diesem abgenabelt, aber schon länger am Leben, blök blök:",
       "video_clip_id": "lg2_inge",
       "scene_ref": "LG2_Inge",
-      "duration_ms": 420000
+      "duration_ms": 7000
     },
     {
       "id": "lg3_seb",
@@ -104,7 +168,7 @@
       "text": "Das Geld könnte also überall sein und nirgends.",
       "video_clip_id": "lg3_seb",
       "scene_ref": "LG3_Seb",
-      "duration_ms": 240000
+      "duration_ms": 4000
     },
     {
       "id": "lg4_azaria",
@@ -112,7 +176,7 @@
       "text": "Das Geld könnte, von mir aus, ich werde es eh nicht sehn, auch am Himmel stehn wie dieser Pfeil. Es ist wesenlos.",
       "video_clip_id": "lg4_azaria",
       "scene_ref": "LG4_Azaria",
-      "duration_ms": 600000
+      "duration_ms": 10000
     },
     {
       "id": "lg5_henrike",
@@ -120,7 +184,7 @@
       "text": "Das Geld könnte",
       "video_clip_id": "lg5_henrike",
       "scene_ref": "LG5_Henrike",
-      "duration_ms": 180000
+      "duration_ms": 3000
     },
     {
       "id": "lg6_hai",
@@ -128,15 +192,15 @@
       "text": "Retouren werden nicht mehr angenommen,",
       "video_clip_id": "lg6_hai",
       "scene_ref": "LG6_Hai",
-      "duration_ms": 180000
+      "duration_ms": 3000
     },
     {
       "id": "bk5_nicolas",
       "avatar": "baerenklau",
-      "text": "26 Bärenklau",
+      "text": "25 Bärenklau",
       "video_clip_id": "bk5_nicolas",
       "scene_ref": "BK5_Nicolas",
-      "duration_ms": 180000
+      "duration_ms": 3000
     },
     {
       "id": "bk6_branko",
@@ -144,7 +208,7 @@
       "text": "Ja,",
       "video_clip_id": "bk6_branko",
       "scene_ref": "BK6_Branko",
-      "duration_ms": 180000
+      "duration_ms": 3000
     },
     {
       "id": "bk7_caroline",
@@ -152,7 +216,7 @@
       "text": "Der Kredit ist endlos. Es zahlt sich aus, es wird ausgezahlt, Da fließen schon die Millionen, alle für mich, alle her zu mir, ich will sie herzlich begrüßen, und auch andre haben sich in diesen Kreislauf eingespeist, doch essen werde ich, am Ende werde ich endlich was zu essen kriegen, man hat es mir versprochen! Ich brauch doch eh nur Wasser! Mineralstoffe und Spurenelemente erzeuge ich selbst, die Ökologie hat gesiegt, ich bin ein beinahe selbsterhaltendes System.",
       "video_clip_id": "bk7_caroline",
       "scene_ref": "BK7_Caroline",
-      "duration_ms": 1980000
+      "duration_ms": 33000
     },
     {
       "id": "bk7_nasenfisch",
@@ -160,7 +224,7 @@
       "text": "Der Kredit ist endlos. Es zahlt sich aus, es wird ausgezahlt, Da fließen schon die Millionen, alle für mich, alle her zu mir, ich will sie herzlich begrüßen, und auch andre haben sich in diesen Kreislauf eingespeist, doch essen werde ich, am Ende werde ich endlich was zu essen kriegen, man hat es mir versprochen! Ich brauch doch eh nur Wasser! Mineralstoffe und Spurenelemente erzeuge ich selbst, die Ökologie hat gesiegt, ich bin ein beinahe selbsterhaltendes System.",
       "video_clip_id": "bk7_nasenfisch",
       "scene_ref": "BK7_Nasenfisch",
-      "duration_ms": 1980000
+      "duration_ms": 33000
     },
     {
       "id": "bk8_haischaedel",
@@ -168,7 +232,7 @@
       "text": "Der Gewinner nimmt alles. Wird ein andrer aus meinem alten Haus ein neues machen? Die Bank schafft das mit links, sie schafft das mit nichts, sie schafft Geld aus Dreck und aus dem Nichts. Geld aus dem Nichts. Die Pflanze, die nichts will und nichts braucht, überzieht die Erde.",
       "video_clip_id": "bk8_haischaedel",
       "scene_ref": "BK8_HaiSchaedel",
-      "duration_ms": 1260000
+      "duration_ms": 21000
     },
     {
       "id": "bk8_mavie1",
@@ -176,7 +240,7 @@
       "text": "Der Gewinner nimmt alles. Wird ein andrer aus meinem alten Haus ein neues machen? Die Bank schafft das mit links, sie schafft das mit nichts, sie schafft Geld aus Dreck und aus dem Nichts. Geld aus dem Nichts. Die Pflanze, die nichts will und nichts braucht, überzieht die Erde.",
       "video_clip_id": "bk8_mavie1",
       "scene_ref": "BK8_Mavie1",
-      "duration_ms": 1260000
+      "duration_ms": 21000
     },
     {
       "id": "bk8_mavie",
@@ -184,31 +248,39 @@
       "text": "Der Gewinner nimmt alles. Wird ein andrer aus meinem alten Haus ein neues machen? Die Bank schafft das mit links, sie schafft das mit nichts, sie schafft Geld aus Dreck und aus dem Nichts. Geld aus dem Nichts. Die Pflanze, die nichts will und nichts braucht, überzieht die Erde.",
       "video_clip_id": "bk8_mavie",
       "scene_ref": "BK8_Mavie",
-      "duration_ms": 1260000
+      "duration_ms": 21000
     },
     {
       "id": "bk9_thiemo",
       "avatar": "baerenklau",
-      "text": "Die Pflanze ist die Rente der Erde und die Rendite. Sie ist das, was, neben dem nicht volatilen Herrn Stein, übrig bleibt,",
+      "text": "Die Pflanze ist die Rente der Erde und die Rendite. Sie ist das, was, neben dem nicht volatilen Herrn Stein, übrigbleibt,",
       "video_clip_id": "bk9_thiemo",
       "scene_ref": "BK9_Thiemo",
-      "duration_ms": 540000
+      "duration_ms": 9000
+    },
+    {
+      "id": "pet0_baer_thomas",
+      "avatar": "petya",
+      "text": "26 Der arme Hund Petya",
+      "video_clip_id": "pet0_baer_thomas",
+      "scene_ref": "PET0_Baer_Thomas",
+      "duration_ms": 5000
     },
     {
       "id": "pet1_azaria",
       "avatar": "petya",
-      "text": "27 Der arme Hund Petya Die Kurse in Kryptowährungen, für die ich in Minen schuften mußte, bis die Radioaktivität mich gerettet hat,",
+      "text": "Die Kurse in Kryptowährungen, für die ich in Minen schuften mußte, bis die Radioaktivität mich gerettet hat,",
       "video_clip_id": "pet1_azaria",
       "scene_ref": "PET1_Azaria",
-      "duration_ms": 480000
+      "duration_ms": 5000
     },
     {
       "id": "pet1_thomas",
       "avatar": "petya",
-      "text": "27 Der arme Hund Petya Die Kurse in Kryptowährungen, für die ich in Minen schuften mußte, bis die Radioaktivität mich gerettet hat,",
+      "text": "Die Kurse in Kryptowährungen, für die ich in Minen schuften mußte, bis die Radioaktivität mich gerettet hat,",
       "video_clip_id": "pet1_thomas",
       "scene_ref": "PET1_Thomas",
-      "duration_ms": 960000
+      "duration_ms": 10000
     },
     {
       "id": "pet2_inge",
@@ -216,7 +288,7 @@
       "text": "Kurse, welche ich doch grad erst belegte, sind schon wieder geschlossen, die Zahl der Teilnehmer ist erfüllt, das Ziel, das ich habe, ist, mein eigenes Privatgeld zu erschaffen, meinen eigenen digitalen Coin für meine Spielecke.",
       "video_clip_id": "pet2_inge",
       "scene_ref": "PET2_Inge",
-      "duration_ms": 1020000
+      "duration_ms": 17000
     },
     {
       "id": "pet3_caroline",
@@ -224,7 +296,7 @@
       "text": "Der Krieg ist nichts gegen das, was ich auch nicht kriege.",
       "video_clip_id": "pet3_caroline",
       "scene_ref": "PET3_Caroline",
-      "duration_ms": 240000
+      "duration_ms": 4000
     },
     {
       "id": "pet3_koala",
@@ -232,7 +304,7 @@
       "text": "Der Krieg ist nichts gegen das, was ich auch nicht kriege.",
       "video_clip_id": "pet3_koala",
       "scene_ref": "PET3_Koala",
-      "duration_ms": 240000
+      "duration_ms": 4000
     },
     {
       "id": "pet4_sebastian",
@@ -240,7 +312,7 @@
       "text": "Doch das Geld ist einfach unzerstörbar. Sie haben es versucht, es war kurz weg, schon ist es wieder da. Für eine neue Währung, und wäre sie nur digital, was aber alles ist, der Finger Gottes hat auf uns gezeigt und es uns gebracht. Dafür, für mein neues, ganz eigenes Geld, das nur mir gehört, brauche ich jedoch ein gewisses Kapital, Programmierer und fachliches Knowhow, dann entsteht Geld aus dem Nichts.",
       "video_clip_id": "pet4_sebastian",
       "scene_ref": "PET4_Sebastian",
-      "duration_ms": 1560000
+      "duration_ms": 26000
     },
     {
       "id": "pet5_azaria",
@@ -248,15 +320,15 @@
       "text": "Ich bin als einziger frei von Unglück, denn das größte habe ich schon erlebt. Ich bin zwar tot, aber dieser Tod hat mich immerhin von jämmerlichen Schmerzen befreit. Als Skelett hat man kein Gewicht auf der Welt, nicht einmal, wenn es von Fell und Haaren überzogen ist.",
       "video_clip_id": "pet5_azaria",
       "scene_ref": "PET5_Azaria",
-      "duration_ms": 1020000
+      "duration_ms": 17000
     },
     {
       "id": "wo1_kaenguru",
       "avatar": "wolf",
-      "text": "28 Der Wolf",
+      "text": "27 Der Wolf",
       "video_clip_id": "wo1_kaenguru",
       "scene_ref": "WO1_Kaenguru",
-      "duration_ms": 240000
+      "duration_ms": 4000
     },
     {
       "id": "wo2_branko",
@@ -264,7 +336,7 @@
       "text": "Mit ein wenig Glück werde ich durch diesen Selbstschöpfungsakt des Geldes reich. Daneben zählt nichts mehr. Die Toten schon gar nicht.",
       "video_clip_id": "wo2_branko",
       "scene_ref": "WO2_Branko",
-      "duration_ms": 480000
+      "duration_ms": 8000
     },
     {
       "id": "wo3_seb_musik",
@@ -272,7 +344,7 @@
       "text": "Da steigen sie schon wieder, nicht die Getöteten, die Kurse, ich steige mit ihnen, habe was anzulegen, ich bin dabei, bin beim Rendite-Rennen dabei,",
       "video_clip_id": "wo3_seb_musik",
       "scene_ref": "WO3_Seb_Musik",
-      "duration_ms": 600000
+      "duration_ms": 10000
     },
     {
       "id": "wo4_nicolas",
@@ -280,7 +352,7 @@
       "text": "Ach, ich Verlorener,",
       "video_clip_id": "wo4_nicolas",
       "scene_ref": "WO4_Nicolas",
-      "duration_ms": 120000
+      "duration_ms": 2000
     },
     {
       "id": "wo4_schimpanse",
@@ -288,7 +360,7 @@
       "text": "Ach, ich Verlorener,",
       "video_clip_id": "wo4_schimpanse",
       "scene_ref": "WO4_Schimpanse",
-      "duration_ms": 180000
+      "duration_ms": 3000
     },
     {
       "id": "wo5_thiemo",
@@ -296,7 +368,7 @@
       "text": "Da kommt schon wieder eine neue Forderung der Finanz auf mich zu! Nachforderungen in zweistelliger Millionenhöhe! Das gibts doch nicht! (…)",
       "video_clip_id": "wo5_thiemo",
       "scene_ref": "WO5_Thiemo",
-      "duration_ms": 480000
+      "duration_ms": 8000
     },
     {
       "id": "wo6_mavie",
@@ -304,7 +376,7 @@
       "text": "Dann sollen sie halt die Gesetze in meinem Sinn abändern, so wie andre die Grenzen abändern, das geht doch! Der sitzt dann womöglich neben dem jüngsten Altkanzler, der heute noch lebt und sprechen und raten kann, wer bin ich? Ich mache eine Bewegung. Er hat es erraten!",
       "video_clip_id": "wo6_mavie",
       "scene_ref": "WO6_Mavie",
-      "duration_ms": 1200000
+      "duration_ms": 20000
     },
     {
       "id": "wo6_schimpanse",
@@ -312,7 +384,7 @@
       "text": "Dann sollen sie halt die Gesetze in meinem Sinn abändern, so wie andre die Grenzen abändern, das geht doch! Der sitzt dann womöglich neben dem jüngsten Altkanzler, der heute noch lebt und sprechen und raten kann, wer bin ich? Ich mache eine Bewegung. Er hat es erraten!",
       "video_clip_id": "wo6_schimpanse",
       "scene_ref": "WO6_Schimpanse",
-      "duration_ms": 1200000
+      "duration_ms": 20000
     },
     {
       "id": "wo7_sebastian",
@@ -320,31 +392,119 @@
       "text": "Der Minister soll sich drum kümmern, daß noch niedriger geschätzt wird, weil ich selbst so hochgeschätzt bin, das kann mir keiner nehmen, höher gehts kaum. Dann fängt das Theater erst an.",
       "video_clip_id": "wo7_sebastian",
       "scene_ref": "WO7_Sebastian",
-      "duration_ms": 720000
+      "duration_ms": 12000
     },
     {
-      "id": "hierunterdererde",
+      "id": "mo1_sebmusik",
       "avatar": "delphin",
-      "text": "Ein Schauspieler läuft unter der Bühne umher und spielt ein Tier unter der Erde. Einen Dachs.",
-      "video_clip_id": "hierunterdererde",
-      "scene_ref": "HierUnterDerErde",
-      "duration_ms": 1320000
+      "text": "28 Der arme Mole",
+      "video_clip_id": "mo1_sebmusik",
+      "scene_ref": "MO1_SebMusik",
+      "duration_ms": 5000
     },
     {
-      "id": "kuscheltierschlachtung",
+      "id": "mo2_branko",
       "avatar": "delphin",
-      "text": "Ein Kuscheltier wird mit Schere und Kunstblut geschlachtet.",
-      "video_clip_id": "kuscheltierschlachtung",
-      "scene_ref": "KuscheltierSchlachtung",
-      "duration_ms": 960000
+      "text": "Der Golfplatz liegt in strahlendem Grün. Ein solches Grün hab ich überhaupt noch nie gesehen, man weiß gar nicht, wo man hinpinkeln soll, Ich verlege ab jetzt alles, auch mein Fortkommen, unter die Erde, bis man mich woanders wieder hochkommen läßt. Ich habe gegraben und gegraben, vielleicht können Sie mich als Werktätigen ja brauchen, bevor die Baumaschinen und die Panzer, nein, zuerst die Panzer, alles übernehmen werden. Sie sind froh, wenn sie mich als Hindernis für ihren Golfball angeben können und noch mal zuschlagen dürfen. So hänge ich irgendwie in der Luft. Wie soll ich mich dort orientieren, da ich ja nichts sehe?",
+      "video_clip_id": "mo2_branko",
+      "scene_ref": "MO2_Branko",
+      "duration_ms": 31000
     },
     {
-      "id": "derhaseverlaesstdiebuehne",
+      "id": "mo3_dachs",
       "avatar": "delphin",
-      "text": "Ein sprechender Hase verlässt die Bühne und geht vor sich hin redend aus dem Haus.",
-      "video_clip_id": "derhaseverlaesstdiebuehne",
-      "scene_ref": "DerHaseVerlaesstDieBuehne",
-      "duration_ms": 1980000
+      "text": "Dieser Ort ist nicht etwas, das ist. Und er ist nicht mehr das, was er war. Es hat also gar keinen Sinn, mir zu folgen. Nichts ist. Etwas, das nirgendwo ist, ist nicht.",
+      "video_clip_id": "mo3_dachs",
+      "scene_ref": "MO3_Dachs",
+      "duration_ms": 14000
+    },
+    {
+      "id": "mo3_caro",
+      "avatar": "delphin",
+      "text": "Dieser Ort ist nicht etwas, das ist. Und er ist nicht mehr das, was er war. Es hat also gar keinen Sinn, mir zu folgen. Nichts ist. Etwas, das nirgendwo ist, ist nicht.",
+      "video_clip_id": "mo3_caro",
+      "scene_ref": "MO3_Caro",
+      "duration_ms": 14000
+    },
+    {
+      "id": "sch1_sebastian",
+      "avatar": "delphin",
+      "text": "29 Das Schaf",
+      "video_clip_id": "sch1_sebastian",
+      "scene_ref": "SCH1_Sebastian",
+      "duration_ms": 4000
+    },
+    {
+      "id": "sch2_azariawirdschaf",
+      "avatar": "delphin",
+      "text": "Erst zaghaft, dann wie eine Flut rauscht es heran. Das Wasser schießt in mein Stall-Häuschen mit dem Plumpsklo daneben, Endlich ein Wasserklo, wie fein! Dafür ist jetzt das Haus weg, dort, wo Haus war, ist jetzt Loch. Das Wasser, das nun in unsre Zimmer rinnt, braucht keinen Waffenschein, um uns allen den Rest zu geben. Neben mir treiben noch andre Tiere dahin, Keine Sorge! Die Menschen bleiben auch nicht verschont. Doch auch die Häuser treiben es miteinander, wenn sie in der Flut ineinanderkrachen. Ganz freiwillig geschieht das nicht. Niemand hat die Wahl, und wer wählen kann, wählt das Falsche.",
+      "video_clip_id": "sch2_azariawirdschaf",
+      "scene_ref": "SCH2_AzariawirdSchaf",
+      "duration_ms": 37000
+    },
+    {
+      "id": "sch2_azaria_als_schaf",
+      "avatar": "delphin",
+      "text": "Erst zaghaft, dann wie eine Flut rauscht es heran. Das Wasser schießt in mein Stall-Häuschen mit dem Plumpsklo daneben, Endlich ein Wasserklo, wie fein! Dafür ist jetzt das Haus weg, dort, wo Haus war, ist jetzt Loch. Das Wasser, das nun in unsre Zimmer rinnt, braucht keinen Waffenschein, um uns allen den Rest zu geben. Neben mir treiben noch andre Tiere dahin, Keine Sorge! Die Menschen bleiben auch nicht verschont. Doch auch die Häuser treiben es miteinander, wenn sie in der Flut ineinanderkrachen. Ganz freiwillig geschieht das nicht. Niemand hat die Wahl, und wer wählen kann, wählt das Falsche.",
+      "video_clip_id": "sch2_azaria_als_schaf",
+      "scene_ref": "SCH2_Azaria_als_Schaf",
+      "duration_ms": 37000
+    },
+    {
+      "id": "sch2_azaria",
+      "avatar": "delphin",
+      "text": "Erst zaghaft, dann wie eine Flut rauscht es heran. Das Wasser schießt in mein Stall-Häuschen mit dem Plumpsklo daneben, Endlich ein Wasserklo, wie fein! Dafür ist jetzt das Haus weg, dort, wo Haus war, ist jetzt Loch. Das Wasser, das nun in unsre Zimmer rinnt, braucht keinen Waffenschein, um uns allen den Rest zu geben. Neben mir treiben noch andre Tiere dahin, Keine Sorge! Die Menschen bleiben auch nicht verschont. Doch auch die Häuser treiben es miteinander, wenn sie in der Flut ineinanderkrachen. Ganz freiwillig geschieht das nicht. Niemand hat die Wahl, und wer wählen kann, wählt das Falsche.",
+      "video_clip_id": "sch2_azaria",
+      "scene_ref": "SCH2_Azaria",
+      "duration_ms": 37000
+    },
+    {
+      "id": "sch3_ingewirdschaf",
+      "avatar": "delphin",
+      "text": "Der Boden ist mit Blut getränkt, meines fällt da gar nicht auf. Zuerst schmückt man mich, dann sticht man mir in den Hals und läßt mich langsam verwelken und meine Wolle zu Kleidung werden, Ich wünsche mir, daß alles zahm sei wie Kotelett und die Menschen und den Menschen freundlich gesinnt, ja, auch Tiere und Vögel!",
+      "video_clip_id": "sch3_ingewirdschaf",
+      "scene_ref": "SCH3_IngewirdSchaf",
+      "duration_ms": 26000
+    },
+    {
+      "id": "sch4_thomas",
+      "avatar": "delphin",
+      "text": "Nie wieder Krieg!",
+      "video_clip_id": "sch4_thomas",
+      "scene_ref": "SCH4_Thomas",
+      "duration_ms": 4000
+    },
+    {
+      "id": "sch5_schafsolo_mavie",
+      "avatar": "delphin",
+      "text": "Da ist ja schon wieder einer! Als hätte ich nichts gesagt. Auf den Straßen fressen Hunde die Körper, die da herumliegen. Man hat ihnen gesagt: Was herumliegt, gehört euch. Ein Grab ist gar nicht nötig.",
+      "video_clip_id": "sch5_schafsolo_mavie",
+      "scene_ref": "SCH5_SchafSolo_Mavie",
+      "duration_ms": 13000
+    },
+    {
+      "id": "sch6_schafherde",
+      "avatar": "delphin",
+      "text": "Ich schaue hinauf und sehe die Gestirne, Sie befinden sich am natürlichen Ort, wie immer. Wir würden, wenn das so weitergeht, gewaltsam mitgezogen in ihrem Kreislauf. das wäre dann das Ende. Ende des Jüngsten Gerichts.",
+      "video_clip_id": "sch6_schafherde",
+      "scene_ref": "SCH6_Schafherde",
+      "duration_ms": 13000
+    },
+    {
+      "id": "sch7_schaf_single_sebastian",
+      "avatar": "delphin",
+      "text": "Ich hätte es mir irgendwie dramatischer vorgestellt. So wie den Staat, der aber derzeit gelähmt ist. Nein, der Staat selbst ist nicht reich, nur seine Diener sind es, welche ihn bestahlen, der gehört vor Gericht, der Staat, der sich sowas vorsetzen läßt!, und vor ein andres Gericht gehören wiederum alle, die Sachen behaupten, die nicht stimmen, und sich Sachen nehmen, die ihnen nicht gehören, und für Sachen werben, die sie immer nur selbst sind, und Sachen kaputtmachen, die sie vorher noch nie gesehen haben. Und die göttlichen Dinge leugnen, die auch nicht stimmen, und die Ansichten über Himmelserscheinungen und Kriegserscheinungen verbreiten, die Blödsinn sind, sie alle müssen unverzüglich, wegen Verletzung der Staatsordnung vor Gericht gebracht werden, und zwar noch bevor ich selbst anderen zum Gericht werde.",
+      "video_clip_id": "sch7_schaf_single_sebastian",
+      "scene_ref": "SCH7_Schaf_Single_Sebastian",
+      "duration_ms": 45000
+    },
+    {
+      "id": "sch8_viele_schafe_caro",
+      "avatar": "delphin",
+      "text": "Es wurde ja gesagt, die Armen würden die Erde erben. Ich sehe keine Anzeichen dafür - denn da ist nichts mehr.",
+      "video_clip_id": "sch8_viele_schafe_caro",
+      "scene_ref": "SCH8_Viele_Schafe_Caro",
+      "duration_ms": 10000
     }
   ]
 }
