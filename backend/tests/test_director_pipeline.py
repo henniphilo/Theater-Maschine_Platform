@@ -18,7 +18,7 @@ def _memory_event() -> DialogueEvent:
 
 def test_plan_does_not_send_osc() -> None:
     pipeline = DirectorPipeline()
-    with patch("app.director.pipeline.send_osc_commands") as send_mock:
+    with patch("app.director.outputs.osc_commands.send_osc_commands") as send_mock:
         result = pipeline.plan(_memory_event())
 
     send_mock.assert_not_called()
@@ -30,9 +30,9 @@ def test_plan_does_not_send_osc() -> None:
 def test_execute_sends_osc_commands() -> None:
     pipeline = DirectorPipeline()
     planned = pipeline.plan(_memory_event())
-    with patch("app.director.pipeline.send_osc_commands", wraps=__import__(
-        "app.director.outputs.osc_commands", fromlist=["send_osc_commands"]
-    ).send_osc_commands) as send_mock:
+    with patch("app.director.pipeline.send_osc_batch", wraps=__import__(
+        "app.director.outputs.osc_queue", fromlist=["send_osc_batch"]
+    ).send_osc_batch) as send_mock:
         result = pipeline.execute(planned.decision, stagger=False)
 
     assert send_mock.call_count >= 1
@@ -46,7 +46,7 @@ def test_process_sequenced_mode_plans_only(monkeypatch) -> None:
 
     monkeypatch.setattr(settings, "director_execute_mode", "sequenced")
     pipeline = DirectorPipeline()
-    with patch("app.director.pipeline.send_osc_commands") as send_mock:
+    with patch("app.director.outputs.osc_commands.send_osc_commands") as send_mock:
         result = pipeline.process(_memory_event())
 
     send_mock.assert_not_called()

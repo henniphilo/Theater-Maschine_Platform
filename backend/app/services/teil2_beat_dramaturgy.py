@@ -10,7 +10,7 @@ from app.director.dramaturgy.llm_director import LLMDirector
 from app.director.outputs.osc_commands import build_osc_commands
 from app.schemas.inszenierung import CompositionMoment, Gesamtkonzept
 from app.services.inszenierung_validation import dramaturgy_with_anarchy
-from app.services.teil2_projector_assignment import ALL_PROJECTORS
+from app.services.teil2_projector_assignment import pick_atmosphere_projectors
 
 _ATMOSPHERE_CLIPS = ("clyde", "strand", "black", "maschinen_grundader")
 
@@ -71,12 +71,7 @@ def _avatar_reserved_projectors(moment: CompositionMoment) -> set[str]:
 
 def _pick_dramaturgy_projectors(moment: CompositionMoment, count: int) -> list[str]:
     reserved = _avatar_reserved_projectors(moment)
-    pool = [p for p in ALL_PROJECTORS if p not in reserved]
-    if not pool:
-        pool = list(ALL_PROJECTORS)
-    if count <= 1:
-        return [pool[moment.order % len(pool)]]
-    return [pool[(moment.order + index) % len(pool)] for index in range(count)]
+    return pick_atmosphere_projectors(count, reserved=reserved, seed=moment.order)
 
 
 def _assign_atmosphere_visual(visual: VisualCue, projector: str) -> VisualCue:
@@ -145,7 +140,9 @@ def _ensure_cue_points(decision: DramaturgyDecision, moment: CompositionMoment) 
     ]
     if moment.anarchy_level >= 0.75:
         clip = _ATMOSPHERE_CLIPS[moment.order % len(_ATMOSPHERE_CLIPS)]
-        target = ALL_PROJECTORS[(moment.order + 1) % len(ALL_PROJECTORS)]
+        reserved = _avatar_reserved_projectors(moment)
+        targets = pick_atmosphere_projectors(1, reserved=reserved, seed=moment.order + 1)
+        target = targets[0]
         decision.cue_points.append(
             CuePoint(
                 trigger=CuePointTrigger.START,
@@ -164,14 +161,12 @@ def _ensure_cue_points(decision: DramaturgyDecision, moment: CompositionMoment) 
 def _apply_atmosphere_to_decision(decision: DramaturgyDecision, moment: CompositionMoment) -> None:
     atmosphere: list[VisualCue] = []
     avatar_clip = moment.avatar_video_clip_id
-    primary_projector = None
-    if moment.avatar_layers:
-        primary_projector = moment.avatar_layers[0].projector
-    elif moment.avatar_video_cue:
-        primary_projector = moment.avatar_video_cue.projector
 
     if moment.anarchy_level >= 0.35 and decision.cue_points:
-        atmosphere_projectors = [p for p in ALL_PROJECTORS if p != primary_projector]
+        reserved = _avatar_reserved_projectors(moment)
+        atmosphere_projectors = [p for p in ("adam", "eva", "led", "rz21") if p not in reserved]
+        if not atmosphere_projectors:
+            atmosphere_projectors = ["rz21"]
         atmo_index = 0
         for point in decision.cue_points:
             if point.visual and point.visual.clip_id and point.visual.clip_id != avatar_clip:

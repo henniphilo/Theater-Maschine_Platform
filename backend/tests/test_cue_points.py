@@ -15,11 +15,9 @@ _SCENE_PARTIAL = "blendung_zuschauerraum"
 def _light_osc_counts(scene_id: str, intensity: float) -> tuple[int, int, int]:
     scene = next(s for s in MediaDatabase().light_scenes if s.id == scene_id)
     channels = len(scene.groups) + len(expand_channels(scene.channels))
-    # Each scene activation sends /eos/key/out before channel levels.
-    total = channels + 1
     if intensity >= 1.0:
-        return total, channels, 0
-    return total, 0, channels
+        return channels, channels, 0
+    return channels, 0, channels
 
 
 def test_normalize_legacy_decision_to_cue_points() -> None:
@@ -70,10 +68,11 @@ def test_build_osc_commands_from_multiple_cue_points() -> None:
     light_cmds = [c for c in commands if c.bridge == "light" and not c.mirror]
     expected_total, expected_full, expected_at = _light_osc_counts(_SCENE_A, 1.0)
     total_b, _, at_b = _light_osc_counts(_SCENE_B, 0.5)
-    assert len(light_cmds) == expected_total + total_b
+    fade_out_a, _, _ = _light_osc_counts(_SCENE_A, 0.0)
+    assert len(light_cmds) == expected_total + fade_out_a + total_b
     full_cmds = [c for c in light_cmds if c.address.endswith("/full")]
-    level_cmds = _light_level_cmds(light_cmds)
     assert len(full_cmds) == expected_full
+    level_cmds = [c for c in _light_level_cmds(light_cmds) if c.args and c.args[0] > 0]
     assert len(level_cmds) == at_b
     if level_cmds:
         assert level_cmds[0].args == [50.0]
@@ -88,9 +87,8 @@ def test_build_osc_commands_light_explicit_intensity() -> None:
     commands = build_osc_commands(decision, dry_run=True)
     light_cmds = [c for c in commands if c.bridge == "light" and not c.mirror]
     assert light_cmds
-    key_outs = [c for c in light_cmds if c.address.endswith("/key/out")]
+    assert not any(c.address.endswith("/key/out") for c in light_cmds)
     level_cmds = _light_level_cmds(light_cmds)
-    assert len(key_outs) == 1
     assert level_cmds
     assert all(c.args == [40.0] for c in level_cmds)
 

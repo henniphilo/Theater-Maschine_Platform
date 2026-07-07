@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import threading
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 
@@ -32,12 +33,23 @@ class ProjectorSlot:
 class ProjectorState:
     slots: dict[ProjectorTarget, ProjectorSlot] = field(default_factory=dict)
     allow_avatar_interrupt: bool = False
+    _lock: threading.RLock = field(default_factory=threading.RLock, repr=False, compare=False)
 
     def __post_init__(self) -> None:
         if not self.slots:
             self.slots = {p: ProjectorSlot(projector=p) for p in PROJECTORS}
 
     def can_play(
+        self,
+        cue: VisualCue,
+        *,
+        now: datetime | None = None,
+        text_excerpt: str | None = None,
+    ) -> tuple[bool, str | None]:
+        with self._lock:
+            return self._can_play_unlocked(cue, now=now, text_excerpt=text_excerpt)
+
+    def _can_play_unlocked(
         self,
         cue: VisualCue,
         *,
@@ -75,6 +87,16 @@ class ProjectorState:
         now: datetime | None = None,
         text_excerpt: str | None = None,
     ) -> None:
+        with self._lock:
+            self._lock_after_play_unlocked(cue, now=now, text_excerpt=text_excerpt)
+
+    def _lock_after_play_unlocked(
+        self,
+        cue: VisualCue,
+        *,
+        now: datetime | None = None,
+        text_excerpt: str | None = None,
+    ) -> None:
         now = now or datetime.now(UTC)
         projector = cue.projector
         if projector is None and cue.outputs:
@@ -95,11 +117,16 @@ class ProjectorState:
             slot.locked_until = now + timedelta(milliseconds=cue.duration_ms)
 
     def release(self, projector: ProjectorTarget) -> None:
-        slot = self.slots[projector]
-        slot.active_clip_id = None
-        slot.locked_until = None
-        slot.video_type = "atmosphere"
+        with self._lock:
+            slot = self.slots[projector]
+            slot.active_clip_id = None
+            slot.locked_until = None
+            slot.video_type = "atmosphere"
 
     def reset(self) -> None:
-        for projector in PROJECTORS:
-            self.release(projector)
+        with self._lock:
+            for projector in PROJECTORS:
+                slot = self.slots[projector]
+                slot.active_clip_id = None
+                slot.locked_until = None
+                slot.video_type = "atmosphere"

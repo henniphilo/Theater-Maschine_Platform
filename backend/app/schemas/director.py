@@ -67,6 +67,7 @@ class ExecuteResponse(BaseModel):
 class DirectorStatusResponse(BaseModel):
     safety: dict[str, bool]
     active_cues: list[str]
+    osc_queue_depth: int = 0
     last_event: DialogueEvent | None = None
     last_decision: DramaturgyDecision | None = None
     last_executed: bool | None = None

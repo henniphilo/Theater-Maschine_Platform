@@ -12,9 +12,10 @@ import {
 import { textPositionForPlayback } from "@/features/show/mediaMentions";
 import {
   fireAllRemainingAvatarSegments,
-  fireAvatarSegmentsAtPosition,
+  fireInitialAvatarSegments,
   fireRemainingSentenceSegments,
   resolveSentenceCharStarts,
+  scheduleAvatarSegmentsAtPosition,
   sentenceSpanLength
 } from "@/features/inszenierung/avatarCuePlayback";
 import { resolveSentenceSpeech } from "@/features/inszenierung/inszenierungBuffer";
@@ -102,6 +103,15 @@ export async function runTextSyncPlayback(
 
   if (startIndex === 0) {
     fireStartCues(cueCtx);
+    await fireInitialAvatarSegments(
+      plan,
+      firedSegments,
+      sentenceCharStarts,
+      anarchyForSegment,
+      cueCtx.onCommands,
+      shouldAbort,
+      onSegmentFired
+    );
   }
 
   for (let index = startIndex; index <= endIndex; index++) {
@@ -120,6 +130,8 @@ export async function runTextSyncPlayback(
         plan,
         index,
         firedSegments,
+        sentenceCharStarts,
+        scriptText.length,
         anarchyLevel,
         cueCtx.onCommands,
         shouldAbort,
@@ -141,7 +153,7 @@ export async function runTextSyncPlayback(
         const spanLength = sentenceSpanLength(index, sentenceCharStarts, scriptText.length);
         const localPos = textPositionForPlayback(current, duration, spanLength);
         const globalPos = sentenceCharStarts[index] + localPos;
-        void fireAvatarSegmentsAtPosition(
+        scheduleAvatarSegmentsAtPosition(
           plan,
           globalPos,
           firedSegments,
@@ -158,6 +170,8 @@ export async function runTextSyncPlayback(
       plan,
       index,
       firedSegments,
+      sentenceCharStarts,
+      scriptText.length,
       anarchyLevel,
       cueCtx.onCommands,
       shouldAbort,
@@ -171,6 +185,7 @@ export async function runTextSyncPlayback(
     await fireAllRemainingAvatarSegments(
       plan,
       firedSegments,
+      sentenceCharStarts,
       anarchyForSegment,
       cueCtx.onCommands,
       shouldAbort,

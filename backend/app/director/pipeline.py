@@ -1,8 +1,7 @@
 import logging
-import time
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from threading import Lock
+from threading import RLock
 
 from app.core.config import settings
 from app.director.cues.cue_models import DramaturgyDecision, OscCommand, ScheduledCue
@@ -14,12 +13,17 @@ from app.director.dramaturgy.engine import DramaturgyEngine
 from app.director.media.database import MediaDatabase
 from app.director.outputs.lighting import LightingBridge
 from app.director.outputs.logger import DirectorLogger
-from app.director.outputs.osc_commands import build_osc_commands, send_osc_commands
+from app.director.outputs.osc_commands import build_osc_commands
+from app.director.outputs.osc_queue import CUE_STAGGER_SECONDS, get_osc_command_queue, send_osc_batch
 from app.director.outputs.pixera import PixeraBridge
 from app.director.outputs.sound import SoundBridge
 from app.director.outputs.touchdesigner import TouchDesignerBridge
+from app.services.teil2_dramaturgy_routing import (
+    active_avatar_reserved_projectors,
+    route_dramaturgy_away_from_projectors,
+)
 
-CUE_STAGGER_SECONDS = 0.15
+CUE_STAGGER_SECONDS = CUE_STAGGER_SECONDS  # re-export for tests
 _execute_logger = logging.getLogger("theatermaschine.osc")
 
 
@@ -53,6 +57,19 @@ def _filter_decision_for_safety(decision: DramaturgyDecision, safety: SafetyStat
 
 def _effective_dry_run(safety: SafetyState) -> bool:
     return settings.osc_dry_run or safety.performance_tryout
+
+
+def _route_dramaturgy_from_avatar_projectors(
+    decision: DramaturgyDecision,
+    projectors: ProjectorState,
+) -> DramaturgyDecision:
+    if not decision.visual and not decision.cue_points:
+        return decision
+    reserved = active_avatar_reserved_projectors(projectors)
+    if not reserved:
+        return decision
+    seed = int(decision.timestamp or 0) % 10_000
+    return route_dramaturgy_away_from_projectors(decision.model_copy(deep=True), reserved, seed=seed)
 
 
 @dataclass
@@ -97,7 +114,7 @@ class DirectorPipeline:
         self.logger = logger or DirectorLogger()
         self.projectors = ProjectorState()
         self.state = DirectorState()
-        self._lock = Lock()
+        self._lock = RLock()
 
     def plan(self, event: DialogueEvent) -> DirectorResult:
         decision = self.engine.decide(event)
@@ -133,10 +150,21 @@ class DirectorPipeline:
         force: bool = False,
         stagger: bool = True,
     ) -> DirectorResult:
+        with self._lock:
+            return self._execute_locked(decision, force=force, stagger=stagger)
+
+    def _execute_locked(
+        self,
+        decision: DramaturgyDecision,
+        *,
+        force: bool,
+        stagger: bool,
+    ) -> DirectorResult:
         if self.safety.emergency_stop_active:
             return self._emergency_blocked_result(decision, "(script beat)")
 
         decision = _filter_decision_for_safety(decision, self.safety)
+        decision = _route_dramaturgy_from_avatar_projectors(decision, self.projectors)
         allowed, blocked_reason = self.scheduler.can_execute(decision)
         if force:
             allowed = True
@@ -147,7 +175,7 @@ class DirectorPipeline:
         osc_commands: list[OscCommand] = []
 
         if allowed and planned:
-            osc_commands = self._execute_commands(planned, stagger=stagger)
+            osc_commands = self._dispatch_commands(planned, stagger=stagger)
             self.scheduler.mark_executed(decision)
 
         event = self.state.last_event or DialogueEvent(
@@ -181,6 +209,26 @@ class DirectorPipeline:
         stagger: bool = False,
         text_excerpt: str | None = None,
     ) -> DirectorResult:
+        with self._lock:
+            return self._execute_layered_locked(
+                decision,
+                anarchy_level=anarchy_level,
+                stack=stack,
+                skip_interval_check=skip_interval_check,
+                stagger=stagger,
+                text_excerpt=text_excerpt,
+            )
+
+    def _execute_layered_locked(
+        self,
+        decision: DramaturgyDecision,
+        *,
+        anarchy_level: float,
+        stack: bool,
+        skip_interval_check: bool,
+        stagger: bool,
+        text_excerpt: str | None,
+    ) -> DirectorResult:
         if self.safety.emergency_stop_active:
             return self._emergency_blocked_result(decision, "(inszenierung moment)")
 
@@ -190,6 +238,7 @@ class DirectorPipeline:
                 update={"blend_mode": "layer"},
             )
         decision = _filter_decision_for_safety(decision, self.safety)
+        decision = _route_dramaturgy_from_avatar_projectors(decision, self.projectors)
         projector_blocked: str | None = None
         if decision.visual:
             allowed_proj, projector_blocked = self.projectors.can_play(decision.visual)
@@ -212,7 +261,7 @@ class DirectorPipeline:
         osc_commands: list[OscCommand] = []
 
         if allowed and planned:
-            osc_commands = self._execute_commands(planned, stagger=stagger)
+            osc_commands = self._dispatch_commands(planned, stagger=stagger)
             self.scheduler.mark_executed(decision)
             if decision.visual:
                 excerpt = text_excerpt
@@ -279,30 +328,37 @@ class DirectorPipeline:
         self._store_result(result, log_executed=False)
         return result
 
-    def _execute_commands(self, commands: list[OscCommand], *, stagger: bool) -> list[OscCommand]:
-        bridges = {
+    def _dispatch_commands(self, commands: list[OscCommand], *, stagger: bool) -> list[OscCommand]:
+        bridges = self._osc_bridges()
+        if settings.director_osc_queue:
+            return get_osc_command_queue().enqueue(
+                commands,
+                stagger=stagger,
+                bridges=bridges,
+                wait=False,
+            )
+        return self._execute_commands_sync(commands, stagger=stagger, bridges=bridges)
+
+    def _osc_bridges(self) -> dict[str, object]:
+        return {
             "touchdesigner": self.touchdesigner,
             "pixera": self.pixera,
             "sound": self.sound,
             "lighting": self.lighting,
         }
-        sent: list[OscCommand] = []
-        last_bridge: str | None = None
-        for cmd in commands:
-            if stagger and last_bridge is not None and cmd.bridge != last_bridge:
-                time.sleep(CUE_STAGGER_SECONDS)
-            last_bridge = cmd.bridge
-            try:
-                send_osc_commands([cmd], bridges)
-            except Exception as exc:
-                _execute_logger.warning(
-                    "[CUE FAILED] bridge=%s address=%s: %s",
-                    cmd.bridge,
-                    cmd.address,
-                    exc,
-                )
-            sent.append(cmd)
-        return sent
+
+    def _execute_commands_sync(
+        self,
+        commands: list[OscCommand],
+        *,
+        stagger: bool,
+        bridges: dict[str, object],
+    ) -> list[OscCommand]:
+        return send_osc_batch(commands, stagger=stagger, bridges=bridges)
+
+    def _execute_commands(self, commands: list[OscCommand], *, stagger: bool) -> list[OscCommand]:
+        """Backward-compatible alias used in tests."""
+        return self._dispatch_commands(commands, stagger=stagger)
 
     def _store_result(self, result: DirectorResult, *, log_executed: bool) -> None:
         self.logger.log_event(

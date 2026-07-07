@@ -1,0 +1,37 @@
+{
+  "id": "921e143c-fd21-488c-9a29-d8d5f79c4f07",
+  "title": "Unter Tieren Elfride Jelinek",
+  "source_text": "21 Der Bärenklau:\n\n– wir werden alle von Pflanzen ersetzt werden, weil die billiger in der Anschaffung und im Betrieb sind und keine Widerworte geben –, Da der Mensch, ja, sagen wir so, also dermaßen leicht verderblich geworden ist,\n da wir also gar kein Geld haben, müssen wir uns leider wieder dem Produzenten der Waren zuwenden,\n\ndie Produkte stehen sich gegenüber und knurren einander an.\nDer wahre Klassenkampf\n\nWas aber, wenn die Preissteigerungen so hoch sind, daß keiner die Waren mehr kaufen kann?\n\nWenn beide, Produzenten wie Arbeiter, zusätzliche Kaufkraft wollen,\n\nDie Kreditkapazitäten, also die Geldmengen ausweiten?\nIch weiß nicht, was das bringen soll. \n Ich weiß nur, daß das viel bringt,\n\nEin Konflikt zwischen Schuldnern und Schöpfern?\nZu hoch für mich, \nund ich bin schon gern hochtönend, \n\nIst das der wahre Klassenkampf? Zwischen den Banken, die den Unternehmen ihre Kredite aufdrängen wollen, und den Arbeitern,\ndie auch irgendwas wollen, ich weiß es nicht, \nich weiß nicht, was der Arbeiter will, \n\nEr sagt es zwar dauernd, von Lohnrunde zu Lohnrunde mehr,\n\nIch weiß es trotzdem immer noch nicht,\n\nWahrscheinlich will der Arbeiter auch bloß einen Kredit bekommen, doch was ist das Geld überhaupt wert?\n\ndoch was ist das Geld überhaupt wert? \nIst das Geld denn das alles wert? \nIst das alles das alles denn wert?",
+  "beats": [
+    {
+      "id": "432ac174-efdb-461d-87ad-8639720ae631",
+      "order": 0,
+      "text": "– wir werden alle von Pflanzen ersetzt werden,\nweil die billiger in der Anschaffung und im Betrieb sind\nund keine Widerworte geben –,\nDa der Mensch, ja, sagen wir so,\nalso dermaßen leicht verderblich geworden ist,\n\nda wir also gar kein Geld haben,\nmüssen wir uns leider wieder dem Produzenten der Waren zuwenden,\n\ndie Produkte stehen sich gegenüber und knurren einander an.\nDer wahre Klassenkampf\n\nWas aber, wenn die Preissteigerungen so hoch sind,\ndaß keiner die Waren mehr kaufen kann?\n\nWenn beide,\nProduzenten wie Arbeiter,\nzusätzliche Kaufkraft wollen,\n\nDie Kreditkapazitäten, also die Geldmengen ausweiten?\nIch weiß nicht, was das bringen soll. \n\nIch weiß nur, daß das viel bringt,\n\nEin Konflikt zwischen Schuldnern und Schöpfern?\nZu hoch für mich, \nund ich bin schon gern hochtönend, \n\nIst das der wahre Klassenkampf?\nZwischen den Banken,\ndie den Unternehmen ihre Kredite aufdrängen wollen,\nund den Arbeitern,\ndie auch irgendwas wollen, ich weiß es nicht, \nich weiß nicht, was der Arbeiter will, \n\nEr sagt es zwar dauernd,\nvon Lohnrunde zu Lohnrunde mehr,\n\nIch weiß es trotzdem immer noch nicht,\n\nWahrscheinlich will der Arbeiter auch bloß einen Kredit bekommen,\ndoch was ist das Geld überhaupt wert?\n\ndoch was ist das Geld überhaupt wert? \nIst das Geld denn das alles wert? \nIst das alles das alles denn wert?",
+      "scene_title": "21 Der Bärenklau",
+      "speaker": "AI_A",
+      "dramaturgy": null,
+      "planned_commands": [],
+      "discussion_turns": [
+        {
+          "speaker": "anthropic",
+          "content": "Beim Stichwort «wir werden alle von Pflanzen ersetzt werden»: setzt den Ton: der Mensch als Kostenfaktor, überflüssig. Die kreisende Frage «Ist das alles das alles denn wert?» zermürbt jede Gewissheit. Grundstimmung: bürokratisch-kalt, fast komisch — aber das Lachen friert ein. Eine Sprachmaschine, die sich selbst demontiert (Sound).",
+          "proposed_decision": null,
+          "media_mentions": [
+            {
+              "medium": "sound",
+              "media_id": "kaefigecho",
+              "keyword": "wir werden alle von Pflanzen ersetzt werden",
+              "char_offset": 0
+            }
+          ]
+        }
+      ],
+      "discussion_summary": null
+    }
+  ],
+  "status": "draft",
+  "has_rendered_audio": false,
+  "part1_selection": null,
+  "performance_part": null,
+  "teil2_corpus_id": null
+}

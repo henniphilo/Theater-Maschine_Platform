@@ -6,6 +6,8 @@ from app.director.cues.cue_models import VisualCue, VisualOutputAssignment
 from app.schemas.inszenierung import AvatarSpeechLayer
 
 ALL_PROJECTORS: tuple[str, ...] = ("rz21", "adam", "eva", "led")
+# Side beamers first for atmosphere + avatar rotation (Adam/Eva Bühnenbeamer).
+STAGE_BEAMER_ORDER: tuple[str, ...] = ("adam", "eva", "rz21", "led")
 
 AVATAR_DEFAULT_PROJECTOR: dict[str, str] = {
     "delphin": "rz21",
@@ -17,11 +19,46 @@ AVATAR_DEFAULT_PROJECTOR: dict[str, str] = {
 
 
 def projector_mode_for_anarchy(anarchy_level: float) -> str:
+    """Blend/layer semantics for high anarchy — not «all beamers on one clip»."""
     return "all" if anarchy_level >= 0.5 else "single"
 
 
 def _default_projector(avatar: str) -> str:
     return AVATAR_DEFAULT_PROJECTOR.get(avatar.lower(), "rz21")
+
+
+def pick_distinct_projector(
+    *,
+    preferred: str | None = None,
+    used: set[str] | None = None,
+    reserved: set[str] | None = None,
+    fallback_index: int = 0,
+) -> str:
+    """Pick one projector, preferring unused beamers (chorus + rotation)."""
+    used_set = used or set()
+    reserved_set = reserved or set()
+    free = [p for p in STAGE_BEAMER_ORDER if p not in used_set and p not in reserved_set]
+    if preferred and preferred in free:
+        return preferred
+    if free:
+        return free[fallback_index % len(free)]
+    pool = [p for p in STAGE_BEAMER_ORDER if p not in used_set]
+    if pool:
+        return pool[fallback_index % len(pool)]
+    return STAGE_BEAMER_ORDER[fallback_index % len(STAGE_BEAMER_ORDER)]
+
+
+def pick_atmosphere_projectors(
+    count: int,
+    *,
+    reserved: set[str],
+    seed: int = 0,
+) -> list[str]:
+    """Atmosphere/random clips on free beamers; prefer Adam/Eva side projectors."""
+    pool = [p for p in STAGE_BEAMER_ORDER if p not in reserved]
+    if not pool:
+        return ["rz21"] * max(1, count)
+    return [pool[(seed + index) % len(pool)] for index in range(max(1, count))]
 
 
 def assign_projectors_for_layers(
@@ -30,29 +67,20 @@ def assign_projectors_for_layers(
     anarchy_level: float,
     used: set[str] | None = None,
 ) -> list[AvatarSpeechLayer]:
-    """Assign distinct projectors for chorus layers; escalate to all beamers when anarchic."""
-    mode = projector_mode_for_anarchy(anarchy_level)
+    """Assign exactly one distinct projector per chorus layer."""
+    del anarchy_level  # blend mode handled in build_avatar_visual_cue
     used_projectors = used if used is not None else set()
     updated: list[AvatarSpeechLayer] = []
 
     for index, layer in enumerate(layers):
-        if mode == "all":
-            projector = None
-            outputs = [
-                VisualOutputAssignment(output_id=pid, clip_id=layer.video_clip_id)
-                for pid in ALL_PROJECTORS
-            ]
-        else:
-            preferred = layer.projector or _default_projector(layer.avatar)
-            projector = preferred
-            if preferred in used_projectors:
-                for candidate in ALL_PROJECTORS:
-                    if candidate not in used_projectors:
-                        projector = candidate
-                        break
-            used_projectors.add(projector)
-            outputs = [VisualOutputAssignment(output_id=projector, clip_id=layer.video_clip_id)]
-
+        preferred = layer.projector or _default_projector(layer.avatar)
+        projector = pick_distinct_projector(
+            preferred=preferred,
+            used=used_projectors,
+            fallback_index=index,
+        )
+        used_projectors.add(projector)
+        outputs = [VisualOutputAssignment(output_id=projector, clip_id=layer.video_clip_id)]
         updated.append(
             layer.model_copy(
                 update={

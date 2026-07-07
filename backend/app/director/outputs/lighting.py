@@ -5,7 +5,12 @@ from pythonosc import udp_client
 from app.core.config import settings
 from app.director.cues.cue_models import LightCue, resolve_light_scene_ids
 from app.director.media.database import MediaDatabase
-from app.director.outputs.eos_light import eos_chan_level, eos_group_level, eos_key_out, expand_channels
+from app.director.outputs.eos_light import eos_chan_level, eos_group_level, expand_channels
+from app.director.outputs.light_scene_tracker import (
+    clear_active_light_scenes,
+    fade_out_scene,
+    replace_active_light_scenes,
+)
 from app.director.outputs.light_tcp import (
     LightDeskConnectionError,
     close_light_tcp,
@@ -74,9 +79,16 @@ class LightingBridge:
                     return
 
         if cue.replace_previous:
-            self.blackout_signal(dry_run=dry_run)
+            previous = replace_active_light_scenes(scene_ids)
+            self._fade_out_scenes(previous, dry_run=dry_run)
+        else:
+            replace_active_light_scenes(scene_ids)
 
         intensity = cue.intensity if cue.intensity is not None else 1.0
+        if intensity <= 0.0:
+            self._fade_out_scenes(scene_ids, dry_run=dry_run)
+            return
+
         for scene_id in scene_ids:
             scene = next((s for s in self.media_db.light_scenes if s.id == scene_id), None)
             if scene is None:
@@ -92,15 +104,24 @@ class LightingBridge:
             self._send_td_osc("/light/set_scene", ",".join(scene_ids), fade, dry_run=dry_run)
 
     def blackout_signal(self, dry_run: bool = False) -> None:
-        if settings.light_output == "tcp" and get_light_tcp_session().connected:
-            address, args = eos_key_out()
-            self._send_desk_osc(address, *args, dry_run=dry_run)
-        elif settings.light_output != "tcp":
-            address, args = eos_key_out()
-            self._send_desk_osc(address, *args, dry_run=dry_run)
+        previous = clear_active_light_scenes()
+        self._fade_out_scenes(previous, dry_run=dry_run)
 
         if settings.light_osc_mirror:
             self._send_td_osc("/light/blackout", dry_run=dry_run)
+
+    def _fade_out_scenes(self, scene_ids: list[str], *, dry_run: bool = False) -> None:
+        for scene_id in scene_ids:
+            scene = next((s for s in self.media_db.light_scenes if s.id == scene_id), None)
+            if scene is None:
+                continue
+            self._apply_scene_channels(
+                scene.channels,
+                groups=scene.groups,
+                intensity=0.0,
+                dry_run=dry_run,
+            )
+            fade_out_scene(scene_id)
 
     def blackout(self, dry_run: bool = False) -> None:
         self.blackout_signal(dry_run=dry_run)

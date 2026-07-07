@@ -45,6 +45,7 @@ class Settings(BaseSettings):
     director_enabled: bool = True
     director_dramaturgy_mode: Literal["llm", "rules"] = "llm"
     director_execute_mode: Literal["immediate", "sequenced"] = "sequenced"
+    director_osc_queue: bool = True
     director_autopilot_default: bool = True
     director_log_path: str = "logs/director.log"
     director_data_dir: str = "data"

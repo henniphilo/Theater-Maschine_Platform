@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Literal
 
 from app.schemas.video_cues import VideoClipEntry, VideoCueCatalog
+from app.services.video_pixera_aliases import catalog_pixera_to_osc_name, osc_pixera_to_catalog_name
 
 VideoScope = Literal["part1", "part2"]
 
@@ -53,6 +54,26 @@ def _parse_osc_pairs(paths: list) -> list[tuple[str, str]]:
     return parse_osc_befehlliste_files(paths)
 
 
+def _name_to_id_map(clips: list[VideoClipEntry]) -> dict[str, str]:
+    mapping: dict[str, str] = {}
+    for clip in clips:
+        mapping[clip.pixera_name] = clip.id
+        osc_name = catalog_pixera_to_osc_name(clip.pixera_name)
+        if osc_name != clip.pixera_name:
+            mapping[osc_name] = clip.id
+    return mapping
+
+
+def _clip_id_for_pixera_name(pixera_name: str, name_to_id: dict[str, str]) -> str | None:
+    clip_id = name_to_id.get(pixera_name)
+    if clip_id:
+        return clip_id
+    catalog_name = osc_pixera_to_catalog_name(pixera_name)
+    if catalog_name != pixera_name:
+        return name_to_id.get(catalog_name)
+    return None
+
+
 def _clip_ids_for_scope(scope: VideoScope) -> set[str]:
     paths = _osc_paths_for_scope(scope)
     base = _load_base_catalog()
@@ -63,10 +84,10 @@ def _clip_ids_for_scope(scope: VideoScope) -> set[str]:
             return all_ids - avatar_ids
         return all_ids
 
-    name_to_id = {clip.pixera_name: clip.id for clip in base.clips}
+    name_to_id = _name_to_id_map(base.clips)
     clip_ids: set[str] = set()
     for _prefix, pixera_name in _parse_osc_pairs(paths):
-        clip_id = name_to_id.get(pixera_name)
+        clip_id = _clip_id_for_pixera_name(pixera_name, name_to_id)
         if clip_id:
             clip_ids.add(clip_id)
     return clip_ids
@@ -81,10 +102,10 @@ def _avatar_clip_ids() -> set[str]:
         return {clip.id for clip in _load_base_catalog().clips if clip.pixera_name in _AVATAR_PIXERA_NAMES}
 
     base = _load_base_catalog()
-    name_to_id = {clip.pixera_name: clip.id for clip in base.clips}
+    name_to_id = _name_to_id_map(base.clips)
     ids: set[str] = set()
     for _prefix, pixera_name in _parse_osc_pairs([avatar_path]):
-        clip_id = name_to_id.get(pixera_name)
+        clip_id = _clip_id_for_pixera_name(pixera_name, name_to_id)
         if clip_id:
             ids.add(clip_id)
     return ids
@@ -116,12 +137,12 @@ def osc_availability_by_clip(scope: VideoScope = "part2") -> dict[str, set[str]]
 
     prefix_to_id = {p.pixera_prefix: p.id for p in catalog.projectors}
     prefix_to_id["KI_KI_RZ21"] = "rz21"
-    name_to_id = {clip.pixera_name: clip.id for clip in catalog.clips}
+    name_to_id = _name_to_id_map(catalog.clips)
 
     availability: dict[str, set[str]] = {}
     for prefix, pixera_name in _parse_osc_pairs(paths):
         output_id = prefix_to_id.get(prefix)
-        clip_id = name_to_id.get(pixera_name)
+        clip_id = _clip_id_for_pixera_name(pixera_name, name_to_id)
         if not output_id or not clip_id:
             continue
         availability.setdefault(clip_id, set()).add(output_id)

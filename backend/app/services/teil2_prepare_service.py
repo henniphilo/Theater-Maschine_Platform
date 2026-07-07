@@ -30,6 +30,7 @@ from app.schemas.inszenierung import (
 from app.services.ai_service import AIService
 from app.services.avatar_speech_catalog import get_avatar_speech_catalog_service
 from app.services.inszenierung_validation import dramaturgy_with_anarchy
+from app.services.teil2_atmosphere_cues import inject_atmosphere_visuals
 from app.services.teil2_dramaturgy_routing import (
     reserved_projectors_from_segments,
     route_dramaturgy_away_from_projectors,
@@ -86,6 +87,13 @@ class Teil2PrepareService:
         avatar_clip_ids = {
             layer.video_clip_id for segment in segments for layer in segment.avatar_layers
         }
+        dramaturgy = inject_atmosphere_visuals(
+            dramaturgy,
+            sentences=sentences,
+            segments=segments,
+            curve=gesamtkonzept.anarchy_curve,
+            avatar_clip_ids=avatar_clip_ids,
+        )
         reserved = reserved_projectors_from_segments(segments)
         dramaturgy = route_dramaturgy_away_from_projectors(
             dramaturgy,
@@ -397,9 +405,31 @@ class Teil2PrepareService:
                             fade_time=light_scene.fade_time,
                             intensity=round(0.3 + anarchy * 0.7, 2),
                         )
+                        recent_scene_ids.append(light_scene.id)
                 elif existing.light.scene_id:
-                    recent_scene_ids.append(existing.light.scene_id)
+                    if existing.light.intensity is not None and existing.light.intensity <= 0:
+                        recent_scene_ids = [
+                            sid for sid in recent_scene_ids if sid != existing.light.scene_id
+                        ]
+                    else:
+                        recent_scene_ids.append(existing.light.scene_id)
                 boosted.append(existing)
+                if index % 5 == 4 and recent_scene_ids:
+                    off_scene = recent_scene_ids[-1]
+                    boosted.append(
+                        CuePoint(
+                            trigger=CuePointTrigger.SENTENCE_END,
+                            sentence_index=index,
+                            function="licht_aus",
+                            intensity=0.0,
+                            light=LightCue(
+                                scene_id=off_scene,
+                                fade_time=2.0,
+                                intensity=0.0,
+                                replace_previous=False,
+                            ),
+                        )
+                    )
                 continue
             light_scene = self._light_scene_for_sentence(
                 sentence, index, total, anarchy, recent_scene_ids

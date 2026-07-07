@@ -39,6 +39,7 @@ def director_test_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.setattr(settings, "director_autopilot_default", True)
     monkeypatch.setattr(settings, "director_execute_mode", "sequenced")
     monkeypatch.setattr(settings, "director_dramaturgy_mode", "rules")
+    monkeypatch.setattr(settings, "director_osc_queue", False)
 
     import app.director.media.video_inventory as video_inventory_mod
 
@@ -50,8 +51,12 @@ def director_test_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
 
     from app.services.video_cue_catalog import get_video_cue_catalog_service
 
+    from app.director.outputs.light_scene_tracker import reset_light_scene_tracker
+
+    reset_light_scene_tracker()
     get_video_cue_catalog_service().clear_cache()
 
+    import app.director.outputs.osc_queue as osc_queue_mod
     import app.director.pipeline as pipeline_mod
     import app.api.routes.director as director_routes
     from app.director.cues.safety import get_safety_state
@@ -64,6 +69,7 @@ def director_test_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     safety.blackout_locked = True
     safety.emergency_stop_active = False
 
+    osc_queue_mod._queue = None
     pipeline_mod._pipeline = None
     director_routes._pipeline = pipeline_mod.get_director_pipeline()
     director_routes._recording = __import__(

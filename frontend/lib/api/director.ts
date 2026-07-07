@@ -46,6 +46,7 @@ export type DirectorSafety = {
 export type DirectorStatus = {
   safety: DirectorSafety;
   active_cues: string[];
+  osc_queue_depth?: number;
   last_event: Record<string, unknown> | null;
   last_decision: Record<string, unknown> | null;
   last_executed: boolean | null;

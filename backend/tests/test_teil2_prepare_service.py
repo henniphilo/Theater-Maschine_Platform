@@ -34,6 +34,12 @@ def test_prepare_builds_plan_with_segments_and_dramaturgy(monkeypatch):
     assert len(light_points) >= len(plan.sentences)
     light_scene_ids = {p.light.scene_id for p in light_points if p.light and p.light.scene_id}
     assert len(light_scene_ids) >= 2
+    atmosphere_points = [
+        p
+        for p in plan.dramaturgy.cue_points
+        if p.visual is not None and p.visual.video_type == "atmosphere"
+    ]
+    assert len(atmosphere_points) >= 1
     assert plan.model_dump_json()
 
 

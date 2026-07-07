@@ -3,6 +3,9 @@ from pathlib import Path
 
 from app.core.config import settings
 from app.services.tts.edge_provider import EdgeTTSProvider
+import asyncio
+from functools import partial
+
 from app.services.tts.mac_say import MacSayProvider
 from app.services.tts.voice_map import VoiceProfile, default_profile_for_speaker, voice_for_speaker
 from app.services.spoken_text import spoken_discussion_text, needs_discussion_sanitization
@@ -60,7 +63,8 @@ class TTSService:
     async def list_voices(self) -> list[str]:
         provider = self.resolve_provider()
         if provider == "say":
-            return MacSayProvider.list_voices()
+            loop = asyncio.get_event_loop()
+            return await loop.run_in_executor(None, MacSayProvider.list_voices)
         return await EdgeTTSProvider.list_voices()
 
     async def synthesize(
@@ -76,7 +80,15 @@ class TTSService:
             text = spoken_discussion_text(text)
         voice = voice_for_speaker(speaker, provider=provider, profile=resolved)
         if provider == "say":
-            return MacSayProvider.synthesize(text, speaker, voice=voice, profile=resolved)
+            loop = asyncio.get_event_loop()
+            fn = partial(
+                MacSayProvider.synthesize,
+                text,
+                speaker,
+                voice=voice,
+                profile=resolved,
+            )
+            return await loop.run_in_executor(None, fn)
         return await EdgeTTSProvider.synthesize(text, speaker, voice=voice, profile=resolved)
 
     @property

@@ -3,27 +3,56 @@ import { fetchDirectorStatus, isDirectorPerformanceAborted, postDirectorExecute 
 import { sleepWallMs } from "@/lib/api/client";
 import { splitSentences } from "@/lib/text/splitSentences";
 
+let cueExecuteTail: Promise<unknown> = Promise.resolve();
+
+function enqueueCueExecute<T>(work: () => Promise<T>): Promise<T> {
+  const run = cueExecuteTail.then(work, work);
+  cueExecuteTail = run.then(
+    () => undefined,
+    () => undefined
+  );
+  return run;
+}
+
+function logCueResult(
+  label: string,
+  decision: DramaturgyDecision,
+  executed: boolean,
+  blockedReason: string | null | undefined
+): void {
+  if (executed) return;
+  const parts = [
+    label,
+    decision.reason,
+    blockedReason ? `blocked=${blockedReason}` : "executed=false"
+  ];
+  console.warn("[cue]", parts.filter(Boolean).join(" — "));
+}
+
 /** Execute cues without aborting playback when the director/OSC path fails. */
 export async function executeCueSafely(
   decision: DramaturgyDecision,
   onCommands: (commands: OscCommand[]) => Promise<void>,
   shouldAbort: () => boolean
 ): Promise<boolean> {
-  if (shouldAbort() || isDirectorPerformanceAborted()) return false;
-  try {
-    const result = await postDirectorExecute(decision, { force: true, stagger: true });
+  return enqueueCueExecute(async () => {
     if (shouldAbort() || isDirectorPerformanceAborted()) return false;
-    if (result.osc_commands.length > 0) {
-      void onCommands(result.osc_commands).catch((err) => {
-        console.warn("Cue highlight failed (playback continues):", err);
-      });
+    try {
+      const result = await postDirectorExecute(decision, { force: true, stagger: true });
+      if (shouldAbort() || isDirectorPerformanceAborted()) return false;
+      logCueResult("dramaturgy", decision, result.executed, result.blocked_reason);
+      if (result.osc_commands.length > 0) {
+        void onCommands(result.osc_commands).catch((err) => {
+          console.warn("Cue highlight failed (playback continues):", err);
+        });
+      }
+      return result.executed;
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return false;
+      console.warn("Cue execute failed (playback continues):", err);
+      return false;
     }
-    return result.executed;
-  } catch (err) {
-    if (err instanceof DOMException && err.name === "AbortError") return false;
-    console.warn("Cue execute failed (playback continues):", err);
-    return false;
-  }
+  });
 }
 
 export function normalizeCuePoints(dramaturgy: DramaturgyDecision): CuePoint[] {

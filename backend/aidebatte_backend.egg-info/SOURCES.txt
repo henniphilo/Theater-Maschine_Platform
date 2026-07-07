@@ -52,12 +52,14 @@ app/director/media/video_inventory.py
 app/director/outputs/__init__.py
 app/director/outputs/artnet.py
 app/director/outputs/eos_light.py
+app/director/outputs/light_scene_tracker.py
 app/director/outputs/light_tcp.py
 app/director/outputs/lighting.py
 app/director/outputs/logger.py
 app/director/outputs/midi_log.py
 app/director/outputs/osc_commands.py
 app/director/outputs/osc_log.py
+app/director/outputs/osc_queue.py
 app/director/outputs/part1_logger.py
 app/director/outputs/part2_logger.py
 app/director/outputs/pixera.py
@@ -111,6 +113,7 @@ app/services/script_store.py
 app/services/sound_cue_catalog.py
 app/services/sound_designer.py
 app/services/spoken_text.py
+app/services/teil2_atmosphere_cues.py
 app/services/teil2_beat_dramaturgy.py
 app/services/teil2_compose_service.py
 app/services/teil2_dramaturgy_routing.py
@@ -122,6 +125,7 @@ app/services/teil2_text_alignment.py
 app/services/text_split.py
 app/services/tts_service.py
 app/services/video_cue_catalog.py
+app/services/video_pixera_aliases.py
 app/services/video_scope.py
 app/services/providers/__init__.py
 app/services/providers/anthropic_provider.py
@@ -166,6 +170,7 @@ tests/test_media_inventory.py
 tests/test_media_mentions.py
 tests/test_media_selector.py
 tests/test_neutral_reset.py
+tests/test_osc_queue.py
 tests/test_part1_selection_builder.py
 tests/test_part1_selection_validation.py
 tests/test_part1_workshop_flow.py
@@ -182,14 +187,17 @@ tests/test_sound_designer.py
 tests/test_sound_midi.py
 tests/test_spoken_text.py
 tests/test_technik_hold.py
+tests/test_teil2_atmosphere_cues.py
 tests/test_teil2_beat_dramaturgy.py
 tests/test_teil2_compose_script.py
+tests/test_teil2_dramaturgy_routing.py
 tests/test_teil2_prepare_service.py
 tests/test_teil2_projector_assignment.py
 tests/test_teil2_scene_filter.py
 tests/test_teil2_script_service.py
 tests/test_teil2_text_alignment.py
 tests/test_touchdesigner_bridge.py
+tests/test_video_pixera_aliases.py
 tests/test_video_scope.py
 tests/test_visual_outputs.py
 tests/test_voice_map.py

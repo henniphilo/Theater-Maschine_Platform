@@ -9,10 +9,14 @@ from app.director.media.database import MediaDatabase
 from app.director.outputs.eos_light import (
     eos_chan_level,
     eos_group_level,
-    eos_key_out,
     expand_channels,
     parse_eos_chan_command,
     parse_eos_group_command,
+)
+from app.director.outputs.light_scene_tracker import (
+    clear_active_light_scenes,
+    fade_out_scene,
+    replace_active_light_scenes,
 )
 from app.services.video_cue_catalog import get_video_cue_catalog_service
 from app.services.video_scope import VideoScope
@@ -72,6 +76,28 @@ def _eos_commands_for_scene(
     return commands
 
 
+def _eos_fade_out_scenes_commands(
+    scene_ids: list[str],
+    *,
+    osc_host: str,
+    osc_port: int,
+    is_dry_run: bool,
+) -> list[OscCommand]:
+    commands: list[OscCommand] = []
+    for scene_id in scene_ids:
+        commands.extend(
+            _eos_commands_for_scene(
+                scene_id,
+                intensity=0.0,
+                osc_host=osc_host,
+                osc_port=osc_port,
+                is_dry_run=is_dry_run,
+            )
+        )
+        fade_out_scene(scene_id)
+    return commands
+
+
 def _eos_commands_for_light_cue(
     light: LightCue,
     *,
@@ -85,10 +111,35 @@ def _eos_commands_for_light_cue(
         return []
 
     commands: list[OscCommand] = []
-    if light.replace_previous and light.action.value != "fade_blackout":
-        commands.append(_eos_blackout_command(osc_host=osc_host, osc_port=osc_port, is_dry_run=is_dry_run))
-
     light_intensity = _resolve_light_intensity(light, decision)
+
+    if light_intensity <= 0.0:
+        for scene_id in scene_ids:
+            commands.extend(
+                _eos_commands_for_scene(
+                    scene_id,
+                    intensity=0.0,
+                    osc_host=osc_host,
+                    osc_port=osc_port,
+                    is_dry_run=is_dry_run,
+                )
+            )
+            fade_out_scene(scene_id)
+        return commands
+
+    if light.replace_previous and light.action.value != "fade_blackout":
+        previous = replace_active_light_scenes(scene_ids)
+        commands.extend(
+            _eos_fade_out_scenes_commands(
+                previous,
+                osc_host=osc_host,
+                osc_port=osc_port,
+                is_dry_run=is_dry_run,
+            )
+        )
+    else:
+        replace_active_light_scenes(scene_ids)
+
     for scene_id in scene_ids:
         commands.extend(
             _eos_commands_for_scene(
@@ -100,24 +151,6 @@ def _eos_commands_for_light_cue(
             )
         )
     return commands
-
-
-def _eos_blackout_command(
-    *,
-    osc_host: str,
-    osc_port: int,
-    is_dry_run: bool,
-) -> OscCommand:
-    light_host, light_port = _light_osc_target(osc_host, osc_port)
-    address, args = eos_key_out()
-    return OscCommand(
-        bridge="light",
-        host=light_host,
-        port=light_port,
-        address=address,
-        args=args,
-        dry_run=is_dry_run,
-    )
 
 
 def _touchdesigner_visual_commands(
@@ -318,7 +351,15 @@ def _commands_for_single_decision(
         scene_ids = resolve_light_scene_ids(light)
 
         if light.action.value == "fade_blackout":
-            commands.append(_eos_blackout_command(osc_host=osc_host, osc_port=osc_port, is_dry_run=is_dry_run))
+            previous = clear_active_light_scenes()
+            commands.extend(
+                _eos_fade_out_scenes_commands(
+                    previous,
+                    osc_host=osc_host,
+                    osc_port=osc_port,
+                    is_dry_run=is_dry_run,
+                )
+            )
             if settings.light_osc_mirror:
                 commands.append(
                     OscCommand(
@@ -354,7 +395,15 @@ def _commands_for_single_decision(
                     )
                 )
     elif decision.light and decision.light.action.value == "fade_blackout":
-        commands.append(_eos_blackout_command(osc_host=osc_host, osc_port=osc_port, is_dry_run=is_dry_run))
+        previous = clear_active_light_scenes()
+        commands.extend(
+            _eos_fade_out_scenes_commands(
+                previous,
+                osc_host=osc_host,
+                osc_port=osc_port,
+                is_dry_run=is_dry_run,
+            )
+        )
         if settings.light_osc_mirror:
             commands.append(
                 OscCommand(

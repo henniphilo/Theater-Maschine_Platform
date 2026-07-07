@@ -89,14 +89,11 @@ class CueScheduler:
         now = datetime.now(UTC)
         if decision.visual:
             self._last_video_change = now
-            if decision.visual.clip_id:
-                self._register_active(decision.visual.clip_id)
         if decision.sound and decision.sound.cue_id:
             self._last_sound_change = now
             self._register_active(decision.sound.cue_id)
         if decision.light and decision.light.scene_id:
             self._last_light_change = now
-            self._register_active(decision.light.scene_id)
 
     def clear_active(self) -> None:
         self.active_cues.clear()

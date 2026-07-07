@@ -34,3 +34,14 @@ def test_scheduler_skip_interval_check_allows_rapid_cues() -> None:
     )
     assert allowed_layered
     assert layered_reason is None
+
+
+def test_scheduler_active_cues_track_sound_only() -> None:
+    safety = SafetyState()
+    safety.autopilot_enabled = True
+    scheduler = CueScheduler(DramaturgyRules(), safety)
+    decision = _decision()
+
+    scheduler.mark_executed(decision)
+
+    assert scheduler.active_cues == ["maschinen_grundader"]

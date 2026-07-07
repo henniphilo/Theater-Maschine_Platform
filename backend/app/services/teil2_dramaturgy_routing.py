@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
+
 from app.director.cues.cue_models import DramaturgyDecision, VisualCue, VisualOutputAssignment
-from app.services.teil2_projector_assignment import ALL_PROJECTORS
+from app.director.cues.projector_state import ProjectorState
+from app.services.teil2_projector_assignment import pick_atmosphere_projectors
 
 
 def _assign_atmosphere_visual(visual: VisualCue, projector: str) -> VisualCue:
@@ -26,12 +29,7 @@ def _pick_dramaturgy_projectors(
     *,
     seed: int = 0,
 ) -> list[str]:
-    pool = [p for p in ALL_PROJECTORS if p not in reserved]
-    if not pool:
-        pool = list(ALL_PROJECTORS)
-    if count <= 1:
-        return [pool[seed % len(pool)]]
-    return [pool[(seed + index) % len(pool)] for index in range(count)]
+    return pick_atmosphere_projectors(count, reserved=reserved, seed=seed)
 
 
 def route_dramaturgy_away_from_projectors(
@@ -49,7 +47,12 @@ def route_dramaturgy_away_from_projectors(
     if (
         decision.visual
         and decision.visual.clip_id
-        and decision.visual.clip_id not in avatar_clips
+        and decision.visual.clip_id in avatar_clips
+    ):
+        decision.visual = None
+    elif (
+        decision.visual
+        and decision.visual.clip_id
         and decision.visual.video_type != "avatar"
     ):
         decision.visual = _assign_atmosphere_visual(decision.visual, dram_projectors[0])
@@ -75,3 +78,17 @@ def reserved_projectors_from_segments(segments) -> set[str]:
             for output in layer.outputs or []:
                 reserved.add(output.output_id)
     return reserved
+
+
+def active_avatar_reserved_projectors(
+    projectors: ProjectorState,
+    *,
+    now: datetime | None = None,
+) -> set[str]:
+    """Beamers currently locked by an avatar clip."""
+    now = now or datetime.now(UTC)
+    return {
+        projector
+        for projector, slot in projectors.slots.items()
+        if slot.video_type == "avatar" and slot.is_locked(now)
+    }

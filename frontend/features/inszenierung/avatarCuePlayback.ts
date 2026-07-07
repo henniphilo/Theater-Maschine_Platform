@@ -4,6 +4,33 @@ import type { VisualCue } from "@/lib/types/visual";
 import { isDirectorPerformanceAborted, postDirectorExecuteLayered } from "@/lib/api/director";
 import { waitWhilePlaybackPaused } from "@/lib/api/client";
 
+let avatarFireChain: Promise<void> = Promise.resolve();
+
+const AVATAR_POSITION_DEBOUNCE_MS = 150;
+let avatarPositionTimer: ReturnType<typeof setTimeout> | null = null;
+
+type PendingAvatarPositionFire = {
+  plan: Teil2PerformancePlan;
+  globalPos: number;
+  fired: Set<string>;
+  sentenceCharStarts: number[];
+  anarchyLevelFor: (segment: AvatarTextSegment) => number;
+  onCommands: (commands: OscCommand[]) => Promise<void>;
+  shouldAbort: () => boolean;
+  onSegmentFired?: (segment: AvatarTextSegment) => void;
+};
+
+let pendingAvatarPositionFire: PendingAvatarPositionFire | null = null;
+
+function withAvatarFireLock<T>(work: () => Promise<T>): Promise<T> {
+  const run = avatarFireChain.then(work, work);
+  avatarFireChain = run.then(
+    () => undefined,
+    () => undefined
+  );
+  return run;
+}
+
 export async function executeAvatarVisualCue(
   visual: VisualCue,
   anarchyLevel: number,
@@ -23,12 +50,20 @@ export async function executeAvatarVisualCue(
   try {
     const result = await postDirectorExecuteLayered(decision, {
       anarchy_level: anarchyLevel,
-      stack: true,
+      stack: false,
       skip_interval_check: true,
       stagger: false,
       text_excerpt: textExcerpt
     });
     if (shouldAbort() || isDirectorPerformanceAborted()) return false;
+    if (!result.executed) {
+      console.warn(
+        "[avatar] cue blocked:",
+        result.blocked_reason ?? "executed=false",
+        visual.clip_id,
+        textExcerpt ? `«${textExcerpt.slice(0, 40)}»` : ""
+      );
+    }
     if (result.osc_commands.length > 0) {
       void onCommands(result.osc_commands).catch((err) => {
         console.warn("Avatar cue highlight failed (playback continues):", err);
@@ -161,6 +196,28 @@ export function effectiveCharOffset(segment: AvatarTextSegment, sentenceCharStar
   return sentenceCharStarts[segment.start_sentence_index] ?? 0;
 }
 
+export function avatarSegmentsInSentence(
+  plan: Teil2PerformancePlan,
+  sentenceIndex: number,
+  sentenceCharStarts: number[],
+  scriptTextLength: number
+): AvatarTextSegment[] {
+  const sentenceStart = sentenceCharStarts[sentenceIndex] ?? 0;
+  const sentenceEnd =
+    sentenceIndex + 1 < sentenceCharStarts.length
+      ? sentenceCharStarts[sentenceIndex + 1]!
+      : scriptTextLength;
+  return plan.avatar_segments
+    .filter((segment) => {
+      const offset = effectiveCharOffset(segment, sentenceCharStarts);
+      return offset >= sentenceStart && offset < sentenceEnd;
+    })
+    .sort(
+      (a, b) =>
+        effectiveCharOffset(a, sentenceCharStarts) - effectiveCharOffset(b, sentenceCharStarts)
+    );
+}
+
 export function avatarSegmentsDueAtPosition(
   plan: Teil2PerformancePlan,
   globalPos: number,
@@ -178,6 +235,45 @@ export function avatarSegmentsDueAtPosition(
     );
 }
 
+export function scheduleAvatarSegmentsAtPosition(
+  plan: Teil2PerformancePlan,
+  globalPos: number,
+  fired: Set<string>,
+  sentenceCharStarts: number[],
+  anarchyLevelFor: (segment: AvatarTextSegment) => number,
+  onCommands: (commands: OscCommand[]) => Promise<void>,
+  shouldAbort: () => boolean,
+  onSegmentFired?: (segment: AvatarTextSegment) => void
+): void {
+  pendingAvatarPositionFire = {
+    plan,
+    globalPos,
+    fired,
+    sentenceCharStarts,
+    anarchyLevelFor,
+    onCommands,
+    shouldAbort,
+    onSegmentFired
+  };
+  if (avatarPositionTimer !== null) return;
+  avatarPositionTimer = setTimeout(() => {
+    avatarPositionTimer = null;
+    const pending = pendingAvatarPositionFire;
+    pendingAvatarPositionFire = null;
+    if (!pending || pending.shouldAbort()) return;
+    void fireAvatarSegmentsAtPosition(
+      pending.plan,
+      pending.globalPos,
+      pending.fired,
+      pending.sentenceCharStarts,
+      pending.anarchyLevelFor,
+      pending.onCommands,
+      pending.shouldAbort,
+      pending.onSegmentFired
+    );
+  }, AVATAR_POSITION_DEBOUNCE_MS);
+}
+
 export async function fireAvatarSegmentsAtPosition(
   plan: Teil2PerformancePlan,
   globalPos: number,
@@ -188,64 +284,99 @@ export async function fireAvatarSegmentsAtPosition(
   shouldAbort: () => boolean,
   onSegmentFired?: (segment: AvatarTextSegment) => void
 ): Promise<void> {
-  const due = avatarSegmentsDueAtPosition(plan, globalPos, fired, sentenceCharStarts);
-  for (const segment of due) {
-    if (shouldAbort()) return;
-    const sent = await fireAvatarSegmentIfDue(
-      segment,
-      anarchyLevelFor(segment),
-      onCommands,
-      shouldAbort
-    );
-    if (!sent) continue;
-    fired.add(avatarSegmentKey(segment));
-    onSegmentFired?.(segment);
-  }
+  await withAvatarFireLock(async () => {
+    let due = avatarSegmentsDueAtPosition(plan, globalPos, fired, sentenceCharStarts);
+    while (due.length > 0) {
+      const segment = due[0]!;
+      if (shouldAbort()) return;
+      const sent = await fireAvatarSegmentIfDue(
+        segment,
+        anarchyLevelFor(segment),
+        onCommands,
+        shouldAbort
+      );
+      if (!sent) break;
+      fired.add(avatarSegmentKey(segment));
+      onSegmentFired?.(segment);
+      due = avatarSegmentsDueAtPosition(plan, globalPos, fired, sentenceCharStarts);
+    }
+  });
+}
+
+export async function fireInitialAvatarSegments(
+  plan: Teil2PerformancePlan,
+  fired: Set<string>,
+  sentenceCharStarts: number[],
+  anarchyLevelFor: (segment: AvatarTextSegment) => number,
+  onCommands: (commands: OscCommand[]) => Promise<void>,
+  shouldAbort: () => boolean,
+  onSegmentFired?: (segment: AvatarTextSegment) => void
+): Promise<void> {
+  await fireAvatarSegmentsAtPosition(
+    plan,
+    0,
+    fired,
+    sentenceCharStarts,
+    anarchyLevelFor,
+    onCommands,
+    shouldAbort,
+    onSegmentFired
+  );
 }
 
 export async function fireRemainingSentenceSegments(
   plan: Teil2PerformancePlan,
   sentenceIndex: number,
   fired: Set<string>,
+  sentenceCharStarts: number[],
+  scriptTextLength: number,
   anarchyLevel: number,
   onCommands: (commands: OscCommand[]) => Promise<void>,
   shouldAbort: () => boolean,
   onSegmentFired?: (segment: AvatarTextSegment) => void
 ): Promise<void> {
-  for (const segment of plan.avatar_segments) {
-    if (segment.start_sentence_index !== sentenceIndex) continue;
-    if (fired.has(avatarSegmentKey(segment))) continue;
-    if (shouldAbort()) return;
-    const sent = await fireAvatarSegmentIfDue(segment, anarchyLevel, onCommands, shouldAbort);
-    if (!sent) continue;
-    fired.add(avatarSegmentKey(segment));
-    onSegmentFired?.(segment);
-  }
+  await withAvatarFireLock(async () => {
+    for (const segment of avatarSegmentsInSentence(
+      plan,
+      sentenceIndex,
+      sentenceCharStarts,
+      scriptTextLength
+    )) {
+      if (fired.has(avatarSegmentKey(segment))) continue;
+      if (shouldAbort()) return;
+      const sent = await fireAvatarSegmentIfDue(segment, anarchyLevel, onCommands, shouldAbort);
+      if (!sent) continue;
+      fired.add(avatarSegmentKey(segment));
+      onSegmentFired?.(segment);
+    }
+  });
 }
-
-/** Last-chance pass: fire avatar OSC for segments never successfully sent. */
 export async function fireAllRemainingAvatarSegments(
   plan: Teil2PerformancePlan,
   fired: Set<string>,
+  sentenceCharStarts: number[],
   anarchyLevelFor: (segment: AvatarTextSegment) => number,
   onCommands: (commands: OscCommand[]) => Promise<void>,
   shouldAbort: () => boolean,
   onSegmentFired?: (segment: AvatarTextSegment) => void
 ): Promise<void> {
   const remaining = [...plan.avatar_segments].sort(
-    (a, b) => (a.char_offset ?? a.start_sentence_index) - (b.char_offset ?? b.start_sentence_index)
+    (a, b) =>
+      effectiveCharOffset(a, sentenceCharStarts) - effectiveCharOffset(b, sentenceCharStarts)
   );
-  for (const segment of remaining) {
-    if (fired.has(avatarSegmentKey(segment))) continue;
-    if (shouldAbort()) return;
-    const sent = await fireAvatarSegmentIfDue(
-      segment,
-      anarchyLevelFor(segment),
-      onCommands,
-      shouldAbort
-    );
-    if (!sent) continue;
-    fired.add(avatarSegmentKey(segment));
-    onSegmentFired?.(segment);
-  }
+  await withAvatarFireLock(async () => {
+    for (const segment of remaining) {
+      if (fired.has(avatarSegmentKey(segment))) continue;
+      if (shouldAbort()) return;
+      const sent = await fireAvatarSegmentIfDue(
+        segment,
+        anarchyLevelFor(segment),
+        onCommands,
+        shouldAbort
+      );
+      if (!sent) continue;
+      fired.add(avatarSegmentKey(segment));
+      onSegmentFired?.(segment);
+    }
+  });
 }

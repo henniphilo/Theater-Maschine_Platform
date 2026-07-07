@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import StreamingResponse
 
 from app.core.config import settings
+from app.director.outputs.osc_queue import get_osc_command_queue
 from app.director.pipeline import get_director_pipeline
 from app.director.recording import RecordingManager
 from app.schemas.director import (
@@ -54,9 +55,11 @@ def _to_response(result) -> DirectorProcessResponse:
 def _status_response() -> DirectorStatusResponse:
     state = _pipeline.state
     last = state.last_result
+    queue_depth = get_osc_command_queue().depth if settings.director_osc_queue else 0
     return DirectorStatusResponse(
         safety=_pipeline.safety.to_dict(),
         active_cues=list(_pipeline.scheduler.active_cues),
+        osc_queue_depth=queue_depth,
         last_event=state.last_event,
         last_decision=state.last_decision,
         last_executed=last.executed if last else None,

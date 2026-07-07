@@ -5,6 +5,7 @@ from app.core.config import settings
 from app.director.media.database import VideoAsset
 from app.director.media.video_inventory import load_video_cues_from_csv, resolve_video_overview_paths
 from app.schemas.video_cues import VideoCueCatalog
+from app.services.video_pixera_aliases import catalog_pixera_to_osc_name
 from app.services.video_scope import VideoScope, build_video_catalog, osc_availability_by_clip
 
 
@@ -119,7 +120,7 @@ class VideoCueCatalogService:
         clip = self.clip_by_id(clip_id, catalog, scope=scope)
         if not prefix or not clip:
             raise KeyError(f"Unknown projector {output_id!r} or clip {clip_id!r}")
-        return f"{prefix}.{clip.pixera_name}"
+        return f"{prefix}.{catalog_pixera_to_osc_name(clip.pixera_name)}"
 
     def to_video_assets(self, catalog: VideoCueCatalog | None = None, *, scope: VideoScope = "part2") -> list[VideoAsset]:
         catalog = catalog or self.load(scope)

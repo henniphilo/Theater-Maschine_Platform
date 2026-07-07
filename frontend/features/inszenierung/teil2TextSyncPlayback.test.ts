@@ -4,6 +4,7 @@ import { runTextSyncPlayback } from "@/features/inszenierung/teil2TextSyncPlayba
 import type { SceneCorpus, Teil2PerformancePlan } from "@/lib/types/inszenierung";
 
 const fireAvatarSegmentsAtPosition = vi.fn().mockResolvedValue(undefined);
+const fireInitialAvatarSegments = vi.fn().mockResolvedValue(undefined);
 const fireRemainingSentenceSegments = vi.fn().mockResolvedValue(undefined);
 const fireAllRemainingAvatarSegments = vi.fn().mockResolvedValue(undefined);
 const resolveSentenceSpeech = vi.fn().mockResolvedValue(new Blob(["audio"]));
@@ -12,7 +13,9 @@ vi.mock("@/features/inszenierung/avatarCuePlayback", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/features/inszenierung/avatarCuePlayback")>();
   return {
     ...actual,
+    scheduleAvatarSegmentsAtPosition: (...args: unknown[]) => fireAvatarSegmentsAtPosition(...args),
     fireAvatarSegmentsAtPosition: (...args: unknown[]) => fireAvatarSegmentsAtPosition(...args),
+    fireInitialAvatarSegments: (...args: unknown[]) => fireInitialAvatarSegments(...args),
     fireRemainingSentenceSegments: (...args: unknown[]) => fireRemainingSentenceSegments(...args),
     fireAllRemainingAvatarSegments: (...args: unknown[]) => fireAllRemainingAvatarSegments(...args)
   };
