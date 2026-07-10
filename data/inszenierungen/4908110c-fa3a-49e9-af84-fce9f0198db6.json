@@ -1,0 +1,568 @@
+{
+  "id": "4908110c-fa3a-49e9-af84-fce9f0198db6",
+  "title": "Job Test",
+  "scenes": [],
+  "script_source": null,
+  "script_text": "23. Der Delphin spricht.\n\n24. Der Bärenklauer folgt.",
+  "status": "ready",
+  "prepare_phase": null,
+  "prepare_error": null,
+  "gesamtkonzept": {
+    "thesis": "Geld erscheint bei den Tieren als Austauschlogik, Schuldzuweisung und Sprachmaske.",
+    "money_themes": [
+      "Austausch",
+      "Schuld",
+      "Wert",
+      "Rendite"
+    ],
+    "animal_positions": [
+      {
+        "animal": "Der Delphin spricht.",
+        "stance": "im Aufführungstext",
+        "money_angle": "Geld / Ökonomie"
+      },
+      {
+        "animal": "Der Bärenklauer folgt.",
+        "stance": "im Aufführungstext",
+        "money_angle": "Geld / Ökonomie"
+      }
+    ],
+    "cross_scene_links": [
+      {
+        "label": "Geld-Klammer",
+        "scene_ids": [
+          "avatar"
+        ],
+        "note": "Querverweis über den Aufführungstext"
+      }
+    ],
+    "anarchy_curve": {
+      "start": 0.35,
+      "end": 1.0
+    },
+    "discussion_summary": "Kompakt-Analyse (Regel-Fallback)"
+  },
+  "composition": null,
+  "teil2_plan": {
+    "performance_speaker": "narrator",
+    "sentences": [
+      "23.",
+      "Der Delphin spricht.",
+      "24.",
+      "Der Bärenklauer folgt."
+    ],
+    "sentence_char_starts": [
+      0,
+      4,
+      26,
+      30
+    ],
+    "avatar_segments": [],
+    "dramaturgy": {
+      "visual": null,
+      "sound": null,
+      "light": null,
+      "reason": "Teil-2 Stichwort-Cues (Regel-Fallback ohne LLM)",
+      "dramaturgical_reading": "",
+      "cue_points": [
+        {
+          "trigger": "keyword",
+          "keyword": "Der",
+          "sentence_index": 1,
+          "time_offset_sec": 0.0,
+          "function": "verstärken",
+          "intensity": 0.401,
+          "visual": null,
+          "sound": {
+            "action": "trigger_cue",
+            "cue_id": "kaefigecho_fade_in",
+            "volume": 0.58
+          },
+          "light": {
+            "action": "set_scene",
+            "scene_id": "vorbuehnenzug",
+            "scene_ids": [],
+            "fade_time": 2.2811764705882354,
+            "intensity": 0.55,
+            "replace_previous": true
+          }
+        },
+        {
+          "trigger": "keyword",
+          "keyword": "Delphin",
+          "sentence_index": 1,
+          "time_offset_sec": 0.0,
+          "function": "überlagern",
+          "intensity": 0.452,
+          "visual": null,
+          "sound": {
+            "action": "trigger_cue",
+            "cue_id": "kaefigecho_fade_out",
+            "volume": 0.62
+          },
+          "light": {
+            "action": "set_scene",
+            "scene_id": "teppich_rot",
+            "scene_ids": [],
+            "fade_time": 2.3423529411764705,
+            "intensity": 0.59,
+            "replace_previous": true
+          }
+        },
+        {
+          "trigger": "keyword",
+          "keyword": "spricht",
+          "sentence_index": 1,
+          "time_offset_sec": 0.0,
+          "function": "überlagern",
+          "intensity": 0.554,
+          "visual": null,
+          "sound": {
+            "action": "trigger_cue",
+            "cue_id": "erinnerungsglitch_fade_in",
+            "volume": 0.69
+          },
+          "light": {
+            "action": "set_scene",
+            "scene_id": "wolkenprospekt_boden",
+            "scene_ids": [],
+            "fade_time": 2.4647058823529413,
+            "intensity": 0.67,
+            "replace_previous": true
+          }
+        },
+        {
+          "trigger": "keyword",
+          "keyword": "Bärenklauer",
+          "sentence_index": 3,
+          "time_offset_sec": 0.0,
+          "function": "entfremden",
+          "intensity": 0.783,
+          "visual": null,
+          "sound": {
+            "action": "trigger_cue",
+            "cue_id": "herz_unter_glas_fade_in",
+            "volume": 0.85
+          },
+          "light": {
+            "action": "set_scene",
+            "scene_id": "lautsprecher_buehne",
+            "scene_ids": [],
+            "fade_time": 1.8266666666666667,
+            "intensity": 0.84,
+            "replace_previous": true
+          }
+        },
+        {
+          "trigger": "keyword",
+          "keyword": "folgt",
+          "sentence_index": 3,
+          "time_offset_sec": 0.0,
+          "function": "desorientieren",
+          "intensity": 0.936,
+          "visual": null,
+          "sound": {
+            "action": "trigger_cue",
+            "cue_id": "metallseufzer",
+            "volume": 0.96
+          },
+          "light": {
+            "action": "set_scene",
+            "scene_id": "saallicht",
+            "scene_ids": [],
+            "fade_time": 3.8980392156862744,
+            "intensity": 0.95,
+            "replace_previous": true
+          }
+        }
+      ],
+      "performance_speakers": [],
+      "tags": [
+        "teil2",
+        "text_sync",
+        "keyword",
+        "anarchy",
+        "fallback"
+      ],
+      "mood": "anarchy",
+      "intensity": 1.0,
+      "timestamp": 0.0
+    },
+    "atmosphere_cue_points": [
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 18.75,
+        "function": "verstärken",
+        "intensity": 0.401,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "clyde",
+          "outputs": [
+            {
+              "output_id": "eva",
+              "clip_id": "clyde",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "eva",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 18.75,
+        "function": "überlagern",
+        "intensity": 0.452,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "black",
+          "outputs": [
+            {
+              "output_id": "eva",
+              "clip_id": "black",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "eva",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 18.75,
+        "function": "überlagern",
+        "intensity": 0.554,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "clyde",
+          "outputs": [
+            {
+              "output_id": "eva",
+              "clip_id": "clyde",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "eva",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 56.25,
+        "function": "entfremden",
+        "intensity": 0.783,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "black",
+          "outputs": [
+            {
+              "output_id": "led",
+              "clip_id": "black",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "led",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 56.25,
+        "function": "desorientieren",
+        "intensity": 0.936,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "clyde",
+          "outputs": [
+            {
+              "output_id": "led",
+              "clip_id": "clyde",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "led",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      }
+    ],
+    "cue_overview": {
+      "rows": [
+        {
+          "sentence_index": 0,
+          "text": "23.",
+          "annotations": []
+        },
+        {
+          "sentence_index": 1,
+          "text": "Der Delphin spricht.",
+          "annotations": [
+            {
+              "kind": "sound",
+              "label": "kaefigecho_fade_in",
+              "projector": null,
+              "time_sec": null,
+              "sentence_index": 1,
+              "reason": "Stichwort: Der · verstärken"
+            },
+            {
+              "kind": "light",
+              "label": "vorbuehnenzug",
+              "projector": null,
+              "time_sec": null,
+              "sentence_index": 1,
+              "reason": "Stichwort: Der · verstärken"
+            },
+            {
+              "kind": "sound",
+              "label": "kaefigecho_fade_out",
+              "projector": null,
+              "time_sec": null,
+              "sentence_index": 1,
+              "reason": "Stichwort: Delphin · überlagern"
+            },
+            {
+              "kind": "light",
+              "label": "teppich_rot",
+              "projector": null,
+              "time_sec": null,
+              "sentence_index": 1,
+              "reason": "Stichwort: Delphin · überlagern"
+            },
+            {
+              "kind": "sound",
+              "label": "erinnerungsglitch_fade_in",
+              "projector": null,
+              "time_sec": null,
+              "sentence_index": 1,
+              "reason": "Stichwort: spricht · überlagern"
+            },
+            {
+              "kind": "light",
+              "label": "wolkenprospekt_boden",
+              "projector": null,
+              "time_sec": null,
+              "sentence_index": 1,
+              "reason": "Stichwort: spricht · überlagern"
+            }
+          ]
+        },
+        {
+          "sentence_index": 2,
+          "text": "24.",
+          "annotations": []
+        },
+        {
+          "sentence_index": 3,
+          "text": "Der Bärenklauer folgt.",
+          "annotations": [
+            {
+              "kind": "sound",
+              "label": "herz_unter_glas_fade_in",
+              "projector": null,
+              "time_sec": null,
+              "sentence_index": 3,
+              "reason": "Stichwort: Bärenklauer · entfremden"
+            },
+            {
+              "kind": "light",
+              "label": "lautsprecher_buehne",
+              "projector": null,
+              "time_sec": null,
+              "sentence_index": 3,
+              "reason": "Stichwort: Bärenklauer · entfremden"
+            },
+            {
+              "kind": "sound",
+              "label": "metallseufzer",
+              "projector": null,
+              "time_sec": null,
+              "sentence_index": 3,
+              "reason": "Stichwort: folgt · desorientieren"
+            },
+            {
+              "kind": "light",
+              "label": "saallicht",
+              "projector": null,
+              "time_sec": null,
+              "sentence_index": 3,
+              "reason": "Stichwort: folgt · desorientieren"
+            }
+          ]
+        }
+      ],
+      "atmosphere_timeline": [
+        {
+          "kind": "video",
+          "label": "clyde",
+          "projector": "eva",
+          "time_sec": 18.75,
+          "sentence_index": null,
+          "reason": "verstärken"
+        },
+        {
+          "kind": "video",
+          "label": "black",
+          "projector": "eva",
+          "time_sec": 18.75,
+          "sentence_index": null,
+          "reason": "überlagern"
+        },
+        {
+          "kind": "video",
+          "label": "clyde",
+          "projector": "eva",
+          "time_sec": 18.75,
+          "sentence_index": null,
+          "reason": "überlagern"
+        },
+        {
+          "kind": "video",
+          "label": "black",
+          "projector": "led",
+          "time_sec": 56.25,
+          "sentence_index": null,
+          "reason": "entfremden"
+        },
+        {
+          "kind": "video",
+          "label": "clyde",
+          "projector": "led",
+          "time_sec": 56.25,
+          "sentence_index": null,
+          "reason": "desorientieren"
+        }
+      ]
+    },
+    "anarchy_level_end": 1.0,
+    "alignment_warnings": [
+      "bak1_nicolaspflanzen3: Text nicht im Aufführungstext gefunden",
+      "bak2_krabbe: Text nicht im Aufführungstext gefunden",
+      "bak3_hasen: Text nicht im Aufführungstext gefunden",
+      "bak3_mavie: Text nicht im Aufführungstext gefunden",
+      "bak4_inge: Text nicht im Aufführungstext gefunden",
+      "bak5_thiemo: Text nicht im Aufführungstext gefunden",
+      "bak6_azaria: Text nicht im Aufführungstext gefunden",
+      "del1_nicolas: Text nicht im Aufführungstext gefunden",
+      "del2: Text nicht im Aufführungstext gefunden",
+      "del3: Text nicht im Aufführungstext gefunden",
+      "del4: Text nicht im Aufführungstext gefunden",
+      "bk0_waran: Text nicht im Aufführungstext gefunden",
+      "bk1_caro: Text nicht im Aufführungstext gefunden",
+      "bk1_caroline: Text nicht im Aufführungstext gefunden",
+      "bk1_thomas: Text nicht im Aufführungstext gefunden",
+      "bk2_hundswolf: Text nicht im Aufführungstext gefunden",
+      "bk2_mavie: Text nicht im Aufführungstext gefunden",
+      "bk3_thomas: Text nicht im Aufführungstext gefunden",
+      "daslammgottes: Text nicht im Aufführungstext gefunden",
+      "lg2_inge: Text nicht im Aufführungstext gefunden",
+      "lg3_seb: Text nicht im Aufführungstext gefunden",
+      "lg4_azaria: Text nicht im Aufführungstext gefunden",
+      "lg5_henrike: Text nicht im Aufführungstext gefunden",
+      "lg6_hai: Text nicht im Aufführungstext gefunden",
+      "bk5_nicolas: Text nicht im Aufführungstext gefunden",
+      "bk6_branko: Text nicht im Aufführungstext gefunden",
+      "bk7_caroline: Text nicht im Aufführungstext gefunden",
+      "bk7_nasenfisch: Text nicht im Aufführungstext gefunden",
+      "bk8_haischaedel: Text nicht im Aufführungstext gefunden",
+      "bk8_mavie1: Text nicht im Aufführungstext gefunden",
+      "bk8_mavie: Text nicht im Aufführungstext gefunden",
+      "bk9_thiemo: Text nicht im Aufführungstext gefunden",
+      "pet0_baer_thomas: Text nicht im Aufführungstext gefunden",
+      "pet1_azaria: Text nicht im Aufführungstext gefunden",
+      "pet1_thomas: Text nicht im Aufführungstext gefunden",
+      "pet2_inge: Text nicht im Aufführungstext gefunden",
+      "pet3_caroline: Text nicht im Aufführungstext gefunden",
+      "pet3_koala: Text nicht im Aufführungstext gefunden",
+      "pet4_sebastian: Text nicht im Aufführungstext gefunden",
+      "pet5_azaria: Text nicht im Aufführungstext gefunden",
+      "wo1_kaenguru: Text nicht im Aufführungstext gefunden",
+      "wo2_branko: Text nicht im Aufführungstext gefunden",
+      "wo3_seb_musik: Text nicht im Aufführungstext gefunden",
+      "wo4_nicolas: Text nicht im Aufführungstext gefunden",
+      "wo4_schimpanse: Text nicht im Aufführungstext gefunden",
+      "wo5_thiemo: Text nicht im Aufführungstext gefunden",
+      "wo6_mavie: Text nicht im Aufführungstext gefunden",
+      "wo6_schimpanse: Text nicht im Aufführungstext gefunden",
+      "wo7_sebastian: Text nicht im Aufführungstext gefunden",
+      "mo1_sebmusik: Text nicht im Aufführungstext gefunden",
+      "mo2_branko: Text nicht im Aufführungstext gefunden",
+      "mo3_dachs: Text nicht im Aufführungstext gefunden",
+      "mo3_caro: Text nicht im Aufführungstext gefunden",
+      "sch1_sebastian: Text nicht im Aufführungstext gefunden",
+      "sch2_azariawirdschaf: Text nicht im Aufführungstext gefunden",
+      "sch2_azaria_als_schaf: Text nicht im Aufführungstext gefunden",
+      "sch2_azaria: Text nicht im Aufführungstext gefunden",
+      "sch3_ingewirdschaf: Text nicht im Aufführungstext gefunden",
+      "sch4_thomas: Text nicht im Aufführungstext gefunden",
+      "sch5_schafsolo_mavie: Text nicht im Aufführungstext gefunden",
+      "sch6_schafherde: Text nicht im Aufführungstext gefunden",
+      "sch7_schaf_single_sebastian: Text nicht im Aufführungstext gefunden",
+      "sch8_viele_schafe_caro: Text nicht im Aufführungstext gefunden"
+    ]
+  }
+}

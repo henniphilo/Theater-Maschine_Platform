@@ -32,6 +32,11 @@ vi.mock("@/features/show/discussionCuePlayback", () => ({
   textPositionForPlayback: vi.fn(() => 0)
 }));
 
+vi.mock("@/lib/api/director", () => ({
+  armDirectorForPerformance: vi.fn().mockResolvedValue(undefined),
+  stopDirectorPerformance: vi.fn().mockResolvedValue(undefined)
+}));
+
 import { runPart1ScriptPlayback } from "@/features/show/scriptPlayback";
 
 function beatWithDiscussion(): ScriptBeat {

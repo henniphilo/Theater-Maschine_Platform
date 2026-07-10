@@ -33,7 +33,6 @@ def test_anarchy_function_escalates() -> None:
 
 
 def test_build_keyword_cue_point_has_sound_or_light() -> None:
-    curve = AnarchyCurve()
     point = build_keyword_cue_point("Schuld", 2, 0.6, slot=1)
     assert point.trigger == CuePointTrigger.KEYWORD
     assert point.keyword == "Schuld"
