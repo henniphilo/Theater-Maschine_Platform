@@ -10,6 +10,7 @@ from app.director.outputs.osc_queue import get_osc_command_queue
 from app.director.outputs.signal_trace import begin_request_trace, emit_signal_trace_event
 from app.director.pipeline import get_director_pipeline
 from app.director.recording import RecordingManager
+from app.director.remote_transport import get_remote_transport_mailbox
 from app.schemas.director import (
     DialogueEventRequest,
     DirectorProcessResponse,
@@ -21,6 +22,9 @@ from app.schemas.director import (
     OscTestResponse,
     RecordingRequest,
     RecordingStatusResponse,
+    RemoteTransportCommandRequest,
+    RemoteTransportPostResponse,
+    RemoteTransportStatusResponse,
     SafetyUpdateRequest,
     TechnikHoldStatusResponse,
     TechnikStopRequest,
@@ -541,6 +545,31 @@ def get_osc_log_recent(limit: int = 150) -> dict[str, object]:
         "path": settings.osc_log_path,
         "limit": capped,
     }
+
+
+@router.post("/remote-transport", response_model=RemoteTransportPostResponse)
+def post_remote_transport(payload: RemoteTransportCommandRequest) -> RemoteTransportPostResponse:
+    """Phone posts play/pause/stop; stage Aufführung tab consumes via GET."""
+    _ensure_enabled()
+    mailbox = get_remote_transport_mailbox()
+    cmd = mailbox.post(payload.action)
+    status_snap = mailbox.snapshot(consume=False, heartbeat=False)
+    return RemoteTransportPostResponse(
+        id=cmd.id,
+        action=cmd.action,
+        listener_connected=bool(status_snap["listener_connected"]),
+    )
+
+
+@router.get("/remote-transport", response_model=RemoteTransportStatusResponse)
+def get_remote_transport(
+    consume: bool = False,
+    heartbeat: bool = False,
+) -> RemoteTransportStatusResponse:
+    """Stage browser polls; set consume=1 to claim the pending command once."""
+    _ensure_enabled()
+    snap = get_remote_transport_mailbox().snapshot(consume=consume, heartbeat=heartbeat)
+    return RemoteTransportStatusResponse.model_validate(snap)
 
 
 def process_debate_turn_if_enabled(

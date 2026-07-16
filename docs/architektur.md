@@ -236,6 +236,7 @@ flowchart TB
 | **QLab / Ableton** | Theater-Sound, Cues, Fades | OSC `/sound/*` |
 | **Lichtpult / Interface** | DMX-Scenen | OSC → Pult, oder Art-Net (Phase 3) |
 | **Operator-Laptop** | Overrides, Emergency Stop | Browser → `/director` |
+| **Handy (Remote)** | Play / Pause / Stop aus der Ferne | Browser → `/remote` (Mac-Aufführung bleibt Master) — [remote_transport.md](remote_transport.md) |
 
 ---
 

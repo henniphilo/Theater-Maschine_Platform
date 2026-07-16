@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseModel, Field
 
 from app.director.cues.cue_models import DramaturgyDecision, OscCommand
@@ -147,3 +149,25 @@ class RecordingRequest(BaseModel):
 class RecordingStatusResponse(BaseModel):
     active: bool
     recording_id: str | None = None
+
+
+class RemoteTransportCommandRequest(BaseModel):
+    action: Literal["play", "pause", "stop"]
+
+
+class RemoteTransportPendingCommand(BaseModel):
+    id: str
+    action: Literal["play", "pause", "stop"]
+    created_at: float
+
+
+class RemoteTransportStatusResponse(BaseModel):
+    pending: RemoteTransportPendingCommand | None = None
+    listener_connected: bool = False
+    listener_heartbeat_age_sec: float | None = None
+
+
+class RemoteTransportPostResponse(BaseModel):
+    id: str
+    action: Literal["play", "pause", "stop"]
+    listener_connected: bool = False

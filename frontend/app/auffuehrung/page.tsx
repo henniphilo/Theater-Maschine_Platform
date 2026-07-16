@@ -72,6 +72,7 @@ import { allowlistFromCatalog, buildMediaAliasIndex, type MediaAllowlist, type M
 import { buildMediaLookup, type MediaLookup } from "@/lib/types/media";
 import type { ProductionScript } from "@/lib/types/script";
 import { sessionGet, sessionSet } from "@/lib/browser/session";
+import { useRemoteTransportListener } from "@/features/show/useRemoteTransportListener";
 
 function AuffuehrungContent() {
   const router = useRouter();
@@ -533,6 +534,29 @@ function AuffuehrungContent() {
     setTextSyncPlayback((prev) => ({ ...prev, running: false, paused: true }));
   }
 
+  function handleRemotePlay() {
+    if (teil2Running && teil2Paused) {
+      handlePlayTeil2();
+      return;
+    }
+    if (playback.running && playback.paused) {
+      handlePlayTeil1(playback.playbackMode ?? "full");
+      return;
+    }
+    if (teil2Running || playback.running) return;
+    if (canPlayTeil1) {
+      handlePlayTeil1("full");
+      return;
+    }
+    if (canPlayTeil2) handlePlayTeil2();
+  }
+
+  useRemoteTransportListener({
+    onPlay: handleRemotePlay,
+    onPause: handlePause,
+    onStop: handleStop
+  });
+
   function handleSeek(progress: number) {
     if (!script || beatCount === 0) return;
     const index = beatIndexFromProgress(progress, beatCount);
@@ -674,6 +698,11 @@ function AuffuehrungContent() {
       <p className="textMuted">
         Teil 1 und Teil 2 laufen unabhängig: ▶ Teil 1 = Dramaturgen-Diskussion, dann Stücktext mit Cues. Teil 2 =
         anarchische Inszenierung (eigener Start).
+      </p>
+      <p className="textMuted" style={{ fontSize: "0.85rem" }}>
+        Remote vom Handy: diese Seite offen lassen, dann{" "}
+        <Link href="/remote">/remote</Link> auf dem Handy öffnen (
+        <code>http://&lt;Mac-IP&gt;:3003/remote</code>).
       </p>
 
       <section className="card col">

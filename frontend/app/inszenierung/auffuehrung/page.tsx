@@ -34,6 +34,7 @@ import {
 } from "@/features/inszenierung/inszenierungBuffer";
 import type { SceneCorpus } from "@/lib/types/inszenierung";
 import { sessionGet } from "@/lib/browser/session";
+import { useRemoteTransportListener } from "@/features/show/useRemoteTransportListener";
 
 function AuffuehrungContent() {
   const searchParams = useSearchParams();
@@ -169,6 +170,12 @@ function AuffuehrungContent() {
     void play(startSentenceIndex);
   }
 
+  useRemoteTransportListener({
+    onPlay: () => handlePlay(0),
+    onPause: pause,
+    onStop: stop
+  });
+
   function handleJumpToAvatarSegment(segmentIndex: number) {
     if (!canPlay || !usesTextSync || !plan) return;
     const segment = plan.avatar_segments[segmentIndex];
@@ -217,6 +224,11 @@ function AuffuehrungContent() {
         <h1>Teil 2 — Aufführung</h1>
         {running ? <span className="liveBadge">{paused ? "Pausiert" : "Live"}</span> : null}
       </div>
+      <p className="textMuted" style={{ fontSize: "0.85rem" }}>
+        Remote vom Handy: diese Seite offen lassen, dann{" "}
+        <Link href="/remote">/remote</Link> auf dem Handy öffnen (
+        <code>http://&lt;Mac-IP&gt;:3003/remote</code>).
+      </p>
 
       {corpus ? (
         <section className="card col">

@@ -27,6 +27,7 @@ app/director/__init__.py
 app/director/light_desk_test.py
 app/director/pipeline.py
 app/director/recording.py
+app/director/remote_transport.py
 app/director/run_state.py
 app/director/signal_trace_analysis.py
 app/director/technik_hold.py
@@ -198,6 +199,7 @@ tests/test_preview_executor.py
 tests/test_projector_lock.py
 tests/test_qlab_assign_video_stages.py
 tests/test_qlab_import_video_cues.py
+tests/test_remote_transport.py
 tests/test_run_epoch_queue.py
 tests/test_script_api.py
 tests/test_script_splitter.py

@@ -23,6 +23,7 @@ Zwei KIs (GPT und Claude) diskutieren live über ein Thema. Während sie spreche
 - [Teil 1 — Stücktext-Dramaturgie](#teil-1--stücktext-dramaturgie)
 - [Teil 2 — Text-Sync Inszenierung](#teil-2--text-sync-inszenierung)
 - [Live-Regie (Director)](#live-regie-director)
+- [Remote-Transport (Handy)](docs/remote_transport.md)
 - [TouchDesigner](#touchdesigner)
 - [Projektstruktur](#projektstruktur)
 - [Code-Übersicht: Was liegt wo?](#code-übersicht-was-liegt-wo)
@@ -51,6 +52,8 @@ Bei jedem Debatten-Beitrag (wenn `DIRECTOR_ENABLED=true`):
 5. Entscheidungen werden in `logs/director.log` protokolliert.
 
 Der Operator steuert alles über **http://localhost:3003/director** (Autopilot, Visuals/Sound/Licht, Aufnahme, Emergency Stop).
+
+**Aufführung remote vom Handy starten:** Mac-Aufführung offen lassen, Handy → `/remote`. Anleitung inkl. Mac-IP: [docs/remote_transport.md](docs/remote_transport.md).
 
 ### Zwei Inszenierungs-Modi
 
@@ -180,6 +183,7 @@ docker compose up --force-recreate backend
 | **Teil 2 — Aufführung** | http://localhost:3003/inszenierung/auffuehrung |
 | **Technik-Test** (Video/Sound/Licht einzeln) | http://localhost:3003/technik |
 | **Live-Regie (Operator)** | http://localhost:3003/director |
+| **Remote (Handy Play/Pause/Stop)** | http://localhost:3003/remote — [Anleitung](docs/remote_transport.md) |
 | **Backend (API)** | http://localhost:8000 |
 | **API-Docs** | http://localhost:8000/docs |
 
@@ -624,6 +628,12 @@ Entscheidung in logs/director.log + last_osc_commands im Status
 - **Emergency Stop** — stoppt alle Ausgaben
 - **Record Start/Stop** — Live-Aufnahme in TouchDesigner anstoßen
 
+### Remote-Transport (Handy)
+
+Play/Pause/Stop vom Handy, TTS bleibt auf dem Mac: **http://localhost:3003/remote** (LAN: `http://<Mac-IP>:3003/remote`).
+
+Mac-IP z. B. mit `ipconfig getifaddr en0`. Details: [docs/remote_transport.md](docs/remote_transport.md).
+
 ### Manueller Test (ohne Debatte)
 
 ```bash
@@ -830,6 +840,10 @@ Theatermaschine/
 | `POST` | `/api/v1/director/record/start` | Aufnahme starten |
 | `POST` | `/api/v1/director/record/stop` | Aufnahme stoppen |
 | `GET` | `/api/v1/director/events` | Live-Updates (SSE) |
+| `POST` | `/api/v1/director/remote-transport` | Handy: Play/Pause/Stop in Mailbox |
+| `GET` | `/api/v1/director/remote-transport` | Mac-Tab: Befehl abholen (`consume=1&heartbeat=1`) |
+
+Remote-Bedienung (Handy, Mac-IP): [docs/remote_transport.md](docs/remote_transport.md).
 
 ---
 

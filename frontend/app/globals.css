@@ -2479,3 +2479,87 @@ hr {
 [data-theme="light"] .machineStartBtn:not(:disabled) {
   color: var(--color-accent-ink);
 }
+
+/* Remote transport (phone) */
+.remotePage {
+  max-width: 28rem;
+  gap: var(--space-4);
+  padding-bottom: var(--space-7);
+}
+
+.remoteHint {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.remoteBadgeOffline {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-text-muted);
+}
+
+.remoteStatus {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.remoteButtons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.remoteBtn {
+  width: 100%;
+  min-height: 4.25rem;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-md);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  border: 1px solid var(--color-border-strong);
+  cursor: pointer;
+}
+
+.remoteBtn:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.remoteBtnPlay {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  border-color: transparent;
+  box-shadow: 0 8px 22px rgba(74, 222, 128, 0.22);
+}
+
+.remoteBtnPause {
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+
+.remoteBtnStop {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.remoteUrlHint {
+  font-size: 0.8rem;
+  word-break: break-all;
+}
+
+[data-theme="light"] .remoteBtnPlay {
+  box-shadow: 0 8px 18px rgba(22, 163, 74, 0.2);
+}

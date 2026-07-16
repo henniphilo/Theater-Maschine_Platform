@@ -9,6 +9,7 @@ Live-theater control system: FastAPI backend + Next.js frontend → OSC / MIDI /
 | Teil 1 | `/dramaturgie` → `/stueck` → `/auffuehrung` | Script dramaturgy workshop, sequential playback |
 | Teil 2 | `/inszenierung` → prepare → `/inszenierung/auffuehrung` | Text-sync avatars, TTS as master clock |
 | Operator | `/director` | Manual director panel, safety toggles |
+| Remote | `/remote` | Phone Play/Pause/Stop; Mac Aufführung tab executes (TTS stays on Mac) — [docs/remote_transport.md](docs/remote_transport.md) |
 
 ## Key paths
 

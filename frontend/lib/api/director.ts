@@ -496,3 +496,48 @@ export async function fetchOscLogRecent(limit = 150): Promise<OscLogRecentRespon
   if (!res.ok) throw new Error("OSC-Log nicht erreichbar");
   return res.json();
 }
+
+export type RemoteTransportAction = "play" | "pause" | "stop";
+
+export type RemoteTransportPendingCommand = {
+  id: string;
+  action: RemoteTransportAction;
+  created_at: number;
+};
+
+export type RemoteTransportStatus = {
+  pending: RemoteTransportPendingCommand | null;
+  listener_connected: boolean;
+  listener_heartbeat_age_sec: number | null;
+};
+
+export type RemoteTransportPostResult = {
+  id: string;
+  action: RemoteTransportAction;
+  listener_connected: boolean;
+};
+
+export async function postRemoteTransport(
+  action: RemoteTransportAction
+): Promise<RemoteTransportPostResult> {
+  const res = await apiFetch("/director/remote-transport", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action })
+  });
+  if (!res.ok) throw new Error("Remote-Transport fehlgeschlagen");
+  return res.json();
+}
+
+export async function pollRemoteTransport(options?: {
+  consume?: boolean;
+  heartbeat?: boolean;
+}): Promise<RemoteTransportStatus> {
+  const params = new URLSearchParams();
+  if (options?.consume) params.set("consume", "1");
+  if (options?.heartbeat) params.set("heartbeat", "1");
+  const qs = params.toString();
+  const res = await apiFetch(`/director/remote-transport${qs ? `?${qs}` : ""}`);
+  if (!res.ok) throw new Error("Remote-Transport Status fehlgeschlagen");
+  return res.json();
+}
