@@ -6,12 +6,15 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import StreamingResponse
 
 from app.core.config import settings
+from app.director.avatar_done_gate import get_avatar_done_gate
 from app.director.outputs.osc_queue import get_osc_command_queue
 from app.director.outputs.signal_trace import begin_request_trace, emit_signal_trace_event
 from app.director.pipeline import get_director_pipeline
 from app.director.recording import RecordingManager
 from app.director.remote_transport import get_remote_transport_mailbox
 from app.schemas.director import (
+    AvatarDoneWaitRequest,
+    AvatarDoneWaitResponse,
     DialogueEventRequest,
     DirectorProcessResponse,
     DirectorStatusResponse,
@@ -75,6 +78,8 @@ def _status_response() -> DirectorStatusResponse:
         last_blocked_reason=last.blocked_reason if last else None,
         last_planned_commands=last.planned_commands if last else [],
         last_osc_commands=state.last_osc_commands,
+        avatar_done_gate_enabled=settings.avatar_done_gate_enabled,
+        avatar_done_gate=get_avatar_done_gate().status_snapshot(),
     )
 
 
@@ -435,6 +440,37 @@ def get_status() -> DirectorStatusResponse:
     return _status_response()
 
 
+@router.post("/avatar-done/wait", response_model=AvatarDoneWaitResponse)
+def post_avatar_done_wait(payload: AvatarDoneWaitRequest) -> AvatarDoneWaitResponse:
+    """Block until expected avatar cue completion OSC arrives (or timeout).
+
+    Used by Teil-2 playback to pause narrator TTS until QLab reports video end.
+    See docs/avatar_done_gate.md.
+    """
+    _ensure_enabled()
+    if not settings.avatar_done_gate_enabled:
+        return AvatarDoneWaitResponse(status="disabled")
+    result = get_avatar_done_gate().wait_for(
+        payload.cue_names,
+        timeout_ms=payload.timeout_ms,
+    )
+    emit_signal_trace_event(
+        "avatar.done_wait",
+        status=result.status,
+        cue_names=payload.cue_names,
+        received=result.received,
+        missing=result.missing,
+        wait_ms=result.wait_ms,
+        timeout_ms=payload.timeout_ms,
+    )
+    return AvatarDoneWaitResponse(
+        status=result.status,  # type: ignore[arg-type]
+        received=result.received,
+        missing=result.missing,
+        wait_ms=result.wait_ms,
+    )
+
+
 @router.patch("/safety", response_model=DirectorStatusResponse)
 def patch_safety(payload: SafetyUpdateRequest) -> DirectorStatusResponse:
     _ensure_enabled()
@@ -447,6 +483,7 @@ def patch_safety(payload: SafetyUpdateRequest) -> DirectorStatusResponse:
 @router.post("/emergency-stop", response_model=DirectorStatusResponse)
 def emergency_stop() -> DirectorStatusResponse:
     _ensure_enabled()
+    get_avatar_done_gate().reset()
     _pipeline.emergency_stop()
     return _status_response()
 
@@ -454,6 +491,7 @@ def emergency_stop() -> DirectorStatusResponse:
 @router.post("/emergency-clear", response_model=DirectorStatusResponse)
 def emergency_clear() -> DirectorStatusResponse:
     _ensure_enabled()
+    get_avatar_done_gate().reset()
     _pipeline.clear_for_performance()
     return _status_response()
 

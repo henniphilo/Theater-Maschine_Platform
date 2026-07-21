@@ -90,6 +90,20 @@ class DirectorStatusResponse(BaseModel):
     last_blocked_reason: str | None = None
     last_planned_commands: list[OscCommand] = Field(default_factory=list)
     last_osc_commands: list[OscCommand] = Field(default_factory=list)
+    avatar_done_gate_enabled: bool = False
+    avatar_done_gate: dict[str, object] = Field(default_factory=dict)
+
+
+class AvatarDoneWaitRequest(BaseModel):
+    cue_names: list[str] = Field(default_factory=list)
+    timeout_ms: int = Field(default=120_000, ge=0, le=600_000)
+
+
+class AvatarDoneWaitResponse(BaseModel):
+    status: Literal["disabled", "skipped", "done", "timeout", "cancelled"]
+    received: list[str] = Field(default_factory=list)
+    missing: list[str] = Field(default_factory=list)
+    wait_ms: int = 0
 
 
 class OscTestRequest(BaseModel):

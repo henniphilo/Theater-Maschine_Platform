@@ -85,6 +85,29 @@ def test_light_handler_forwards_all_scenes_to_qlab_client() -> None:
     ]
 
 
+def test_cue_name_from_qlab_stop() -> None:
+    assert (
+        relay.cue_name_from_qlab_stop(
+            "/qlab/event/workspace/cue/stop",
+            ["KI_RZ21.BK1_Caro", "BK1 Caro", "uuid", "Video"],
+        )
+        == "KI_RZ21.BK1_Caro"
+    )
+    assert relay.cue_name_from_qlab_stop("/qlab/event/workspace/cue/start", ["KI_RZ21.A"]) is None
+
+
+def test_qlab_stop_forwarder_sends_avatar_done() -> None:
+    sent: list[tuple[str, list[object]]] = []
+
+    class _FakeClient:
+        def send_message(self, address: str, args: list[object]) -> None:
+            sent.append((address, args))
+
+    forward = relay.build_qlab_stop_forwarder(_FakeClient())
+    forward("/qlab/event/workspace/cue/stop", ["KI_Adam.DEL1", "name", "id", "Video"])
+    assert sent == [("/avatar/done", ["KI_Adam.DEL1"])]
+
+
 def test_relay_forwards_pixera_to_qlab_format() -> None:
     received: list[tuple[str, list[object]]] = []
     lock = threading.Lock()
@@ -116,6 +139,8 @@ def test_relay_forwards_pixera_to_qlab_format() -> None:
                 str(relay_port),
                 "--qlab-port",
                 str(listen_port),
+                "--no-light",
+                "--no-qlab-feedback",
             ]
         ),
         daemon=True,

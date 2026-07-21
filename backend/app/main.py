@@ -1,3 +1,6 @@
+from contextlib import asynccontextmanager
+from collections.abc import AsyncIterator
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -15,11 +18,29 @@ from app.api.routes.script import router as script_router
 from app.api.routes.health import router as health_router
 from app.core.config import settings
 from app.core.logging import configure_logging
+from app.director.outputs.avatar_done_listener import (
+    start_avatar_done_listener,
+    stop_avatar_done_listener,
+)
 
 configure_logging()
 limiter = Limiter(key_func=get_remote_address)
 
-app = FastAPI(title=settings.app_name, debug=settings.app_debug)
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
+    if settings.avatar_done_gate_enabled:
+        start_avatar_done_listener(
+            host=settings.avatar_done_osc_host,
+            port=settings.avatar_done_osc_port,
+        )
+    try:
+        yield
+    finally:
+        stop_avatar_done_listener()
+
+
+app = FastAPI(title=settings.app_name, debug=settings.app_debug, lifespan=lifespan)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(SlowAPIMiddleware)

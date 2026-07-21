@@ -34,6 +34,7 @@ def director_test_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.setattr(settings, "director_enabled", True)
     monkeypatch.setattr(settings, "osc_dry_run", True)
     monkeypatch.setattr(settings, "osc_host", "127.0.0.1")
+    monkeypatch.setattr(settings, "avatar_done_gate_enabled", False)
     monkeypatch.setattr(settings, "director_data_dir", str(repo_data))
     monkeypatch.setattr(settings, "director_log_path", str(tmp_path / "director.log"))
     monkeypatch.setattr(settings, "director_autopilot_default", True)
@@ -44,9 +45,11 @@ def director_test_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.setattr(settings, "signal_trace_path", str(tmp_path / "signal_trace.jsonl"))
 
     from app.director.outputs.signal_trace import SignalTraceWriter, reset_run_state_for_tests
+    from app.director.avatar_done_gate import get_avatar_done_gate
 
     SignalTraceWriter.reset_for_tests(tmp_path / "signal_trace.jsonl")
     reset_run_state_for_tests()
+    get_avatar_done_gate().reset()
 
     import app.director.media.video_inventory as video_inventory_mod
 
