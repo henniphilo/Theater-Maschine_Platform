@@ -5,6 +5,7 @@ import {
   avatarSegmentsDueAtPosition,
   avatarSegmentsInSentence,
   effectiveCharOffset,
+  fireAvatarSegmentIfDue,
   fireRemainingSentenceSegments,
   nextUnfiredAvatarSegment,
   resolveSentenceCharStarts,
@@ -15,11 +16,17 @@ import type { Teil2PerformancePlan } from "@/lib/types/inszenierung";
 
 vi.mock("@/lib/api/director", () => ({
   isDirectorPerformanceAborted: () => false,
-  postDirectorExecuteLayered: vi.fn().mockResolvedValue({ executed: true, osc_commands: [{ path: "/test" }] })
+  isAvatarDoneGateEnabled: vi.fn().mockResolvedValue(false),
+  waitForAvatarVideosDone: vi.fn().mockResolvedValue(null),
+  postDirectorExecuteLayered: vi.fn().mockResolvedValue({
+    executed: true,
+    osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.Test"] }]
+  })
 }));
 
 vi.mock("@/lib/api/client", () => ({
-  waitWhilePlaybackPaused: vi.fn().mockResolvedValue(true)
+  waitWhilePlaybackPaused: vi.fn().mockResolvedValue(true),
+  setPlaybackPaused: vi.fn()
 }));
 
 describe("avatarCuePlayback position helpers", () => {
@@ -181,5 +188,49 @@ describe("avatarCuePlayback position helpers", () => {
       "first",
       "second"
     ]);
+  });
+});
+
+describe("avatar done gate", () => {
+  it("pauses narrator until wait resolves when gate enabled", async () => {
+    const { isAvatarDoneGateEnabled, waitForAvatarVideosDone } = await import("@/lib/api/director");
+    const { setPlaybackPaused } = await import("@/lib/api/client");
+    const { fireAvatarSegmentIfDue } = await import("@/features/inszenierung/avatarCuePlayback");
+
+    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(true);
+    vi.mocked(waitForAvatarVideosDone).mockResolvedValue({
+      status: "done",
+      received: ["KI_RZ21.Test"],
+      missing: [],
+      wait_ms: 10
+    });
+
+    const segment = {
+      csv_cue_ids: ["a"],
+      text_excerpt: "Alpha.",
+      char_offset: 0,
+      csv_sequence_index: 0,
+      start_sentence_index: 0,
+      end_sentence_index: 0,
+      avatar_layers: [
+        {
+          avatar_speech_id: "a",
+          avatar: "delfin",
+          video_clip_id: "test",
+          visual_cue: {
+            action: "play_clip",
+            clip_id: "test",
+            video_type: "avatar" as const,
+            duration_ms: 1000
+          }
+        }
+      ]
+    };
+
+    const ok = await fireAvatarSegmentIfDue(segment, 0.5, async () => undefined, () => false);
+    expect(ok).toBe(true);
+    expect(setPlaybackPaused).toHaveBeenCalledWith(true);
+    expect(waitForAvatarVideosDone).toHaveBeenCalled();
+    expect(setPlaybackPaused).toHaveBeenCalledWith(false);
   });
 });

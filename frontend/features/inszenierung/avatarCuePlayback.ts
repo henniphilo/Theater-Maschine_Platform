@@ -1,12 +1,14 @@
 import type { AvatarTextSegment, CompositionMoment, CompositionPlan, Teil2PerformancePlan } from "@/lib/types/inszenierung";
 import type { DramaturgyDecision, OscCommand } from "@/lib/types/director";
 import type { VisualCue } from "@/lib/types/visual";
-import { isDirectorPerformanceAborted, postDirectorExecuteLayered } from "@/lib/api/director";
-import { waitWhilePlaybackPaused } from "@/lib/api/client";
+import { isDirectorPerformanceAborted, isAvatarDoneGateEnabled, postDirectorExecuteLayered, waitForAvatarVideosDone } from "@/lib/api/director";
+import { setPlaybackPaused, waitWhilePlaybackPaused } from "@/lib/api/client";
 
 let avatarFireChain: Promise<void> = Promise.resolve();
 
 const AVATAR_POSITION_DEBOUNCE_MS = 150;
+const DEFAULT_AVATAR_DONE_TIMEOUT_MS = 120_000;
+const AVATAR_DONE_TIMEOUT_GRACE_MS = 2_000;
 let avatarPositionTimer: ReturnType<typeof setTimeout> | null = null;
 
 type PendingAvatarPositionFire = {
@@ -38,8 +40,8 @@ export async function executeAvatarVisualCue(
   onCommands: (commands: OscCommand[]) => Promise<void>,
   shouldAbort: () => boolean,
   textExcerpt?: string
-): Promise<boolean> {
-  if (shouldAbort() || isDirectorPerformanceAborted()) return false;
+): Promise<{ executed: boolean; cueNames: string[] }> {
+  if (shouldAbort() || isDirectorPerformanceAborted()) return { executed: false, cueNames: [] };
   const decision: DramaturgyDecision = {
     reason: "Avatar-Sprache",
     tags: ["teil2", "avatar"],
@@ -56,7 +58,7 @@ export async function executeAvatarVisualCue(
       stagger: false,
       text_excerpt: textExcerpt
     });
-    if (shouldAbort() || isDirectorPerformanceAborted()) return false;
+    if (shouldAbort() || isDirectorPerformanceAborted()) return { executed: false, cueNames: [] };
     if (!result.executed) {
       console.warn(
         "[avatar] cue blocked:",
@@ -65,16 +67,61 @@ export async function executeAvatarVisualCue(
         textExcerpt ? `«${textExcerpt.slice(0, 40)}»` : ""
       );
     }
+    const cueNames = pixeraCueNamesFromCommands(result.osc_commands);
     if (result.osc_commands.length > 0) {
       void onCommands(result.osc_commands).catch((err) => {
         console.warn("Avatar cue highlight failed (playback continues):", err);
       });
     }
-    return result.executed;
+    return { executed: result.executed, cueNames };
   } catch (err) {
-    if (err instanceof DOMException && err.name === "AbortError") return false;
+    if (err instanceof DOMException && err.name === "AbortError") return { executed: false, cueNames: [] };
     console.warn("Avatar cue failed (playback continues):", err);
-    return false;
+    return { executed: false, cueNames: [] };
+  }
+}
+
+function pixeraCueNamesFromCommands(commands: OscCommand[]): string[] {
+  const names: string[] = [];
+  for (const cmd of commands) {
+    if (cmd.bridge !== "pixera") continue;
+    const raw = cmd.args?.[0];
+    if (typeof raw === "string" && raw.trim()) names.push(raw.trim());
+  }
+  return names;
+}
+
+function avatarDoneTimeoutMs(segment: AvatarTextSegment): number {
+  const durations = segment.avatar_layers
+    .map((layer) => layer.visual_cue?.duration_ms)
+    .filter((ms): ms is number => typeof ms === "number" && ms > 0);
+  const base = durations.length > 0 ? Math.max(...durations) : DEFAULT_AVATAR_DONE_TIMEOUT_MS;
+  return base + AVATAR_DONE_TIMEOUT_GRACE_MS;
+}
+
+async function gateNarratorUntilAvatarDone(
+  cueNames: string[],
+  timeoutMs: number,
+  shouldAbort: () => boolean
+): Promise<void> {
+  if (!cueNames.length || shouldAbort()) return;
+  if (!(await isAvatarDoneGateEnabled())) return;
+  setPlaybackPaused(true);
+  try {
+    const result = await waitForAvatarVideosDone(cueNames, timeoutMs, shouldAbort);
+    if (result?.status === "timeout") {
+      console.warn(
+        "[avatar] done-gate timeout — continuing narrator",
+        cueNames,
+        result.missing.length ? `missing=${result.missing.join(",")}` : ""
+      );
+    }
+  } catch (err) {
+    if (!(err instanceof DOMException && err.name === "AbortError")) {
+      console.warn("[avatar] done-gate wait failed — continuing narrator:", err);
+    }
+  } finally {
+    if (!shouldAbort()) setPlaybackPaused(false);
   }
 }
 
@@ -109,17 +156,22 @@ export async function fireAvatarSegmentIfDue(
   if (shouldAbort()) return false;
   if (!(await waitWhilePlaybackPaused(shouldAbort))) return false;
   let anySent = false;
+  const cueNames: string[] = [];
   for (const layer of segment.avatar_layers) {
     if (!layer.visual_cue) continue;
     if (shouldAbort()) return anySent;
-    const sent = await executeAvatarVisualCue(
+    const result = await executeAvatarVisualCue(
       layer.visual_cue,
       anarchyLevel,
       onCommands,
       shouldAbort,
       segment.text_excerpt
     );
-    anySent = anySent || sent;
+    anySent = anySent || result.executed;
+    cueNames.push(...result.cueNames);
+  }
+  if (anySent) {
+    await gateNarratorUntilAvatarDone(cueNames, avatarDoneTimeoutMs(segment), shouldAbort);
   }
   return anySent;
 }
@@ -139,9 +191,33 @@ export async function fireAvatarMomentCues(
   onCommands: (commands: OscCommand[]) => Promise<void>,
   shouldAbort: () => boolean
 ): Promise<void> {
+  const cueNames: string[] = [];
+  let anySent = false;
   for (const visual of avatarVisualCuesForMoment(moment)) {
     if (shouldAbort()) return;
-    await executeAvatarVisualCue(visual, anarchyLevel, onCommands, shouldAbort, moment.text_excerpt);
+    const result = await executeAvatarVisualCue(
+      visual,
+      anarchyLevel,
+      onCommands,
+      shouldAbort,
+      moment.text_excerpt
+    );
+    anySent = anySent || result.executed;
+    cueNames.push(...result.cueNames);
+  }
+  if (anySent) {
+    const durationMs =
+      moment.avatar_layers
+        ?.map((layer) => layer.visual_cue?.duration_ms)
+        .filter((ms): ms is number => typeof ms === "number" && ms > 0)
+        .reduce((a, b) => Math.max(a, b), 0) ||
+      moment.avatar_video_cue?.duration_ms ||
+      DEFAULT_AVATAR_DONE_TIMEOUT_MS;
+    await gateNarratorUntilAvatarDone(
+      cueNames,
+      (durationMs || DEFAULT_AVATAR_DONE_TIMEOUT_MS) + AVATAR_DONE_TIMEOUT_GRACE_MS,
+      shouldAbort
+    );
   }
 }
 

@@ -36,7 +36,10 @@ vi.mock("@/lib/api/client", () => ({
 
 vi.mock("@/lib/api/director", () => ({
   armDirectorForPerformance: vi.fn(),
-  stopDirectorPerformance: vi.fn()
+  stopDirectorPerformance: vi.fn(),
+  isDirectorPerformanceAborted: () => false,
+  isAvatarDoneGateEnabled: vi.fn().mockResolvedValue(false),
+  waitForAvatarVideosDone: vi.fn().mockResolvedValue(null)
 }));
 
 vi.mock("@/features/show/cuePlayback", () => ({

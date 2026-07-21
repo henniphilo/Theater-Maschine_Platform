@@ -5,8 +5,11 @@ Video: Pixera /pixera/args/cue/apply on PIXERA_LISTEN_PORT (default 8990).
 Light:  /light/set_scene and /light/blackout on LIGHT_LISTEN_PORT (default 7000)
         when LIGHT_OSC_MIRROR=true in backend/.env.
 
+Optional reverse path (avatar done gate):
+  QLab show-control cue/stop → /avatar/done → Theatermaschine :8991
+
 Forwards to QLab on QLAB_PORT (default 53000).
-See docs/qlab_setup.md for workspace and .env configuration.
+See docs/qlab_setup.md and docs/avatar_done_gate.md.
 """
 
 from __future__ import annotations
@@ -18,20 +21,30 @@ import signal
 import socket
 import sys
 import threading
+import time
 
 from pythonosc.dispatcher import Dispatcher
+from pythonosc.osc_message import OscMessage
+from pythonosc.osc_message_builder import OscMessageBuilder
 from pythonosc.osc_server import BlockingOSCUDPServer
 from pythonosc.udp_client import SimpleUDPClient
 
 PIXERA_APPLY_ADDRESS = "/pixera/args/cue/apply"
 LIGHT_SET_SCENE_ADDRESS = "/light/set_scene"
 LIGHT_BLACKOUT_ADDRESS = "/light/blackout"
+AVATAR_DONE_ADDRESS = "/avatar/done"
+QLAB_CUE_STOP_SUFFIX = "/cue/stop"
+QLAB_LISTEN_ADDRESS = "/listen"
+QLAB_UDP_KEEPALIVE_ADDRESS = "/udpKeepAlive"
 
 DEFAULT_LISTEN_HOST = "127.0.0.1"
 DEFAULT_PIXERA_LISTEN_PORT = 8990
 DEFAULT_LIGHT_LISTEN_PORT = 7000
 DEFAULT_QLAB_HOST = "127.0.0.1"
 DEFAULT_QLAB_PORT = 53000
+DEFAULT_AVATAR_DONE_HOST = "127.0.0.1"
+DEFAULT_AVATAR_DONE_PORT = 8991
+DEFAULT_QLAB_FEEDBACK_KEEPALIVE_S = 30.0
 
 logger = logging.getLogger("pixera_qlab_relay")
 
@@ -63,6 +76,18 @@ def qlab_light_start_addresses(address: str, args: list[object]) -> list[str]:
     return [f"/cue/{scene_id}/start" for scene_id in scene_ids]
 
 
+def cue_name_from_qlab_stop(address: str, args: list[object]) -> str | None:
+    """Extract cue number/name from a QLab show-control stop event."""
+    if not address.endswith(QLAB_CUE_STOP_SUFFIX):
+        return None
+    if not args:
+        return None
+    cue = args[0]
+    if not isinstance(cue, str) or not cue.strip():
+        return None
+    return cue.strip()
+
+
 def build_pixera_handler(qlab_client: SimpleUDPClient):
     def _handler(address: str, *args: object) -> None:
         qlab_address = qlab_start_address(address, list(args))
@@ -86,6 +111,20 @@ def build_light_handler(qlab_client: SimpleUDPClient):
             logger.info("relay light %s %s -> %s", address, args, qlab_address)
 
     return _handler
+
+
+def build_qlab_stop_forwarder(backend_client: SimpleUDPClient):
+    """Forward QLab cue/stop show-control events as /avatar/done <cue>."""
+
+    def _forward(address: str, args: list[object]) -> None:
+        cue_name = cue_name_from_qlab_stop(address, args)
+        if cue_name is None:
+            logger.debug("ignore qlab event %s %s", address, args)
+            return
+        backend_client.send_message(AVATAR_DONE_ADDRESS, [cue_name])
+        logger.info("relay qlab stop %s -> %s %s", address, AVATAR_DONE_ADDRESS, cue_name)
+
+    return _forward
 
 
 # Backwards-compatible alias used in tests.
@@ -129,8 +168,70 @@ def _run_server(
         raise SystemExit(1) from exc
 
 
+def _osc_dgram(address: str, *args: object) -> bytes:
+    builder = OscMessageBuilder(address=address)
+    for arg in args:
+        builder.add_arg(arg)
+    return builder.build().dgram
+
+
+def run_qlab_feedback_loop(
+    *,
+    qlab_host: str,
+    qlab_port: int,
+    backend_host: str,
+    backend_port: int,
+    keepalive_s: float,
+    stop_event: threading.Event,
+) -> None:
+    """Subscribe to QLab show-control and forward cue/stop → /avatar/done."""
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.bind(("127.0.0.1", 0))
+    sock.settimeout(1.0)
+    local_port = sock.getsockname()[1]
+    backend = SimpleUDPClient(backend_host, backend_port)
+    forward = build_qlab_stop_forwarder(backend)
+
+    def _send_to_qlab(address: str, *args: object) -> None:
+        sock.sendto(_osc_dgram(address, *args), (qlab_host, qlab_port))
+
+    _send_to_qlab(QLAB_LISTEN_ADDRESS)
+    _send_to_qlab("/listen/cue/stop")
+    logger.info(
+        "qlab feedback: listening replies on :%s, forwarding stops to %s:%s %s",
+        local_port,
+        backend_host,
+        backend_port,
+        AVATAR_DONE_ADDRESS,
+    )
+
+    next_keepalive = time.monotonic() + keepalive_s
+    try:
+        while not stop_event.is_set():
+            now = time.monotonic()
+            if now >= next_keepalive:
+                _send_to_qlab(QLAB_UDP_KEEPALIVE_ADDRESS)
+                _send_to_qlab(QLAB_LISTEN_ADDRESS)
+                _send_to_qlab("/listen/cue/stop")
+                next_keepalive = now + keepalive_s
+            try:
+                data, _addr = sock.recvfrom(65535)
+            except TimeoutError:
+                continue
+            except OSError:
+                break
+            try:
+                message = OscMessage(data)
+            except Exception:
+                logger.debug("ignore non-OSC qlab datagram (%s bytes)", len(data))
+                continue
+            forward(message.address, list(message.params))
+    finally:
+        sock.close()
+
+
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Theatermaschine OSC → QLab OSC relay")
+    parser = argparse.ArgumentParser(description="Theatermaschine OSC ↔ QLab OSC relay")
     parser.add_argument(
         "--listen-host",
         default=os.environ.get("PIXERA_LISTEN_HOST", DEFAULT_LISTEN_HOST),
@@ -162,6 +263,30 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         type=int,
         default=int(os.environ.get("QLAB_PORT", DEFAULT_QLAB_PORT)),
     )
+    parser.add_argument(
+        "--avatar-done-host",
+        default=os.environ.get("AVATAR_DONE_HOST", DEFAULT_AVATAR_DONE_HOST),
+        help="Theatermaschine avatar-done listener host",
+    )
+    parser.add_argument(
+        "--avatar-done-port",
+        type=int,
+        default=int(os.environ.get("AVATAR_DONE_PORT", DEFAULT_AVATAR_DONE_PORT)),
+        help="Theatermaschine avatar-done listener port (= AVATAR_DONE_OSC_PORT)",
+    )
+    parser.add_argument(
+        "--no-qlab-feedback",
+        action="store_true",
+        help="Disable QLab show-control → /avatar/done forwarding",
+    )
+    parser.add_argument(
+        "--qlab-feedback-keepalive",
+        type=float,
+        default=float(
+            os.environ.get("QLAB_FEEDBACK_KEEPALIVE_S", DEFAULT_QLAB_FEEDBACK_KEEPALIVE_S)
+        ),
+        help="Re-send /listen + /udpKeepAlive interval (seconds)",
+    )
     parser.add_argument("-v", "--verbose", action="store_true")
     return parser.parse_args(argv)
 
@@ -183,6 +308,7 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     threads: list[threading.Thread] = []
+    stop_event = threading.Event()
     threads.append(
         threading.Thread(
             target=_run_server,
@@ -214,20 +340,41 @@ def main(argv: list[str] | None = None) -> int:
             )
         )
 
+    if not args.no_qlab_feedback:
+        threads.append(
+            threading.Thread(
+                target=run_qlab_feedback_loop,
+                kwargs={
+                    "qlab_host": args.qlab_host,
+                    "qlab_port": args.qlab_port,
+                    "backend_host": args.avatar_done_host,
+                    "backend_port": args.avatar_done_port,
+                    "keepalive_s": max(5.0, args.qlab_feedback_keepalive),
+                    "stop_event": stop_event,
+                },
+                daemon=True,
+                name="qlab-feedback",
+            )
+        )
+
     _assert_udp_port_free(args.listen_host, args.listen_port, "pixera")
     if not args.no_light:
         _assert_udp_port_free(args.listen_host, args.light_listen_port, "light")
 
     logger.info(
-        "forwarding to QLab %s:%s (pixera :%s%s)",
+        "forwarding to QLab %s:%s (pixera :%s%s%s)",
         args.qlab_host,
         args.qlab_port,
         args.listen_port,
         "" if args.no_light else f", light :{args.light_listen_port}",
+        ""
+        if args.no_qlab_feedback
+        else f", feedback → {args.avatar_done_host}:{args.avatar_done_port}",
     )
 
     def _shutdown(_signum: int, _frame: object) -> None:
         logger.info("shutting down")
+        stop_event.set()
         sys.exit(0)
 
     if threading.current_thread() is threading.main_thread():
