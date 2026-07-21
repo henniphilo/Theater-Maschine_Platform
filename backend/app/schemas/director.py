@@ -132,6 +132,8 @@ class TechnikHoldStatusResponse(BaseModel):
 
 class LightDeskStatusResponse(BaseModel):
     tcp_connected: bool
+    output: str = "tcp"
+    ready: bool = False
     scene_id: str | None = None
     hold_active: bool = False
     intensity: float | None = Field(default=None, ge=0.0, le=1.0)

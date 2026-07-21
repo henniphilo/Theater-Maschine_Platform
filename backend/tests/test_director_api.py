@@ -1,5 +1,7 @@
 from fastapi.testclient import TestClient
 
+import pytest
+
 from app.main import app
 
 
@@ -116,12 +118,32 @@ def test_light_send_with_intensity() -> None:
 
 
 def test_light_send_without_connect_returns_409() -> None:
+    from app.core.config import settings
+
+    if settings.light_output == "mirror":
+        pytest.skip("Mirror mode does not require TCP connect")
     client.post("/api/v1/director/light/disconnect")
     res = client.post(
         "/api/v1/director/light/send",
         json={"light_scene_id": "blendung_zuschauerraum"},
     )
     assert res.status_code == 409
+
+
+def test_light_send_mirror_mode_without_connect(monkeypatch) -> None:
+    from app.core.config import settings
+
+    monkeypatch.setattr(settings, "light_output", "mirror")
+    client.post("/api/v1/director/light/disconnect")
+    res = client.post(
+        "/api/v1/director/light/send",
+        json={"light_scene_id": "saallicht"},
+    )
+    assert res.status_code == 200
+    body = res.json()
+    assert body["ready"] is True
+    assert body["output"] == "mirror"
+    assert body["scene_id"] == "saallicht"
 
 
 def test_technik_start_rejects_light_channel() -> None:

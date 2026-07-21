@@ -62,6 +62,11 @@ export type MediaCatalog = {
     tcp_protocol: string;
     osc_host: string;
     osc_port: number;
+    preview_osc_host?: string | null;
+    preview_osc_port?: number | null;
+    preview_set_scene?: string;
+    preview_blackout?: string;
+    qlab_relay_port?: number | null;
   };
   sound?: {
     output: string;

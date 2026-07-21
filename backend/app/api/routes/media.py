@@ -76,6 +76,11 @@ def get_media_catalog(video_scope: VideoScope = Query(default="part2")) -> dict:
             "tcp_protocol": settings.light_tcp_protocol,
             "osc_host": settings.light_desk_host(),
             "osc_port": settings.light_desk_port(),
+            "preview_osc_host": settings.osc_host if settings.light_output == "mirror" else None,
+            "preview_osc_port": settings.osc_port if settings.light_output == "mirror" else None,
+            "preview_set_scene": "/light/set_scene",
+            "preview_blackout": "/light/blackout",
+            "qlab_relay_port": settings.osc_port if settings.light_output == "mirror" else None,
         },
         "sound": {
             "output": settings.sound_output,

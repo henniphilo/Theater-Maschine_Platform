@@ -175,6 +175,7 @@ tests/test_inszenierung_komposition.py
 tests/test_inszenierung_validation.py
 tests/test_layered_cues.py
 tests/test_light_desk_intensity.py
+tests/test_light_mirror_mode.py
 tests/test_light_replace.py
 tests/test_light_tcp.py
 tests/test_lighting.py
@@ -199,6 +200,8 @@ tests/test_preview_executor.py
 tests/test_projector_lock.py
 tests/test_qlab_assign_video_stages.py
 tests/test_qlab_import_video_cues.py
+tests/test_qlab_install_light_patch.py
+tests/test_qlab_light_cues.py
 tests/test_remote_transport.py
 tests/test_run_epoch_queue.py
 tests/test_script_api.py

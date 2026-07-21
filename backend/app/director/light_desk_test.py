@@ -18,6 +18,8 @@ class LightDeskNotConnectedError(RuntimeError):
 @dataclass
 class LightDeskStatus:
     tcp_connected: bool = False
+    output: str = "tcp"
+    ready: bool = False
     scene_id: str | None = None
     hold_active: bool = False
     intensity: float | None = None
@@ -33,9 +35,14 @@ class LightDeskTestManager:
         self._intensity: float | None = None
 
     def status(self) -> LightDeskStatus:
+        output = settings.light_output
+        tcp_connected = get_light_tcp_session().connected
+        ready = output == "mirror" or tcp_connected
         with self._lock:
             return LightDeskStatus(
-                tcp_connected=get_light_tcp_session().connected,
+                tcp_connected=tcp_connected,
+                output=output,
+                ready=ready,
                 scene_id=self._scene_id,
                 hold_active=self._hold_thread is not None and self._hold_thread.is_alive(),
                 intensity=self._intensity,
@@ -122,12 +129,14 @@ class LightDeskTestManager:
         interval = settings.technik_hold_interval_seconds
         cue = LightCue(scene_id=scene_id, intensity=intensity)
         while not self._stop_event.wait(interval):
-            if not get_light_tcp_session().connected:
+            if settings.light_output == "tcp" and not get_light_tcp_session().connected:
                 return
             self._pipeline.lighting.send_scene(cue, dry_run=dry_run)
 
     def _require_tcp_connected(self) -> None:
-        if settings.light_output == "tcp" and not get_light_tcp_session().connected:
+        if settings.light_output != "tcp":
+            return
+        if not get_light_tcp_session().connected:
             raise LightDeskNotConnectedError("Light desk TCP session not connected")
 
 

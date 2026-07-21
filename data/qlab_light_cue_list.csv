@@ -1,0 +1,21 @@
+qlab_cue_number,scene_id,description,location,channels,groups,fade_time,sim_red,sim_green,sim_blue,sim_intensity,command_text
+gegenlicht_lichteinfall,gegenlicht_lichteinfall,Gegenlicht Lichteinfall — Sola Wash Ch. 71–74,OL 7er Gegenlicht,71-74,,3.0,82,88,100,85,TMPREVIEW.red = 82\nTMPREVIEW.green = 88\nTMPREVIEW.blue = 100\nTMPREVIEW.intensity = 85
+blendung_zuschauerraum,blendung_zuschauerraum,Zuschauerraum Blendung — Vorbühnenzug Ch. 11–19,Vorbühnenzug,11-19,,3.0,100,78,100,100,TMPREVIEW.red = 100\nTMPREVIEW.green = 78\nTMPREVIEW.blue = 100\nTMPREVIEW.intensity = 100
+vorbuehnenzug,vorbuehnenzug,Zuschauerraum Blendung — Vorbühnenzug Ch. 11–19,Vorbühnenzug,11-19,,3.0,100,78,100,100,TMPREVIEW.red = 100\nTMPREVIEW.green = 78\nTMPREVIEW.blue = 100\nTMPREVIEW.intensity = 100
+blendung_magenta,blendung_magenta,Licht Blendung — CYC Fluter Ch. 1701,OL 8er,1701,,4.0,86,16,78,100,TMPREVIEW.red = 86\nTMPREVIEW.green = 16\nTMPREVIEW.blue = 78\nTMPREVIEW.intensity = 100
+seitenlicht_hart,seitenlicht_hart,Seitenlicht hartes Licht — Panolatte Ch. 91–94,Saal seitlich,91-94,,2.0,100,100,94,100,TMPREVIEW.red = 100\nTMPREVIEW.green = 100\nTMPREVIEW.blue = 94\nTMPREVIEW.intensity = 100
+saallicht,saallicht,Saallicht Zuschauerraum — EOS Gruppe 2,Saal,,2,4.0,100,84,67,100,TMPREVIEW.red = 100\nTMPREVIEW.green = 84\nTMPREVIEW.blue = 67\nTMPREVIEW.intensity = 100
+teppich_rot,teppich_rot,Lichtstimmung Teppich Rot — Ch. 22–26,OL 2er,22-26,,3.0,86,27,14,100,TMPREVIEW.red = 86\nTMPREVIEW.green = 27\nTMPREVIEW.blue = 14\nTMPREVIEW.intensity = 100
+buehne_kalt_hart,buehne_kalt_hart,Fläche Bühne hartes kaltes Licht — HMI Ch. 7–9,OL 6er,7-9,,2.0,59,76,100,100,TMPREVIEW.red = 59\nTMPREVIEW.green = 76\nTMPREVIEW.blue = 100\nTMPREVIEW.intensity = 100
+gegenlicht_weich,gegenlicht_weich,"Gegenlicht weich, homogen ausgeleuchtete Bühne — EOS Gruppen 13 und 23",Gegenlicht,,13;23,4.0,82,88,100,70,TMPREVIEW.red = 82\nTMPREVIEW.green = 88\nTMPREVIEW.blue = 100\nTMPREVIEW.intensity = 70
+wolkenprospekt_boden,wolkenprospekt_boden,Neonlicht vor dem Wolkenprospekt am Boden — EOS Gruppe 12,Wolkenprospekt,,12,3.0,47,100,82,80,TMPREVIEW.red = 47\nTMPREVIEW.green = 100\nTMPREVIEW.blue = 82\nTMPREVIEW.intensity = 80
+musiker,musiker,Musiker — Ch. 46,Musikbereich,46,,2.0,100,97,90,100,TMPREVIEW.red = 100\nTMPREVIEW.green = 97\nTMPREVIEW.blue = 90\nTMPREVIEW.intensity = 100
+klavier,klavier,Klavierlicht — Ch. 27,Bühne,27,,2.0,100,71,35,90,TMPREVIEW.red = 100\nTMPREVIEW.green = 71\nTMPREVIEW.blue = 35\nTMPREVIEW.intensity = 90
+fluegel,fluegel,Flügellicht — Ch. 33,Bühne,33,,2.0,100,71,35,90,TMPREVIEW.red = 100\nTMPREVIEW.green = 71\nTMPREVIEW.blue = 35\nTMPREVIEW.intensity = 90
+palmen,palmen,"Palmen links vorne rechts hinten — Ch. 372, 37",Bühne,372;37,,3.0,71,100,47,100,TMPREVIEW.red = 71\nTMPREVIEW.green = 100\nTMPREVIEW.blue = 47\nTMPREVIEW.intensity = 100
+lautsprecher_buehne,lautsprecher_buehne,Lautsprecher auf der Bühne — Ch. 34,Bühne,34,,2.0,100,94,86,90,TMPREVIEW.red = 100\nTMPREVIEW.green = 94\nTMPREVIEW.blue = 86\nTMPREVIEW.intensity = 90
+warme_buehnenflaeche,warme_buehnenflaeche,Warme Fläche auf der Bühne — Ch. 6 und 10,Bühne,6;10,,3.0,86,27,14,100,TMPREVIEW.red = 86\nTMPREVIEW.green = 27\nTMPREVIEW.blue = 14\nTMPREVIEW.intensity = 100
+luster_treppen,luster_treppen,"Luster über den Treppen — Ch. 151, 152",Treppen,151;152,,4.0,86,27,14,75,TMPREVIEW.red = 86\nTMPREVIEW.green = 27\nTMPREVIEW.blue = 14\nTMPREVIEW.intensity = 75
+zwei_spots,zwei_spots,2 Lichtspots nebeneinander — Ch. 52 und 54,OL 5er,52;54,,2.0,100,97,90,100,TMPREVIEW.red = 100\nTMPREVIEW.green = 97\nTMPREVIEW.blue = 90\nTMPREVIEW.intensity = 100
+spot_tisch,spot_tisch,"Spot am Tisch, Schauspielergruppe — Ch. 51",Tisch,51,,2.0,100,97,90,100,TMPREVIEW.red = 100\nTMPREVIEW.green = 97\nTMPREVIEW.blue = 90\nTMPREVIEW.intensity = 100
+blackout,blackout,Blackout — alle Kanäle aus (/eos/key/out),Gesamt,,,4.0,0,0,0,0,TMPREVIEW.red = 0\nTMPREVIEW.green = 0\nTMPREVIEW.blue = 0\nTMPREVIEW.intensity = 0

@@ -53,6 +53,38 @@ def test_relay_handler_forwards_to_qlab_client() -> None:
     assert sent == [("/cue/KI_RZ21.Clyde/start", [])]
 
 
+def test_qlab_light_start_addresses_maps_single_scene() -> None:
+    assert relay.qlab_light_start_addresses("/light/set_scene", ["saallicht", 4.0]) == [
+        "/cue/saallicht/start"
+    ]
+
+
+def test_qlab_light_start_addresses_maps_multiple_scenes() -> None:
+    assert relay.qlab_light_start_addresses(
+        "/light/set_scene",
+        ["saallicht,gegenlicht_weich", 4.0],
+    ) == ["/cue/saallicht/start", "/cue/gegenlicht_weich/start"]
+
+
+def test_qlab_light_start_addresses_maps_blackout() -> None:
+    assert relay.qlab_light_start_addresses("/light/blackout", []) == ["/cue/blackout/start"]
+
+
+def test_light_handler_forwards_all_scenes_to_qlab_client() -> None:
+    sent: list[tuple[str, list[object]]] = []
+
+    class _FakeClient:
+        def send_message(self, address: str, args: list[object]) -> None:
+            sent.append((address, args))
+
+    handler = relay.build_light_handler(_FakeClient())
+    handler("/light/set_scene", "saallicht,gegenlicht_weich", 4.0)
+    assert sent == [
+        ("/cue/saallicht/start", []),
+        ("/cue/gegenlicht_weich/start", []),
+    ]
+
+
 def test_relay_forwards_pixera_to_qlab_format() -> None:
     received: list[tuple[str, list[object]]] = []
     lock = threading.Lock()

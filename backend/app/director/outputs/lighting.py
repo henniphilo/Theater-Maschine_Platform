@@ -31,14 +31,14 @@ class LightingBridge:
         self.host = host or settings.light_tcp_host
         self.port = port or settings.light_tcp_port
         self._desk_osc_client: udp_client.SimpleUDPClient | None = None
-        self._td_osc_client: udp_client.SimpleUDPClient | None = None
+        self._preview_osc_client: udp_client.SimpleUDPClient | None = None
         if settings.light_output == "osc":
             self._desk_osc_client = udp_client.SimpleUDPClient(
                 settings.light_desk_host(),
                 settings.light_desk_port(),
             )
-        if settings.light_osc_mirror:
-            self._td_osc_client = udp_client.SimpleUDPClient(
+        if settings.light_output == "mirror" or settings.light_osc_mirror:
+            self._preview_osc_client = udp_client.SimpleUDPClient(
                 settings.osc_host,
                 settings.osc_port,
             )
@@ -73,9 +73,20 @@ class LightingBridge:
         primary = next((s for s in self.media_db.light_scenes if s.id == scene_ids[0]), None)
         fade = cue.fade_time if cue.fade_time else (primary.fade_time if primary else 4.0)
 
+        if settings.light_output == "mirror":
+            self._apply_mirror_scene(cue, scene_ids=scene_ids, fade=fade, dry_run=dry_run)
+            return
+
         if settings.light_output == "tcp" and not get_light_tcp_session().connected:
             if not dry_run:
                 if not self._open_tcp_session(dry_run=dry_run):
+                    if settings.light_osc_mirror:
+                        self._send_preview_osc(
+                            "/light/set_scene",
+                            ",".join(scene_ids),
+                            fade,
+                            dry_run=dry_run,
+                        )
                     return
 
         if cue.replace_previous:
@@ -101,14 +112,42 @@ class LightingBridge:
             )
 
         if settings.light_osc_mirror:
-            self._send_td_osc("/light/set_scene", ",".join(scene_ids), fade, dry_run=dry_run)
+            self._send_preview_osc("/light/set_scene", ",".join(scene_ids), fade, dry_run=dry_run)
 
     def blackout_signal(self, dry_run: bool = False) -> None:
         previous = clear_active_light_scenes()
-        self._fade_out_scenes(previous, dry_run=dry_run)
+        if settings.light_output == "mirror":
+            for scene_id in previous:
+                fade_out_scene(scene_id)
+        else:
+            self._fade_out_scenes(previous, dry_run=dry_run)
 
-        if settings.light_osc_mirror:
-            self._send_td_osc("/light/blackout", dry_run=dry_run)
+        if settings.light_output == "mirror" or settings.light_osc_mirror:
+            self._send_preview_osc("/light/blackout", dry_run=dry_run)
+
+    def _apply_mirror_scene(
+        self,
+        cue: LightCue,
+        *,
+        scene_ids: list[str],
+        fade: float,
+        dry_run: bool,
+    ) -> None:
+        if cue.replace_previous:
+            previous = replace_active_light_scenes(scene_ids)
+            for scene_id in previous:
+                fade_out_scene(scene_id)
+        else:
+            replace_active_light_scenes(scene_ids)
+
+        intensity = cue.intensity if cue.intensity is not None else 1.0
+        if intensity <= 0.0:
+            for scene_id in scene_ids:
+                fade_out_scene(scene_id)
+            self._send_preview_osc("/light/blackout", dry_run=dry_run)
+            return
+
+        self._send_preview_osc("/light/set_scene", ",".join(scene_ids), fade, dry_run=dry_run)
 
     def _fade_out_scenes(self, scene_ids: list[str], *, dry_run: bool = False) -> None:
         for scene_id in scene_ids:
@@ -148,12 +187,16 @@ class LightingBridge:
             self._send_desk_osc(address, *args, dry_run=dry_run)
 
     def apply_group(self, group: int, *, intensity: float = 1.0, dry_run: bool = False) -> None:
+        if settings.light_output == "mirror":
+            return
         if settings.light_output == "tcp" and not self._open_tcp_session(dry_run=dry_run):
             return
         address, args = eos_group_level(group, intensity)
         self._send_desk_osc(address, *args, dry_run=dry_run)
 
     def apply_channel(self, channel: int, *, intensity: float = 1.0, dry_run: bool = False) -> None:
+        if settings.light_output == "mirror":
+            return
         if settings.light_output == "tcp" and not self._open_tcp_session(dry_run=dry_run):
             return
         address, args = eos_chan_level(channel, intensity)
@@ -191,7 +234,7 @@ class LightingBridge:
             return
         self._desk_osc_client.send_message(address, list(args))
 
-    def _send_td_osc(self, address: str, *args: object, dry_run: bool = False) -> None:
+    def _send_preview_osc(self, address: str, *args: object, dry_run: bool = False) -> None:
         is_dry_run = dry_run or settings.osc_dry_run
         log_osc_command(
             settings.osc_host,
@@ -201,6 +244,6 @@ class LightingBridge:
             dry_run=is_dry_run,
             bridge="light",
         )
-        if is_dry_run or self._td_osc_client is None:
+        if is_dry_run or self._preview_osc_client is None:
             return
-        self._td_osc_client.send_message(address, list(args))
+        self._preview_osc_client.send_message(address, list(args))

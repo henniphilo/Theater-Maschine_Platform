@@ -341,6 +341,8 @@ def _light_desk_status_response() -> LightDeskStatusResponse:
     status = get_light_desk_test_manager(_pipeline).status()
     return LightDeskStatusResponse(
         tcp_connected=status.tcp_connected,
+        output=status.output,
+        ready=status.ready,
         scene_id=status.scene_id,
         hold_active=status.hold_active,
         intensity=status.intensity,
@@ -419,6 +421,8 @@ def post_light_stop() -> LightDeskStatusResponse:
 def _light_desk_status_response_from(status) -> LightDeskStatusResponse:
     return LightDeskStatusResponse(
         tcp_connected=status.tcp_connected,
+        output=status.output,
+        ready=status.ready,
         scene_id=status.scene_id,
         hold_active=status.hold_active,
         intensity=status.intensity,

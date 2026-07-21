@@ -1,12 +1,13 @@
-# QLab lokal für Video-OSC testen
+# QLab lokal für Video- und Licht-OSC testen
 
-Theatermaschine sendet Video als **Pixera-OSC** (`/pixera/args/cue/apply`). QLab versteht das nicht direkt — ein kleiner Relay auf dem Mac übersetzt die Befehle.
+Theatermaschine sendet Video als **Pixera-OSC** (`/pixera/args/cue/apply`) und Licht optional als **Mirror-OSC** (`/light/set_scene`). QLab versteht das nicht direkt — ein kleiner Relay auf dem Mac übersetzt die Befehle.
 
 ```
 Theatermaschine  →  127.0.0.1:8990  →  pixera_qlab_relay  →  QLab :53000
+                 →  127.0.0.1:7000  →       (Licht)
 ```
 
-Auf der Bühne entfällt der Relay; Pixera empfängt die gleichen Befehle direkt.
+Auf der Bühne entfällt der Relay; Pixera und EOS empfangen die Befehle direkt.
 
 ---
 
@@ -19,7 +20,16 @@ OSC_DRY_RUN=false
 VISUAL_OUTPUT=pixera
 PIXERA_OSC_HOST=127.0.0.1
 PIXERA_OSC_PORT=8990
+
+# Licht-Simulation via QLab (Relay auf Port 7000 — kein EOS-Pult)
+LIGHT_OUTPUT=mirror
+OSC_HOST=127.0.0.1
+OSC_PORT=7000
 ```
+
+`LIGHT_OUTPUT=mirror` sendet nur `/light/set_scene` an den Relay — **kein TCP** zu `10.101.90.112:3032`. Auf der Bühne: `LIGHT_OUTPUT=tcp`.
+
+TouchDesigner nicht parallel auf Port 7000 starten.
 
 Backend **nativ** starten (`make run`), nicht Docker-Backend.
 
@@ -129,6 +139,78 @@ echo "/cue/KI_RZ21.Clyde/start" | nc -u -w1 127.0.0.1 53535
 
 Wenn der Cue startet, ist QLab korrekt konfiguriert.
 
+### Licht-Cues (Simulation)
+
+Für lokale Licht-Timing-Tests ohne EOS-Pult: Light-Cues in QLab, gesteuert über den gleichen Relay.
+
+**Quelle:** `data/light_scenes.json` (abgeleitet aus `media/light/Kanal Übersicht.xlsx` / `Light Channels KI.txt`).
+
+| Datei | Inhalt |
+|-------|--------|
+| [`data/qlab_light_cue_list.csv`](../data/qlab_light_cue_list.csv) | 19 Lichtstimmungen (`scene_id` = Cue-Nummer) |
+
+Neu erzeugen:
+
+```bash
+make qlab-light-cue-list
+```
+
+**Cue-Nummer = `scene_id`** — das sendet Theatermaschine via Mirror-OSC, z. B. `saallicht`, `gegenlicht_weich`, `blackout`.
+
+#### Patch einmalig anlegen (automatisch)
+
+QLab hat kein AppleScript für den Light Patch — das Skript steuert die Workspace Settings per UI:
+
+```bash
+make qlab-light-patch
+```
+
+Voraussetzungen: QLab offen, Ziel-Workspace im Vordergrund. Beim ersten Lauf ggf. **Bedienungshilfen** für Terminal/Cursor erlauben (Systemeinstellungen → Datenschutz).
+
+Das Skript legt Instrument **`TMPREVIEW`** an (Generic → RGB Fixture with Intensity) und patched es per Auto-Patch.
+
+Manuell (falls Automation scheitert): Workspace Settings → Lighting → Patch → + Instrument, Name **`TMPREVIEW`** (kein Unterstrich — QLab erlaubt `_` in Instrument-Namen nicht), Definition **RGB Fixture with Intensity**, Auto-Patch.
+
+#### Cues importieren
+
+```bash
+make qlab-light-cue-list
+make qlab-light-patch    # TMPREVIEW anlegen
+make qlab-light-import   # Patch + Cues (oder nur import wenn Patch schon da)
+```
+
+Dry-run / bestehende Cues aktualisieren (z. B. nach Umbenennung `TM_PREVIEW` → `TMPREVIEW`):
+
+```bash
+python3 tools/qlab_import_light_cues.py data/qlab_light_cue_list.csv --dry-run
+python3 tools/qlab_import_light_cues.py data/qlab_light_cue_list.csv --replace-existing
+```
+
+Jeder Light-Cue enthält RGB-Werte für `TMPREVIEW` (Stimmungs-Näherung, kein EOS-Kanalmodell). Kanäle/Gruppen stehen als Kommentar in der Cue.
+
+#### Manueller Licht-Test (Technik-Seite oder Terminal)
+
+Relay läuft (`make qlab-relay`), Backend mit `LIGHT_OUTPUT=mirror`, dann:
+
+- Browser: **Technik-Test** → Licht-Szene wählen → **Signal senden** (kein EOS-TCP nötig)
+- Unten erscheinen die letzten `[light]`-Zeilen aus `logs/osc.log`
+- QLab: **Window → Light Dashboard** (`TMPREVIEW`) und **Window → Status** (OSC)
+
+Terminal:
+
+```bash
+echo "/light/set_scene saallicht 4" | nc -u -w1 127.0.0.1 7000
+echo "/light/blackout" | nc -u -w1 127.0.0.1 7000
+```
+
+Mapping:
+
+```
+/light/set_scene  "saallicht,gegenlicht_weich"  4.0  →  /cue/saallicht/start
+                                                       →  /cue/gegenlicht_weich/start
+/light/blackout                                       →  /cue/blackout/start
+```
+
 ---
 
 ## 3. Relay starten
@@ -148,29 +230,38 @@ Umgebungsvariablen (optional):
 | Variable | Standard | Bedeutung |
 |----------|----------|-----------|
 | `PIXERA_LISTEN_HOST` | `127.0.0.1` | Relay lauscht hier |
-| `PIXERA_LISTEN_PORT` | `8990` | = `PIXERA_OSC_PORT` im Backend |
+| `PIXERA_LISTEN_PORT` | `8990` | = `PIXERA_OSC_PORT` im Backend (Video) |
+| `LIGHT_LISTEN_PORT` | `7000` | = `OSC_PORT` wenn `LIGHT_OSC_MIRROR=true` |
 | `QLAB_HOST` | `127.0.0.1` | QLab-Mac |
 | `QLAB_PORT` | `53000` | QLab OSC-Port |
 
-Mapping:
+Video-Mapping:
 
 ```
 /pixera/args/cue/apply  "KI_RZ21.Clyde"  →  /cue/KI_RZ21.Clyde/start
+```
+
+Licht-Mapping (wenn Mirror aktiv):
+
+```
+/light/set_scene  "saallicht"  4.0  →  /cue/saallicht/start
+/light/blackout                     →  /cue/blackout/start
 ```
 
 ---
 
 ## 4. Test-Ablauf
 
-1. QLab mit Test-Cues öffnen
+1. QLab mit Video- und Licht-Test-Cues öffnen
 2. `make qlab-relay` (eigenes Terminal)
-3. `make run` (Backend nativ)
+3. `make run` (Backend nativ, `.env` mit Mirror siehe oben)
 4. Browser: http://localhost:3003/technik
 5. Clip wählen (z. B. `clyde`) → **Video senden**
-6. Prüfen:
-   - `logs/osc.log` — `[pixera] → 127.0.0.1:8990 /pixera/args/cue/apply 'KI_RZ21.Clyde'`
-   - Relay-Terminal — `relay ... -> /cue/KI_RZ21.Clyde/start`
-   - QLab — Video startet
+6. Licht-Stimmung wählen → **Licht senden** (oder Aufführung mit Licht-Cues)
+7. Prüfen:
+   - `logs/osc.log` — Pixera + `/light/set_scene`
+   - Relay-Terminal — `relay pixera …` / `relay light …`
+   - QLab — Video bzw. Light-Cue startet
 
 ---
 
@@ -198,3 +289,6 @@ Gleicher Katalog (`video_cues.json`), gleiche Inszenierung — nur das Ziel änd
 | `OSC_DRY_RUN=true` | Nur Logging, kein UDP |
 | `VISUAL_OUTPUT=touchdesigner` | Andere Adressen (`/visual/play_clip`) |
 | QLab „OSC Controls“ | Nur Workspace-Aktionen, nicht pro Video-Cue |
+| `LIGHT_OUTPUT=mirror` ohne Relay | OSC geht ins Leere — `make qlab-relay` starten |
+| `LIGHT_OUTPUT=tcp` + lokaler Test | EOS-Timeouts — für QLab `LIGHT_OUTPUT=mirror` setzen |
+| TouchDesigner + Relay auf `:7000` | Port-Konflikt — nur eines gleichzeitig |

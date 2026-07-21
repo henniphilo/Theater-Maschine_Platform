@@ -262,6 +262,8 @@ export async function fetchTechnikStatus(): Promise<TechnikHoldStatus> {
 
 export type LightDeskStatus = {
   tcp_connected: boolean;
+  output: string;
+  ready: boolean;
   scene_id: string | null;
   hold_active: boolean;
   intensity: number | null;

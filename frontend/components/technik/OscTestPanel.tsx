@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import {
   fetchLightDeskStatus,
+  fetchOscLogRecent,
   fetchTechnikStatus,
   postLightConnect,
   postLightDisconnect,
@@ -34,11 +35,29 @@ export function OscTestPanel() {
   const [error, setError] = useState("");
   const [holdStatus, setHoldStatus] = useState<TechnikHoldStatus | null>(null);
   const [lightStatus, setLightStatus] = useState<LightDeskStatus | null>(null);
+  const [lightOscLines, setLightOscLines] = useState<string[]>([]);
+
+  const refreshLightOscLog = useCallback(async () => {
+    try {
+      const data = await fetchOscLogRecent(120);
+      const lines = data.lines.filter(
+        (line) => line.includes("[light]") || line.includes("/light/")
+      );
+      setLightOscLines(lines.slice(-6));
+    } catch {
+      setLightOscLines([]);
+    }
+  }, []);
 
   const refreshStatus = useCallback(() => {
     fetchTechnikStatus().then(setHoldStatus).catch(() => setHoldStatus(null));
-    fetchLightDeskStatus().then(setLightStatus).catch(() => setLightStatus(null));
-  }, []);
+    fetchLightDeskStatus()
+      .then((status) => {
+        setLightStatus(status);
+      })
+      .catch(() => setLightStatus(null));
+    void refreshLightOscLog();
+  }, [refreshLightOscLog]);
 
   useEffect(() => {
     fetchMediaCatalog("part2")
@@ -197,36 +216,39 @@ export function OscTestPanel() {
     setLightLoading(true);
     try {
       setLightStatus(await postLightSend(lightId, { intensity: lightIntensity }));
+      await refreshLightOscLog();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Licht-Signal fehlgeschlagen");
     } finally {
       setLightLoading(false);
     }
-  }, [lightId, lightIntensity]);
+  }, [lightId, lightIntensity, refreshLightOscLog]);
 
   const holdLight = useCallback(async () => {
     setError("");
     setLightLoading(true);
     try {
       setLightStatus(await postLightHoldStart(lightId, { intensity: lightIntensity }));
+      await refreshLightOscLog();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Licht-Hold fehlgeschlagen");
     } finally {
       setLightLoading(false);
     }
-  }, [lightId, lightIntensity]);
+  }, [lightId, lightIntensity, refreshLightOscLog]);
 
   const stopLight = useCallback(async () => {
     setError("");
     setLightLoading(true);
     try {
       setLightStatus(await postLightStop());
+      await refreshLightOscLog();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Licht-Stopp fehlgeschlagen");
     } finally {
       setLightLoading(false);
     }
-  }, []);
+  }, [refreshLightOscLog]);
 
   const dryRun = catalog?.touchdesigner?.osc_dry_run ?? false;
   const videoUsesPixera =
@@ -240,10 +262,20 @@ export function OscTestPanel() {
       : catalog?.sound
         ? `OSC ${catalog.sound.osc_host}:${catalog.sound.osc_port}`
         : "—";
+  const lightOutput = catalog?.lighting?.output ?? lightStatus?.output ?? "tcp";
+  const lightNeedsTcpConnect = lightOutput === "tcp";
+  const lightMirrorMode = lightOutput === "mirror";
   const lightTcpTarget = catalog?.lighting
     ? `TCP ${catalog.lighting.tcp_host}:${catalog.lighting.tcp_port}`
     : "—";
+  const lightMirrorTarget = catalog?.lighting?.preview_osc_host
+    ? `OSC ${catalog.lighting.preview_osc_host}:${catalog.lighting.preview_osc_port ?? 7000} ${catalog.lighting.preview_set_scene ?? "/light/set_scene"} → make qlab-relay → QLab :53000`
+    : "OSC Mirror (LIGHT_OUTPUT=mirror in backend/.env)";
+  const lightReady = lightNeedsTcpConnect
+    ? (lightStatus?.tcp_connected ?? false)
+    : Boolean(catalog?.lighting);
   const lightConnected = lightStatus?.tcp_connected ?? false;
+  const lightActive = Boolean(lightStatus?.scene_id || lightStatus?.hold_active);
   const videoHolding = Boolean(holdStatus?.active && holdStatus.send_visual);
   const soundHolding = Boolean(holdStatus?.active && holdStatus.send_sound);
 
@@ -342,7 +374,7 @@ export function OscTestPanel() {
           </div>
         </div>
 
-        <div className={`oscTestGroup${lightConnected ? " oscTestGroupActive" : ""}`}>
+        <div className={`oscTestGroup${lightNeedsTcpConnect ? (lightConnected ? " oscTestGroupActive" : "") : lightActive ? " oscTestGroupActive" : ""}`}>
           <div className="oscTestGroupHead">
             <span className="oscTestGroupIcon oscTestGroupIconLight" aria-hidden="true">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
@@ -353,8 +385,14 @@ export function OscTestPanel() {
             </span>
             <div>
               <h3>Licht</h3>
-              <p className={lightConnected ? "oscTestActive" : "oscTestIdle"} role="status">
-                {lightConnected ? "verbunden" : "nicht verbunden"}
+              <p className={lightReady || lightActive ? "oscTestActive" : "oscTestIdle"} role="status">
+                {lightMirrorMode
+                  ? "QLab-Simulation — direkt senden"
+                  : lightNeedsTcpConnect
+                    ? lightConnected
+                      ? "EOS verbunden"
+                      : "EOS nicht verbunden"
+                    : "OSC — direkt senden"}
                 {lightStatus?.scene_id ? (
                   <span>
                     {" "}
@@ -376,89 +414,127 @@ export function OscTestPanel() {
               </p>
             </div>
           </div>
-          <p className="textMuted oscTestTarget">
-            EOS TCP <code>{lightTcpTarget}</code>: Socket verbinden, dann binäres OSC (4-Byte-Längenpräfix) auf
-            derselben Verbindung — <code>/eos/chan/N/full</code> oder <code>/eos/chan/N</code> mit Prozent-Argument
-            (0–100&nbsp;%) · Stopp: <code>/eos/key/out</code>
-          </p>
-          <div className="row oscTestActions">
-            <button type="button" className="machineStartBtn" disabled={lightLoading || lightConnected} onClick={() => void connectLight()}>
-              1. Verbindung aufbauen
-            </button>
-            <button type="button" disabled={lightLoading || !lightConnected} onClick={() => void disconnectLight()}>
-              Verbindung trennen
-            </button>
-          </div>
+          {lightMirrorMode ? (
+            <p className="textMuted oscTestTarget">
+              Ziel: <code>{lightMirrorTarget}</code>
+              {" · "}
+              Kein EOS-TCP — Relay-Terminal und QLab Light Dashboard prüfen
+            </p>
+          ) : lightNeedsTcpConnect ? (
+            <p className="textMuted oscTestTarget">
+              EOS TCP <code>{lightTcpTarget}</code>: Socket verbinden, dann binäres OSC (4-Byte-Längenpräfix) auf
+              derselben Verbindung — <code>/eos/chan/N/full</code> oder <code>/eos/chan/N</code> mit Prozent-Argument
+              (0–100&nbsp;%) · Stopp: <code>/eos/key/out</code>
+            </p>
+          ) : (
+            <p className="textMuted oscTestTarget">
+              Ziel: OSC <code>{catalog?.lighting?.osc_host}:{catalog?.lighting?.osc_port}</code>
+            </p>
+          )}
+          {lightNeedsTcpConnect ? (
+            <div className="row oscTestActions">
+              <button type="button" className="machineStartBtn" disabled={lightLoading || lightConnected} onClick={() => void connectLight()}>
+                1. Verbindung aufbauen
+              </button>
+              <button type="button" disabled={lightLoading || !lightConnected} onClick={() => void disconnectLight()}>
+                Verbindung trennen
+              </button>
+            </div>
+          ) : null}
           <label className="oscTestChannel">
-            <span>2. Licht-Szene</span>
+            <span>{lightNeedsTcpConnect ? "2. Licht-Szene" : "Licht-Szene"}</span>
             <select
               value={lightId}
               onChange={(e) => setLightId(e.target.value)}
-              disabled={lightLoading || !lightConnected}
+              disabled={lightLoading || !lightReady}
             >
               {(catalog?.lights ?? []).filter((l) => l.id !== "blackout").map((l) => (
                 <option key={l.id} value={l.id}>{formatLightChannelLabel(l)}</option>
               ))}
             </select>
           </label>
-          <label className="oscTestChannel oscTestIntensity">
-            <span className="oscTestIntensityHeader">
-              <span>Intensität testen</span>
-              <label className="oscTestIntensityToggle">
-                <input
-                  type="checkbox"
-                  checked={useLightIntensity}
-                  onChange={(e) => setUseLightIntensity(e.target.checked)}
-                  disabled={lightLoading || !lightConnected}
-                />
-                Teilhelligkeit
-              </label>
-            </span>
-            <input
-              type="range"
-              min={1}
-              max={100}
-              step={1}
-              value={lightIntensityPercent}
-              onChange={(e) => setLightIntensityPercent(Number(e.target.value))}
-              disabled={lightLoading || !lightConnected || !useLightIntensity}
-              aria-valuemin={1}
-              aria-valuemax={100}
-              aria-valuenow={lightIntensityPercent}
-              aria-label="Lichtintensität in Prozent"
-            />
-            <div className="oscTestIntensityMeta">
-              <strong>{useLightIntensity ? `${lightIntensityPercent} %` : "Full (100 %)"}</strong>
-              <span className="textMuted">
-                {useLightIntensity
-                  ? `→ /eos/chan/N ${lightIntensityPercent}`
-                  : "→ /eos/chan/N/full"}
+          {!lightNeedsTcpConnect ? (
+            <p className="textMuted" style={{ margin: "0.25rem 0 0" }}>
+              {lightMirrorMode
+                ? "Mirror-Modus: Szene senden → Relay → QLab Light-Cue (TMPREVIEW)."
+                : "Kein EOS-TCP nötig — Szene direkt per OSC senden."}
+            </p>
+          ) : (
+            <label className="oscTestChannel oscTestIntensity">
+              <span className="oscTestIntensityHeader">
+                <span>Intensität testen</span>
+                <label className="oscTestIntensityToggle">
+                  <input
+                    type="checkbox"
+                    checked={useLightIntensity}
+                    onChange={(e) => setUseLightIntensity(e.target.checked)}
+                    disabled={lightLoading || !lightReady}
+                  />
+                  Teilhelligkeit
+                </label>
               </span>
-            </div>
-            <div className="row oscTestIntensityPresets">
-              {[25, 50, 75, 100].map((pct) => (
-                <button
-                  key={pct}
-                  type="button"
-                  disabled={lightLoading || !lightConnected || !useLightIntensity}
-                  onClick={() => setLightIntensityPercent(pct)}
-                >
-                  {pct}%
-                </button>
-              ))}
-            </div>
-          </label>
+              <input
+                type="range"
+                min={1}
+                max={100}
+                step={1}
+                value={lightIntensityPercent}
+                onChange={(e) => setLightIntensityPercent(Number(e.target.value))}
+                disabled={lightLoading || !lightReady || !useLightIntensity}
+                aria-valuemin={1}
+                aria-valuemax={100}
+                aria-valuenow={lightIntensityPercent}
+                aria-label="Lichtintensität in Prozent"
+              />
+              <div className="oscTestIntensityMeta">
+                <strong>{useLightIntensity ? `${lightIntensityPercent} %` : "Full (100 %)"}</strong>
+                <span className="textMuted">
+                  {useLightIntensity
+                    ? `→ /eos/chan/N ${lightIntensityPercent}`
+                    : "→ /eos/chan/N/full"}
+                </span>
+              </div>
+              <div className="row oscTestIntensityPresets">
+                {[25, 50, 75, 100].map((pct) => (
+                  <button
+                    key={pct}
+                    type="button"
+                    disabled={lightLoading || !lightReady || !useLightIntensity}
+                    onClick={() => setLightIntensityPercent(pct)}
+                  >
+                    {pct}%
+                  </button>
+                ))}
+              </div>
+            </label>
+          )}
           <div className="row oscTestActions">
-            <button type="button" disabled={lightLoading || !lightConnected} onClick={() => void sendLight()}>
+            <button type="button" disabled={lightLoading || !lightReady} onClick={() => void sendLight()}>
               Signal senden
             </button>
-            <button type="button" disabled={lightLoading || !lightConnected} onClick={() => void holdLight()}>
+            <button type="button" disabled={lightLoading || !lightReady} onClick={() => void holdLight()}>
               Signal halten
             </button>
-            <button type="button" className="oscTestStopBtn" disabled={lightLoading || !lightConnected} onClick={() => void stopLight()}>
-              Signal aus (/eos/key/out)
+            <button type="button" className="oscTestStopBtn" disabled={lightLoading || !lightReady} onClick={() => void stopLight()}>
+              {lightMirrorMode ? "Blackout (/light/blackout)" : "Signal aus (/eos/key/out)"}
             </button>
           </div>
+          {!lightNeedsTcpConnect ? (
+            <div className="oscTestLog" aria-live="polite">
+              <p className="textMuted" style={{ marginTop: 0 }}>
+                Letzte Licht-OSC (aus <code>logs/osc.log</code>):
+              </p>
+              {lightOscLines.length ? (
+                <ul className="oscLogList">
+                  {lightOscLines.map((line) => (
+                    <li key={line}>{line}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="textMuted">Noch kein Licht-OSC — Szene senden oder DRY-RUN prüfen.</p>
+              )}
+            </div>
+          ) : null}
         </div>
       </div>
 

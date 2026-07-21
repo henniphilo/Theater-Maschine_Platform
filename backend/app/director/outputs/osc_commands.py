@@ -308,6 +308,64 @@ def _visual_commands(
     return commands
 
 
+def _preview_light_blackout_commands(
+    *,
+    osc_host: str,
+    osc_port: int,
+    is_dry_run: bool,
+) -> list[OscCommand]:
+    previous = clear_active_light_scenes()
+    for scene_id in previous:
+        fade_out_scene(scene_id)
+    return [
+        OscCommand(
+            bridge="light",
+            host=osc_host,
+            port=osc_port,
+            address="/light/blackout",
+            args=[],
+            dry_run=is_dry_run,
+        )
+    ]
+
+
+def _preview_light_scene_commands(
+    light: LightCue,
+    *,
+    decision: DramaturgyDecision,
+    osc_host: str,
+    osc_port: int,
+    is_dry_run: bool,
+) -> list[OscCommand]:
+    scene_ids = resolve_light_scene_ids(light)
+    if not scene_ids:
+        return []
+    fade = light.fade_time
+    light_intensity = _resolve_light_intensity(light, decision)
+    if light_intensity <= 0.0:
+        return _preview_light_blackout_commands(
+            osc_host=osc_host,
+            osc_port=osc_port,
+            is_dry_run=is_dry_run,
+        )
+    if light.replace_previous and light.action.value != "fade_blackout":
+        previous = replace_active_light_scenes(scene_ids)
+        for scene_id in previous:
+            fade_out_scene(scene_id)
+    else:
+        replace_active_light_scenes(scene_ids)
+    return [
+        OscCommand(
+            bridge="light",
+            host=osc_host,
+            port=osc_port,
+            address="/light/set_scene",
+            args=[",".join(scene_ids), fade],
+            dry_run=is_dry_run,
+        )
+    ]
+
+
 def _commands_for_single_decision(
     decision: DramaturgyDecision,
     *,
@@ -370,7 +428,26 @@ def _commands_for_single_decision(
         fade = light.fade_time
         scene_ids = resolve_light_scene_ids(light)
 
-        if light.action.value == "fade_blackout":
+        if settings.light_output == "mirror":
+            if light.action.value == "fade_blackout":
+                commands.extend(
+                    _preview_light_blackout_commands(
+                        osc_host=osc_host,
+                        osc_port=osc_port,
+                        is_dry_run=is_dry_run,
+                    )
+                )
+            else:
+                commands.extend(
+                    _preview_light_scene_commands(
+                        light,
+                        decision=decision,
+                        osc_host=osc_host,
+                        osc_port=osc_port,
+                        is_dry_run=is_dry_run,
+                    )
+                )
+        elif light.action.value == "fade_blackout":
             previous = clear_active_light_scenes()
             commands.extend(
                 _eos_fade_out_scenes_commands(
@@ -415,27 +492,36 @@ def _commands_for_single_decision(
                     )
                 )
     elif decision.light and decision.light.action.value == "fade_blackout":
-        previous = clear_active_light_scenes()
-        commands.extend(
-            _eos_fade_out_scenes_commands(
-                previous,
-                osc_host=osc_host,
-                osc_port=osc_port,
-                is_dry_run=is_dry_run,
-            )
-        )
-        if settings.light_osc_mirror:
-            commands.append(
-                OscCommand(
-                    bridge="light",
-                    host=osc_host,
-                    port=osc_port,
-                    address="/light/blackout",
-                    args=[],
-                    dry_run=is_dry_run,
-                    mirror=True,
+        if settings.light_output == "mirror":
+            commands.extend(
+                _preview_light_blackout_commands(
+                    osc_host=osc_host,
+                    osc_port=osc_port,
+                    is_dry_run=is_dry_run,
                 )
             )
+        else:
+            previous = clear_active_light_scenes()
+            commands.extend(
+                _eos_fade_out_scenes_commands(
+                    previous,
+                    osc_host=osc_host,
+                    osc_port=osc_port,
+                    is_dry_run=is_dry_run,
+                )
+            )
+            if settings.light_osc_mirror:
+                commands.append(
+                    OscCommand(
+                        bridge="light",
+                        host=osc_host,
+                        port=osc_port,
+                        address="/light/blackout",
+                        args=[],
+                        dry_run=is_dry_run,
+                        mirror=True,
+                    )
+                )
 
     return commands
 

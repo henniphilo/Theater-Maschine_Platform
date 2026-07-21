@@ -16,6 +16,7 @@ COMPOSE_NATIVE := $(COMPOSE_BASE) -f docker-compose.native.yml
 
 .PHONY: help setup build up down stop ps logs \
         docker-native native-deps run native qlab-relay qlab-cue-list qlab-import qlab-stages \
+        qlab-light-cue-list qlab-light-import qlab-light-setup qlab-light-patch \
         test test-backend test-frontend visualize-logs analyze-signal-trace prepare-tryout \
         desktop-install
 
@@ -74,7 +75,7 @@ native: run ## Alias für make run
 desktop-install: ## Start-/Stop-Apps auf dem macOS-Desktop installieren
 	"$(ROOT)/tools/desktop/install-desktop-apps.sh"
 
-qlab-relay: ## Pixera-OSC → QLab-Relay (127.0.0.1:8990 → :53000) — siehe docs/qlab_setup.md
+qlab-relay: ## Pixera + Licht-OSC → QLab (:8990 + :7000 → :53000) — docs/qlab_setup.md
 	@if [[ ! -x "$(ROOT)/backend/.venv/bin/python" ]]; then \
 		echo "Backend-venv fehlt — zuerst: cd backend && ./run-native.sh (oder make run)" >&2; \
 		exit 1; \
@@ -90,6 +91,22 @@ qlab-cue-list: ## QLab-Cue-CSV aus OSC-Listen (data/qlab_cue_list_*.csv)
 
 qlab-stages: ## QLab Preview-Stages setzen (RZ21→1, Adam→2, Eva→3, LED→4)
 	python3 "$(ROOT)/tools/qlab_assign_video_stages.py"
+
+qlab-light-cue-list: ## QLab-Licht-Cue-CSV aus light_scenes.json
+	@if [[ ! -x "$(ROOT)/backend/.venv/bin/python" ]]; then \
+		echo "Backend-venv fehlt — zuerst: cd backend && ./run-native.sh (oder make run)" >&2; \
+		exit 1; \
+	fi
+	cd "$(ROOT)/backend" && .venv/bin/python scripts/export_qlab_light_cue_list.py
+
+qlab-light-setup: ## TMPREVIEW Light-Patch in QLab anlegen (UI-Automation)
+	python3 "$(ROOT)/tools/qlab_install_light_patch.py"
+
+qlab-light-patch: qlab-light-setup ## Alias
+
+qlab-light-import: ## Patch + Light-Cues (TMPREVIEW → qlab-light-cue-list → import)
+	python3 "$(ROOT)/tools/qlab_install_light_patch.py"
+	python3 "$(ROOT)/tools/qlab_import_light_cues.py" "$(ROOT)/data/qlab_light_cue_list.csv"
 
 qlab-import: ## QLab-Cues importieren — make qlab-import VIDEO_DIR=/pfad PROJECTOR=adam SOURCE=all
 	@if [[ -z "$(VIDEO_DIR)" ]]; then \

@@ -56,7 +56,7 @@ class Settings(BaseSettings):
     osc_log_path: str = "logs/osc.log"
     signal_trace_path: str = "logs/signal_trace.jsonl"
     signal_trace_enabled: bool | None = None
-    light_output: Literal["tcp", "osc"] = "tcp"
+    light_output: Literal["tcp", "osc", "mirror"] = "tcp"
     light_osc_mirror: bool = False
     light_tcp_host: str = "10.101.90.112"
     light_tcp_port: int = 3032
@@ -112,6 +112,13 @@ class Settings(BaseSettings):
         if self.light_output == "tcp":
             return self.light_tcp_port
         return self.light_osc_port
+
+    def light_uses_desk(self) -> bool:
+        return self.light_output in ("tcp", "osc")
+
+    def light_uses_preview_osc(self) -> bool:
+        """QLab relay / TouchDesigner mirror (/light/set_scene on OSC_HOST:OSC_PORT)."""
+        return self.light_output == "mirror" or self.light_osc_mirror
 
 
 settings = Settings()

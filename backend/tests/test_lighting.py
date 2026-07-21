@@ -108,3 +108,31 @@ def test_lighting_apply_channel_skips_when_tcp_unreachable(
     bridge.apply_channel(6, dry_run=False)
 
     tcp.send_osc.assert_not_called()
+
+
+@patch("app.director.outputs.lighting.settings")
+@patch("app.director.outputs.lighting.log_osc_command")
+def test_lighting_mirror_mode_skips_tcp_and_sends_preview_osc(
+    mock_log_osc: MagicMock,
+    mock_settings: MagicMock,
+) -> None:
+    reset_light_scene_tracker()
+    mock_settings.light_output = "mirror"
+    mock_settings.light_osc_mirror = False
+    mock_settings.osc_dry_run = False
+    mock_settings.osc_host = "127.0.0.1"
+    mock_settings.osc_port = 7000
+
+    preview_client = MagicMock()
+    scene = LightScene(id="saallicht", description="test", groups=["2"])
+    bridge = LightingBridge(media_db=MagicMock(light_scenes=[scene]))
+    bridge._preview_osc_client = preview_client
+
+    bridge.execute(LightCue(scene_id="saallicht", fade_time=4.0), dry_run=False)
+
+    preview_client.send_message.assert_called_once_with(
+        "/light/set_scene",
+        ["saallicht", 4.0],
+    )
+    mock_log_osc.assert_called()
+
