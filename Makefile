@@ -16,6 +16,7 @@ COMPOSE_NATIVE := $(COMPOSE_BASE) -f docker-compose.native.yml
 
 .PHONY: help setup build up down stop ps logs \
         docker-native native-deps run native qlab-relay qlab-cue-list qlab-import qlab-stages \
+        qlab-sync-durations \
         qlab-light-cue-list qlab-light-import qlab-light-setup qlab-light-patch \
         test test-backend test-frontend visualize-logs analyze-signal-trace prepare-tryout \
         desktop-install
@@ -91,6 +92,9 @@ qlab-cue-list: ## QLab-Cue-CSV aus OSC-Listen (data/qlab_cue_list_*.csv)
 
 qlab-stages: ## QLab Preview-Stages setzen (RZ21→1, Adam→2, Eva→3, LED→4)
 	python3 "$(ROOT)/tools/qlab_assign_video_stages.py"
+
+qlab-sync-durations: ## QLab Video-Dauern → Avatar-CSV + video_cues.json (ms genau)
+	python3 "$(ROOT)/tools/qlab_sync_durations.py"
 
 qlab-light-cue-list: ## QLab-Licht-Cue-CSV aus light_scenes.json
 	@if [[ ! -x "$(ROOT)/backend/.venv/bin/python" ]]; then \

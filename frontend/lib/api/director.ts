@@ -168,7 +168,7 @@ export async function postAvatarDoneWait(
   return res.json();
 }
 
-/** Pause narrator until QLab (via relay) reports avatar video completion, or timeout. */
+/** Wait until QLab (via relay) reports avatar video completion, or timeout. */
 export async function waitForAvatarVideosDone(
   cueNames: string[],
   timeoutMs: number,

@@ -1,7 +1,7 @@
 import type { AvatarTextSegment, CompositionMoment, CompositionPlan, Teil2PerformancePlan } from "@/lib/types/inszenierung";
 import type { DramaturgyDecision, OscCommand } from "@/lib/types/director";
 import type { VisualCue } from "@/lib/types/visual";
-import { isDirectorPerformanceAborted, isAvatarDoneGateEnabled, postDirectorExecuteLayered, waitForAvatarVideosDone } from "@/lib/api/director";
+import { isDirectorPerformanceAborted, isAvatarDoneGateEnabled, postDirectorExecuteLayered, waitForAvatarVideosDone, type AvatarDoneWaitResult } from "@/lib/api/director";
 import { setPlaybackPaused, waitWhilePlaybackPaused } from "@/lib/api/client";
 
 let avatarFireChain: Promise<void> = Promise.resolve();
@@ -10,6 +10,29 @@ const AVATAR_POSITION_DEBOUNCE_MS = 150;
 const DEFAULT_AVATAR_DONE_TIMEOUT_MS = 120_000;
 const AVATAR_DONE_TIMEOUT_GRACE_MS = 2_000;
 let avatarPositionTimer: ReturnType<typeof setTimeout> | null = null;
+
+/** In-flight avatar clip(s): TTS stays parallel; on done the next clip starts immediately. */
+type PendingAvatarDone = {
+  cueNames: string[];
+  timeoutMs: number;
+  finished: Promise<AvatarDoneWaitResult | null>;
+  token: symbol;
+};
+
+let pendingAvatarDone: PendingAvatarDone | null = null;
+
+export type AvatarChainContext = {
+  plan: Teil2PerformancePlan;
+  fired: Set<string>;
+  sentenceCharStarts: number[];
+  scriptText: string;
+  anarchyLevelFor: (segment: AvatarTextSegment) => number;
+  onCommands: (commands: OscCommand[]) => Promise<void>;
+  shouldAbort: () => boolean;
+  onSegmentFired?: (segment: AvatarTextSegment) => void;
+};
+
+let avatarChainContext: AvatarChainContext | null = null;
 
 type PendingAvatarPositionFire = {
   plan: Teil2PerformancePlan;
@@ -99,20 +122,27 @@ function avatarDoneTimeoutMs(segment: AvatarTextSegment): number {
   return base + AVATAR_DONE_TIMEOUT_GRACE_MS;
 }
 
-async function gateNarratorUntilAvatarDone(
-  cueNames: string[],
-  timeoutMs: number,
-  shouldAbort: () => boolean
+/**
+ * Await the in-flight clip. When pauseNarrator is true (text already at next
+ * anchor), TTS holds until Done — otherwise used only to serialize the next OSC.
+ */
+async function waitForPendingAvatarDone(
+  shouldAbort: () => boolean,
+  pauseNarrator: boolean
 ): Promise<void> {
-  if (!cueNames.length || shouldAbort()) return;
-  if (!(await isAvatarDoneGateEnabled())) return;
+  const pending = pendingAvatarDone;
+  if (!pending) return;
+  if (!pauseNarrator) {
+    await pending.finished;
+    return;
+  }
   setPlaybackPaused(true);
   try {
-    const result = await waitForAvatarVideosDone(cueNames, timeoutMs, shouldAbort);
+    const result = await pending.finished;
     if (result?.status === "timeout") {
       console.warn(
         "[avatar] done-gate timeout — continuing narrator",
-        cueNames,
+        pending.cueNames,
         result.missing.length ? `missing=${result.missing.join(",")}` : ""
       );
     }
@@ -123,6 +153,80 @@ async function gateNarratorUntilAvatarDone(
   } finally {
     if (!shouldAbort()) setPlaybackPaused(false);
   }
+}
+
+function noteAvatarStarted(
+  cueNames: string[],
+  timeoutMs: number,
+  shouldAbort: () => boolean
+): void {
+  const names = cueNames.map((n) => n.trim()).filter(Boolean);
+  if (!names.length) return;
+
+  const token = Symbol("avatar-done");
+  const finished = (async (): Promise<AvatarDoneWaitResult | null> => {
+    if (!(await isAvatarDoneGateEnabled())) return null;
+    try {
+      return await waitForAvatarVideosDone(names, timeoutMs, shouldAbort);
+    } catch (err) {
+      if (!(err instanceof DOMException && err.name === "AbortError")) {
+        console.warn("[avatar] done-gate wait failed:", err);
+      }
+      return null;
+    }
+  })();
+
+  pendingAvatarDone = { cueNames: names, timeoutMs, finished, token };
+
+  void finished.then(async (result) => {
+    if (pendingAvatarDone?.token !== token) return;
+    pendingAvatarDone = null;
+    if (shouldAbort() || result == null) return;
+    if (!(await isAvatarDoneGateEnabled())) return;
+    // Video finished → start next avatar immediately (no text-anchor gap).
+    await advanceAvatarChainAfterDone();
+  });
+}
+
+/** Bind plan/fired callbacks so Done can chain the next CSV avatar without delay. */
+export function bindAvatarChainContext(ctx: AvatarChainContext | null): void {
+  avatarChainContext = ctx;
+}
+
+/** Clear in-flight done-wait (tests / abort). */
+export function clearPendingAvatarDoneGate(): void {
+  pendingAvatarDone = null;
+}
+
+/** Block narrator until any in-flight avatar finishes (e.g. show end). */
+export async function flushPendingAvatarDoneGate(shouldAbort: () => boolean): Promise<void> {
+  await waitForPendingAvatarDone(shouldAbort, true);
+  if (pendingAvatarDone) pendingAvatarDone = null;
+}
+
+async function advanceAvatarChainAfterDone(): Promise<void> {
+  const ctx = avatarChainContext;
+  if (!ctx || ctx.shouldAbort()) return;
+  await withAvatarFireLock(async () => {
+    if (ctx.shouldAbort() || pendingAvatarDone) return;
+    const next = nextUnfiredAvatarInSequence(
+      ctx.plan,
+      ctx.fired,
+      ctx.sentenceCharStarts,
+      ctx.scriptText
+    );
+    if (!next) return;
+    const sent = await fireAvatarSegmentIfDue(
+      next,
+      ctx.anarchyLevelFor(next),
+      ctx.onCommands,
+      ctx.shouldAbort,
+      { pauseNarratorForPending: false }
+    );
+    if (!sent) return;
+    ctx.fired.add(avatarSegmentKey(next));
+    ctx.onSegmentFired?.(next);
+  });
 }
 
 export function avatarVisualCuesForMoment(moment: CompositionMoment): VisualCue[] {
@@ -151,8 +255,14 @@ export async function fireAvatarSegmentIfDue(
   segment: AvatarTextSegment,
   anarchyLevel: number,
   onCommands: (commands: OscCommand[]) => Promise<void>,
-  shouldAbort: () => boolean
+  shouldAbort: () => boolean,
+  options?: { pauseNarratorForPending?: boolean }
 ): Promise<boolean> {
+  if (shouldAbort()) return false;
+  // If text already reached the next anchor while the previous clip plays: pause TTS.
+  // Chain-advance after Done uses pauseNarratorForPending=false (no extra gap).
+  const pauseNarrator = options?.pauseNarratorForPending !== false;
+  await waitForPendingAvatarDone(shouldAbort, pauseNarrator);
   if (shouldAbort()) return false;
   if (!(await waitWhilePlaybackPaused(shouldAbort))) return false;
   let anySent = false;
@@ -171,7 +281,7 @@ export async function fireAvatarSegmentIfDue(
     cueNames.push(...result.cueNames);
   }
   if (anySent) {
-    await gateNarratorUntilAvatarDone(cueNames, avatarDoneTimeoutMs(segment), shouldAbort);
+    noteAvatarStarted(cueNames, avatarDoneTimeoutMs(segment), shouldAbort);
   }
   return anySent;
 }
@@ -191,6 +301,8 @@ export async function fireAvatarMomentCues(
   onCommands: (commands: OscCommand[]) => Promise<void>,
   shouldAbort: () => boolean
 ): Promise<void> {
+  await waitForPendingAvatarDone(shouldAbort, true);
+  if (shouldAbort()) return;
   const cueNames: string[] = [];
   let anySent = false;
   for (const visual of avatarVisualCuesForMoment(moment)) {
@@ -213,7 +325,7 @@ export async function fireAvatarMomentCues(
         .reduce((a, b) => Math.max(a, b), 0) ||
       moment.avatar_video_cue?.duration_ms ||
       DEFAULT_AVATAR_DONE_TIMEOUT_MS;
-    await gateNarratorUntilAvatarDone(
+    noteAvatarStarted(
       cueNames,
       (durationMs || DEFAULT_AVATAR_DONE_TIMEOUT_MS) + AVATAR_DONE_TIMEOUT_GRACE_MS,
       shouldAbort
@@ -341,6 +453,20 @@ export function nextUnfiredAvatarSegment(
       return segment;
     }
     return null;
+  }
+  return null;
+}
+
+/** Next unfired segment in CSV order — used to chain clips back-to-back after Done. */
+export function nextUnfiredAvatarInSequence(
+  plan: Teil2PerformancePlan,
+  fired: Set<string>,
+  sentenceCharStarts: number[],
+  scriptText?: string
+): AvatarTextSegment | null {
+  for (const segment of sortedAvatarSegments(plan, sentenceCharStarts, scriptText)) {
+    if (fired.has(avatarSegmentKey(segment))) continue;
+    return segment;
   }
   return null;
 }

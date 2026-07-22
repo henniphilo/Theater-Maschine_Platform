@@ -1,10 +1,15 @@
-# Avatar-Done-Gate: Erzähler wartet auf Video-Ende
+# Avatar-Done-Gate: Sync bei Drift, sonst parallel
 
-Ziel: **Avatar-Performance-Clips** blockieren den Erzählertext und den nächsten Avatar, bis das Video fertig ist. **Atmosphäre / Loops** bleiben unabhängig und können weiterlaufen.
+Ziel: **Avatar-Performance-Clips** und Erzählertext laufen **parallel**. Der Erzähler (oder der nächste Avatar-Start) wartet nur, wenn sich die Zeiten verschieben — z. B. wenn die Stimme den nächsten Textanker erreicht, das vorherige Video aber noch spielt. **Atmosphäre / Loops** bleiben unabhängig.
 
 ```
-Avatar-OSC start  →  Video spielt  →  Done-Signal  →  TTS weiter / nächster Avatar
+Avatar-OSC start  →  Video + TTS parallel
+                  →  Done-Signal  →  nächster Avatar sofort (ohne Textanker-Lücke)
+                  →  Stimme schon am nächsten Anker, Video noch aktiv
+                  →  TTS pausiert bis Done, dann nächster Avatar sofort
 ```
+
+Gegenteiliger Drift (Video fertig vor Textanker): **kein** Warten auf den Anker — der nächste Avatar startet direkt nach Done.
 
 ---
 
@@ -39,10 +44,10 @@ Theatermaschine  ←  /avatar/done {name}  ←  Relay  ←  QLab show-control cu
      :8991
 ```
 
-1. Teil-2 feuert Avatar-OSC und pausiert die TTS.
-2. Frontend ruft `POST /api/v1/director/avatar-done/wait` mit den Pixera-Cue-Namen.
-3. Relay empfängt QLab Show-Control `…/cue/stop` und sendet `/avatar/done <cue_number>`.
-4. Backend löst den Wait → TTS läuft weiter → nächster Avatar erst danach.
+1. Teil-2 feuert Avatar-OSC; TTS läuft weiter (parallel). Parallel wartet das Backend auf `/avatar/done`.
+2. Bei Done startet der **nächste** Avatar in CSV-Reihenfolge sofort (keine Pause bis zum Textanker).
+3. Wenn die Stimme den nächsten Anker erreicht, das Video aber noch spielt: TTS pausiert bis Done, danach startet der nächste Avatar sofort.
+4. Relay empfängt QLab Show-Control `…/cue/stop` und sendet `/avatar/done <cue_number>`.
 
 Timeout: max. Clip-`duration_ms` (CSV) + `AVATAR_DONE_TIMEOUT_GRACE_MS` (sonst 120 s + Grace). Bei Timeout geht die Aufführung weiter (Warnung in der Konsole).
 
@@ -179,7 +184,7 @@ Weiterhin CSV-`duration_ms` als Timeout (schon im Gate als Sicherheitsnetz). Nic
 - [ ] Netz: Show-Rechner erreicht Pixera; Rückkanal zur Maschine erlaubt (Firewall/UDP)
 - [ ] Nur **Avatar**-Clips senden Done — Atmosphäre nicht
 - [ ] `AVATAR_DONE_GATE_ENABLED=true` auf dem Show-Rechner
-- [ ] Probe: ein Avatar-Clip → Wait endet → TTS setzt fort; Atmosphäre parallel ungestört
+- [ ] Probe: ein Avatar-Clip → TTS parallel; am nächsten Anker wartet TTS bis Done; Atmosphäre parallel ungestört
 - [ ] Docs hier + `.env.example` aktualisieren, sobald der Pixera-Pfad feststeht
 
 ---

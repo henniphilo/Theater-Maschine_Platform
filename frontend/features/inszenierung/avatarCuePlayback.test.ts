@@ -1,12 +1,15 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi, beforeEach } from "vitest";
 
 import {
   avatarSegmentKey,
   avatarSegmentsDueAtPosition,
   avatarSegmentsInSentence,
+  clearPendingAvatarDoneGate,
+  bindAvatarChainContext,
   effectiveCharOffset,
   fireAvatarSegmentIfDue,
   fireRemainingSentenceSegments,
+  flushPendingAvatarDoneGate,
   nextUnfiredAvatarSegment,
   resolveSentenceCharStarts,
   sentenceSpanLength,
@@ -28,6 +31,12 @@ vi.mock("@/lib/api/client", () => ({
   waitWhilePlaybackPaused: vi.fn().mockResolvedValue(true),
   setPlaybackPaused: vi.fn()
 }));
+
+beforeEach(() => {
+  clearPendingAvatarDoneGate();
+  bindAvatarChainContext(null);
+  vi.clearAllMocks();
+});
 
 describe("avatarCuePlayback position helpers", () => {
   const plan: Teil2PerformancePlan = {
@@ -192,10 +201,9 @@ describe("avatarCuePlayback position helpers", () => {
 });
 
 describe("avatar done gate", () => {
-  it("pauses narrator until wait resolves when gate enabled", async () => {
+  it("keeps narrator running after avatar start (parallel)", async () => {
     const { isAvatarDoneGateEnabled, waitForAvatarVideosDone } = await import("@/lib/api/director");
     const { setPlaybackPaused } = await import("@/lib/api/client");
-    const { fireAvatarSegmentIfDue } = await import("@/features/inszenierung/avatarCuePlayback");
 
     vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(true);
     vi.mocked(waitForAvatarVideosDone).mockResolvedValue({
@@ -229,8 +237,262 @@ describe("avatar done gate", () => {
 
     const ok = await fireAvatarSegmentIfDue(segment, 0.5, async () => undefined, () => false);
     expect(ok).toBe(true);
-    expect(setPlaybackPaused).toHaveBeenCalledWith(true);
+    // Done-wait arms in background without pausing TTS.
+    expect(setPlaybackPaused).not.toHaveBeenCalled();
+    await vi.waitFor(() => {
+      expect(waitForAvatarVideosDone).toHaveBeenCalled();
+    });
+  });
+
+  it("pauses narrator only before the next avatar when previous still pending", async () => {
+    const { isAvatarDoneGateEnabled, waitForAvatarVideosDone, postDirectorExecuteLayered } =
+      await import("@/lib/api/director");
+    const { setPlaybackPaused } = await import("@/lib/api/client");
+
+    let resolveDone: (value: {
+      status: "done";
+      received: string[];
+      missing: string[];
+      wait_ms: number;
+    }) => void = () => undefined;
+    const donePromise = new Promise<{
+      status: "done";
+      received: string[];
+      missing: string[];
+      wait_ms: number;
+    }>((resolve) => {
+      resolveDone = resolve;
+    });
+
+    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(true);
+    vi.mocked(waitForAvatarVideosDone)
+      .mockImplementationOnce(() => donePromise)
+      .mockResolvedValue({
+        status: "done",
+        received: ["KI_RZ21.Second"],
+        missing: [],
+        wait_ms: 1
+      });
+    vi.mocked(postDirectorExecuteLayered)
+      .mockResolvedValueOnce({
+        executed: true,
+        osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.First"] }]
+      })
+      .mockResolvedValueOnce({
+        executed: true,
+        osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.Second"] }]
+      });
+
+    const layer = (clip: string) => ({
+      avatar_speech_id: clip,
+      avatar: "delfin",
+      video_clip_id: clip,
+      visual_cue: {
+        action: "play_clip" as const,
+        clip_id: clip,
+        video_type: "avatar" as const,
+        duration_ms: 1000
+      }
+    });
+
+    const first = {
+      csv_cue_ids: ["a"],
+      text_excerpt: "Alpha.",
+      char_offset: 0,
+      csv_sequence_index: 0,
+      start_sentence_index: 0,
+      end_sentence_index: 0,
+      avatar_layers: [layer("first")]
+    };
+    const second = {
+      csv_cue_ids: ["b"],
+      text_excerpt: "Beta.",
+      char_offset: 10,
+      csv_sequence_index: 1,
+      start_sentence_index: 1,
+      end_sentence_index: 1,
+      avatar_layers: [layer("second")]
+    };
+
+    await fireAvatarSegmentIfDue(first, 0.5, async () => undefined, () => false);
+    expect(setPlaybackPaused).not.toHaveBeenCalled();
+
+    const secondFire = fireAvatarSegmentIfDue(second, 0.5, async () => undefined, () => false);
+    await vi.waitFor(() => {
+      expect(setPlaybackPaused).toHaveBeenCalledWith(true);
+    });
+    resolveDone({
+      status: "done",
+      received: ["KI_RZ21.First"],
+      missing: [],
+      wait_ms: 10
+    });
+    await secondFire;
     expect(waitForAvatarVideosDone).toHaveBeenCalled();
     expect(setPlaybackPaused).toHaveBeenCalledWith(false);
+  });
+
+  it("flushPendingAvatarDoneGate waits for in-flight clip at show end", async () => {
+    const { isAvatarDoneGateEnabled, waitForAvatarVideosDone } = await import("@/lib/api/director");
+    const { setPlaybackPaused } = await import("@/lib/api/client");
+
+    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(true);
+    vi.mocked(waitForAvatarVideosDone).mockResolvedValue({
+      status: "done",
+      received: ["KI_RZ21.Test"],
+      missing: [],
+      wait_ms: 5
+    });
+
+    await fireAvatarSegmentIfDue(
+      {
+        csv_cue_ids: ["a"],
+        text_excerpt: "Alpha.",
+        char_offset: 0,
+        csv_sequence_index: 0,
+        start_sentence_index: 0,
+        end_sentence_index: 0,
+        avatar_layers: [
+          {
+            avatar_speech_id: "a",
+            avatar: "delfin",
+            video_clip_id: "test",
+            visual_cue: {
+              action: "play_clip",
+              clip_id: "test",
+              video_type: "avatar",
+              duration_ms: 1000
+            }
+          }
+        ]
+      },
+      0.5,
+      async () => undefined,
+      () => false
+    );
+    // Background wait starts immediately (parallel); flush also awaits it.
+    await flushPendingAvatarDoneGate(() => false);
+    expect(waitForAvatarVideosDone).toHaveBeenCalled();
+    expect(setPlaybackPaused).toHaveBeenCalledWith(true);
+    expect(setPlaybackPaused).toHaveBeenCalledWith(false);
+  });
+
+  it("chains the next avatar immediately when previous Done arrives", async () => {
+    const { isAvatarDoneGateEnabled, waitForAvatarVideosDone, postDirectorExecuteLayered } =
+      await import("@/lib/api/director");
+    const { setPlaybackPaused } = await import("@/lib/api/client");
+    const { bindAvatarChainContext, avatarSegmentKey } = await import(
+      "@/features/inszenierung/avatarCuePlayback"
+    );
+
+    let resolveDone: (value: {
+      status: "done";
+      received: string[];
+      missing: string[];
+      wait_ms: number;
+    }) => void = () => undefined;
+    const donePromise = new Promise<{
+      status: "done";
+      received: string[];
+      missing: string[];
+      wait_ms: number;
+    }>((resolve) => {
+      resolveDone = resolve;
+    });
+
+    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(true);
+    vi.mocked(waitForAvatarVideosDone)
+      .mockImplementationOnce(() => donePromise)
+      .mockResolvedValue({
+        status: "done",
+        received: ["KI_RZ21.Second"],
+        missing: [],
+        wait_ms: 1
+      });
+    vi.mocked(postDirectorExecuteLayered)
+      .mockResolvedValueOnce({
+        executed: true,
+        osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.First"] }]
+      })
+      .mockResolvedValueOnce({
+        executed: true,
+        osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.Second"] }]
+      });
+
+    const layer = (clip: string) => ({
+      avatar_speech_id: clip,
+      avatar: "delfin",
+      video_clip_id: clip,
+      visual_cue: {
+        action: "play_clip" as const,
+        clip_id: clip,
+        video_type: "avatar" as const,
+        duration_ms: 1000
+      }
+    });
+
+    const first = {
+      csv_cue_ids: ["a"],
+      text_excerpt: "Alpha.",
+      char_offset: 0,
+      csv_sequence_index: 0,
+      start_sentence_index: 0,
+      end_sentence_index: 0,
+      avatar_layers: [layer("first")]
+    };
+    const second = {
+      csv_cue_ids: ["b"],
+      text_excerpt: "Beta.",
+      char_offset: 500,
+      csv_sequence_index: 1,
+      start_sentence_index: 1,
+      end_sentence_index: 1,
+      avatar_layers: [layer("second")]
+    };
+
+    const plan = {
+      performance_speaker: "narrator" as const,
+      sentences: ["Alpha.", "Beta."],
+      sentence_char_starts: [0, 7],
+      avatar_segments: [first, second],
+      dramaturgy: { reason: "t", tags: [], mood: "tension" as const, intensity: 0.5, cue_points: [] },
+      anarchy_level_end: 1,
+      alignment_warnings: []
+    };
+    const fired = new Set<string>();
+    const firedOrder: string[] = [];
+
+    bindAvatarChainContext({
+      plan,
+      fired,
+      sentenceCharStarts: plan.sentence_char_starts,
+      scriptText: "Alpha. Beta.",
+      anarchyLevelFor: () => 0.5,
+      onCommands: async () => undefined,
+      shouldAbort: () => false,
+      onSegmentFired: (segment) => {
+        firedOrder.push(avatarSegmentKey(segment));
+      }
+    });
+
+    await fireAvatarSegmentIfDue(first, 0.5, async () => undefined, () => false);
+    fired.add(avatarSegmentKey(first));
+    expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(1);
+    expect(setPlaybackPaused).not.toHaveBeenCalled();
+
+    // Done arrives while narrator is still far from second char_offset (500).
+    resolveDone({
+      status: "done",
+      received: ["KI_RZ21.First"],
+      missing: [],
+      wait_ms: 1
+    });
+    await vi.waitFor(() => {
+      expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(2);
+    });
+    expect(fired.has(avatarSegmentKey(second))).toBe(true);
+    expect(setPlaybackPaused).not.toHaveBeenCalled();
+
+    bindAvatarChainContext(null);
   });
 });

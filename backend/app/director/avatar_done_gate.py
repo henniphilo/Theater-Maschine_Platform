@@ -1,4 +1,8 @@
-"""Wait for avatar video completion OSC (/avatar/done) before continuing narration."""
+"""Wait for avatar video completion OSC (/avatar/done) when sync would drift.
+
+Frontend keeps TTS parallel with the clip and only blocks before the next avatar
+(or show end) while a previous clip is still pending.
+"""
 
 from __future__ import annotations
 

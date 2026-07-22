@@ -8,7 +8,7 @@ Theatermaschine  →  127.0.0.1:8990  →  pixera_qlab_relay  →  QLab :53000
 QLab cue/stop    →  Relay  →  /avatar/done  →  Theatermaschine :8991  (optional, Avatar-Gate)
 ```
 
-Optional: Avatar-Videos können nach Clip-Ende zurückmelden, damit der Erzähler wartet — siehe [avatar_done_gate.md](avatar_done_gate.md).
+Avatar-Videos können nach Clip-Ende zurückmelden, damit Erzähler und nächster Avatar bei Drift synchron bleiben (sonst parallel) — siehe [avatar_done_gate.md](avatar_done_gate.md).
 
 Auf der Bühne entfällt der Relay; Pixera und EOS empfangen die Befehle direkt.
 
@@ -127,6 +127,18 @@ make qlab-stages
 
 QLab muss offen sein. Das Skript setzt bei allen **Video Cues** die `stage number` anhand der Cue-Nummer. Nach neuem Import erneut ausführen.
 
+### Clip-Dauern aus QLab (ms)
+
+Die Numbers-Spalte «Zeit» ist nur sekundengenau. Für Beamer-Sperren und Avatar-Timing die echten QLab-Dauern übernehmen:
+
+```bash
+make qlab-sync-durations
+```
+
+Schreibt millisekundengenau nach `media/video/Avatar Textzuordnung.csv`, `data/avatar_speech.json` und `data/video_cues.json`. QLab-Workspace muss offen sein. Nach `make avatar-import` (Numbers) erneut ausführen — sonst überschreibt der Import wieder Sekundenwerte.
+
+Bereits vorbereitete Inszenierungen speichern alte `duration_ms` — Prepare erneut laufen lassen.
+
 In QLab unter **Workspace Settings → Video → Video Outputs** sollten Stage 1–4 auf verschiedene Bildschirme/Fenster geroutet sein (z. B. vier Audition-Fenster oder Monitor-Layouts).
 
 ### Video-Ausgabe
@@ -241,7 +253,7 @@ Umgebungsvariablen (optional):
 | `AVATAR_DONE_PORT` | `8991` | = `AVATAR_DONE_OSC_PORT` |
 | `QLAB_FEEDBACK_KEEPALIVE_S` | `30` | `/listen` + `/udpKeepAlive` Intervall |
 
-Avatar-Done-Gate (Erzähler wartet auf Video-Ende): [avatar_done_gate.md](avatar_done_gate.md). Abschalten am Relay: `--no-qlab-feedback`.
+Avatar-Done-Gate (Sync bei Drift, sonst parallel): [avatar_done_gate.md](avatar_done_gate.md). Abschalten am Relay: `--no-qlab-feedback`.
 
 Video-Mapping:
 
