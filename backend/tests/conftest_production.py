@@ -15,7 +15,10 @@ from app.core.config import settings
 from app.db.session import Base, get_db
 from app.main import app
 from app.models import asset as asset_model  # noqa: F401
+from app.models import cue as cue_model  # noqa: F401
+from app.models import device as device_model  # noqa: F401
 from app.models import production as production_model  # noqa: F401
+from app.models import rule as rule_model  # noqa: F401
 from app.models import tag as tag_model  # noqa: F401
 from app.services import active_production as active_production_store
 from app.storage import get_storage_backend, reset_storage_backend_cache

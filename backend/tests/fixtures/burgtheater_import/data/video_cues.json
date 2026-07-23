@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "osc_address": "/pixera/args/cue/apply",
+  "projectors": [
+    {"id": "rz21", "pixera_prefix": "KI_RZ21", "name": "RZ21"},
+    {"id": "adam", "pixera_prefix": "KI_Adam", "name": "Adam"}
+  ],
+  "clips": [
+    {
+      "id": "affenslowodysee",
+      "pixera_name": "AffenSlowOdysee",
+      "label": "AffenSlowOdysee",
+      "description": "Fixture clip with local file",
+      "tags": ["affen"],
+      "moods": ["spannung"],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": null,
+      "duration_ms": 1200
+    },
+    {
+      "id": "missing_clip",
+      "pixera_name": "MissingClipNowhere",
+      "label": "Missing Clip",
+      "description": "No local media",
+      "tags": ["missing"],
+      "moods": ["leer"],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "video_type": "atmosphere",
+      "projector_preference": "rz21",
+      "duration_ms": null
+    }
+  ]
+}

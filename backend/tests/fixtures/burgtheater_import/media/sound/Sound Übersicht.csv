@@ -1,0 +1,3 @@
+cue_id;midi_note;kanal;soundname;aktion;beschreibung;tags;stimmungen;dramaturgie
+maschinen_grundton;36;1;Maschinen-Grundton;play;Fixture;drone;neutral;ja
+maschinen_grundton_out;72;1;Maschinen-Grundton;out;Stop;drone,cut;neutral;ja

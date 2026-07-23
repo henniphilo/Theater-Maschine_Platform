@@ -1,0 +1,27 @@
+{
+  "source": "media/light/Light Channels KI.txt",
+  "scenes": [
+    {
+      "id": "saallicht",
+      "description": "Saallicht",
+      "location": "Saal",
+      "channels": ["11-19"],
+      "fixtures": ["JB P12"],
+      "moods": ["warm"],
+      "intensity_min": 0.3,
+      "intensity_max": 1.0,
+      "fade_time": 3.0
+    },
+    {
+      "id": "blackout",
+      "description": "Blackout",
+      "location": "Gesamt",
+      "channels": [],
+      "fixtures": [],
+      "moods": ["leer"],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "fade_time": 4.0
+    }
+  ]
+}

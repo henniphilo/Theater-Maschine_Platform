@@ -18,6 +18,7 @@ COMPOSE_NATIVE := $(COMPOSE_BASE) -f docker-compose.native.yml
         docker-native native-deps run native qlab-relay qlab-cue-list qlab-import qlab-stages \
         qlab-sync-durations \
         qlab-light-cue-list qlab-light-import qlab-light-setup qlab-light-patch \
+        burgtheater-import-dry burgtheater-import \
         test test-backend test-frontend test-smoke visualize-logs analyze-signal-trace prepare-tryout \
         desktop-install
 
@@ -179,3 +180,21 @@ avatar-import: ## Textzuordnung.numbers → CSV, Video Übersicht, Skript.txt
 
 video-import: ## Videozuordnung.numbers → OSC ohne Avatare, Video Übersicht, video_cues.json
 	cd "$(ROOT)/backend" && .venv/bin/python scripts/import_video_zuordnung.py
+
+burgtheater-import-dry: ## Burgtheater-Import analysieren (Dry Run, keine DB-Persistenz)
+	@if [[ ! -x "$(ROOT)/backend/.venv/bin/python" ]]; then \
+		echo "Backend-venv fehlt — zuerst: cd backend && ./run-native.sh (oder make run)" >&2; \
+		exit 1; \
+	fi
+	cd "$(ROOT)/backend" && .venv/bin/python scripts/import_burgtheater.py \
+		--repo-root "$(ROOT)" \
+		--report "$(ROOT)/logs/burgtheater_import_dry_run.json"
+
+burgtheater-import: ## Burgtheater-Import anwenden (idempotent; Geräte bleiben disabled/dry-run)
+	@if [[ ! -x "$(ROOT)/backend/.venv/bin/python" ]]; then \
+		echo "Backend-venv fehlt — zuerst: cd backend && ./run-native.sh (oder make run)" >&2; \
+		exit 1; \
+	fi
+	cd "$(ROOT)/backend" && .venv/bin/python scripts/import_burgtheater.py --apply \
+		--repo-root "$(ROOT)" \
+		--report "$(ROOT)/logs/burgtheater_import.json"

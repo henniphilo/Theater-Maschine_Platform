@@ -51,6 +51,10 @@ class Settings(BaseSettings):
     asset_allowed_mime_types: list[str] = list(_DEFAULT_ASSET_MIME_TYPES)
     asset_preview_text_chars: int = 4000
 
+    # Optional HMAC key for sealing Device.configuration (never commit real values).
+    # When unset, configs are stored as a plain sealed envelope and still redacted from APIs.
+    device_config_key: str | None = None
+
     openai_api_key: str | None = None
     anthropic_api_key: str | None = None
 

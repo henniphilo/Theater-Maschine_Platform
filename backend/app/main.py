@@ -19,6 +19,10 @@ from app.api.routes.productions import router as productions_router
 from app.api.routes.script import router as script_router
 from app.api.routes.health import router as health_router
 from app.api.routes.tags import router as tags_router
+from app.api.routes.cues import router as cues_router
+from app.api.routes.devices import router as devices_router
+from app.api.routes.rules import router as rules_router
+from app.api.routes.admin_import import router as admin_import_router
 from app.core.config import settings
 from app.core.logging import configure_logging
 from app.director.outputs.avatar_done_listener import (
@@ -66,4 +70,8 @@ app.include_router(inszenierung_router, prefix="/api/v1")
 app.include_router(productions_router, prefix="/api/v1")
 app.include_router(assets_router, prefix="/api/v1")
 app.include_router(tags_router, prefix="/api/v1")
+app.include_router(cues_router, prefix="/api/v1")
+app.include_router(devices_router, prefix="/api/v1")
+app.include_router(rules_router, prefix="/api/v1")
+app.include_router(admin_import_router, prefix="/api/v1")
 app.include_router(media_router, prefix="/api/v1")

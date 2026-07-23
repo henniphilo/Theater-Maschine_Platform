@@ -125,6 +125,9 @@ export default function ProductionDetailPage() {
 
       <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap" }}>
         <Link href={`/productions/${production.id}/library` as Route}>Bibliothek</Link>
+        <Link href={`/productions/${production.id}/cues` as Route}>Cues</Link>
+        <Link href={`/productions/${production.id}/rules` as Route}>Regeln</Link>
+        <Link href={`/productions/${production.id}/devices` as Route}>Geräte</Link>
         <button
           type="button"
           disabled={production.status === "archived" || isActive}

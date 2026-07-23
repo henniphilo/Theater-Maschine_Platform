@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "defaults": {"channel": 1, "velocity": 100},
+  "cues": [
+    {
+      "id": "maschinen_grundton",
+      "label": "Maschinen-Grundton",
+      "soundname": "Maschinen-Grundton",
+      "action": "play",
+      "description": "Fixture drone",
+      "midi_note": 36,
+      "channel": 1,
+      "velocity": null,
+      "tags": ["drone"],
+      "moods": ["neutral"],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "dramaturgy_active": true
+    },
+    {
+      "id": "maschinen_grundton_out",
+      "label": "Maschinen-Grundton",
+      "soundname": "Maschinen-Grundton",
+      "action": "out",
+      "description": "Stop drone",
+      "midi_note": 72,
+      "channel": 1,
+      "velocity": null,
+      "tags": ["drone", "cut"],
+      "moods": ["neutral"],
+      "intensity_min": 0.0,
+      "intensity_max": 1.0,
+      "dramaturgy_active": true
+    }
+  ]
+}

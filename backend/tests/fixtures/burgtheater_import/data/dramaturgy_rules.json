@@ -1,0 +1,14 @@
+{
+  "keyword_tags": {
+    "memory": ["erinnerung"],
+    "machine": ["maschine"]
+  },
+  "mood_keywords": {
+    "warm": ["nähe"]
+  },
+  "intensity_boosters": ["!!!"],
+  "min_cue_interval_seconds": {
+    "video": 5.0,
+    "sound": 3.0
+  }
+}

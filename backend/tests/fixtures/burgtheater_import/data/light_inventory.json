@@ -1,0 +1,7 @@
+{
+  "source": "media/light/Kanal Übersicht.xlsx",
+  "venue": "Fixture Venue",
+  "groups": [
+    {"id": "vorbuehnenzug", "channels": ["11-19"], "fixtures": ["JB P12"], "location": "Vorbühne"}
+  ]
+}

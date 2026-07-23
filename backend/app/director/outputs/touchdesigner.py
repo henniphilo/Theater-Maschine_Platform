@@ -33,6 +33,10 @@ class TouchDesignerBridge:
             return
         self._client.send_message(address, list(args))
 
+    def send_message(self, address: str, *args: object) -> None:
+        """Public send path for OutputAdapters (same addresses as existing callers)."""
+        self._send(address, *args)
+
     def play_clip(self, clip_id: str, opacity: float = 0.8, fade_time: float = 4.0) -> None:
         self._send("/visual/play_clip", clip_id, opacity, fade_time)
 
