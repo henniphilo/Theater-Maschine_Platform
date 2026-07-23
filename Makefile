@@ -18,7 +18,7 @@ COMPOSE_NATIVE := $(COMPOSE_BASE) -f docker-compose.native.yml
         docker-native native-deps run native qlab-relay qlab-cue-list qlab-import qlab-stages \
         qlab-sync-durations \
         qlab-light-cue-list qlab-light-import qlab-light-setup qlab-light-patch \
-        test test-backend test-frontend visualize-logs analyze-signal-trace prepare-tryout \
+        test test-backend test-frontend test-smoke visualize-logs analyze-signal-trace prepare-tryout \
         desktop-install
 
 help: ## Ziele anzeigen
@@ -164,6 +164,9 @@ run-tryout: prepare-tryout ## Probebetrieb: Script-Cues via API feuern + Analyse
 
 test-backend: ## pytest via backend/run-tests.sh (venv + deps)
 	cd "$(ROOT)/backend" && ./run-tests.sh -q
+
+test-smoke: ## Platform-Foundation-Smoke (Health, Director, Media, Cue Dry-Run)
+	cd "$(ROOT)/backend" && ./run-tests.sh tests/test_platform_foundation_smoke.py -q
 
 test-frontend: ## vitest
 	cd "$(ROOT)/frontend" && npm test -- --run

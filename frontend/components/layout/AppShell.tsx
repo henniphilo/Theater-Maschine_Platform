@@ -8,6 +8,7 @@ import { WorkshopStatusBar } from "@/components/layout/WorkshopStatusBar";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
 const LINKS = [
+  { href: "/productions", label: "Produktionen", short: "Produktionen", icon: "productions" },
   { href: "/technik", label: "Technik-Test", short: "Technik", icon: "technik" },
   { href: "/dramaturgie", label: "Teil 1", short: "Dramaturgie", icon: "dramaturgie" },
   { href: "/inszenierung", label: "Teil 2", short: "Inszenierung", icon: "inszenierung" },
@@ -30,6 +31,14 @@ function NavIconSvg({ name }: { name: NavIcon }) {
   };
 
   switch (name) {
+    case "productions":
+      return (
+        <svg {...common}>
+          <path d="M4 6h16" />
+          <path d="M4 12h16" />
+          <path d="M4 18h10" />
+        </svg>
+      );
     case "technik":
       return (
         <svg {...common}>

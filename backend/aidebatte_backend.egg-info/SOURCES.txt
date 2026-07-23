@@ -15,6 +15,7 @@ app/api/routes/director.py
 app/api/routes/health.py
 app/api/routes/inszenierung.py
 app/api/routes/media.py
+app/api/routes/productions.py
 app/api/routes/script.py
 app/core/__init__.py
 app/core/config.py
@@ -77,6 +78,7 @@ app/director/testing/__init__.py
 app/director/testing/fake_osc_receiver.py
 app/models/__init__.py
 app/models/entities.py
+app/models/production.py
 app/schemas/__init__.py
 app/schemas/avatar_speech.py
 app/schemas/chat.py
@@ -88,10 +90,12 @@ app/schemas/inszenierung.py
 app/schemas/media_mentions.py
 app/schemas/part1_selection.py
 app/schemas/performance.py
+app/schemas/production.py
 app/schemas/script.py
 app/schemas/sound_cues.py
 app/schemas/video_cues.py
 app/services/__init__.py
+app/services/active_production.py
 app/services/ai_errors.py
 app/services/ai_service.py
 app/services/avatar_duration.py
@@ -116,6 +120,7 @@ app/services/part1_workshop_service.py
 app/services/part2_cue_density.py
 app/services/performance_bundle_service.py
 app/services/preview_executor.py
+app/services/production_service.py
 app/services/script_splitter.py
 app/services/script_store.py
 app/services/sound_cue_catalog.py
@@ -199,7 +204,11 @@ tests/test_performance_bundle.py
 tests/test_performance_tryout.py
 tests/test_pixera_qlab_relay.py
 tests/test_pixera_video.py
+tests/test_platform_foundation_smoke.py
 tests/test_preview_executor.py
+tests/test_production_api.py
+tests/test_production_model.py
+tests/test_production_service.py
 tests/test_projector_lock.py
 tests/test_qlab_assign_video_stages.py
 tests/test_qlab_import_video_cues.py

@@ -10,6 +10,8 @@ import pytest
 
 from app.core.config import settings
 
+pytest_plugins = ["tests.conftest_production"]
+
 FIXTURE_MEDIA_VIDEO = Path(__file__).resolve().parent / "fixtures" / "media" / "video"
 
 
