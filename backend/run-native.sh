@@ -39,6 +39,7 @@ export TTS_PROVIDER="${TTS_PROVIDER:-say}"
 
 # Repo-Daten/Logs (nicht backend/data — dort liegt nur ggf. lokales tts/)
 export DIRECTOR_DATA_DIR="${DIRECTOR_DATA_DIR:-$ROOT/data}"
+export STORAGE_ROOT="${STORAGE_ROOT:-$ROOT/storage}"
 export OSC_LOG_PATH="${OSC_LOG_PATH:-$ROOT/logs/osc.log}"
 export DIRECTOR_LOG_PATH="${DIRECTOR_LOG_PATH:-$ROOT/logs/director.log}"
 export SIGNAL_TRACE_PATH="${SIGNAL_TRACE_PATH:-$ROOT/logs/signal_trace.jsonl}"

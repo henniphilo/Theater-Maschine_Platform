@@ -26,6 +26,10 @@ backend/data/
 # Director logs
 logs/
 
+# Platform asset object storage (local MVP — not in Git)
+storage/productions/
+!storage/.gitkeep
+
 # Large media assets (local / Docker volume only — not in Git)
 media/video/*
 !media/video/.gitkeep

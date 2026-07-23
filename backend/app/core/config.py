@@ -1,6 +1,30 @@
+from pathlib import Path
 from typing import Literal
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+_DEFAULT_ASSET_MIME_TYPES = [
+    "application/json",
+    "audio/aiff",
+    "audio/mpeg",
+    "audio/mp3",
+    "audio/wav",
+    "audio/x-aiff",
+    "audio/x-wav",
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "text/csv",
+    "text/markdown",
+    "text/plain",
+    "text/x-markdown",
+    "application/csv",
+    "video/mp4",
+    "video/quicktime",
+    "video/webm",
+]
 
 
 class Settings(BaseSettings):
@@ -20,6 +44,12 @@ class Settings(BaseSettings):
 
     database_url: str = "postgresql+psycopg://postgres:postgres@localhost:5432/aidebatte"
     redis_url: str = "redis://localhost:6379/0"
+
+    # Asset object storage (MVP: local filesystem under storage_root)
+    storage_root: str = "storage"
+    asset_max_upload_bytes: int = 100 * 1024 * 1024
+    asset_allowed_mime_types: list[str] = list(_DEFAULT_ASSET_MIME_TYPES)
+    asset_preview_text_chars: int = 4000
 
     openai_api_key: str | None = None
     anthropic_api_key: str | None = None
@@ -124,6 +154,28 @@ class Settings(BaseSettings):
     def light_uses_preview_osc(self) -> bool:
         """QLab relay / TouchDesigner mirror (/light/set_scene on OSC_HOST:OSC_PORT)."""
         return self.light_output == "mirror" or self.light_osc_mirror
+
+    @field_validator("asset_allowed_mime_types", mode="before")
+    @classmethod
+    def parse_allowed_mime_types(cls, value: object) -> object:
+        if isinstance(value, str):
+            parts = [part.strip() for part in value.split(",") if part.strip()]
+            return parts
+        return value
+
+    def resolved_storage_root(self) -> Path:
+        path = Path(self.storage_root)
+        if not path.is_absolute():
+            # Prefer repo root when running from backend/ (run-native.sh cwd).
+            cwd = Path.cwd()
+            if cwd.name == "backend" and (cwd.parent / "frontend").is_dir():
+                path = cwd.parent / path
+            else:
+                path = cwd / path
+        return path.resolve()
+
+    def allowed_mime_type_set(self) -> frozenset[str]:
+        return frozenset(self.asset_allowed_mime_types)
 
 
 settings = Settings()

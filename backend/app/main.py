@@ -14,9 +14,11 @@ from app.api.routes.debate import router as debate_router, tts_router
 from app.api.routes.director import router as director_router
 from app.api.routes.media import router as media_router
 from app.api.routes.inszenierung import router as inszenierung_router
+from app.api.routes.assets import router as assets_router
 from app.api.routes.productions import router as productions_router
 from app.api.routes.script import router as script_router
 from app.api.routes.health import router as health_router
+from app.api.routes.tags import router as tags_router
 from app.core.config import settings
 from app.core.logging import configure_logging
 from app.director.outputs.avatar_done_listener import (
@@ -49,7 +51,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type"],
 )
 
@@ -62,4 +64,6 @@ app.include_router(director_router, prefix="/api/v1")
 app.include_router(script_router, prefix="/api/v1")
 app.include_router(inszenierung_router, prefix="/api/v1")
 app.include_router(productions_router, prefix="/api/v1")
+app.include_router(assets_router, prefix="/api/v1")
+app.include_router(tags_router, prefix="/api/v1")
 app.include_router(media_router, prefix="/api/v1")

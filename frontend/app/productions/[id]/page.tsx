@@ -1,5 +1,6 @@
 "use client";
 
+import type { Route } from "next";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -123,6 +124,7 @@ export default function ProductionDetailPage() {
       </dl>
 
       <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap" }}>
+        <Link href={`/productions/${production.id}/library` as Route}>Bibliothek</Link>
         <button
           type="button"
           disabled={production.status === "archived" || isActive}
