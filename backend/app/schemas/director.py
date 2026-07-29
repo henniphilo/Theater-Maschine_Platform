@@ -2,7 +2,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-from app.director.cues.cue_models import DramaturgyDecision, OscCommand
+from app.director.cues.cue_models import CueProposal, DramaturgyDecision, OscCommand
 from app.director.dialogue.models import DialogueEvent, DialogueSpeaker
 
 
@@ -78,6 +78,37 @@ class ExecuteResponse(BaseModel):
     osc_commands: list[OscCommand] = Field(default_factory=list)
 
 
+class ProposalActionResponse(BaseModel):
+    proposal_id: str
+    status: str
+    executed: bool = False
+    blocked_reason: str | None = None
+    decision: DramaturgyDecision | None = None
+
+
+class ProposalOverrideRequest(BaseModel):
+    decision: DramaturgyDecision
+    force: bool = True
+
+
+class DramaturgyAnalysisEntry(BaseModel):
+    decision_id: str
+    created_at: str
+    text_snippet: str = ""
+    reason_short: str = ""
+    dramaturgical_function: str = ""
+    decision: str = ""
+    decision_status: str = ""
+    cue_id: str | None = None
+    executed: bool = False
+    blocked_reason: str | None = None
+
+
+class DramaturgyAnalysisResponse(BaseModel):
+    entries: list[DramaturgyAnalysisEntry] = Field(default_factory=list)
+    dramaturgy_state: dict[str, object] = Field(default_factory=dict)
+
+
 class DirectorStatusResponse(BaseModel):
     safety: dict[str, bool]
     active_cues: list[str]
@@ -90,8 +121,13 @@ class DirectorStatusResponse(BaseModel):
     last_blocked_reason: str | None = None
     last_planned_commands: list[OscCommand] = Field(default_factory=list)
     last_osc_commands: list[OscCommand] = Field(default_factory=list)
+    dramaturgy_state: dict[str, object] = Field(default_factory=dict)
+    open_proposals: list[CueProposal] = Field(default_factory=list)
     avatar_done_gate_enabled: bool = False
     avatar_done_gate: dict[str, object] = Field(default_factory=dict)
+    active_production_id: str | None = None
+    active_production_name: str | None = None
+    active_production_slug: str | None = None
 
 
 class AvatarDoneWaitRequest(BaseModel):
@@ -156,6 +192,46 @@ class LightDeskStatusResponse(BaseModel):
 class LightSendRequest(BaseModel):
     light_scene_id: str = Field(min_length=1)
     intensity: float | None = Field(default=None, ge=0.0, le=1.0)
+
+
+class OutputTargetEndpoint(BaseModel):
+    host: str
+    port: int
+
+
+class OutputTargetChannel(BaseModel):
+    default: OutputTargetEndpoint
+    override: OutputTargetEndpoint | None = None
+    effective: OutputTargetEndpoint
+
+
+class OutputTargetsResponse(BaseModel):
+    visual_output: str
+    light_output: str
+    video: OutputTargetChannel
+    light: OutputTargetChannel
+
+
+class OutputTargetsUpdateRequest(BaseModel):
+    video_host: str | None = None
+    video_port: int | None = Field(default=None, ge=1, le=65535)
+    light_host: str | None = None
+    light_port: int | None = Field(default=None, ge=1, le=65535)
+    reset: bool = False
+
+
+class QlabRelayStatusResponse(BaseModel):
+    running: bool
+    managed: bool
+    pid: int | None = None
+    listen_host: str
+    pixera_listen_port: int
+    light_listen_port: int
+    light_listener_enabled: bool
+    qlab_host: str
+    qlab_port: int
+    feedback_enabled: bool
+    error: str | None = None
 
 
 class RecordingRequest(BaseModel):

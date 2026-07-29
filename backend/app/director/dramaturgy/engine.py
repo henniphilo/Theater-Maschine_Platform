@@ -9,6 +9,7 @@ from app.director.cues.cue_models import (
     VisualCue,
 )
 from app.director.dialogue.models import DialogueEvent
+from app.director.dramaturgy.reason_short import enrich_decision_metadata
 from app.director.media.database import MediaDatabase
 from app.director.media.selector import MediaSelector
 
@@ -71,7 +72,7 @@ class DramaturgyEngine:
                 )
             ],
         )
-        return decision
+        return enrich_decision_metadata(decision)
 
     @staticmethod
     def _build_reason(event: DialogueEvent, video, sound, light) -> str:

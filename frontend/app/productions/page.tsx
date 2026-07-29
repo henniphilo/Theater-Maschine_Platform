@@ -6,6 +6,7 @@ import { FormEvent, useCallback, useEffect, useState } from "react";
 import { setMirroredActiveProductionId } from "@/lib/activeProduction";
 import {
   createProduction,
+  duplicateProduction,
   fetchActiveProduction,
   listProductions,
   setActiveProduction
@@ -20,6 +21,7 @@ export default function ProductionsPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [busyId, setBusyId] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     setError(null);
@@ -68,7 +70,40 @@ export default function ProductionsPage() {
       setMirroredActiveProductionId(active.production_id);
       await refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Aktivieren fehlgeschlagen");
+      const message = err instanceof Error ? err.message : "Aktivieren fehlgeschlagen";
+      if (message.toLowerCase().includes("force")) {
+        const confirmed = window.confirm(
+          `${message}\n\nTrotzdem wechseln? (löst Emergency Stop aus)`
+        );
+        if (!confirmed) {
+          setError(message);
+          return;
+        }
+        try {
+          const active = await setActiveProduction(production.id, { force: true });
+          setActiveId(active.production_id);
+          setMirroredActiveProductionId(active.production_id);
+          await refresh();
+          return;
+        } catch (forceErr) {
+          setError(forceErr instanceof Error ? forceErr.message : "Aktivieren fehlgeschlagen");
+          return;
+        }
+      }
+      setError(message);
+    }
+  }
+
+  async function onDuplicate(production: Production) {
+    setBusyId(production.id);
+    setError(null);
+    try {
+      await duplicateProduction(production.id);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Duplizieren fehlgeschlagen");
+    } finally {
+      setBusyId(null);
     }
   }
 
@@ -151,6 +186,13 @@ export default function ProductionsPage() {
                 </div>
                 <div style={{ display: "flex", gap: "var(--space-2)", alignItems: "center" }}>
                   <Link href={`/productions/${production.id}`}>Öffnen</Link>
+                  <button
+                    type="button"
+                    disabled={busyId === production.id}
+                    onClick={() => void onDuplicate(production)}
+                  >
+                    {busyId === production.id ? "Kopiere…" : "Duplizieren"}
+                  </button>
                   <button
                     type="button"
                     disabled={production.status === "archived" || isActive}

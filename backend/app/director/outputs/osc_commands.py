@@ -2,6 +2,7 @@ import logging
 from typing import Any
 
 from app.core.config import settings
+from app.director.output_targets import effective_light_target, effective_video_target
 from app.director.cues.cue_models import DramaturgyDecision, LightCue, OscCommand, VisualAction, resolve_light_scene_ids
 from app.director.cues.cue_points import decision_from_cue_point, normalize_cue_points
 from app.director.cues.visual_outputs import resolve_visual_assignments
@@ -46,7 +47,7 @@ def apply_runtime_safety_dry_run(cmd: OscCommand) -> OscCommand:
 
 def _light_osc_target(osc_host: str, osc_port: int) -> tuple[str, int]:
     del osc_host, osc_port
-    return settings.light_desk_host(), settings.light_desk_port()
+    return effective_light_target()
 
 
 def _resolve_light_intensity(light: LightCue, decision: DramaturgyDecision) -> float:
@@ -284,14 +285,13 @@ def _visual_commands(
 ) -> list[OscCommand]:
     mode = settings.visual_output
     commands: list[OscCommand] = []
+    video_host, video_port = effective_video_target()
     if mode in ("pixera", "both"):
-        pixera_host = settings.pixera_osc_host or osc_host
-        pixera_port = settings.pixera_osc_port or osc_port
         commands.extend(
             _pixera_visual_commands(
                 visual,
-                osc_host=pixera_host,
-                osc_port=pixera_port,
+                osc_host=video_host,
+                osc_port=video_port,
                 is_dry_run=is_dry_run,
                 video_scope=video_scope,
             )
@@ -300,8 +300,8 @@ def _visual_commands(
         commands.extend(
             _touchdesigner_visual_commands(
                 visual,
-                osc_host=osc_host,
-                osc_port=osc_port,
+                osc_host=video_host,
+                osc_port=video_port,
                 is_dry_run=is_dry_run,
             )
         )

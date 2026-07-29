@@ -5,10 +5,10 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-FRONTEND_URL="${THEATERMASCHINE_URL:-http://localhost:3003}"
+FRONTEND_URL="${THEATERMASCHINE_URL:-http://localhost:3004}"
 # Teil-2-Vorlage: erst öffnen, wenn Frontend + natives Backend die Kanon-Vorlage liefern
-SCRIPT_READY_URL="${THEATERMASCHINE_SCRIPT_URL:-http://localhost:3003/api/v1/inszenierung/script}"
-OPEN_URL="${THEATERMASCHINE_OPEN_URL:-http://localhost:3003/inszenierung}"
+SCRIPT_READY_URL="${THEATERMASCHINE_SCRIPT_URL:-http://localhost:3004/api/v1/inszenierung/script}"
+OPEN_URL="${THEATERMASCHINE_OPEN_URL:-http://localhost:3004/inszenierung}"
 
 cd "$ROOT"
 

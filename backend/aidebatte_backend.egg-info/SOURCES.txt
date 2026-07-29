@@ -40,7 +40,9 @@ app/db/session.py
 app/director/__init__.py
 app/director/avatar_done_gate.py
 app/director/light_desk_test.py
+app/director/output_targets.py
 app/director/pipeline.py
+app/director/qlab_relay_manager.py
 app/director/recording.py
 app/director/remote_transport.py
 app/director/run_state.py
@@ -57,10 +59,16 @@ app/director/dialogue/__init__.py
 app/director/dialogue/builder.py
 app/director/dialogue/models.py
 app/director/dramaturgy/__init__.py
+app/director/dramaturgy/conflict_check.py
 app/director/dramaturgy/engine.py
+app/director/dramaturgy/function_mapping.py
 app/director/dramaturgy/llm_director.py
+app/director/dramaturgy/proposals.py
+app/director/dramaturgy/reason_short.py
 app/director/dramaturgy/rules.py
 app/director/dramaturgy/rules_text.py
+app/director/dramaturgy/state.py
+app/director/dramaturgy/trace.py
 app/director/media/__init__.py
 app/director/media/database.py
 app/director/media/inventory.py
@@ -93,6 +101,7 @@ app/models/__init__.py
 app/models/asset.py
 app/models/cue.py
 app/models/device.py
+app/models/dramaturgy_decision_event.py
 app/models/entities.py
 app/models/production.py
 app/models/rule.py
@@ -134,7 +143,9 @@ app/services/cue_service.py
 app/services/debate_service.py
 app/services/device_secrets.py
 app/services/device_service.py
+app/services/director_production_context.py
 app/services/dramaturg_labels.py
+app/services/dramaturgy_analysis_service.py
 app/services/dramaturgy_text.py
 app/services/dramaturgy_workshop_service.py
 app/services/inszenierung_analyse_service.py
@@ -144,6 +155,7 @@ app/services/inszenierung_komposition_service.py
 app/services/inszenierung_store.py
 app/services/inszenierung_validation.py
 app/services/media_mentions.py
+app/services/output_slots.py
 app/services/part1_selection_builder.py
 app/services/part1_selection_store.py
 app/services/part1_selection_validation.py
@@ -151,6 +163,7 @@ app/services/part1_workshop_service.py
 app/services/part2_cue_density.py
 app/services/performance_bundle_service.py
 app/services/preview_executor.py
+app/services/production_rules_runtime.py
 app/services/production_service.py
 app/services/rule_db_adapter.py
 app/services/rule_evaluator.py
@@ -214,6 +227,7 @@ tests/test_baerenklau_beat.py
 tests/test_burgtheater_import.py
 tests/test_catalog_media_resolver.py
 tests/test_cue_api.py
+tests/test_cue_execution_service.py
 tests/test_cue_model.py
 tests/test_cue_points.py
 tests/test_cue_scheduler.py
@@ -225,9 +239,11 @@ tests/test_device_service.py
 tests/test_director_api.py
 tests/test_director_emergency_layered.py
 tests/test_director_pipeline.py
+tests/test_director_production_context.py
 tests/test_director_trace_context.py
 tests/test_dramaturg_labels.py
 tests/test_dramaturgy.py
+tests/test_dramaturgy_reason_short.py
 tests/test_dramaturgy_rules_text.py
 tests/test_dramaturgy_text.py
 tests/test_dramaturgy_workshop.py
@@ -257,6 +273,8 @@ tests/test_neutral_reset.py
 tests/test_osc_log_recent.py
 tests/test_osc_queue.py
 tests/test_osc_queue_trace.py
+tests/test_output_slots.py
+tests/test_output_targets.py
 tests/test_part1_selection_builder.py
 tests/test_part1_selection_validation.py
 tests/test_part1_workshop_flow.py
@@ -268,13 +286,16 @@ tests/test_pixera_video.py
 tests/test_platform_foundation_smoke.py
 tests/test_preview_executor.py
 tests/test_production_api.py
+tests/test_production_duplicate.py
 tests/test_production_model.py
+tests/test_production_rules_runtime.py
 tests/test_production_service.py
 tests/test_projector_lock.py
 tests/test_qlab_assign_video_stages.py
 tests/test_qlab_import_video_cues.py
 tests/test_qlab_install_light_patch.py
 tests/test_qlab_light_cues.py
+tests/test_qlab_relay_manager.py
 tests/test_qlab_sync_durations.py
 tests/test_remote_transport.py
 tests/test_rule_api.py

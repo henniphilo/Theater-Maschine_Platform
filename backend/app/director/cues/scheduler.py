@@ -3,6 +3,7 @@ from datetime import UTC, datetime
 
 from app.director.cues.cue_models import DramaturgyDecision, LightAction, VisualAction
 from app.director.cues.safety import SafetyState
+from app.director.dramaturgy.state import DramaturgyState
 from app.director.media.database import DramaturgyRules
 
 
@@ -21,7 +22,11 @@ class CueScheduler:
         *,
         anarchy_level: float = 0.0,
         skip_interval_check: bool = False,
+        dramaturgy_state: DramaturgyState | None = None,
     ) -> tuple[bool, str | None]:
+        from app.director.dramaturgy.conflict_check import check_conflicts
+        from app.director.dramaturgy.state import DramaturgyState as _DramaturgyState
+
         if self.safety.emergency_stop_active:
             return False, "emergency_stop_active"
 
@@ -38,6 +43,11 @@ class CueScheduler:
 
         if decision.light and (not self.safety.lights_enabled or self.safety.performance_tryout):
             return False, "lights_disabled"
+
+        state = dramaturgy_state or _DramaturgyState()
+        conflict = check_conflicts(decision, state)
+        if not conflict.allowed and conflict.reason:
+            return False, conflict.reason
 
         if skip_interval_check:
             return True, None

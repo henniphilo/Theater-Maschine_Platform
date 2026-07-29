@@ -64,13 +64,17 @@ export function Teil2ScriptCueOverview({ overview }: Teil2ScriptCueOverviewProps
               {row.annotations.length > 0 ? (
                 <div className="teil2CueBadgeRow">
                   {row.annotations.map((annotation, index) => (
-                    <span
-                      key={`${row.sentence_index}-${annotation.kind}-${annotation.label}-${index}`}
-                      className={`teil2CueBadge ${KIND_CLASS[annotation.kind]}`}
-                      title={annotation.reason ?? undefined}
-                    >
-                      {KIND_LABELS[annotation.kind]}: {annotation.label}
-                      {annotation.projector ? ` @ ${annotation.projector}` : ""}
+                    <span key={`${row.sentence_index}-${annotation.kind}-${annotation.label}-${index}`}>
+                      <span
+                        className={`teil2CueBadge ${KIND_CLASS[annotation.kind]}`}
+                        title={annotation.reason ?? undefined}
+                      >
+                        {KIND_LABELS[annotation.kind]}: {annotation.label}
+                        {annotation.projector ? ` @ ${annotation.projector}` : ""}
+                      </span>
+                      {annotation.reason ? (
+                        <span className="teil2CueReasonInline textMuted"> – {annotation.reason}</span>
+                      ) : null}
                     </span>
                   ))}
                 </div>

@@ -1,5 +1,6 @@
 import type { MediaLookup } from "@/lib/types/media";
 import { formatMidiTrigger } from "@/lib/midi/format";
+import { displayReasonShort, dramaturgicalFunctionLabel } from "@/lib/dramaturgy/labels";
 import type { CuePoint, DramaturgyDecision } from "@/lib/types/director";
 import { formatVisualCueLabel } from "@/lib/types/visual";
 import { normalizeCuePoints } from "@/features/show/cuePlayback";
@@ -81,9 +82,17 @@ export function MediaCueDetail({
   const video = dramaturgy.visual?.clip_id ? media?.videoById[dramaturgy.visual.clip_id] : undefined;
   const sound = dramaturgy.sound?.cue_id ? media?.soundById[dramaturgy.sound.cue_id] : undefined;
   const lightScene = dramaturgy.light?.scene_id ? media?.lightById[dramaturgy.light.scene_id] : undefined;
+  const functionLabel = dramaturgicalFunctionLabel(dramaturgy.dramaturgical_function);
+  const reasonShort = displayReasonShort(dramaturgy.reason_short, dramaturgy.reason);
 
   return (
     <div className={`mediaCueDetail${compact ? " mediaCueDetailCompact" : ""}`}>
+      {functionLabel || reasonShort ? (
+        <p className="textMuted" style={{ fontSize: "0.9rem" }}>
+          {functionLabel ? `${functionLabel}` : null}
+          {reasonShort ? `${functionLabel ? " · " : ""}– ${reasonShort}` : null}
+        </p>
+      ) : null}
       {dramaturgy.dramaturgical_reading ? (
         <p className="textMuted" style={{ fontSize: "0.9rem" }}>
           Lesart: {dramaturgy.dramaturgical_reading}

@@ -23,7 +23,14 @@ from app.services.part1_selection_validation import _light_scene_ids, _play_soun
 
 _logger = logging.getLogger("theatermaschine.part1.preview")
 
-DEFAULT_VIDEO_PROJECTOR: ProjectorTarget = "rz21"
+
+def _default_video_projector() -> str:
+    try:
+        from app.services.output_slots import default_preview_projector
+
+        return default_preview_projector()
+    except Exception:
+        return "rz21"
 
 
 def _out_cue_id(play_id: str) -> str | None:
@@ -43,7 +50,7 @@ def _preview_decision_for_medium(
     if medium in ("sound", "music"):
         return DramaturgyDecision(sound=SoundCue(cue_id=medium_id, volume=0.65))
     if medium == "video":
-        target = projector or DEFAULT_VIDEO_PROJECTOR
+        target = projector or _default_video_projector()
         return DramaturgyDecision(
             visual=VisualCue(
                 clip_id=medium_id,
@@ -67,7 +74,7 @@ def _stop_decision_for_medium(
             return DramaturgyDecision(sound=SoundCue(cue_id=out_id, volume=0.0))
         return None
     if medium == "video":
-        target = projector or DEFAULT_VIDEO_PROJECTOR
+        target = projector or _default_video_projector()
         return DramaturgyDecision(
             visual=VisualCue(
                 clip_id="black",

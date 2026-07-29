@@ -61,13 +61,26 @@ export async function deleteCue(id: string, productionId?: string): Promise<void
   }
 }
 
-/** Always dry-run — UI never requests real hardware send. */
+/** Always dry-run — UI primary action never requests real hardware send. */
 export async function dryRunCue(id: string, productionId?: string): Promise<CueExecutionResult> {
   const query = productionId ? `?production_id=${encodeURIComponent(productionId)}` : "";
   return apiFetchJson<CueExecutionResult>(`/cues/${id}/execute${query}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ dry_run: true })
+  });
+}
+
+/** Real execute via Device adapters — caller must confirm in UI first. */
+export async function executeCueReal(
+  id: string,
+  productionId?: string
+): Promise<CueExecutionResult> {
+  const query = productionId ? `?production_id=${encodeURIComponent(productionId)}` : "";
+  return apiFetchJson<CueExecutionResult>(`/cues/${id}/execute${query}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ dry_run: false })
   });
 }
 

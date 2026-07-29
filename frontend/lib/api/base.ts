@@ -17,7 +17,7 @@ export async function apiFetch(input: string, init?: RequestInit): Promise<Respo
   } catch (err) {
     if (isNetworkFetchError(err)) {
       throw new Error(
-        "Backend nicht erreichbar. Bitte «make run» starten und http://localhost:3003/inszenierung nutzen."
+        "Backend nicht erreichbar. Bitte «make run» starten und http://localhost:3004/inszenierung nutzen."
       );
     }
     throw err;

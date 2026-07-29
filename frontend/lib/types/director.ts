@@ -60,7 +60,11 @@ export type DramaturgyDecision = {
     replace_previous?: boolean;
   } | null;
   reason: string;
+  reason_short?: string;
   dramaturgical_reading?: string;
+  dramaturgical_function?: string;
+  decision_kind?: string;
+  confidence?: number;
   cue_points?: CuePoint[];
   performance_speakers?: PerformanceSpeaker[];
   tags: string[];

@@ -144,6 +144,22 @@ class MediaDatabase:
             intensity_boosters=rules_data.get("intensity_boosters", []),
             min_cue_interval_seconds=rules_data.get("min_cue_interval_seconds", {}),
         )
+        self._overlay_active_production_rules()
+
+    def _overlay_active_production_rules(self) -> None:
+        """Prefer DB rules of the active Production when available (JSON remains fallback)."""
+        try:
+            from app.db.session import SessionLocal
+            from app.services.production_rules_runtime import overlay_media_db_rules_from_active
+
+            db = SessionLocal()
+            try:
+                self.rules = overlay_media_db_rules_from_active(db, self.rules)
+            finally:
+                db.close()
+        except Exception:
+            # MediaDatabase must stay usable without Postgres / active production.
+            pass
 
     @property
     def dramaturgy_sounds(self) -> list[SoundAsset]:

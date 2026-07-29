@@ -75,7 +75,7 @@ export type CueExecutionResult = {
   cue_id: string;
   production_id: string;
   dry_run: boolean;
-  status: "planned" | "skipped" | "rejected";
+  status: "planned" | "skipped" | "rejected" | "executed" | "failed";
   message: string;
   planned: Record<string, unknown>;
 };

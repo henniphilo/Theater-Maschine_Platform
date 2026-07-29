@@ -1,3 +1,7 @@
+import type {
+  CueProposal,
+  DramaturgyAnalysisResponse
+} from "@/lib/dramaturgy/labels";
 import type { DramaturgyDecision, OscCommand, TraceContext } from "@/lib/types/director";
 
 import { apiBaseUrl, apiFetch } from "@/lib/api/base";
@@ -124,7 +128,12 @@ export type DirectorStatus = {
   last_blocked_reason: string | null;
   last_planned_commands: OscCommand[];
   last_osc_commands: OscCommand[];
+  dramaturgy_state?: Record<string, unknown>;
+  open_proposals?: CueProposal[];
   avatar_done_gate_enabled?: boolean;
+  active_production_id?: string | null;
+  active_production_name?: string | null;
+  active_production_slug?: string | null;
 };
 
 export type AvatarDoneWaitStatus = "disabled" | "skipped" | "done" | "timeout" | "cancelled";
@@ -188,6 +197,32 @@ export type SafetyUpdate = Partial<DirectorSafety>;
 export async function fetchDirectorStatus(): Promise<DirectorStatus> {
   const res = await apiFetch("/director/status");
   if (!res.ok) throw new Error("Director status unavailable");
+  return res.json();
+}
+
+export async function fetchOpenProposals(): Promise<CueProposal[]> {
+  const res = await apiFetch("/director/proposals");
+  if (!res.ok) throw new Error("Proposals unavailable");
+  return res.json();
+}
+
+export async function acceptDirectorProposal(proposalId: string, force = false) {
+  const res = await apiFetch(`/director/proposals/${proposalId}/accept?force=${force ? "true" : "false"}`, {
+    method: "POST"
+  });
+  if (!res.ok) throw new Error("Accept proposal failed");
+  return res.json();
+}
+
+export async function rejectDirectorProposal(proposalId: string) {
+  const res = await apiFetch(`/director/proposals/${proposalId}/reject`, { method: "POST" });
+  if (!res.ok) throw new Error("Reject proposal failed");
+  return res.json();
+}
+
+export async function fetchDramaturgyAnalysis(limit = 100): Promise<DramaturgyAnalysisResponse> {
+  const res = await apiFetch(`/director/dramaturgy-analysis?limit=${limit}`);
+  if (!res.ok) throw new Error("Dramaturgy analysis unavailable");
   return res.json();
 }
 
@@ -286,6 +321,51 @@ export type TechnikStopRequest = {
   send_light?: boolean;
 };
 
+export type OutputTargetEndpoint = {
+  host: string;
+  port: number;
+};
+
+export type OutputTargetChannel = {
+  default: OutputTargetEndpoint;
+  override: OutputTargetEndpoint | null;
+  effective: OutputTargetEndpoint;
+};
+
+export type OutputTargets = {
+  visual_output: string;
+  light_output: string;
+  video: OutputTargetChannel;
+  light: OutputTargetChannel;
+};
+
+export type OutputTargetsUpdate = {
+  video_host?: string;
+  video_port?: number;
+  light_host?: string;
+  light_port?: number;
+  reset?: boolean;
+};
+
+export async function fetchOutputTargets(): Promise<OutputTargets> {
+  const res = await apiFetch("/director/output-targets");
+  if (!res.ok) throw new Error("Output targets unavailable");
+  return res.json();
+}
+
+export async function patchOutputTargets(payload: OutputTargetsUpdate): Promise<OutputTargets> {
+  const res = await apiFetch("/director/output-targets", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ detail: "Output targets update failed" }));
+    throw new Error(body.detail ?? "Output targets update failed");
+  }
+  return res.json();
+}
+
 export async function postTechnikStart(payload: OscTestRequest = {}): Promise<TechnikHoldStatus> {
   const res = await apiFetch("/director/technik/start", {
     method: "POST",
@@ -315,6 +395,44 @@ export async function postTechnikStop(payload: TechnikStopRequest = {}): Promise
 export async function fetchTechnikStatus(): Promise<TechnikHoldStatus> {
   const res = await apiFetch("/director/technik/status");
   if (!res.ok) throw new Error("Technik status unavailable");
+  return res.json();
+}
+
+export type QlabRelayStatus = {
+  running: boolean;
+  managed: boolean;
+  pid?: number | null;
+  listen_host: string;
+  pixera_listen_port: number;
+  light_listen_port: number;
+  light_listener_enabled: boolean;
+  qlab_host: string;
+  qlab_port: number;
+  feedback_enabled: boolean;
+  error?: string | null;
+};
+
+export async function fetchQlabRelayStatus(): Promise<QlabRelayStatus> {
+  const res = await apiFetch("/director/relay/status");
+  if (!res.ok) throw new Error("Relay status unavailable");
+  return res.json();
+}
+
+export async function postQlabRelayStart(): Promise<QlabRelayStatus> {
+  const res = await apiFetch("/director/relay/start", { method: "POST" });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ detail: "Relay start failed" }));
+    throw new Error(body.detail ?? "Relay start failed");
+  }
+  return res.json();
+}
+
+export async function postQlabRelayStop(): Promise<QlabRelayStatus> {
+  const res = await apiFetch("/director/relay/stop", { method: "POST" });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ detail: "Relay stop failed" }));
+    throw new Error(body.detail ?? "Relay stop failed");
+  }
   return res.json();
 }
 

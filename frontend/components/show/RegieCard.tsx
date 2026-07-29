@@ -1,5 +1,6 @@
 import type { DirectorPayload, OscCommand, ShowPhase } from "@/lib/types/director";
 import { formatOscCommand } from "@/lib/types/director";
+import { displayReasonShort, dramaturgicalFunctionLabel } from "@/lib/dramaturgy/labels";
 import { formatVisualCueLabel } from "@/lib/types/visual";
 
 const PHASE_LABELS: Record<ShowPhase, string> = {
@@ -37,6 +38,8 @@ export function RegieCard({
   const planned = director.planned_commands ?? [];
   const sent = oscCommands ?? director.osc_commands ?? [];
   const displayCommands = sent.length > 0 ? sent : planned;
+  const reasonShort = displayReasonShort(director.decision.reason_short, director.decision.reason);
+  const functionLabel = dramaturgicalFunctionLabel(director.decision.dramaturgical_function);
 
   return (
     <div className="regieCard">
@@ -48,7 +51,11 @@ export function RegieCard({
         Stimmung: {director.decision.mood} · Intensität: {director.decision.intensity.toFixed(2)}
         {director.decision.tags.length ? ` · Tags: ${director.decision.tags.join(", ")}` : ""}
       </p>
-      {director.decision.reason ? <p className="regieReason">{director.decision.reason}</p> : null}
+      {reasonShort ? (
+        <p className="regieReason">
+          {functionLabel ? <span className="textMuted">{functionLabel} · </span> : null}– {reasonShort}
+        </p>
+      ) : null}
       {cueSummary(director).length > 0 ? (
         <ul className="regieCueList">
           {cueSummary(director).map((line) => {

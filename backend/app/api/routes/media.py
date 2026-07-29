@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Query
 
 from app.core.config import settings
+from app.director.output_targets import effective_light_target, effective_video_target
 from app.director.media.database import MediaDatabase
 from app.schemas.avatar_speech import AvatarSpeechCatalog
 from app.schemas.sound_cues import SoundCueCatalog
@@ -36,6 +37,8 @@ def get_media_catalog(video_scope: VideoScope = Query(default="part2")) -> dict:
     db = MediaDatabase()
     video_catalog = _video_catalog.load(video_scope)
     allowed_video_ids = {clip.id for clip in video_catalog.clips}
+    video_host, video_port = effective_video_target()
+    light_host, light_port = effective_light_target()
     return {
         "videos": [v.model_dump() for v in db.videos if v.id in allowed_video_ids],
         "projectors": [p.model_dump() for p in video_catalog.projectors],
@@ -60,8 +63,8 @@ def get_media_catalog(video_scope: VideoScope = Query(default="part2")) -> dict:
         },
         "pixera": {
             "output": settings.visual_output,
-            "osc_host": settings.pixera_osc_host or settings.osc_host,
-            "osc_port": settings.pixera_osc_port or settings.osc_port,
+            "osc_host": video_host,
+            "osc_port": video_port,
             "osc_dry_run": settings.osc_dry_run,
             "address": video_catalog.osc_address,
             "overview_clips": "media/video/Video Übersicht.csv",
@@ -71,13 +74,13 @@ def get_media_catalog(video_scope: VideoScope = Query(default="part2")) -> dict:
         "lighting": {
             "output": settings.light_output,
             "osc_mirror": settings.light_osc_mirror,
-            "tcp_host": settings.light_tcp_host,
-            "tcp_port": settings.light_tcp_port,
+            "tcp_host": light_host if settings.light_output == "tcp" else settings.light_tcp_host,
+            "tcp_port": light_port if settings.light_output == "tcp" else settings.light_tcp_port,
             "tcp_protocol": settings.light_tcp_protocol,
-            "osc_host": settings.light_desk_host(),
-            "osc_port": settings.light_desk_port(),
-            "preview_osc_host": settings.osc_host if settings.light_output == "mirror" else None,
-            "preview_osc_port": settings.osc_port if settings.light_output == "mirror" else None,
+            "osc_host": light_host,
+            "osc_port": light_port,
+            "preview_osc_host": light_host if settings.light_output == "mirror" else None,
+            "preview_osc_port": light_port if settings.light_output == "mirror" else None,
             "preview_set_scene": "/light/set_scene",
             "preview_blackout": "/light/blackout",
             "qlab_relay_port": settings.osc_port if settings.light_output == "mirror" else None,

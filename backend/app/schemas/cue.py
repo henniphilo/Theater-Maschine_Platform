@@ -111,7 +111,7 @@ class CueRead(BaseModel):
 
 
 class CueExecuteRequest(BaseModel):
-    """UI/API may only request dry-run in this milestone."""
+    """dry_run=true (default) plans only; dry_run=false dispatches via Device adapters."""
 
     dry_run: bool = True
 
@@ -120,7 +120,7 @@ class CueExecutionResult(BaseModel):
     cue_id: str
     production_id: str
     dry_run: bool
-    status: Literal["planned", "skipped", "rejected"]
+    status: Literal["planned", "skipped", "rejected", "executed", "failed"]
     message: str
     planned: dict[str, Any] = Field(default_factory=dict)
 

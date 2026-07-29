@@ -1,6 +1,14 @@
 import pytest
 
-from app.director.cues.cue_models import DramaturgyDecision, LightCue, SoundCue, VisualCue, VisualAction
+from app.director.cues.cue_models import (
+    DecisionKind,
+    DramaturgicalFunction,
+    DramaturgyDecision,
+    LightCue,
+    SoundCue,
+    VisualCue,
+    VisualAction,
+)
 from app.director.dialogue.models import DialogueEvent, DialogueSpeaker
 from app.director.dramaturgy.llm_director import DramaturgyValidationError, LLMDirector
 
@@ -39,7 +47,35 @@ def test_rules_mode_decide(monkeypatch: pytest.MonkeyPatch) -> None:
 
     decision = asyncio.run(director.decide(_event()))
     assert decision.visual is not None
+    assert decision.reason_short
+    assert decision.dramaturgical_function is not None
     from app.director.media.database import MediaDatabase
 
     video_ids = {v.id for v in MediaDatabase().videos}
     assert decision.visual.clip_id in video_ids
+
+
+def test_validator_accepts_none_decision() -> None:
+    director = LLMDirector()
+    decision = DramaturgyDecision(
+        decision_kind=DecisionKind.NONE,
+        dramaturgical_function=DramaturgicalFunction.SPACE,
+        reason_short="Lässt den neuen Gedanken ohne mediale Begleitung beginnen.",
+        mood="neutral",
+        intensity=0.4,
+        cue_points=[],
+    )
+    director.validate_decision(decision)
+
+
+def test_validator_rejects_bad_reason_short() -> None:
+    director = LLMDirector()
+    decision = DramaturgyDecision(
+        decision_kind=DecisionKind.NONE,
+        reason_short="Sound passt zur Szene.",
+        mood="neutral",
+        intensity=0.4,
+        cue_points=[],
+    )
+    with pytest.raises(DramaturgyValidationError):
+        director.validate_decision(decision)

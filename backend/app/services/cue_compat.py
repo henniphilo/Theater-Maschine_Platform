@@ -89,8 +89,8 @@ def to_visual_cue(cue: Cue) -> VisualCue:
         visual_action = VisualAction.PLAY_CLIP
 
     projector = params.get("projector")
-    if projector not in (None, "adam", "eva", "rz21", "led"):
-        projector = None
+    if projector is not None:
+        projector = str(projector).strip() or None
 
     video_type = params.get("video_type") or "atmosphere"
     if video_type not in ("avatar", "atmosphere", "regie"):

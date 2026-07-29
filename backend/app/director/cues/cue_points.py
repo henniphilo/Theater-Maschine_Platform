@@ -1,4 +1,11 @@
 from app.director.cues.cue_models import CuePoint, CuePointTrigger, DramaturgyDecision
+from app.director.dramaturgy.function_mapping import normalize_dramaturgical_function
+
+
+def map_legacy_function(function: str) -> str:
+    """Return canonical enum value string for a legacy German function label."""
+    parsed = normalize_dramaturgical_function(function)
+    return parsed.value if parsed else function
 
 
 def cue_point_is_active(point: CuePoint) -> bool:
@@ -25,20 +32,28 @@ def normalize_cue_points(decision: DramaturgyDecision) -> list[CuePoint]:
 
 
 def decision_from_cue_point(base: DramaturgyDecision, point: CuePoint) -> DramaturgyDecision:
-    reason = base.reason
+    reason = base.reason_short or base.reason
     if point.function:
         reason = f"[{point.function}] {reason}".strip()
+
+    function = base.dramaturgical_function
+    if function is None and point.function:
+        function = normalize_dramaturgical_function(point.function)
 
     return DramaturgyDecision(
         visual=point.visual,
         sound=point.sound,
         light=point.light,
         reason=reason,
+        reason_short=base.reason_short,
         tags=list(base.tags),
         mood=base.mood,
         intensity=point.intensity,
         timestamp=base.timestamp,
         dramaturgical_reading=base.dramaturgical_reading,
+        dramaturgical_function=function,
+        decision_kind=base.decision_kind,
+        confidence=base.confidence,
         cue_points=[],
     )
 

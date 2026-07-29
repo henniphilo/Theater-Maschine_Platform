@@ -1,9 +1,11 @@
 "use client";
 
+import type { Route } from "next";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 import {
+  acceptDirectorProposal,
   DirectorStatus,
   fetchDirectorStatus,
   patchDirectorSafety,
@@ -11,8 +13,10 @@ import {
   postDirectorEmergencyStop,
   postRecordStart,
   postRecordStop,
+  rejectDirectorProposal,
   streamDirectorEvents
 } from "@/lib/api/director";
+import { displayReasonShort, dramaturgicalFunctionLabel } from "@/lib/dramaturgy/labels";
 import { formatOscCommand } from "@/lib/types/director";
 
 function FlagButton({
@@ -126,6 +130,30 @@ export default function DirectorPage() {
     }
   }
 
+  async function handleAcceptProposal(proposalId: string) {
+    setLoading(true);
+    try {
+      await acceptDirectorProposal(proposalId);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Vorschlag annehmen fehlgeschlagen");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleRejectProposal(proposalId: string) {
+    setLoading(true);
+    try {
+      await rejectDirectorProposal(proposalId);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Vorschlag ablehnen fehlgeschlagen");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const lastEvent = status?.last_event;
   const lastDecision = status?.last_decision;
 
@@ -138,6 +166,23 @@ export default function DirectorPage() {
       <p className="textMuted">
         Semi-autonome Regie: Safety-Flags, Emergency Stop, Aufnahme-Steuerung.
       </p>
+
+      {status?.active_production_id ? (
+        <p>
+          Aktive Produktion:{" "}
+          <Link href={`/productions/${status.active_production_id}` as Route}>
+            {status.active_production_name ?? status.active_production_id}
+          </Link>
+          {status.active_production_slug ? (
+            <span className="textMuted"> ({status.active_production_slug})</span>
+          ) : null}
+        </p>
+      ) : (
+        <p className="textMuted">
+          Keine aktive Produktion —{" "}
+          <Link href={"/productions" as Route}>Produktionen</Link>
+        </p>
+      )}
 
       {error ? (
         <div role="alert" className="textError">
@@ -222,6 +267,62 @@ export default function DirectorPage() {
             Record Stop
           </button>
         </div>
+      </section>
+
+      <section className="card col">
+        <h2>Dramaturgie-Vorschläge</h2>
+        <p className="textMuted">
+          <Link href="/director/analysis">Probe-Analyse anzeigen →</Link>
+        </p>
+        {status?.open_proposals?.length ? (
+          <ul style={{ margin: 0, paddingLeft: 0, listStyle: "none" }}>
+            {status.open_proposals.map((proposal) => {
+              const reason = displayReasonShort(
+                proposal.reason_short,
+                proposal.decision?.reason
+              );
+              return (
+                <li key={proposal.proposal_id} className="col" style={{ gap: "0.35rem", marginBottom: "0.75rem" }}>
+                  <strong>{proposal.text_snippet || "Regievorschlag"}</strong>
+                  {reason ? (
+                    <span className="textMuted">
+                      {dramaturgicalFunctionLabel(proposal.dramaturgical_function ?? proposal.decision?.dramaturgical_function)} · – {reason}
+                    </span>
+                  ) : null}
+                  <div className="row">
+                    <button
+                      type="button"
+                      onClick={() => handleAcceptProposal(proposal.proposal_id)}
+                      disabled={loading || status.safety.emergency_stop_active}
+                    >
+                      Annehmen
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleRejectProposal(proposal.proposal_id)}
+                      disabled={loading}
+                    >
+                      Ablehnen
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p className="textFaint">Keine offenen Vorschläge.</p>
+        )}
+      </section>
+
+      <section className="card col">
+        <h2>Dramaturgie-Zustand</h2>
+        {status?.dramaturgy_state ? (
+          <pre style={{ margin: 0, whiteSpace: "pre-wrap", fontSize: "0.85rem" }}>
+            {JSON.stringify(status.dramaturgy_state, null, 2)}
+          </pre>
+        ) : (
+          <p className="textFaint">Noch kein Zustand.</p>
+        )}
       </section>
 
       <section className="card col">

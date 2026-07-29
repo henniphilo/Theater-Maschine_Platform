@@ -88,3 +88,12 @@ class ActiveProductionSet(BaseModel):
         default=None,
         description="Production UUID to activate, or null to clear the active production.",
     )
+    force: bool = Field(
+        default=False,
+        description="When true, emergency-stop director if busy and switch anyway.",
+    )
+
+
+class ProductionDuplicateRequest(BaseModel):
+    name: str | None = Field(default=None, max_length=200)
+    slug: str | None = Field(default=None, max_length=200)

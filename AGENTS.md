@@ -51,7 +51,7 @@ Secrets live in `backend/.env` only — never commit.
 DialogueEvent → DramaturgyDecision → ScheduledCue → OSC / MIDI / TCP
 ```
 
-Details: [docs/architektur.md](docs/architectur.md) · Teil 2: [docs/teil2_inszenierung.md](docs/teil2_inszenierung.md)
+Details: [docs/architektur.md](docs/architectur.md) · Teil 2: [docs/teil2_inszenierung.md](docs/teil2_inszenierung.md) · LLM-Dramaturgie: [docs/llm-dramaturgy-guidelines.md](docs/llm-dramaturgy-guidelines.md)
 
 ## Before committing
 

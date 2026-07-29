@@ -92,11 +92,22 @@ class RuleEvaluateRequest(BaseModel):
 
 
 class RuleEvaluateResponse(BaseModel):
-    production_id: str
+    production_id: str | None = None
     matches: list[dict[str, Any]] = Field(default_factory=list)
     skipped_cooldown: list[str] = Field(default_factory=list)
     skipped_disabled: list[str] = Field(default_factory=list)
     skipped_conditions: list[str] = Field(default_factory=list)
+    rules_source: str | None = None
+    rules_count: int | None = None
+    dispatches: list[dict[str, Any]] | None = None
+
+
+class RuleEvaluateDispatchRequest(RuleEvaluateRequest):
+    """Evaluate rules and dispatch execute_cue actions via CueExecutionService."""
+
+    dry_run: bool = True
+    use_active_production: bool = False
+    use_production_cues: bool = True
 
 
 class LegacyRuleSummary(BaseModel):

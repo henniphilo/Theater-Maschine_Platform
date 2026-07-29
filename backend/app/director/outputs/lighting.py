@@ -3,6 +3,7 @@
 from pythonosc import udp_client
 
 from app.core.config import settings
+from app.director.output_targets import effective_light_target
 from app.director.cues.cue_models import LightCue, resolve_light_scene_ids
 from app.director.media.database import MediaDatabase
 from app.director.outputs.eos_light import eos_chan_level, eos_group_level, expand_channels
@@ -20,6 +21,12 @@ from app.director.outputs.light_tcp import (
 from app.director.outputs.osc_log import log_osc_command
 
 
+def _preview_osc_target() -> tuple[str, int]:
+    if settings.light_output == "mirror":
+        return effective_light_target()
+    return settings.osc_host, settings.osc_port
+
+
 class LightingBridge:
     def __init__(
         self,
@@ -28,20 +35,17 @@ class LightingBridge:
         port: int | None = None,
     ) -> None:
         self.media_db = media_db or MediaDatabase()
-        self.host = host or settings.light_tcp_host
-        self.port = port or settings.light_tcp_port
+        light_host, light_port = effective_light_target()
+        self.host = host or light_host
+        self.port = port or light_port
         self._desk_osc_client: udp_client.SimpleUDPClient | None = None
         self._preview_osc_client: udp_client.SimpleUDPClient | None = None
         if settings.light_output == "osc":
-            self._desk_osc_client = udp_client.SimpleUDPClient(
-                settings.light_desk_host(),
-                settings.light_desk_port(),
-            )
+            desk_host, desk_port = effective_light_target()
+            self._desk_osc_client = udp_client.SimpleUDPClient(desk_host, desk_port)
         if settings.light_output == "mirror" or settings.light_osc_mirror:
-            self._preview_osc_client = udp_client.SimpleUDPClient(
-                settings.osc_host,
-                settings.osc_port,
-            )
+            preview_host, preview_port = _preview_osc_target()
+            self._preview_osc_client = udp_client.SimpleUDPClient(preview_host, preview_port)
 
     def execute(self, cue: LightCue, dry_run: bool = False) -> None:
         if cue.action.value == "fade_blackout" or (
@@ -211,7 +215,21 @@ class LightingBridge:
             return False
 
     def _desk_osc_target(self) -> tuple[str, int]:
-        return settings.light_desk_host(), settings.light_desk_port()
+        return effective_light_target()
+
+    def reconfigure(self, host: str | None = None, port: int | None = None) -> None:
+        if host is not None:
+            self.host = host
+        if port is not None:
+            self.port = port
+        desk_host, desk_port = effective_light_target()
+        self.host = desk_host
+        self.port = desk_port
+        if settings.light_output == "osc":
+            self._desk_osc_client = udp_client.SimpleUDPClient(desk_host, desk_port)
+        if settings.light_output == "mirror" or settings.light_osc_mirror:
+            preview_host, preview_port = _preview_osc_target()
+            self._preview_osc_client = udp_client.SimpleUDPClient(preview_host, preview_port)
 
     def _send_desk_osc(self, address: str, *args: object, dry_run: bool = False) -> None:
         is_dry_run = dry_run or settings.osc_dry_run
@@ -236,9 +254,10 @@ class LightingBridge:
 
     def _send_preview_osc(self, address: str, *args: object, dry_run: bool = False) -> None:
         is_dry_run = dry_run or settings.osc_dry_run
+        preview_host, preview_port = _preview_osc_target()
         log_osc_command(
-            settings.osc_host,
-            settings.osc_port,
+            preview_host,
+            preview_port,
             address,
             list(args),
             dry_run=is_dry_run,

@@ -3,10 +3,12 @@ import re
 from typing import Any
 
 from app.core.config import settings
-from app.director.cues.cue_models import DramaturgyDecision, resolve_light_scene_ids
+from app.director.cues.cue_models import DecisionKind, DramaturgyDecision, resolve_light_scene_ids
 from app.director.dialogue.models import DialogueEvent
 from app.director.cues.cue_points import cue_point_is_active, min_cue_points_for_text, normalize_cue_points
 from app.director.dramaturgy.engine import DramaturgyEngine
+from app.director.dramaturgy.function_mapping import normalize_dramaturgical_function
+from app.director.dramaturgy.reason_short import enrich_decision_metadata, is_valid_reason_short
 from app.director.dramaturgy.rules_text import dramaturgy_rules_excerpt, load_dramaturgy_rules
 from app.director.media.database import MediaDatabase
 from app.services.ai_service import AIService
@@ -141,7 +143,7 @@ class LLMDirector:
             raw = await self._call_llm(event, model=model, discussion_context=discussion_context)
             decision = self._parse_decision(raw, event)
             self.validate_decision(decision, text=event.text)
-            return decision
+            return enrich_decision_metadata(decision)
         except (DramaturgyValidationError, json.JSONDecodeError, KeyError, ValueError):
             return self.rule_engine.decide(event)
 
@@ -156,16 +158,20 @@ class LLMDirector:
         rules = dramaturgy_rules_excerpt(max_chars=settings.dramaturgy_rules_excerpt_chars)
         min_points = min_cue_points_for_text(event.text)
         system = (
-            "Du bist eine Theater-Regisseurin für die Bühne Unter Tieren. "
-            "Du arbeitest ausschließlich mit Video, Sound und Licht — alle Entscheidungen "
-            "müssen als OSC-Cues formulierbar sein. "
-            "Halte dich strikt an das Dramaturgie-Regelwerk unten. "
-            "Wähle NUR IDs aus der Medien-Allowlist. "
-            "Pro Textabschnitt: mehrere cue_points (start, keyword, sentence_end, time). "
-            "Jeder cue_point braucht visual, sound UND light — aktiv oder bewusst aus "
-            "(stop_clip, stop_cue, fade_blackout). "
-            "performance_speakers: 1–3 Stimmen aus [AI_A, AI_B, narrator] für den Stücktext. "
-            "Keine Illustration, keine Schauspielanweisungen. "
+            "Du arbeitest als professionelle Theaterdramaturgin und Live-Medienkünstlerin. "
+            "Deine Aufgabe ist nicht, jede Textstelle zu bebildern oder zu vertonen — "
+            "du gestaltest über längere Zeit eine abwechslungsreiche dramaturgische Entwicklung. "
+            "Du arbeitest mit Video, Sound und Licht; alle Entscheidungen müssen als OSC-Cues "
+            "formulierbar sein. "
+            "Berücksichtige: aktuellen Text, Szene, laufende Ebenen, Medien-Dichte, Wiederholungen, "
+            "Verständlichkeit der Sprache, die Möglichkeit nichts zu tun, und Material zu beenden. "
+            "Bevorzuge präzise Entscheidungen gegenüber vielen. "
+            "Überraschung durch Kontrast, Timing, Wiederaufnahme oder Reduktion — nicht durch Zufall. "
+            "Gib für jede Entscheidung reason_short: höchstens ein kurzer deutscher Satz mit dramaturgischer Funktion. "
+            "dramaturgical_function: support|contrast|intensification|release|transition|recall|disruption|"
+            "foreshadowing|space. "
+            "decision_kind: execute|modify|stop|hold|none — none/space für bewusstes Nichtstun. "
+            "Wähle NUR IDs aus der Medien-Allowlist. Keine Hardware-Befehle. "
             "Antworte ausschließlich mit gültigem JSON ohne Markdown.\n\n"
             f"=== DRAMATURGIE-REGELWERK ===\n{rules}"
         )
@@ -175,16 +181,20 @@ class LLMDirector:
             f"Stimmung: {event.mood}, Intensität: {event.intensity}, Tags: {event.tags}\n\n"
             f"Dramaturgie-Diskussion:\n{discussion_context or '(keine)'}\n\n"
             f"Medien-Allowlist:\n{catalog}\n\n"
-            f"Mindestens {min_points} cue_points für diesen Abschnitt.\n"
+            f"Mindestens {min_points} cue_points für diesen Abschnitt, ODER decision_kind=none mit Begründung.\n"
             "JSON-Schema:\n"
-            '{"dramaturgical_reading":"...","cue_points":['
-            '{"trigger":"start","time_offset_sec":0,"function":"überlagern","intensity":0.45,'
-            '"visual":{"action":"play_clip","clip_id":"clyde","outputs":[{"output_id":"rz21","clip_id":"clyde"},{"output_id":"adam","clip_id":"black"}],"opacity":0.8,"fade_time":4},'
+            '{"dramaturgical_reading":"...","decision_kind":"execute","reason_short":"...",'
+            '"dramaturgical_function":"support","confidence":0.8,"cue_points":['
+            '{"trigger":"start","time_offset_sec":0,"function":"support","intensity":0.45,'
+            '"visual":{"action":"play_clip","clip_id":"clyde","opacity":0.8,"fade_time":4},'
             '"sound":{"action":"trigger_cue","cue_id":"...","volume":0.4},'
             '"light":{"action":"set_scene","scene_id":"...","fade_time":5,"intensity":0.65}},'
-            '{"trigger":"keyword","keyword":"Schuld","function":"entlarven","intensity":0.7,...}'
+            '{"trigger":"keyword","keyword":"Schuld","function":"contrast","intensity":0.7,...}'
             '],"reason":"...","tags":[],"mood":"...","intensity":0.5,"timestamp":0,'
-            '"performance_speakers":["AI_A","AI_B"]}'
+            '"performance_speakers":["AI_A","AI_B"]}\n'
+            'Beispiel Nichtstun: {"decision_kind":"none","dramaturgical_function":"space",'
+            '"reason_short":"Lässt den neuen Gedanken ohne mediale Begleitung beginnen.",'
+            '"confidence":0.88,"cue_points":[],"reason":"...","mood":"...","intensity":0.5,"timestamp":0}'
         )
         return await self.ai.generate(
             "openai",
@@ -206,6 +216,12 @@ class LLMDirector:
         data.setdefault("mood", event.mood)
         data.setdefault("intensity", event.intensity)
         data.setdefault("timestamp", event.timestamp)
+        if "decision_kind" in data and isinstance(data["decision_kind"], str):
+            data["decision_kind"] = data["decision_kind"].lower()
+        if "dramaturgical_function" in data and isinstance(data["dramaturgical_function"], str):
+            parsed_fn = normalize_dramaturgical_function(data["dramaturgical_function"])
+            if parsed_fn:
+                data["dramaturgical_function"] = parsed_fn.value
         decision = DramaturgyDecision.model_validate(data)
         return self._sync_legacy_fields(decision)
 
@@ -223,6 +239,17 @@ class LLMDirector:
         from app.director.cues.cue_models import VisualAction
 
         decision = self._sync_legacy_fields(decision)
+
+        if decision.decision_kind == DecisionKind.NONE:
+            if not decision.reason_short and not decision.reason:
+                raise DramaturgyValidationError("none decision requires reason_short")
+            if decision.reason_short and not is_valid_reason_short(decision.reason_short):
+                raise DramaturgyValidationError("invalid reason_short for none decision")
+            return
+
+        if decision.reason_short and not is_valid_reason_short(decision.reason_short):
+            raise DramaturgyValidationError("invalid reason_short")
+
         video_ids = {v.id for v in self.media_db.videos}
         recording_ids = {r.id for r in self.media_db.recordings}
         sound_ids = {s.id for s in self.media_db.dramaturgy_sounds}

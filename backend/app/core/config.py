@@ -36,8 +36,10 @@ class Settings(BaseSettings):
     app_host: str = "0.0.0.0"
     app_port: int = 8000
     cors_origins: list[str] = [
+        "http://localhost:3004",
         "http://localhost:3003",
         "http://localhost:3000",
+        "http://127.0.0.1:3004",
         "http://127.0.0.1:3003",
         "http://127.0.0.1:3000",
     ]
@@ -139,6 +141,8 @@ class Settings(BaseSettings):
     avatar_done_osc_host: str = "127.0.0.1"
     avatar_done_osc_port: int = 8991
     avatar_done_timeout_grace_ms: int = 2000
+    qlab_host: str = "127.0.0.1"
+    qlab_port: int = 53000
     uvicorn_access_log: bool = False
     app_log_level: str = "warning"
 

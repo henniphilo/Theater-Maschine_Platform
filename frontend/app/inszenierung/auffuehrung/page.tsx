@@ -227,7 +227,7 @@ function AuffuehrungContent() {
       <p className="textMuted" style={{ fontSize: "0.85rem" }}>
         Remote vom Handy: diese Seite offen lassen, dann{" "}
         <Link href="/remote">/remote</Link> auf dem Handy öffnen (
-        <code>http://&lt;Mac-IP&gt;:3003/remote</code>).
+        <code>http://&lt;Mac-IP&gt;:3004/remote</code>).
       </p>
 
       {corpus ? (

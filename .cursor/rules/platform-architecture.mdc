@@ -1,3 +1,69 @@
 ---
 alwaysApply: true
 ---
+---
+description: Architektur- und Migrationsregeln für die Theater-Maschine-Plattform
+alwaysApply: true
+---
+
+# Projektziel
+
+Dieses Repository entwickelt die produktionsunabhängige Theater-Maschine-Plattform.
+
+Die bestehende Burgtheater-Funktionalität dient als Referenz und soll während der Migration möglichst funktionsfähig bleiben.
+
+# Zentrale Regeln
+
+- Keine vollständigen Neuimplementierungen ohne ausdrücklichen Auftrag.
+- Kein Framework-Wechsel.
+- Backend bleibt FastAPI/Python.
+- Frontend bleibt Next.js/TypeScript.
+- PostgreSQL bleibt primäre Datenbank.
+- Redis bleibt nur dort bestehen, wo es einen klaren Zweck erfüllt.
+- Hardwareausgaben müssen hinter Adapter-Schnittstellen liegen.
+- Dramaturgische Entscheidungen dürfen keine direkten Netzwerk- oder Hardwarebefehle enthalten.
+- LLM-Dramaturgie erzeugt abstrakte Proposals (`reason_short`, `dramaturgical_function`) — Ausführung nur über Scheduler/Adapter. Siehe [docs/llm-dramaturgy-guidelines.md](../../docs/llm-dramaturgy-guidelines.md).
+- Assets, Cues, Geräte, Regeln und Produktionen sind getrennte Domänenobjekte.
+- Alle produktionsbezogenen Datensätze besitzen eine production_id.
+- Große Medieninhalte werden nicht als Binärdaten in PostgreSQL gespeichert.
+- Dateien werden über einen austauschbaren Storage-Service verwaltet.
+- Lokaler Dateispeicher ist die erste Implementierung.
+- Pfade aus Uploads dürfen niemals ungeprüft verwendet werden.
+- Keine API-Keys, Passwörter oder lokalen Netzwerkadressen committen.
+- Bestehende Funktionen nicht löschen, bevor ihr Ersatz implementiert und getestet ist.
+
+# Arbeitsweise
+
+- Pro Aufgabe nur einen klar abgegrenzten Meilenstein bearbeiten.
+- Vor Änderungen relevante Dateien lesen.
+- Vor der Implementierung einen kurzen Dateiplan nennen.
+- Datenbankänderungen immer über Migrationen durchführen.
+- Neue Backend-Funktionen mit Tests versehen.
+- Nach Änderungen Backend-Tests, Frontend-Lint und TypeScript-Prüfung ausführen.
+- Keine unrelated refactors.
+- Keine kosmetischen Großänderungen während funktionaler Migrationen.
+- Bei Unsicherheit bestehendes Verhalten bewahren.
+- Am Ende jeder Aufgabe geänderte Dateien, Tests und offene Risiken nennen.
+
+# Kernbegriffe
+
+Production:
+Eine eigenständige Theaterproduktion mit Assets, Cues, Regeln, Geräten und Sessions.
+
+Asset:
+Eine hochgeladene oder registrierte Datei einschließlich Metadaten.
+
+Cue:
+Eine ausführbare Anweisung, die ein Asset und/oder ein Gerät referenzieren kann.
+
+Device:
+Eine konfigurierte technische Ausgabe oder Verbindung.
+
+Adapter:
+Implementiert die technische Kommunikation mit einem Gerätetyp.
+
+Rule:
+Definiert, unter welchen Bedingungen Cues ausgewählt oder ausgelöst werden.
+
+PerformanceSession:
+Eine konkrete Probe oder Aufführung mit Protokollierung.

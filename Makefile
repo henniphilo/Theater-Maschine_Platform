@@ -49,7 +49,7 @@ down: ## Docker-Stack stoppen (ohne natives Backend)
 	cd "$(ROOT)" && $(COMPOSE) $(COMPOSE_NATIVE) down --remove-orphans 2>/dev/null || \
 		$(COMPOSE) $(COMPOSE_BASE) down --remove-orphans
 
-stop: ## Alles stoppen (Director, Ports 8000/3003, Docker) — siehe stop.sh
+stop: ## Alles stoppen (Director, Ports 8000/3004, Docker) — siehe stop.sh
 	"$(ROOT)/stop.sh"
 
 ps: ## Laufende Compose-Services
@@ -65,7 +65,7 @@ native-deps: ## Postgres/Redis/Frontend in Docker, Backend-Container aus
 	cd "$(ROOT)" && $(COMPOSE) $(COMPOSE_NATIVE) up -d --build --force-recreate postgres redis frontend
 	-cd "$(ROOT)" && $(COMPOSE) stop backend
 	@echo ""
-	@echo "Frontend:  http://localhost:3003"
+	@echo "Frontend:  http://localhost:3004"
 	@echo "Backend:   noch nicht gestartet — als Nächstes: make native"
 
 run: native-deps ## Docker-Infrastruktur + natives Backend (run-native.sh)

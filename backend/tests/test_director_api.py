@@ -1,4 +1,5 @@
 from fastapi.testclient import TestClient
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -152,6 +153,48 @@ def test_technik_start_rejects_light_channel() -> None:
         json={"send_visual": False, "send_sound": False, "send_light": True},
     )
     assert res.status_code == 400
+
+
+@patch("app.director.qlab_relay_manager.get_qlab_relay_manager")
+def test_relay_status_endpoint(mock_get_manager: MagicMock) -> None:
+    from app.director.qlab_relay_manager import QlabRelayStatus
+
+    mock_get_manager.return_value.status.return_value = QlabRelayStatus(
+        running=False,
+        managed=False,
+        listen_host="127.0.0.1",
+        pixera_listen_port=8990,
+        light_listen_port=7000,
+        light_listener_enabled=True,
+        qlab_host="127.0.0.1",
+        qlab_port=53000,
+        feedback_enabled=False,
+    )
+    res = client.get("/api/v1/director/relay/status")
+    assert res.status_code == 200
+    body = res.json()
+    assert body["running"] is False
+    assert body["pixera_listen_port"] == 8990
+
+
+@patch("app.director.qlab_relay_manager.get_qlab_relay_manager")
+def test_relay_start_conflict_returns_409(mock_get_manager: MagicMock) -> None:
+    from app.director.qlab_relay_manager import QlabRelayStatus
+
+    mock_get_manager.return_value.start.return_value = QlabRelayStatus(
+        running=True,
+        managed=False,
+        listen_host="127.0.0.1",
+        pixera_listen_port=8990,
+        light_listen_port=7000,
+        light_listener_enabled=True,
+        qlab_host="127.0.0.1",
+        qlab_port=53000,
+        feedback_enabled=False,
+        error="Port bereits belegt",
+    )
+    res = client.post("/api/v1/director/relay/start")
+    assert res.status_code == 409
 
 
 def test_emergency_stop() -> None:

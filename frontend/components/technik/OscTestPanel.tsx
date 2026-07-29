@@ -5,16 +5,23 @@ import { useCallback, useEffect, useState } from "react";
 import {
   fetchLightDeskStatus,
   fetchOscLogRecent,
+  fetchOutputTargets,
+  fetchQlabRelayStatus,
   fetchTechnikStatus,
+  patchOutputTargets,
   postLightConnect,
   postLightDisconnect,
   postLightHoldStart,
   postLightSend,
   postLightStop,
   postOscTest,
+  postQlabRelayStart,
+  postQlabRelayStop,
   postTechnikStart,
   postTechnikStop,
   type LightDeskStatus,
+  type OutputTargets,
+  type QlabRelayStatus,
   type TechnikHoldStatus
 } from "@/lib/api/director";
 import { fetchMediaCatalog } from "@/lib/api/media";
@@ -36,6 +43,15 @@ export function OscTestPanel() {
   const [holdStatus, setHoldStatus] = useState<TechnikHoldStatus | null>(null);
   const [lightStatus, setLightStatus] = useState<LightDeskStatus | null>(null);
   const [lightOscLines, setLightOscLines] = useState<string[]>([]);
+  const [outputTargets, setOutputTargets] = useState<OutputTargets | null>(null);
+  const [videoHost, setVideoHost] = useState("");
+  const [videoPort, setVideoPort] = useState("");
+  const [lightHost, setLightHost] = useState("");
+  const [lightPort, setLightPort] = useState("");
+  const [targetsLoading, setTargetsLoading] = useState(false);
+  const [targetsDirty, setTargetsDirty] = useState(false);
+  const [relayStatus, setRelayStatus] = useState<QlabRelayStatus | null>(null);
+  const [relayLoading, setRelayLoading] = useState(false);
 
   const refreshLightOscLog = useCallback(async () => {
     try {
@@ -56,6 +72,7 @@ export function OscTestPanel() {
         setLightStatus(status);
       })
       .catch(() => setLightStatus(null));
+    fetchQlabRelayStatus().then(setRelayStatus).catch(() => setRelayStatus(null));
     void refreshLightOscLog();
   }, [refreshLightOscLog]);
 
@@ -68,6 +85,18 @@ export function OscTestPanel() {
         if (c.lights[0]) setLightId(c.lights[0].id);
       })
       .catch(() => setError("Medien-Katalog nicht erreichbar"));
+    fetchOutputTargets()
+      .then((targets) => {
+        setOutputTargets(targets);
+        setVideoHost(targets.video.effective.host);
+        setVideoPort(String(targets.video.effective.port));
+        setLightHost(targets.light.effective.host);
+        setLightPort(String(targets.light.effective.port));
+        setTargetsDirty(false);
+      })
+      .catch(() => {
+        /* catalog fallback used for display */
+      });
     refreshStatus();
     const id = setInterval(refreshStatus, 2000);
     return () => clearInterval(id);
@@ -250,27 +279,112 @@ export function OscTestPanel() {
     }
   }, [refreshLightOscLog]);
 
+  const applyOutputTargets = useCallback(async () => {
+    setError("");
+    setTargetsLoading(true);
+    const videoPortNum = Number(videoPort);
+    const lightPortNum = Number(lightPort);
+    if (!videoHost.trim() || !Number.isFinite(videoPortNum) || videoPortNum < 1 || videoPortNum > 65535) {
+      setError("Video-Ziel: gültige IP/Host und Port (1–65535) eingeben");
+      setTargetsLoading(false);
+      return;
+    }
+    if (!lightHost.trim() || !Number.isFinite(lightPortNum) || lightPortNum < 1 || lightPortNum > 65535) {
+      setError("Licht-Ziel: gültige IP/Host und Port (1–65535) eingeben");
+      setTargetsLoading(false);
+      return;
+    }
+    try {
+      const wasLightConnected = lightStatus?.tcp_connected ?? false;
+      const targets = await patchOutputTargets({
+        video_host: videoHost.trim(),
+        video_port: videoPortNum,
+        light_host: lightHost.trim(),
+        light_port: lightPortNum
+      });
+      setOutputTargets(targets);
+      setTargetsDirty(false);
+      const catalogRes = await fetchMediaCatalog("part2");
+      setCatalog(catalogRes);
+      if (wasLightConnected) {
+        setLightStatus(await fetchLightDeskStatus());
+      }
+      refreshStatus();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Ziel-Konfiguration fehlgeschlagen");
+    } finally {
+      setTargetsLoading(false);
+    }
+  }, [videoHost, videoPort, lightHost, lightPort, lightStatus?.tcp_connected, refreshStatus]);
+
+  const startRelay = useCallback(async () => {
+    setError("");
+    setRelayLoading(true);
+    try {
+      setRelayStatus(await postQlabRelayStart());
+      refreshStatus();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Relay start fehlgeschlagen");
+      try {
+        setRelayStatus(await fetchQlabRelayStatus());
+      } catch {
+        /* ignore */
+      }
+    } finally {
+      setRelayLoading(false);
+    }
+  }, [refreshStatus]);
+
+  const stopRelay = useCallback(async () => {
+    setError("");
+    setRelayLoading(true);
+    try {
+      setRelayStatus(await postQlabRelayStop());
+      refreshStatus();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Relay stop fehlgeschlagen");
+    } finally {
+      setRelayLoading(false);
+    }
+  }, [refreshStatus]);
+
   const dryRun = catalog?.touchdesigner?.osc_dry_run ?? false;
   const videoUsesPixera =
-    catalog?.pixera?.output === "pixera" || catalog?.pixera?.output === "both";
-  const videoTarget = videoUsesPixera
-    ? `Pixera ${catalog?.pixera?.address ?? "/pixera/args/cue/apply"} · ${catalog?.pixera?.osc_host}:${catalog?.pixera?.osc_port}`
-    : `TouchDesigner ${catalog?.touchdesigner?.osc_host}:${catalog?.touchdesigner?.osc_port}`;
+    (outputTargets?.visual_output ?? catalog?.pixera?.output) === "pixera" ||
+    (outputTargets?.visual_output ?? catalog?.pixera?.output) === "both";
+  const effectiveVideo = outputTargets?.video.effective;
+  const effectiveLight = outputTargets?.light.effective;
+  const videoTarget = effectiveVideo
+    ? videoUsesPixera
+      ? `Pixera ${catalog?.pixera?.address ?? "/pixera/args/cue/apply"} · ${effectiveVideo.host}:${effectiveVideo.port}`
+      : `TouchDesigner ${effectiveVideo.host}:${effectiveVideo.port}`
+    : videoUsesPixera
+      ? `Pixera ${catalog?.pixera?.address ?? "/pixera/args/cue/apply"} · ${catalog?.pixera?.osc_host}:${catalog?.pixera?.osc_port}`
+      : `TouchDesigner ${catalog?.touchdesigner?.osc_host}:${catalog?.touchdesigner?.osc_port}`;
   const soundTarget =
     catalog?.sound?.output === "midi" || catalog?.sound?.output === "both"
       ? `MIDI ${catalog.sound.midi_port || "auto"} · Kanal ${catalog.sound.midi_channel}`
       : catalog?.sound
         ? `OSC ${catalog.sound.osc_host}:${catalog.sound.osc_port}`
         : "—";
-  const lightOutput = catalog?.lighting?.output ?? lightStatus?.output ?? "tcp";
+  const lightOutput = outputTargets?.light_output ?? catalog?.lighting?.output ?? lightStatus?.output ?? "tcp";
   const lightNeedsTcpConnect = lightOutput === "tcp";
   const lightMirrorMode = lightOutput === "mirror";
-  const lightTcpTarget = catalog?.lighting
-    ? `TCP ${catalog.lighting.tcp_host}:${catalog.lighting.tcp_port}`
+  const lightTcpTarget = effectiveLight
+    ? `TCP ${effectiveLight.host}:${effectiveLight.port}`
+    : catalog?.lighting
+      ? `TCP ${catalog.lighting.tcp_host}:${catalog.lighting.tcp_port}`
+      : "—";
+  const lightMirrorTarget = effectiveLight
+    ? `OSC ${effectiveLight.host}:${effectiveLight.port} ${catalog?.lighting?.preview_set_scene ?? "/light/set_scene"} → QLab Relay → QLab :53000`
+    : catalog?.lighting?.preview_osc_host
+      ? `OSC ${catalog.lighting.preview_osc_host}:${catalog.lighting.preview_osc_port ?? 7000} ${catalog.lighting.preview_set_scene ?? "/light/set_scene"} → QLab Relay → QLab :53000`
+      : "OSC Mirror (LIGHT_OUTPUT=mirror in backend/.env)";
+  const relayTargetLabel = relayStatus
+    ? `Pixera :${relayStatus.pixera_listen_port}${relayStatus.light_listener_enabled ? ` · Licht :${relayStatus.light_listen_port}` : ""} → QLab ${relayStatus.qlab_host}:${relayStatus.qlab_port}`
     : "—";
-  const lightMirrorTarget = catalog?.lighting?.preview_osc_host
-    ? `OSC ${catalog.lighting.preview_osc_host}:${catalog.lighting.preview_osc_port ?? 7000} ${catalog.lighting.preview_set_scene ?? "/light/set_scene"} → make qlab-relay → QLab :53000`
-    : "OSC Mirror (LIGHT_OUTPUT=mirror in backend/.env)";
+  const relayRunning = relayStatus?.running ?? false;
+  const relayManaged = relayStatus?.managed ?? false;
   const lightReady = lightNeedsTcpConnect
     ? (lightStatus?.tcp_connected ?? false)
     : Boolean(catalog?.lighting);
@@ -285,6 +399,58 @@ export function OscTestPanel() {
         Video, Sound und Licht jeweils einzeln testen — wie am Licht-Pult: Signal senden, halten oder stoppen.
         {dryRun ? <span className="oscTestWarn"> · DRY-RUN aktiv</span> : null}
       </p>
+
+      <div className={`oscTestGroup oscTestRelay${relayRunning ? " oscTestGroupActive" : ""}`}>
+        <div className="oscTestGroupHead">
+          <span className="oscTestGroupIcon oscTestGroupIconRelay" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+              <path d="M4 12h6" />
+              <path d="M14 12h6" />
+              <path d="m10 8 4 4-4 4" />
+            </svg>
+          </span>
+          <div>
+            <h3>OSC Relay (QLab)</h3>
+            <p className={relayRunning ? "oscTestActive" : "oscTestIdle"} role="status">
+              {relayRunning
+                ? relayManaged
+                  ? `aktiv · PID ${relayStatus?.pid ?? "—"}`
+                  : "aktiv (extern — z. B. make qlab-relay)"
+                : "inaktiv"}
+              {relayStatus?.feedback_enabled ? " · Avatar-Done-Feedback" : null}
+            </p>
+          </div>
+        </div>
+        <p className="textMuted oscTestTarget">
+          Leitet Pixera- und Licht-OSC an QLab weiter. Ersetzt das separate Terminal{" "}
+          <code>make qlab-relay</code>.
+          <br />
+          Route: <code>{relayTargetLabel}</code>
+        </p>
+        <div className="row oscTestActions">
+          <button
+            type="button"
+            className="machineStartBtn"
+            disabled={relayLoading || relayRunning}
+            onClick={() => void startRelay()}
+          >
+            Relay starten
+          </button>
+          <button
+            type="button"
+            className="oscTestStopBtn"
+            disabled={relayLoading || !relayManaged}
+            onClick={() => void stopRelay()}
+          >
+            Relay stoppen
+          </button>
+        </div>
+        {relayStatus?.error && !relayManaged ? (
+          <p className="textMuted oscTestWarn" role="status">
+            {relayStatus.error}
+          </p>
+        ) : null}
+      </div>
 
       <div className="oscTestGrid">
         <div className={`oscTestGroup${videoHolding ? " oscTestGroupActive" : ""}`}>
@@ -306,6 +472,43 @@ export function OscTestPanel() {
             Ziel: <code>{videoTarget}</code>
             {videoUsesPixera ? " · Testclip auf allen Beamern (RZ21, Adam, Eva, LED)" : null}
           </p>
+          <div className="oscTestTargetFields row">
+            <label className="oscTestChannel">
+              <span>Video IP/Host</span>
+              <input
+                type="text"
+                value={videoHost}
+                onChange={(e) => {
+                  setVideoHost(e.target.value);
+                  setTargetsDirty(true);
+                }}
+                disabled={targetsLoading}
+                autoComplete="off"
+              />
+            </label>
+            <label className="oscTestChannel">
+              <span>Port</span>
+              <input
+                type="number"
+                min={1}
+                max={65535}
+                value={videoPort}
+                onChange={(e) => {
+                  setVideoPort(e.target.value);
+                  setTargetsDirty(true);
+                }}
+                disabled={targetsLoading}
+              />
+            </label>
+            <button
+              type="button"
+              className="machineStartBtn"
+              disabled={targetsLoading || !targetsDirty}
+              onClick={() => void applyOutputTargets()}
+            >
+              Ziel übernehmen
+            </button>
+          </div>
           <label className="oscTestChannel">
             <span>Clip</span>
             <select value={clipId} onChange={(e) => setClipId(e.target.value)} disabled={videoLoading}>
@@ -418,7 +621,7 @@ export function OscTestPanel() {
             <p className="textMuted oscTestTarget">
               Ziel: <code>{lightMirrorTarget}</code>
               {" · "}
-              Kein EOS-TCP — Relay-Terminal und QLab Light Dashboard prüfen
+              Kein EOS-TCP — Relay und QLab Light Dashboard prüfen
             </p>
           ) : lightNeedsTcpConnect ? (
             <p className="textMuted oscTestTarget">
@@ -428,9 +631,51 @@ export function OscTestPanel() {
             </p>
           ) : (
             <p className="textMuted oscTestTarget">
-              Ziel: OSC <code>{catalog?.lighting?.osc_host}:{catalog?.lighting?.osc_port}</code>
+              Ziel: OSC <code>{effectiveLight ? `${effectiveLight.host}:${effectiveLight.port}` : `${catalog?.lighting?.osc_host}:${catalog?.lighting?.osc_port}`}</code>
             </p>
           )}
+          <div className="oscTestTargetFields row">
+            <label className="oscTestChannel">
+              <span>Licht IP/Host</span>
+              <input
+                type="text"
+                value={lightHost}
+                onChange={(e) => {
+                  setLightHost(e.target.value);
+                  setTargetsDirty(true);
+                }}
+                disabled={targetsLoading}
+                autoComplete="off"
+              />
+            </label>
+            <label className="oscTestChannel">
+              <span>Port</span>
+              <input
+                type="number"
+                min={1}
+                max={65535}
+                value={lightPort}
+                onChange={(e) => {
+                  setLightPort(e.target.value);
+                  setTargetsDirty(true);
+                }}
+                disabled={targetsLoading}
+              />
+            </label>
+            <button
+              type="button"
+              className="machineStartBtn"
+              disabled={targetsLoading || !targetsDirty}
+              onClick={() => void applyOutputTargets()}
+            >
+              Ziel übernehmen
+            </button>
+          </div>
+          {lightNeedsTcpConnect && lightConnected && targetsDirty ? (
+            <p className="textMuted oscTestWarn">
+              Licht-Ziel geändert — nach „Ziel übernehmen“ EOS-Verbindung neu aufbauen.
+            </p>
+          ) : null}
           {lightNeedsTcpConnect ? (
             <div className="row oscTestActions">
               <button type="button" className="machineStartBtn" disabled={lightLoading || lightConnected} onClick={() => void connectLight()}>

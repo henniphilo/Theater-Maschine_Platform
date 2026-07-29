@@ -26,10 +26,24 @@ export async function fetchActiveProduction(): Promise<ActiveProduction> {
   return apiFetchJson<ActiveProduction>("/productions/active");
 }
 
-export async function setActiveProduction(productionId: string | null): Promise<ActiveProduction> {
+export async function setActiveProduction(
+  productionId: string | null,
+  options: { force?: boolean } = {}
+): Promise<ActiveProduction> {
   return apiFetchJson<ActiveProduction>("/productions/active", {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ production_id: productionId })
+    body: JSON.stringify({ production_id: productionId, force: options.force ?? false })
+  });
+}
+
+export async function duplicateProduction(
+  id: string,
+  input: { name?: string; slug?: string } = {}
+): Promise<Production> {
+  return apiFetchJson<Production>(`/productions/${id}/duplicate`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(input)
   });
 }

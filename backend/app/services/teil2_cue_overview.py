@@ -37,7 +37,14 @@ def _light_label(light) -> str:
     return light.scene_id or ""
 
 
-def _annotation_reason(point: CuePoint, *, fallback: str | None = None) -> str | None:
+def _annotation_reason(
+    point: CuePoint,
+    *,
+    fallback: str | None = None,
+    reason_short: str | None = None,
+) -> str | None:
+    if reason_short:
+        return reason_short
     parts: list[str] = []
     if point.trigger == CuePointTrigger.KEYWORD and point.keyword:
         parts.append(f"Stichwort: {point.keyword}")
@@ -48,8 +55,13 @@ def _annotation_reason(point: CuePoint, *, fallback: str | None = None) -> str |
     return fallback
 
 
-def _annotations_from_cue_point(point: CuePoint, *, reason: str | None = None) -> list[CueAnnotation]:
-    cue_reason = _annotation_reason(point, fallback=reason)
+def _annotations_from_cue_point(
+    point: CuePoint,
+    *,
+    reason: str | None = None,
+    reason_short: str | None = None,
+) -> list[CueAnnotation]:
+    cue_reason = _annotation_reason(point, fallback=reason, reason_short=reason_short)
     annotations: list[CueAnnotation] = []
     clip_id, projector = _visual_label(point.visual)
     if clip_id:
@@ -140,7 +152,11 @@ def build_cue_overview(
         if index is None or index < 0 or index >= len(sentences):
             continue
         by_sentence[index].extend(
-            _annotations_from_cue_point(point, reason=dramaturgy_reason or dramaturgy.reason)
+            _annotations_from_cue_point(
+                point,
+                reason=dramaturgy_reason or dramaturgy.reason,
+                reason_short=dramaturgy.reason_short or None,
+            )
         )
 
     for index in range(len(sentences)):

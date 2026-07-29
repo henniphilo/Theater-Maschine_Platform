@@ -8,11 +8,17 @@ from app.db.session import get_db
 from app.schemas.rule import (
     LegacyRuleSummary,
     RuleCreate,
+    RuleEvaluateDispatchRequest,
     RuleEvaluateRequest,
     RuleEvaluateResponse,
     RuleRead,
     RuleUpdate,
 )
+from app.services.production_rules_runtime import (
+    ProductionRulesRuntime,
+    cues_as_candidates,
+)
+from app.services.rule_evaluator import RuleEvalContext
 from app.services.rule_json_adapter import json_rules_to_canonical
 from app.services.rule_service import (
     RuleNotFoundError,
@@ -91,6 +97,60 @@ def evaluate_rules_endpoint(
     except (RuleValidationError, ValidationError) as exc:
         raise _http_error(exc) from exc
     return RuleEvaluateResponse.model_validate(result)
+
+
+@router.post("/evaluate-and-dispatch", response_model=RuleEvaluateResponse)
+def evaluate_and_dispatch_rules(
+    production_id: str | None = Query(default=None),
+    payload: RuleEvaluateDispatchRequest | None = None,
+    db: Session = Depends(get_db),
+) -> RuleEvaluateResponse:
+    """Evaluate rules and dispatch execute_cue actions only via CueExecutionService."""
+    from app.services import active_production as active_production_store
+    from app.services.rule_evaluator import CueCandidate
+
+    body = payload or RuleEvaluateDispatchRequest()
+    resolved_id = production_id
+    if body.use_active_production or not resolved_id:
+        resolved_id = resolved_id or active_production_store.get_active_production_id()
+    if not resolved_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="production_id required (or set an active production)",
+        )
+
+    if body.use_production_cues and not body.available_cues:
+        available_cues = cues_as_candidates(db, resolved_id)
+    else:
+        available_cues = [
+            CueCandidate(
+                id=str(item.get("id", "")),
+                tags=[str(t) for t in (item.get("tags") or [])],
+                group=item.get("group"),
+                enabled=bool(item.get("enabled", True)),
+            )
+            for item in body.available_cues
+            if item.get("id")
+        ]
+
+    ctx = RuleEvalContext(
+        text=body.text,
+        tags=list(body.tags),
+        mood=body.mood,
+        intensity=body.intensity,
+        previous_cue_id=body.previous_cue_id,
+        manual_keys=set(body.manual_keys),
+        now_seconds=body.now_seconds,
+        available_cues=available_cues,
+    )
+    runtime = ProductionRulesRuntime(db)
+    result = runtime.evaluate_and_dispatch(
+        ctx,
+        production_id=resolved_id,
+        dry_run=body.dry_run,
+        stop_after_first_match=body.stop_after_first_match,
+    )
+    return RuleEvaluateResponse.model_validate(result.to_dict())
 
 
 @router.get("/{rule_id}", response_model=RuleRead)

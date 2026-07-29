@@ -3,7 +3,7 @@
 #   docker compose up --build
 #
 # Öffentliche Ports (Host):
-#   3003 — Frontend
+#   3004 — Frontend
 #   8000 — Backend API
 # Intern: postgres:5432, redis:6379
 # OSC (Pixera Video): 172.27.27.1:8990 UDP — PIXERA_OSC_* in backend/.env
@@ -32,7 +32,7 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg://postgres:postgres@postgres:5432/aidebatte
       REDIS_URL: redis://redis:6379/0
-      CORS_ORIGINS: '["http://localhost:3003","http://localhost:3000","http://127.0.0.1:3003","http://127.0.0.1:3000"]'
+      CORS_ORIGINS: '["http://localhost:3004","http://localhost:3003","http://localhost:3000","http://127.0.0.1:3004","http://127.0.0.1:3003","http://127.0.0.1:3000"]'
       DIRECTOR_DATA_DIR: data
       DIRECTOR_DRAMATURGY_MODE: llm
       DIRECTOR_EXECUTE_MODE: sequenced
@@ -75,7 +75,7 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "3003:3000"
+      - "3004:3000"
     environment:
       NEXT_PUBLIC_API_BASE_URL: /api/v1
       API_PROXY_TARGET: http://host.docker.internal:8000

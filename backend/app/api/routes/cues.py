@@ -134,7 +134,7 @@ def execute_cue(
     production_id: str | None = Query(default=None),
     service: CueExecutionService = Depends(_execution_service),
 ) -> CueExecutionResult:
-    """Execute a cue via CueExecutionService only (dry-run in this milestone)."""
+    """Execute a cue via CueExecutionService (adapters only; never direct bridges)."""
     body = payload or CueExecuteRequest()
     try:
         return service.execute(

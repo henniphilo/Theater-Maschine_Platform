@@ -8,6 +8,7 @@ from app.schemas.production import (
     ActiveProductionRead,
     ActiveProductionSet,
     ProductionCreate,
+    ProductionDuplicateRequest,
     ProductionRead,
     ProductionUpdate,
 )
@@ -71,13 +72,35 @@ def set_active_production(
     service: ProductionService = Depends(_service),
 ) -> ActiveProductionRead:
     try:
-        production_id, row = service.set_active(payload.production_id)
+        production_id, row = service.set_active(payload.production_id, force=payload.force)
     except (ProductionNotFoundError, ProductionValidationError) as exc:
         raise _http_error(exc) from exc
     return ActiveProductionRead(
         production_id=production_id,
         production=ProductionRead.model_validate(row) if row else None,
     )
+
+
+@router.post(
+    "/{production_id}/duplicate",
+    response_model=ProductionRead,
+    status_code=status.HTTP_201_CREATED,
+)
+def duplicate_production(
+    production_id: str,
+    payload: ProductionDuplicateRequest | None = None,
+    service: ProductionService = Depends(_service),
+) -> ProductionRead:
+    body = payload or ProductionDuplicateRequest()
+    try:
+        row = service.duplicate_production(
+            production_id,
+            name=body.name,
+            slug=body.slug,
+        )
+    except (ProductionNotFoundError, ProductionConflictError, ProductionValidationError) as exc:
+        raise _http_error(exc) from exc
+    return ProductionRead.model_validate(row)
 
 
 @router.get("/{production_id}", response_model=ProductionRead)

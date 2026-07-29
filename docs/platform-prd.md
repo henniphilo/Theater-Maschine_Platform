@@ -173,7 +173,7 @@ Ausdrücklich **nicht** im MVP:
 11. Lizenz-/Rechteverwaltung für Medieninhalte  
 12. Ersetzen von Pixera/Ableton/EOS durch proprietäre Player im Kern  
 
-Post-MVP-Kandidaten: Auth, Multi-Operator, Rule-UI, Pack-Export/Import als ZIP, Cloud-Storage, generischer Teil-2 ohne Burgtheater-Kanon.
+Post-MVP-Kandidaten: Auth, Multi-Operator, Rule-UI, Pack-Export/Import als ZIP, Cloud-Storage, generischer Teil-2 ohne Burgtheater-Kanon, **erklärbare LLM-Dramaturgie** ([llm-dramaturgy-guidelines.md](llm-dramaturgy-guidelines.md)).
 
 ---
 

@@ -6,6 +6,7 @@ import threading
 import time
 
 from app.core.config import settings
+from app.director.output_targets import effective_light_target
 
 _SESSION_COMMANDS = frozenset({"connect", "disconnect"})
 _light_logger = logging.getLogger("theatermaschine.osc")
@@ -120,8 +121,7 @@ class LightTcpSession:
             return self._session_open
 
     def open_session(self, *, dry_run: bool = False) -> None:
-        host = settings.light_tcp_host
-        port = settings.light_tcp_port
+        host, port = effective_light_target()
         use_json = settings.light_tcp_handshake == "json"
         message = build_light_message("connect") if use_json else None
 
@@ -163,8 +163,7 @@ class LightTcpSession:
         *,
         dry_run: bool = False,
     ) -> None:
-        host = settings.light_tcp_host
-        port = settings.light_tcp_port
+        host, port = effective_light_target()
         payload = build_osc_tcp_payload(address, list(args or []))
         transport = describe_tcp_osc_payload(payload)
 
@@ -192,8 +191,7 @@ class LightTcpSession:
             time.sleep(delay)
 
     def close_session(self, *, dry_run: bool = False) -> None:
-        host = settings.light_tcp_host
-        port = settings.light_tcp_port
+        host, port = effective_light_target()
         use_json = settings.light_tcp_handshake == "json"
         message = build_light_message("disconnect") if use_json else None
 
@@ -250,8 +248,7 @@ class LightTcpSession:
     def _ensure_connected_unlocked(self) -> None:
         if self._conn is not None:
             return
-        host = settings.light_tcp_host
-        port = settings.light_tcp_port
+        host, port = effective_light_target()
         try:
             conn = socket.create_connection((host, port), timeout=settings.light_tcp_timeout)
         except (TimeoutError, OSError) as exc:

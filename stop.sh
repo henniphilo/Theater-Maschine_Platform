@@ -78,6 +78,6 @@ stop_docker() {
 echo "=== Theatermaschine stoppen ==="
 stop_director_outputs
 stop_port 8000 "Backend (uvicorn)"
-stop_port 3003 "Frontend (Host-Port)"
+stop_port 3004 "Frontend (Host-Port)"
 stop_docker
 echo "Fertig."

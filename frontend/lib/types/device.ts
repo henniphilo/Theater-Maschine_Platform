@@ -66,7 +66,13 @@ export function defaultConfigurationFor(type: AdapterType): Record<string, unkno
     case "midi":
       return { midi_port: "", force_dry_run: true };
     case "pixera":
-      return { host: "127.0.0.1", port: 8990, force_dry_run: true };
+      return {
+        host: "127.0.0.1",
+        port: 8990,
+        force_dry_run: true,
+        output_slots: ["stage_l", "stage_r"],
+        atmosphere_free_slots: ["stage_r"]
+      };
     case "eos_tcp":
       return { host: "127.0.0.1", port: 3032, force_dry_run: true };
     default:

@@ -2,6 +2,7 @@ import { MediaCueDetail } from "@/components/script/MediaCueDetail";
 import type { MediaLookup } from "@/lib/types/media";
 import type { ScriptBeat, ScriptSpeaker } from "@/lib/types/script";
 import { dramaturgSpeakerLabel, speakerLabel } from "@/lib/types/script";
+import { displayReasonShort, dramaturgicalFunctionLabel } from "@/lib/dramaturgy/labels";
 
 export function ScriptBeatBlock({
   beat,
@@ -28,6 +29,10 @@ export function ScriptBeatBlock({
 }) {
   const d = beat.dramaturgy;
   const mood = d?.mood ?? "—";
+  const reasonShort = d ? displayReasonShort(d.reason_short, d.reason) : "";
+  const functionLabel = d?.dramaturgical_function
+    ? dramaturgicalFunctionLabel(d.dramaturgical_function)
+    : "";
   const turns = beat.discussion_turns ?? [];
 
   const content = (
@@ -90,7 +95,12 @@ export function ScriptBeatBlock({
       {d ? (
         <>
           <MediaCueDetail dramaturgy={d} media={media} />
-          {d.reason ? <p className="scriptBeatReason">Begründung: {d.reason}</p> : null}
+          {reasonShort ? (
+            <p className="scriptBeatReason">
+              {functionLabel ? <span className="textMuted">{functionLabel} · </span> : null}
+              – {reasonShort}
+            </p>
+          ) : null}
         </>
       ) : (
         <p className="textFaint">Noch keine Regieentscheidung.</p>

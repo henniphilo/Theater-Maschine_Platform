@@ -93,7 +93,10 @@ def director_test_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
 
     import app.director.light_desk_test as light_desk_mod
     import app.director.technik_hold as technik_hold_mod
+    from app.director.output_targets import apply_overrides
     from app.director.outputs.light_tcp import close_light_tcp
+
+    apply_overrides(reset=True)
 
     technik_hold_mod._manager = None
     technik_hold_mod.get_technik_hold_manager(director_routes._pipeline).stop()
@@ -102,3 +105,11 @@ def director_test_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
         light_desk_mod.get_light_desk_test_manager(director_routes._pipeline).disconnect()
     except Exception:
         close_light_tcp()
+
+    import app.director.qlab_relay_manager as qlab_relay_mod
+
+    qlab_relay_mod._manager = None
+    try:
+        qlab_relay_mod.get_qlab_relay_manager().stop()
+    except Exception:
+        pass

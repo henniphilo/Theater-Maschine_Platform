@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { FormEvent, useCallback, useEffect, useState } from "react";
 
-import { deleteCue, dryRunCue, fetchCue, updateCue } from "@/lib/api/cues";
+import { deleteCue, dryRunCue, executeCueReal, fetchCue, updateCue } from "@/lib/api/cues";
 import { fetchProduction } from "@/lib/api/productions";
 import type { Cue, CueType } from "@/lib/types/cue";
 import { CUE_ACTIONS, CUE_TYPES } from "@/lib/types/cue";
@@ -30,6 +30,8 @@ export default function CueDetailPage() {
   const [saving, setSaving] = useState(false);
   const [dryRunResult, setDryRunResult] = useState<string | null>(null);
   const [dryRunning, setDryRunning] = useState(false);
+  const [realRunning, setRealRunning] = useState(false);
+  const [execResult, setExecResult] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     if (!productionId || !cueId) return;
@@ -103,6 +105,27 @@ export default function CueDetailPage() {
       setError(err instanceof Error ? err.message : "Dry-Run fehlgeschlagen");
     } finally {
       setDryRunning(false);
+    }
+  }
+
+  async function onRealExecute() {
+    if (!cue) return;
+    const confirmed = window.confirm(
+      `Cue „${cue.name}“ REAL ausführen?\n\nSendet über Device-Adapter (sofern OSC_DRY_RUN/Device nicht dry-run erzwingen).`
+    );
+    if (!confirmed) return;
+    setRealRunning(true);
+    setError(null);
+    setExecResult(null);
+    try {
+      const result = await executeCueReal(cue.id, productionId);
+      setExecResult(
+        `${result.status}: ${result.message}\n${JSON.stringify(result.planned, null, 2)}`
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Ausführung fehlgeschlagen");
+    } finally {
+      setRealRunning(false);
     }
   }
 
@@ -213,6 +236,9 @@ export default function CueDetailPage() {
             <button type="button" disabled={dryRunning} onClick={() => void onDryRun()}>
               {dryRunning ? "Dry-Run…" : "Dry-Run testen"}
             </button>
+            <button type="button" disabled={realRunning} onClick={() => void onRealExecute()}>
+              {realRunning ? "Ausführen…" : "Real ausführen"}
+            </button>
             <button type="button" onClick={() => void onDelete()}>
               Löschen
             </button>
@@ -224,6 +250,13 @@ export default function CueDetailPage() {
         <section className="col" style={{ gap: "var(--space-2)" }}>
           <h2>Dry-Run Ergebnis</h2>
           <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>{dryRunResult}</pre>
+        </section>
+      ) : null}
+
+      {execResult ? (
+        <section className="col" style={{ gap: "var(--space-2)" }}>
+          <h2>Ausführungs-Ergebnis</h2>
+          <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>{execResult}</pre>
         </section>
       ) : null}
 
@@ -240,7 +273,7 @@ export default function CueDetailPage() {
         </div>
         <div>
           <dt className="textMuted">Device</dt>
-          <dd>{cue.device_id ?? "— (Device-Meilenstein folgt)"}</dd>
+          <dd>{cue.device_id ?? "— (für Real-Execute meist nötig)"}</dd>
         </div>
       </dl>
     </main>

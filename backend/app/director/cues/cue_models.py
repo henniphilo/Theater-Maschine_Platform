@@ -1,10 +1,10 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import Enum
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-ProjectorTarget = Literal["adam", "eva", "rz21", "led"]
+ProjectorTarget = str  # output slot id; legacy values: adam|eva|rz21|led
 VideoType = Literal["avatar", "atmosphere", "regie"]
 PerformanceSpeaker = Literal["AI_A", "AI_B", "narrator"]
 
@@ -96,6 +96,35 @@ def resolve_light_scene_ids(light: LightCue | None) -> list[str]:
     return []
 
 
+class DramaturgicalFunction(str, Enum):
+    SUPPORT = "support"
+    CONTRAST = "contrast"
+    INTENSIFICATION = "intensification"
+    RELEASE = "release"
+    TRANSITION = "transition"
+    RECALL = "recall"
+    DISRUPTION = "disruption"
+    FORESHADOWING = "foreshadowing"
+    SPACE = "space"
+
+
+class DecisionKind(str, Enum):
+    EXECUTE = "execute"
+    MODIFY = "modify"
+    STOP = "stop"
+    HOLD = "hold"
+    NONE = "none"
+
+
+class DecisionStatus(str, Enum):
+    SUGGESTED = "suggested"
+    SCHEDULED = "scheduled"
+    EXECUTED = "executed"
+    REJECTED = "rejected"
+    OVERRIDDEN = "overridden"
+    CANCELLED = "cancelled"
+
+
 class CuePointTrigger(str, Enum):
     START = "start"
     KEYWORD = "keyword"
@@ -120,13 +149,44 @@ class DramaturgyDecision(BaseModel):
     sound: SoundCue | None = None
     light: LightCue | None = None
     reason: str = ""
+    reason_short: str = Field(default="", max_length=160)
     dramaturgical_reading: str = ""
+    dramaturgical_function: DramaturgicalFunction | None = None
+    decision_kind: DecisionKind | None = None
+    confidence: float = Field(default=0.0, ge=0.0, le=1.0)
     cue_points: list[CuePoint] = Field(default_factory=list)
     performance_speakers: list[PerformanceSpeaker] = Field(default_factory=list)
     tags: list[str] = Field(default_factory=list)
     mood: str = "neutral"
     intensity: float = Field(default=0.5, ge=0.0, le=1.0)
     timestamp: float = 0.0
+
+
+class DramaturgyDecisionEvent(BaseModel):
+    decision_id: str
+    session_id: str | None = None
+    text_event_id: str | None = None
+    cue_id: str | None = None
+    decision: DecisionKind
+    reason_short: str = Field(max_length=160)
+    dramaturgical_function: DramaturgicalFunction
+    confidence: float = Field(default=0.0, ge=0.0, le=1.0)
+    intensity_before: float | None = Field(default=None, ge=0.0, le=1.0)
+    intensity_after: float | None = Field(default=None, ge=0.0, le=1.0)
+    alternatives_considered: list[str] = Field(default_factory=list)
+    decision_status: DecisionStatus = DecisionStatus.SCHEDULED
+    text_snippet: str = ""
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+class CueProposal(BaseModel):
+    proposal_id: str
+    decision: DramaturgyDecision
+    status: DecisionStatus = DecisionStatus.SUGGESTED
+    reason_short: str = ""
+    dramaturgical_function: DramaturgicalFunction | None = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    text_snippet: str = ""
 
 
 class ScheduledCue(BaseModel):

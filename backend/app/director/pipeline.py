@@ -9,7 +9,12 @@ from app.director.cues.projector_state import ProjectorState
 from app.director.cues.scheduler import CueScheduler
 from app.director.cues.safety import SafetyState, get_safety_state
 from app.director.dialogue.models import DialogueEvent, DialogueSpeaker
+from app.director.dramaturgy.conflict_check import check_conflicts
 from app.director.dramaturgy.engine import DramaturgyEngine
+from app.director.dramaturgy.proposals import ProposalStore
+from app.director.dramaturgy.reason_short import enrich_decision_metadata
+from app.director.dramaturgy.state import DramaturgyState
+from app.director.dramaturgy.trace import emit_dramaturgy_decision
 from app.director.media.database import MediaDatabase
 from app.director.outputs.lighting import LightingBridge
 from app.director.outputs.logger import DirectorLogger
@@ -122,17 +127,41 @@ class DirectorPipeline:
         self.logger = logger or DirectorLogger()
         self.projectors = ProjectorState()
         self.state = DirectorState()
+        self.dramaturgy_state = DramaturgyState()
+        self.proposals = ProposalStore()
         self.run_state = get_director_run_state()
         self._lock = RLock()
 
     def plan(self, event: DialogueEvent) -> DirectorResult:
-        decision = self.engine.decide(event)
-        allowed, blocked_reason = self.scheduler.can_execute(decision)
+        self.dramaturgy_state.apply_text_context(
+            text=event.text,
+            mood=event.mood,
+            intensity=event.intensity,
+            tags=list(event.tags),
+        )
+        decision = enrich_decision_metadata(self.engine.decide(event))
+        conflict = check_conflicts(decision, self.dramaturgy_state)
+        if not conflict.allowed and conflict.reason:
+            blocked_reason = conflict.reason
+            allowed = False
+        else:
+            allowed, blocked_reason = self.scheduler.can_execute(
+                decision,
+                dramaturgy_state=self.dramaturgy_state,
+            )
         dry_run = settings.osc_dry_run or self.safety.emergency_stop_active
         planned = build_osc_commands(decision, dry_run=dry_run)
 
         if not allowed:
             planned = []
+
+        self.proposals.create(decision, text_snippet=event.text)
+        emit_dramaturgy_decision(
+            decision,
+            event=event,
+            executed=False,
+            blocked_reason=blocked_reason,
+        )
 
         scheduled = ScheduledCue(
             decision=decision,
@@ -190,8 +219,16 @@ class DirectorPipeline:
             return self._emergency_blocked_result(decision, "(script beat)")
 
         decision = _filter_decision_for_safety(decision, self.safety)
+        decision = enrich_decision_metadata(decision)
         decision = _route_dramaturgy_from_avatar_projectors(decision, self.projectors)
-        allowed, blocked_reason = self.scheduler.can_execute(decision)
+        conflict = check_conflicts(decision, self.dramaturgy_state)
+        allowed, blocked_reason = self.scheduler.can_execute(
+            decision,
+            dramaturgy_state=self.dramaturgy_state,
+        )
+        if not conflict.allowed and conflict.reason and not force:
+            allowed = False
+            blocked_reason = conflict.reason
         if force:
             allowed = True
             blocked_reason = None
@@ -219,6 +256,7 @@ class DirectorPipeline:
         elif allowed and planned:
             osc_commands = self._dispatch_commands(planned, stagger=stagger)
             self.scheduler.mark_executed(decision)
+            self.dramaturgy_state.apply_decision(decision, executed=True)
 
         event = self.state.last_event or DialogueEvent(
             speaker=DialogueSpeaker.AI_A,
@@ -228,6 +266,15 @@ class DirectorPipeline:
             intensity=decision.intensity,
             tags=decision.tags,
             timestamp=decision.timestamp,
+        )
+
+        emit_dramaturgy_decision(
+            decision,
+            event=event,
+            request_trace=req_trace,
+            executed=allowed and bool(osc_commands),
+            blocked_reason=blocked_reason,
+            intensity_before=self.dramaturgy_state.scene_intensity,
         )
 
         result = DirectorResult(
@@ -293,6 +340,7 @@ class DirectorPipeline:
                 update={"blend_mode": "layer"},
             )
         decision = _filter_decision_for_safety(decision, self.safety)
+        decision = enrich_decision_metadata(decision)
         decision = _route_dramaturgy_from_avatar_projectors(decision, self.projectors)
         projector_blocked: str | None = None
         if decision.visual:
@@ -303,6 +351,7 @@ class DirectorPipeline:
             decision,
             anarchy_level=anarchy_level,
             skip_interval_check=skip_interval_check,
+            dramaturgy_state=self.dramaturgy_state,
         )
         if not allowed_proj:
             allowed = False
@@ -334,6 +383,7 @@ class DirectorPipeline:
         elif allowed and planned:
             osc_commands = self._dispatch_commands(planned, stagger=stagger)
             self.scheduler.mark_executed(decision)
+            self.dramaturgy_state.apply_decision(decision, executed=True)
             if decision.visual:
                 excerpt = text_excerpt
                 if excerpt is None and decision.visual.video_type == "avatar":
@@ -347,12 +397,21 @@ class DirectorPipeline:
 
         event = self.state.last_event or DialogueEvent(
             speaker=DialogueSpeaker.AI_A,
-            text="(inszenierung moment)",
+            text=text_excerpt or "(inszenierung moment)",
             topic="",
             mood=decision.mood,
             intensity=decision.intensity,
             tags=decision.tags,
             timestamp=decision.timestamp,
+        )
+
+        emit_dramaturgy_decision(
+            decision,
+            event=event,
+            request_trace=req_trace,
+            executed=allowed and bool(osc_commands),
+            blocked_reason=blocked_reason,
+            intensity_before=self.dramaturgy_state.scene_intensity,
         )
 
         result = DirectorResult(
@@ -365,6 +424,35 @@ class DirectorPipeline:
         )
         self._store_result(result, log_executed=result.executed)
         return result
+
+    def accept_proposal(self, proposal_id: str, *, force: bool = False) -> DirectorResult | None:
+        proposal = self.proposals.get(proposal_id)
+        if proposal is None:
+            return None
+        from app.director.cues.cue_models import DecisionStatus
+
+        self.proposals.set_status(proposal_id, DecisionStatus.SCHEDULED)
+        return self.execute(proposal.decision, force=force)
+
+    def reject_proposal(self, proposal_id: str) -> bool:
+        from app.director.cues.cue_models import DecisionStatus
+
+        updated = self.proposals.set_status(proposal_id, DecisionStatus.REJECTED)
+        return updated is not None
+
+    def override_proposal(
+        self,
+        proposal_id: str,
+        decision: DramaturgyDecision,
+        *,
+        force: bool = True,
+    ) -> DirectorResult | None:
+        from app.director.cues.cue_models import DecisionStatus
+
+        if self.proposals.get(proposal_id) is None:
+            return None
+        self.proposals.set_status(proposal_id, DecisionStatus.OVERRIDDEN)
+        return self.execute(enrich_decision_metadata(decision), force=force)
 
     def process(self, event: DialogueEvent, *, force: bool = False) -> DirectorResult:
         if settings.director_execute_mode == "sequenced" and not force:
@@ -470,6 +558,7 @@ class DirectorPipeline:
             context_source="backend_authoritative",
         )
         self.safety.clear_emergency_stop()
+        self.projectors.reconfigure_from_active_production()
         self.projectors.reset()
         self.projectors.allow_avatar_interrupt = True
 
@@ -498,16 +587,41 @@ class DirectorPipeline:
         self.projectors.reset()
         self.scheduler.clear_active()
         dry_run = _effective_dry_run(self.safety)
-        if not dry_run and settings.visual_output in ("pixera", "both"):
-            from app.services.video_cue_catalog import get_video_cue_catalog_service
+        try:
+            if not dry_run and settings.visual_output in ("pixera", "both"):
+                from app.services.video_cue_catalog import get_video_cue_catalog_service
 
-            catalog = get_video_cue_catalog_service().load()
-            for projector in catalog.projectors:
-                self.pixera.apply_cue(f"{projector.pixera_prefix}.Black")
-        if not dry_run and settings.visual_output in ("touchdesigner", "both"):
-            self.touchdesigner.blackout()
-        self.sound.stop_all(dry_run=dry_run)
-        self.lighting.blackout(dry_run=dry_run)
+                catalog = get_video_cue_catalog_service().load()
+                for projector in catalog.projectors:
+                    self.pixera.apply_cue(f"{projector.pixera_prefix}.Black")
+            if not dry_run and settings.visual_output in ("touchdesigner", "both"):
+                self.touchdesigner.blackout()
+            self.sound.stop_all(dry_run=dry_run)
+            self.lighting.blackout(dry_run=dry_run)
+        except Exception:
+            _execute_logger.exception("legacy emergency outputs failed")
+        try:
+            from app.services.director_production_context import (
+                emergency_stop_active_production_devices,
+            )
+
+            device_results = emergency_stop_active_production_devices()
+            emit_signal_trace_event(
+                "emergency.production_devices",
+                status="stopped",
+                detail={"devices": device_results},
+            )
+        except Exception:
+            _execute_logger.exception("active production device emergency_stop failed")
+
+    def refresh_output_targets(self) -> None:
+        from app.director.output_targets import effective_light_target, effective_video_target
+
+        video_host, video_port = effective_video_target()
+        light_host, light_port = effective_light_target()
+        self.pixera.reconfigure(video_host, video_port)
+        self.touchdesigner.reconfigure(video_host, video_port)
+        self.lighting.reconfigure(light_host, light_port)
 
 
 _pipeline: DirectorPipeline | None = None

@@ -2,27 +2,33 @@ import asyncio
 import json
 from collections.abc import AsyncIterator
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import StreamingResponse
+from sqlalchemy.orm import Session
 
 from app.core.config import settings
+from app.db.session import get_db
 from app.director.avatar_done_gate import get_avatar_done_gate
 from app.director.outputs.osc_queue import get_osc_command_queue
 from app.director.outputs.signal_trace import begin_request_trace, emit_signal_trace_event
 from app.director.pipeline import get_director_pipeline
 from app.director.recording import RecordingManager
 from app.director.remote_transport import get_remote_transport_mailbox
+from app.director.cues.cue_models import CueProposal
 from app.schemas.director import (
     AvatarDoneWaitRequest,
     AvatarDoneWaitResponse,
     DialogueEventRequest,
     DirectorProcessResponse,
     DirectorStatusResponse,
+    DramaturgyAnalysisResponse,
     ExecuteRequest,
     ExecuteLayeredRequest,
     ExecuteResponse,
     OscTestRequest,
     OscTestResponse,
+    ProposalActionResponse,
+    ProposalOverrideRequest,
     RecordingRequest,
     RecordingStatusResponse,
     RemoteTransportCommandRequest,
@@ -33,6 +39,11 @@ from app.schemas.director import (
     TechnikStopRequest,
     LightDeskStatusResponse,
     LightSendRequest,
+    OutputTargetChannel,
+    OutputTargetEndpoint,
+    OutputTargetsResponse,
+    OutputTargetsUpdateRequest,
+    QlabRelayStatusResponse,
     TraceContext,
 )
 
@@ -61,11 +72,14 @@ def _to_response(result) -> DirectorProcessResponse:
     )
 
 
-def _status_response() -> DirectorStatusResponse:
+def _status_response(db: Session | None = None) -> DirectorStatusResponse:
+    from app.services.director_production_context import active_production_status
+
     state = _pipeline.state
     last = state.last_result
     queue_depth = get_osc_command_queue().depth if settings.director_osc_queue else 0
     run_context = _pipeline.run_state.current()
+    active = active_production_status(db)
     return DirectorStatusResponse(
         safety=_pipeline.safety.to_dict(),
         active_cues=list(_pipeline.scheduler.active_cues),
@@ -78,8 +92,13 @@ def _status_response() -> DirectorStatusResponse:
         last_blocked_reason=last.blocked_reason if last else None,
         last_planned_commands=last.planned_commands if last else [],
         last_osc_commands=state.last_osc_commands,
+        dramaturgy_state=_pipeline.dramaturgy_state.snapshot(),
+        open_proposals=_pipeline.proposals.list_open(),
         avatar_done_gate_enabled=settings.avatar_done_gate_enabled,
         avatar_done_gate=get_avatar_done_gate().status_snapshot(),
+        active_production_id=active.get("active_production_id"),
+        active_production_name=active.get("active_production_name"),
+        active_production_slug=active.get("active_production_slug"),
     )
 
 
@@ -340,6 +359,123 @@ def get_technik_status() -> TechnikHoldStatusResponse:
     return _technik_status_response()
 
 
+def _qlab_relay_status_response() -> QlabRelayStatusResponse:
+    from app.director.qlab_relay_manager import get_qlab_relay_manager
+
+    status = get_qlab_relay_manager().status()
+    return QlabRelayStatusResponse(
+        running=status.running,
+        managed=status.managed,
+        pid=status.pid,
+        listen_host=status.listen_host,
+        pixera_listen_port=status.pixera_listen_port,
+        light_listen_port=status.light_listen_port,
+        light_listener_enabled=status.light_listener_enabled,
+        qlab_host=status.qlab_host,
+        qlab_port=status.qlab_port,
+        feedback_enabled=status.feedback_enabled,
+        error=status.error,
+    )
+
+
+@router.get("/relay/status", response_model=QlabRelayStatusResponse)
+def get_relay_status() -> QlabRelayStatusResponse:
+    _ensure_enabled()
+    return _qlab_relay_status_response()
+
+
+@router.post("/relay/start", response_model=QlabRelayStatusResponse)
+def post_relay_start() -> QlabRelayStatusResponse:
+    _ensure_enabled()
+    from app.director.qlab_relay_manager import get_qlab_relay_manager
+
+    relay_status = get_qlab_relay_manager().start()
+    if relay_status.error and not relay_status.managed:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=relay_status.error)
+    return _qlab_relay_status_response()
+
+
+@router.post("/relay/stop", response_model=QlabRelayStatusResponse)
+def post_relay_stop() -> QlabRelayStatusResponse:
+    _ensure_enabled()
+    from app.director.qlab_relay_manager import get_qlab_relay_manager
+
+    get_qlab_relay_manager().stop()
+    return _qlab_relay_status_response()
+
+
+def _output_targets_response() -> OutputTargetsResponse:
+    from app.director.output_targets import (
+        default_light_target,
+        default_video_target,
+        effective_light_target,
+        effective_video_target,
+        get_override_state,
+    )
+
+    overrides = get_override_state()
+    default_video_host, default_video_port = default_video_target()
+    effective_video_host, effective_video_port = effective_video_target()
+    default_light_host, default_light_port = default_light_target()
+    effective_light_host, effective_light_port = effective_light_target()
+
+    video_override = None
+    if overrides.video_host is not None or overrides.video_port is not None:
+        video_override = OutputTargetEndpoint(
+            host=overrides.video_host or default_video_host,
+            port=overrides.video_port if overrides.video_port is not None else default_video_port,
+        )
+
+    light_override = None
+    if overrides.light_host is not None or overrides.light_port is not None:
+        light_override = OutputTargetEndpoint(
+            host=overrides.light_host or default_light_host,
+            port=overrides.light_port if overrides.light_port is not None else default_light_port,
+        )
+
+    return OutputTargetsResponse(
+        visual_output=settings.visual_output,
+        light_output=settings.light_output,
+        video=OutputTargetChannel(
+            default=OutputTargetEndpoint(host=default_video_host, port=default_video_port),
+            override=video_override,
+            effective=OutputTargetEndpoint(host=effective_video_host, port=effective_video_port),
+        ),
+        light=OutputTargetChannel(
+            default=OutputTargetEndpoint(host=default_light_host, port=default_light_port),
+            override=light_override,
+            effective=OutputTargetEndpoint(host=effective_light_host, port=effective_light_port),
+        ),
+    )
+
+
+@router.get("/output-targets", response_model=OutputTargetsResponse)
+def get_output_targets() -> OutputTargetsResponse:
+    _ensure_enabled()
+    return _output_targets_response()
+
+
+@router.patch("/output-targets", response_model=OutputTargetsResponse)
+def patch_output_targets(payload: OutputTargetsUpdateRequest) -> OutputTargetsResponse:
+    _ensure_enabled()
+    from app.director.output_targets import apply_overrides, refresh_pipeline_targets
+
+    if payload.video_host is not None and not payload.video_host.strip():
+        raise HTTPException(status_code=400, detail="video_host must not be empty")
+    if payload.light_host is not None and not payload.light_host.strip():
+        raise HTTPException(status_code=400, detail="light_host must not be empty")
+
+    apply_overrides(
+        video_host=payload.video_host,
+        video_port=payload.video_port,
+        light_host=payload.light_host,
+        light_port=payload.light_port,
+        reset=payload.reset,
+    )
+    refresh_pipeline_targets()
+    return _output_targets_response()
+
+
 def _light_desk_status_response() -> LightDeskStatusResponse:
     from app.director.light_desk_test import get_light_desk_test_manager
 
@@ -435,9 +571,9 @@ def _light_desk_status_response_from(status) -> LightDeskStatusResponse:
 
 
 @router.get("/status", response_model=DirectorStatusResponse)
-def get_status() -> DirectorStatusResponse:
+def get_status(db: Session = Depends(get_db)) -> DirectorStatusResponse:
     _ensure_enabled()
-    return _status_response()
+    return _status_response(db)
 
 
 @router.post("/avatar-done/wait", response_model=AvatarDoneWaitResponse)
@@ -472,29 +608,31 @@ def post_avatar_done_wait(payload: AvatarDoneWaitRequest) -> AvatarDoneWaitRespo
 
 
 @router.patch("/safety", response_model=DirectorStatusResponse)
-def patch_safety(payload: SafetyUpdateRequest) -> DirectorStatusResponse:
+def patch_safety(
+    payload: SafetyUpdateRequest,
+    db: Session = Depends(get_db),
+) -> DirectorStatusResponse:
     _ensure_enabled()
     updates = payload.model_dump(exclude_none=True)
     if updates:
         _pipeline.safety.update(**updates)
-    return _status_response()
+    return _status_response(db)
 
 
 @router.post("/emergency-stop", response_model=DirectorStatusResponse)
-def emergency_stop() -> DirectorStatusResponse:
+def emergency_stop(db: Session = Depends(get_db)) -> DirectorStatusResponse:
     _ensure_enabled()
     get_avatar_done_gate().reset()
     _pipeline.emergency_stop()
-    return _status_response()
+    return _status_response(db)
 
 
 @router.post("/emergency-clear", response_model=DirectorStatusResponse)
-def emergency_clear() -> DirectorStatusResponse:
+def emergency_clear(db: Session = Depends(get_db)) -> DirectorStatusResponse:
     _ensure_enabled()
     get_avatar_done_gate().reset()
     _pipeline.clear_for_performance()
-    return _status_response()
-
+    return _status_response(db)
 
 @router.post("/record/start", response_model=RecordingStatusResponse)
 def record_start(payload: RecordingRequest) -> RecordingStatusResponse:
@@ -587,6 +725,62 @@ def get_osc_log_recent(limit: int = 150) -> dict[str, object]:
         "path": settings.osc_log_path,
         "limit": capped,
     }
+
+
+@router.get("/proposals", response_model=list[CueProposal])
+def list_proposals() -> list[CueProposal]:
+    _ensure_enabled()
+    return _pipeline.proposals.list_open()
+
+
+@router.post("/proposals/{proposal_id}/accept", response_model=ProposalActionResponse)
+def accept_proposal(proposal_id: str, force: bool = False) -> ProposalActionResponse:
+    _ensure_enabled()
+    result = _pipeline.accept_proposal(proposal_id, force=force)
+    if result is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Proposal not found")
+    return ProposalActionResponse(
+        proposal_id=proposal_id,
+        status="scheduled",
+        executed=result.executed,
+        blocked_reason=result.blocked_reason,
+        decision=result.decision,
+    )
+
+
+@router.post("/proposals/{proposal_id}/reject", response_model=ProposalActionResponse)
+def reject_proposal(proposal_id: str) -> ProposalActionResponse:
+    _ensure_enabled()
+    if not _pipeline.reject_proposal(proposal_id):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Proposal not found")
+    return ProposalActionResponse(proposal_id=proposal_id, status="rejected")
+
+
+@router.post("/proposals/{proposal_id}/override", response_model=ProposalActionResponse)
+def override_proposal(proposal_id: str, payload: ProposalOverrideRequest) -> ProposalActionResponse:
+    _ensure_enabled()
+    result = _pipeline.override_proposal(
+        proposal_id,
+        payload.decision,
+        force=payload.force,
+    )
+    if result is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Proposal not found")
+    return ProposalActionResponse(
+        proposal_id=proposal_id,
+        status="overridden",
+        executed=result.executed,
+        blocked_reason=result.blocked_reason,
+        decision=result.decision,
+    )
+
+
+@router.get("/dramaturgy-analysis", response_model=DramaturgyAnalysisResponse)
+def dramaturgy_analysis(limit: int = 100) -> DramaturgyAnalysisResponse:
+    _ensure_enabled()
+    from app.services.dramaturgy_analysis_service import load_dramaturgy_analysis
+
+    return load_dramaturgy_analysis(limit=limit, dramaturgy_state=_pipeline.dramaturgy_state.snapshot())
 
 
 @router.post("/remote-transport", response_model=RemoteTransportPostResponse)
