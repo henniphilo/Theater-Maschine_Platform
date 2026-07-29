@@ -118,13 +118,22 @@ export function fireStartCues(ctx: CuePlaybackContext): void {
   }
 }
 
-/** When seeking mid-show, skip time cues that would otherwise catch up from t=0. */
-export function markTimeCuesAsFired(ctx: CuePlaybackContext): void {
+/**
+ * When seeking mid-show, skip time cues at or before the seek clock so they do not
+ * catch up from t=0. Future time cues (offset > beforeSec) stay eligible.
+ */
+export function markTimeCuesBefore(ctx: CuePlaybackContext, beforeSec: number): void {
   for (const point of normalizeCuePoints(ctx.dramaturgy)) {
-    if (point.trigger === "time") {
+    if (point.trigger !== "time") continue;
+    if ((point.time_offset_sec ?? 0) <= beforeSec) {
       ctx.fired.add(cueKey(point));
     }
   }
+}
+
+/** @deprecated Prefer markTimeCuesBefore with the seek clock; marks all time cues. */
+export function markTimeCuesAsFired(ctx: CuePlaybackContext): void {
+  markTimeCuesBefore(ctx, Number.POSITIVE_INFINITY);
 }
 
 export function fireTimeCues(ctx: CuePlaybackContext, currentTime: number): void {

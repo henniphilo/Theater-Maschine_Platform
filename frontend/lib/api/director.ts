@@ -410,6 +410,7 @@ export type QlabRelayStatus = {
   qlab_port: number;
   feedback_enabled: boolean;
   error?: string | null;
+  notice?: string | null;
 };
 
 export async function fetchQlabRelayStatus(): Promise<QlabRelayStatus> {

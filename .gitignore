@@ -37,5 +37,6 @@ media/video/*
 !media/video/OSCBefehllisteOhneAvatare.txt
 media/recordings/*
 !media/recordings/.gitkeep
+tools/desktop/icons/generated/
 *.mov
 *.mp4

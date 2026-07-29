@@ -30,6 +30,9 @@ class QlabRelayConfig:
     avatar_done_port: int
 
 
+_LOCALHOST = "127.0.0.1"
+
+
 @dataclass
 class QlabRelayStatus:
     running: bool
@@ -43,6 +46,7 @@ class QlabRelayStatus:
     qlab_port: int = 53000
     feedback_enabled: bool = False
     error: str | None = None
+    notice: str | None = None
 
 
 class QlabRelayError(RuntimeError):
@@ -69,15 +73,80 @@ def _relay_script_path() -> Path:
     return path
 
 
-def _udp_port_in_use(host: str, port: int) -> bool:
+def _can_bind_udp(host: str, port: int) -> bool:
+    return _udp_bind_error(host, port) is None
+
+
+def _udp_bind_error(host: str, port: int) -> str | None:
     probe = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
         probe.bind((host, port))
-        return False
-    except OSError:
-        return True
+        return None
+    except OSError as exc:
+        return str(exc)
     finally:
         probe.close()
+
+
+def _udp_port_in_use(host: str, port: int) -> bool:
+    err = _udp_bind_error(host, port)
+    if err is None:
+        return False
+    lowered = err.lower()
+    return "already in use" in lowered or "address already in use" in lowered
+
+
+def _relay_bind_ok(config: QlabRelayConfig) -> bool:
+    if not _can_bind_udp(config.listen_host, config.pixera_listen_port):
+        return False
+    if config.light_listener_enabled and not _can_bind_udp(
+        config.listen_host, config.light_listen_port
+    ):
+        return False
+    return True
+
+
+def _prepare_relay_listen(
+    config: QlabRelayConfig,
+) -> tuple[QlabRelayConfig, str | None, str | None]:
+    """Ensure relay listen addresses are bindable. Returns (config, notice, error)."""
+    if _relay_bind_ok(config):
+        return config, None, None
+
+    original_host = config.listen_host
+    if original_host != _LOCALHOST:
+        from app.director.output_targets import apply_overrides, refresh_pipeline_targets
+
+        apply_overrides(video_host=_LOCALHOST)
+        if config.light_listener_enabled:
+            apply_overrides(light_host=_LOCALHOST)
+        refresh_pipeline_targets()
+        config = relay_config()
+        if _relay_bind_ok(config):
+            notice = (
+                f"Bühnen-IP {original_host} ist lokal nicht verfügbar — "
+                f"Relay und OSC-Ziele auf {_LOCALHOST} umgestellt."
+            )
+            return config, notice, None
+
+    if _udp_port_in_use(config.listen_host, config.pixera_listen_port):
+        err = (
+            f"Port {config.listen_host}:{config.pixera_listen_port} "
+            f"oder :{config.light_listen_port} bereits belegt — Relay läuft bereits?"
+        )
+    elif not _can_bind_udp(config.listen_host, config.pixera_listen_port):
+        err = (
+            f"Relay kann nicht auf {config.listen_host}:{config.pixera_listen_port} binden "
+            f"(Adresse auf diesem Mac nicht verfügbar). "
+            f"Für lokalen QLab-Test: PIXERA_OSC_HOST=127.0.0.1 in backend/.env "
+            f"oder Video-IP in Technik auf 127.0.0.1 setzen."
+        )
+    else:
+        err = (
+            f"Relay kann Licht-Port {config.listen_host}:{config.light_listen_port} "
+            f"nicht binden — Port belegt oder Adresse nicht verfügbar."
+        )
+    return config, None, err
 
 
 def relay_config() -> QlabRelayConfig:
@@ -107,6 +176,7 @@ def _status_from_config(
     managed: bool,
     pid: int | None,
     error: str | None,
+    notice: str | None = None,
 ) -> QlabRelayStatus:
     return QlabRelayStatus(
         running=running,
@@ -120,6 +190,7 @@ def _status_from_config(
         qlab_port=config.qlab_port,
         feedback_enabled=config.feedback_enabled,
         error=error,
+        notice=notice,
     )
 
 
@@ -128,12 +199,14 @@ class QlabRelayManager:
         self._lock = threading.Lock()
         self._process: subprocess.Popen[str] | None = None
         self._last_error: str | None = None
+        self._last_notice: str | None = None
 
     def status(self) -> QlabRelayStatus:
         config = relay_config()
         with self._lock:
             proc = self._process
             last_error = self._last_error
+            last_notice = self._last_notice
 
         managed_running = proc is not None and proc.poll() is None
         if proc is not None and not managed_running:
@@ -147,6 +220,7 @@ class QlabRelayManager:
             managed=managed_running,
             pid=proc.pid if managed_running and proc else None,
             error=None if managed_running else last_error,
+            notice=last_notice if managed_running else None,
         )
 
     def start(self) -> QlabRelayStatus:
@@ -159,6 +233,31 @@ class QlabRelayManager:
                     managed=True,
                     pid=self._process.pid,
                     error=None,
+                    notice=self._last_notice,
+                )
+
+        config, notice, prep_error = _prepare_relay_listen(config)
+        if prep_error:
+            with self._lock:
+                self._last_error = prep_error
+                self._last_notice = None
+            return _status_from_config(
+                config,
+                running=self._relay_ports_in_use(config),
+                managed=False,
+                pid=None,
+                error=prep_error,
+            )
+
+        with self._lock:
+            if self._process is not None and self._process.poll() is None:
+                return _status_from_config(
+                    config,
+                    running=True,
+                    managed=True,
+                    pid=self._process.pid,
+                    error=None,
+                    notice=self._last_notice,
                 )
 
             if self._relay_ports_in_use(config):
@@ -166,6 +265,7 @@ class QlabRelayManager:
                     f"Port {config.listen_host}:{config.pixera_listen_port} "
                     f"oder :{config.light_listen_port} bereits belegt — Relay läuft bereits?"
                 )
+                self._last_notice = None
                 return _status_from_config(
                     config,
                     running=True,
@@ -195,6 +295,7 @@ class QlabRelayManager:
                 )
 
             self._last_error = None
+            self._last_notice = notice
             proc = self._process
 
         time.sleep(0.35)
@@ -237,6 +338,7 @@ class QlabRelayManager:
         with self._lock:
             if proc is not None and proc.poll() is not None:
                 self._last_error = None
+                self._last_notice = None
 
         return self.status()
 

@@ -232,6 +232,7 @@ class QlabRelayStatusResponse(BaseModel):
     qlab_port: int
     feedback_enabled: bool
     error: str | None = None
+    notice: str | None = None
 
 
 class RecordingRequest(BaseModel):

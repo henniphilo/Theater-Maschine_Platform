@@ -164,6 +164,7 @@ function noteAvatarStarted(
   if (!names.length) return;
 
   const token = Symbol("avatar-done");
+  const clipDurationMs = Math.max(0, timeoutMs - AVATAR_DONE_TIMEOUT_GRACE_MS);
   const finished = (async (): Promise<AvatarDoneWaitResult | null> => {
     if (!(await isAvatarDoneGateEnabled())) return null;
     try {
@@ -181,10 +182,18 @@ function noteAvatarStarted(
   void finished.then(async (result) => {
     if (pendingAvatarDone?.token !== token) return;
     pendingAvatarDone = null;
-    if (shouldAbort() || result == null) return;
-    if (!(await isAvatarDoneGateEnabled())) return;
-    // Video finished → start next avatar immediately (no text-anchor gap).
-    await advanceAvatarChainAfterDone();
+    if (shouldAbort()) return;
+    if (result != null) {
+      // Done signal → next avatar immediately.
+      await advanceAvatarChainAfterDone();
+      return;
+    }
+    if (await isAvatarDoneGateEnabled()) return;
+    // No done gate: chain after CSV clip duration.
+    const chainDelayMs = clipDurationMs > 0 ? clipDurationMs : 0;
+    setTimeout(() => {
+      void advanceAvatarChainAfterDone();
+    }, chainDelayMs);
   });
 }
 
@@ -259,9 +268,8 @@ export async function fireAvatarSegmentIfDue(
   options?: { pauseNarratorForPending?: boolean }
 ): Promise<boolean> {
   if (shouldAbort()) return false;
-  // If text already reached the next anchor while the previous clip plays: pause TTS.
-  // Chain-advance after Done uses pauseNarratorForPending=false (no extra gap).
-  const pauseNarrator = options?.pauseNarratorForPending !== false;
+  // Avatars run sequentially on clip duration / Done — never pause Erzähler-TTS.
+  const pauseNarrator = options?.pauseNarratorForPending === true;
   await waitForPendingAvatarDone(shouldAbort, pauseNarrator);
   if (shouldAbort()) return false;
   if (!(await waitWhilePlaybackPaused(shouldAbort))) return false;
@@ -364,10 +372,12 @@ function compareAvatarSegments(
   sentenceCharStarts: number[],
   scriptText?: string
 ): number {
+  const seqA = a.csv_sequence_index ?? 0;
+  const seqB = b.csv_sequence_index ?? 0;
+  if (seqA !== seqB) return seqA - seqB;
   const offsetA = effectiveCharOffset(a, sentenceCharStarts, scriptText);
   const offsetB = effectiveCharOffset(b, sentenceCharStarts, scriptText);
-  if (offsetA !== offsetB) return offsetA - offsetB;
-  return (a.csv_sequence_index ?? 0) - (b.csv_sequence_index ?? 0);
+  return offsetA - offsetB;
 }
 
 export function sortedAvatarSegments(
@@ -567,17 +577,20 @@ export async function fireInitialAvatarSegments(
   onSegmentFired?: (segment: AvatarTextSegment) => void,
   scriptText?: string
 ): Promise<void> {
-  await fireAvatarSegmentsAtPosition(
-    plan,
-    0,
-    fired,
-    sentenceCharStarts,
-    anarchyLevelFor,
-    onCommands,
-    shouldAbort,
-    onSegmentFired,
-    scriptText
-  );
+  await withAvatarFireLock(async () => {
+    const segment = nextUnfiredAvatarInSequence(plan, fired, sentenceCharStarts, scriptText);
+    if (!segment || shouldAbort()) return;
+    const sent = await fireAvatarSegmentIfDue(
+      segment,
+      anarchyLevelFor(segment),
+      onCommands,
+      shouldAbort,
+      { pauseNarratorForPending: false }
+    );
+    if (!sent) return;
+    fired.add(avatarSegmentKey(segment));
+    onSegmentFired?.(segment);
+  });
 }
 
 export async function fireRemainingSentenceSegments(
@@ -628,6 +641,23 @@ export function countUnfiredAvatarSegments(
   fired: Set<string>
 ): number {
   return plan.avatar_segments.filter((segment) => !fired.has(avatarSegmentKey(segment))).length;
+}
+
+/** Mark avatar segments before a sentence seek point (time-based chain skips past beats). */
+export function markAvatarSegmentsBeforeSentenceIndex(
+  plan: Teil2PerformancePlan,
+  beforeSentenceIndex: number,
+  fired: Set<string>
+): number {
+  let marked = 0;
+  for (const segment of plan.avatar_segments) {
+    if (segment.start_sentence_index >= beforeSentenceIndex) continue;
+    const key = avatarSegmentKey(segment);
+    if (fired.has(key)) continue;
+    fired.add(key);
+    marked += 1;
+  }
+  return marked;
 }
 
 /** Mark segments before a seek position as already fired so jump-in does not catch up OSC. */

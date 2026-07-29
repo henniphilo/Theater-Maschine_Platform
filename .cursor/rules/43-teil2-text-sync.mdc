@@ -6,7 +6,7 @@ alwaysApply: false
 
 # Teil 2 Text-Sync
 
-Teil 2 uses TTS as the master clock. Avatar OSC fires at CSV `char_offset`, not at sentence start.
+Teil 2 uses TTS as the master clock for Erzähler, Licht, Sound and Atmosphäre. Avatar clips run **sequentially by CSV duration / Done**, independent of text position.
 
 ## Canonical sentence split
 

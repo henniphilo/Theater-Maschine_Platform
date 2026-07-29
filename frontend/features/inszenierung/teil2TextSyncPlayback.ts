@@ -8,22 +8,21 @@ import {
   fireSentenceCues,
   fireStartCues,
   fireTimeCues,
-  markTimeCuesAsFired
+  markTimeCuesBefore
 } from "@/features/show/cuePlayback";
-import { textPositionForPlayback } from "@/features/show/mediaMentions";
 import {
   bindAvatarChainContext,
   countUnfiredAvatarSegments,
   clearPendingAvatarDoneGate,
   fireInitialAvatarSegments,
-  fireRemainingSentenceSegments,
   flushPendingAvatarDoneGate,
-  markAvatarSegmentsBeforeAsFired,
-  resolveSentenceCharStarts,
-  scheduleAvatarSegmentsAtPosition,
-  sentenceSpanLength
+  markAvatarSegmentsBeforeSentenceIndex,
+  resolveSentenceCharStarts
 } from "@/features/inszenierung/avatarCuePlayback";
 import { resolveSentenceSpeech } from "@/features/inszenierung/inszenierungBuffer";
+
+/** Approximate German TTS rate for seek-clock estimates (chars / second). */
+export const NARRATION_CHARS_PER_SEC = 14;
 
 export type TextSyncPlaybackState = {
   running: boolean;
@@ -58,10 +57,35 @@ function anarchyForSentence(
   return start + (end - start) * t;
 }
 
+/** Hard stop: clear avatar chain + emergency-stop director. */
 export function stopTextSyncPlayback(): void {
   bindAvatarChainContext(null);
   clearPendingAvatarDoneGate();
   void stopDirectorPerformance().catch(() => undefined);
+}
+
+/**
+ * Soft seek abort: clear Done-gate / chain context without emergency_stop
+ * (avoids racing Probebetrieb re-arm).
+ */
+export function softAbortTextSyncPlayback(): void {
+  bindAvatarChainContext(null);
+  clearPendingAvatarDoneGate();
+}
+
+/** Sum estimated narration seconds for sentences [0, beforeIndex). */
+export function estimateNarrationSecondsBefore(
+  sentences: string[],
+  beforeIndex: number,
+  charsPerSec = NARRATION_CHARS_PER_SEC
+): number {
+  const rate = charsPerSec > 0 ? charsPerSec : NARRATION_CHARS_PER_SEC;
+  let chars = 0;
+  const end = Math.max(0, Math.min(beforeIndex, sentences.length));
+  for (let i = 0; i < end; i++) {
+    chars += sentences[i]?.length ?? 0;
+  }
+  return chars / rate;
 }
 
 function scaledHighlightMs(): number {
@@ -106,7 +130,9 @@ export async function runTextSyncPlayback(
   const scriptText = corpus.script_text ?? sentences.join(" ");
   const sentenceCharStarts = resolveSentenceCharStarts(plan, scriptText);
   const firedSegments = new Set<string>();
-  let cumulativeTime = 0;
+  let cumulativeTime =
+    startIndex > 0 ? estimateNarrationSecondsBefore(sentences, startIndex) : 0;
+  let lastIndex = startIndex;
 
   const cueCtx = createCuePlaybackContext(
     plan.dramaturgy,
@@ -127,12 +153,11 @@ export async function runTextSyncPlayback(
     shouldAbort
   );
 
-  // Jump mid-show: skip all signals that belong before the seek point (no catch-up burst).
+  // Jump mid-show: skip earlier avatars; mark only past time cues relative to seek clock.
   if (startIndex > 0) {
-    const startChar = sentenceCharStarts[startIndex] ?? 0;
-    markAvatarSegmentsBeforeAsFired(plan, startChar, firedSegments, sentenceCharStarts, scriptText);
-    markTimeCuesAsFired(cueCtx);
-    markTimeCuesAsFired(atmosphereCtx);
+    markAvatarSegmentsBeforeSentenceIndex(plan, startIndex, firedSegments);
+    markTimeCuesBefore(cueCtx, cumulativeTime);
+    markTimeCuesBefore(atmosphereCtx, cumulativeTime);
   }
 
   const fireTimedCues = (elapsedSec: number) => {
@@ -160,23 +185,24 @@ export async function runTextSyncPlayback(
 
   if (startIndex === 0) {
     fireStartCues(cueCtx);
-    await fireInitialAvatarSegments(
-      plan,
-      firedSegments,
-      sentenceCharStarts,
-      anarchyForSegment,
-      cueCtx.onCommands,
-      shouldAbort,
-      onSegmentFired,
-      scriptText
-    );
   }
+  await fireInitialAvatarSegments(
+    plan,
+    firedSegments,
+    sentenceCharStarts,
+    anarchyForSegment,
+    cueCtx.onCommands,
+    shouldAbort,
+    onSegmentFired,
+    scriptText
+  );
 
   try {
     for (let index = startIndex; index <= endIndex; index++) {
       if (shouldAbort()) break;
       if (!(await waitWhilePlaybackPaused(shouldAbort))) break;
 
+      lastIndex = index;
       const sentence = sentences[index];
       const anarchyLevel = anarchyForSentence(index, sentences.length, plan, corpus);
       onUpdate({ sentenceIndex: index, anarchyLevel, activeAvatarSegment: null });
@@ -184,19 +210,8 @@ export async function runTextSyncPlayback(
       fireSentenceCues(cueCtx, index, sentence);
 
       if (!ttsAvailable) {
+        cumulativeTime += 1.2;
         if (!(await sleepWallMs(1200, shouldAbort))) break;
-        await fireRemainingSentenceSegments(
-          plan,
-          index,
-          firedSegments,
-          sentenceCharStarts,
-          scriptText.length,
-          anarchyLevel,
-          cueCtx.onCommands,
-          shouldAbort,
-          onSegmentFired,
-          scriptText
-        );
         continue;
       }
 
@@ -210,36 +225,10 @@ export async function runTextSyncPlayback(
         onTimeUpdate: (current, duration) => {
           if (Number.isFinite(duration)) lastDuration = duration;
           void fireTimedCues(sentenceStart + current);
-          const spanLength = sentenceSpanLength(index, sentenceCharStarts, scriptText.length);
-          const localPos = textPositionForPlayback(current, duration, spanLength);
-          const globalPos = sentenceCharStarts[index] + localPos;
-          scheduleAvatarSegmentsAtPosition(
-            plan,
-            globalPos,
-            firedSegments,
-            sentenceCharStarts,
-            anarchyForSegment,
-            cueCtx.onCommands,
-            shouldAbort,
-            onSegmentFired,
-            scriptText
-          );
         }
       });
 
-      await fireRemainingSentenceSegments(
-        plan,
-        index,
-        firedSegments,
-        sentenceCharStarts,
-        scriptText.length,
-        anarchyLevel,
-        cueCtx.onCommands,
-        shouldAbort,
-        onSegmentFired,
-        scriptText
-      );
-
+      if (shouldAbort()) break;
       cumulativeTime += Number.isFinite(lastDuration) ? lastDuration : 0;
     }
 
@@ -249,7 +238,7 @@ export async function runTextSyncPlayback(
       const unfired = countUnfiredAvatarSegments(plan, firedSegments);
       if (unfired > 0) {
         console.warn(
-          `[teil2] ${unfired} Avatar-Segmente nicht ausgelöst — Textzuordnung neu vorbereiten (char_offset / CSV-Reihenfolge).`
+          `[teil2] ${unfired} Avatar-Segmente nicht ausgelöst — CSV-Reihenfolge / Clip-Dauer prüfen.`
         );
       }
       await firePerformanceEndCues(cueCtx.onCommands, shouldAbort);
@@ -263,7 +252,8 @@ export async function runTextSyncPlayback(
   onUpdate({
     running: false,
     completed: !shouldAbort(),
-    sentenceIndex: shouldAbort() ? startIndex : endIndex,
+    // On abort keep the live sentence so Stop→Play / soft seek can resume.
+    sentenceIndex: shouldAbort() ? lastIndex : endIndex,
     activeOscBridge: null,
     activeAvatarSegment: null
   });

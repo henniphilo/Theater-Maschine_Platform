@@ -3,20 +3,17 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { runTextSyncPlayback } from "@/features/inszenierung/teil2TextSyncPlayback";
 import type { SceneCorpus, Teil2PerformancePlan } from "@/lib/types/inszenierung";
 
-const fireAvatarSegmentsAtPosition = vi.fn().mockResolvedValue(undefined);
 const fireInitialAvatarSegments = vi.fn().mockResolvedValue(undefined);
-const fireRemainingSentenceSegments = vi.fn().mockResolvedValue(undefined);
 const countUnfiredAvatarSegments = vi.fn().mockReturnValue(0);
+const scheduleAvatarSegmentsAtPosition = vi.fn();
 const resolveSentenceSpeech = vi.fn().mockResolvedValue(new Blob(["audio"]));
 
 vi.mock("@/features/inszenierung/avatarCuePlayback", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/features/inszenierung/avatarCuePlayback")>();
   return {
     ...actual,
-    scheduleAvatarSegmentsAtPosition: (...args: unknown[]) => fireAvatarSegmentsAtPosition(...args),
-    fireAvatarSegmentsAtPosition: (...args: unknown[]) => fireAvatarSegmentsAtPosition(...args),
+    scheduleAvatarSegmentsAtPosition: (...args: unknown[]) => scheduleAvatarSegmentsAtPosition(...args),
     fireInitialAvatarSegments: (...args: unknown[]) => fireInitialAvatarSegments(...args),
-    fireRemainingSentenceSegments: (...args: unknown[]) => fireRemainingSentenceSegments(...args),
     countUnfiredAvatarSegments: (...args: unknown[]) => countUnfiredAvatarSegments(...args)
   };
 });
@@ -53,6 +50,7 @@ vi.mock("@/features/show/cuePlayback", () => ({
   fireSentenceCues: vi.fn(),
   fireStartCues: vi.fn(),
   fireTimeCues: vi.fn(),
+  markTimeCuesBefore: vi.fn(),
   markTimeCuesAsFired: vi.fn(),
   firePerformanceEndCues: vi.fn().mockResolvedValue(undefined)
 }));
@@ -95,7 +93,7 @@ describe("teil2TextSyncPlayback", () => {
     });
   });
 
-  it("schedules avatar OSC from onTimeUpdate using global text position", async () => {
+  it("starts avatar chain at show open (not from TTS text position)", async () => {
     const plan = basePlan({});
     const corpus: SceneCorpus = {
       id: "corpus-1",
@@ -118,20 +116,15 @@ describe("teil2TextSyncPlayback", () => {
       () => false
     );
 
-    expect(fireAvatarSegmentsAtPosition).toHaveBeenCalled();
-    const maxGlobalPos = Math.max(
-      ...fireAvatarSegmentsAtPosition.mock.calls.map((call) => call[1] as number)
-    );
-    expect(maxGlobalPos).toBeGreaterThanOrEqual(13);
-    expect(fireRemainingSentenceSegments).toHaveBeenCalled();
+    expect(fireInitialAvatarSegments).toHaveBeenCalled();
+    expect(scheduleAvatarSegmentsAtPosition).not.toHaveBeenCalled();
     expect(countUnfiredAvatarSegments).toHaveBeenCalled();
     expect(resolveSentenceSpeech).toHaveBeenCalledTimes(2);
     expect(updates.some((patch) => patch.completed === true)).toBe(true);
   });
 
-  it("does not fire avatar OSC from early onTimeUpdate before char_offset", async () => {
+  it("does not schedule avatar OSC from onTimeUpdate", async () => {
     const scriptText = "Einleitung. Hier kommt der Bärenklauer und noch mehr Text danach.";
-    const anchorOffset = scriptText.indexOf("Bärenklauer");
     const plan = basePlan({
       sentences: ["Einleitung.", scriptText.slice(scriptText.indexOf("Hier"))],
       sentence_char_starts: [0, scriptText.indexOf("Hier")],
@@ -139,7 +132,7 @@ describe("teil2TextSyncPlayback", () => {
         {
           csv_cue_ids: ["BK1_Caro"],
           text_excerpt: "Hier kommt der Bärenklauer",
-          char_offset: anchorOffset,
+          char_offset: scriptText.indexOf("Bärenklauer"),
           start_sentence_index: 1,
           end_sentence_index: 1,
           avatar_layers: []
@@ -157,29 +150,9 @@ describe("teil2TextSyncPlayback", () => {
       script_text: scriptText
     };
 
-    fireAvatarSegmentsAtPosition.mockImplementation(async (_plan, globalPos) => {
-      if (globalPos >= anchorOffset) {
-        await Promise.resolve();
-      }
-    });
-
-    playBlob.mockImplementation((_blob, hooks) => {
-      hooks?.onTimeUpdate?.(0.05, 1);
-      const earlyCalls = fireAvatarSegmentsAtPosition.mock.calls.length;
-      const earlyMaxPos = Math.max(
-        ...fireAvatarSegmentsAtPosition.mock.calls.map((call) => call[1] as number),
-        -1
-      );
-      expect(earlyMaxPos).toBeLessThan(anchorOffset);
-      hooks?.onTimeUpdate?.(0.9, 1);
-      expect(fireAvatarSegmentsAtPosition.mock.calls.length).toBeGreaterThan(earlyCalls);
-      return Promise.resolve();
-    });
-
     await runTextSyncPlayback(corpus, plan, "narrator", true, () => undefined, () => false);
 
-    const maxPos = Math.max(...fireAvatarSegmentsAtPosition.mock.calls.map((call) => call[1] as number));
-    expect(maxPos).toBeGreaterThanOrEqual(anchorOffset);
+    expect(scheduleAvatarSegmentsAtPosition).not.toHaveBeenCalled();
   });
 
   it("fires atmosphere time cues during playback", async () => {
@@ -255,7 +228,7 @@ describe("teil2TextSyncPlayback", () => {
   });
 
   it("marks earlier avatar segments fired when seeking mid-show", async () => {
-    const { markAvatarSegmentsBeforeAsFired, nextUnfiredAvatarSegment, avatarSegmentKey } =
+    const { markAvatarSegmentsBeforeSentenceIndex, nextUnfiredAvatarInSequence, avatarSegmentKey } =
       await import("@/features/inszenierung/avatarCuePlayback");
     const plan = basePlan({
       sentences: ["Eins.", "Zwei.", "Drei."],
@@ -265,6 +238,7 @@ describe("teil2TextSyncPlayback", () => {
           csv_cue_ids: ["a"],
           text_excerpt: "Eins.",
           char_offset: 0,
+          csv_sequence_index: 0,
           start_sentence_index: 0,
           end_sentence_index: 0,
           avatar_layers: []
@@ -273,6 +247,7 @@ describe("teil2TextSyncPlayback", () => {
           csv_cue_ids: ["b"],
           text_excerpt: "Zwei.",
           char_offset: 5,
+          csv_sequence_index: 1,
           start_sentence_index: 1,
           end_sentence_index: 1,
           avatar_layers: []
@@ -281,6 +256,7 @@ describe("teil2TextSyncPlayback", () => {
           csv_cue_ids: ["c"],
           text_excerpt: "Drei.",
           char_offset: 10,
+          csv_sequence_index: 2,
           start_sentence_index: 2,
           end_sentence_index: 2,
           avatar_layers: []
@@ -288,12 +264,98 @@ describe("teil2TextSyncPlayback", () => {
       ]
     });
     const fired = new Set<string>();
-    const marked = markAvatarSegmentsBeforeAsFired(plan, 10, fired, plan.sentence_char_starts);
+    const marked = markAvatarSegmentsBeforeSentenceIndex(plan, 2, fired);
     expect(marked).toBe(2);
     expect(fired.has(avatarSegmentKey(plan.avatar_segments[0]!))).toBe(true);
     expect(fired.has(avatarSegmentKey(plan.avatar_segments[1]!))).toBe(true);
-    expect(nextUnfiredAvatarSegment(plan, 10, fired, plan.sentence_char_starts)).toMatchObject({
+    expect(nextUnfiredAvatarInSequence(plan, fired, plan.sentence_char_starts)).toMatchObject({
       csv_cue_ids: ["c"]
     });
+  });
+
+  it("marks only past time cues when seeking mid-show", async () => {
+    const { markTimeCuesBefore } = await import("@/features/show/cuePlayback");
+    const plan = basePlan({
+      sentences: ["Eins.", "Zwei langer Satz hier.", "Drei."],
+      sentence_char_starts: [0, 5, 28]
+    });
+    const corpus: SceneCorpus = {
+      id: "corpus-seek-cues",
+      title: "Test",
+      scenes: [],
+      status: "ready",
+      gesamtkonzept: null,
+      composition: null,
+      teil2_plan: plan,
+      script_text: plan.sentences.join(" ")
+    };
+
+    await runTextSyncPlayback(corpus, plan, "narrator", true, () => undefined, () => false, {
+      startSentenceIndex: 1
+    });
+
+    expect(markTimeCuesBefore).toHaveBeenCalled();
+    const seekClock = vi.mocked(markTimeCuesBefore).mock.calls[0]?.[1] as number;
+    expect(seekClock).toBeGreaterThan(0);
+    // Future cues stay open: seek clock is finite, not Infinity.
+    for (const call of vi.mocked(markTimeCuesBefore).mock.calls) {
+      expect(call[1]).toBeLessThan(Number.POSITIVE_INFINITY);
+    }
+  });
+
+  it("keeps the live sentence index when aborted mid-run", async () => {
+    playBlob.mockImplementation(async (_blob, hooks?: { shouldAbort?: () => boolean }) => {
+      while (!hooks?.shouldAbort?.()) {
+        await new Promise((r) => setTimeout(r, 10));
+      }
+    });
+
+    const plan = basePlan({
+      sentences: ["Eins.", "Zwei.", "Drei."],
+      sentence_char_starts: [0, 5, 10]
+    });
+    const corpus: SceneCorpus = {
+      id: "corpus-abort",
+      title: "Test",
+      scenes: [],
+      status: "ready",
+      gesamtkonzept: null,
+      composition: null,
+      teil2_plan: plan,
+      script_text: plan.sentences.join(" ")
+    };
+
+    let aborted = false;
+    const updates: Array<Record<string, unknown>> = [];
+    const run = runTextSyncPlayback(
+      corpus,
+      plan,
+      "narrator",
+      true,
+      (patch) => updates.push(patch),
+      () => aborted
+    );
+
+    await vi.waitFor(() => {
+      expect(updates.some((u) => u.sentenceIndex === 0)).toBe(true);
+    });
+    aborted = true;
+    await run;
+
+    const final = updates[updates.length - 1];
+    expect(final?.running).toBe(false);
+    expect(final?.completed).toBe(false);
+    expect(final?.sentenceIndex).toBe(0);
+  });
+});
+
+describe("estimateNarrationSecondsBefore", () => {
+  it("sums character lengths before the seek index", async () => {
+    const { estimateNarrationSecondsBefore, NARRATION_CHARS_PER_SEC } = await import(
+      "@/features/inszenierung/teil2TextSyncPlayback"
+    );
+    expect(estimateNarrationSecondsBefore(["abcd", "efgh"], 1)).toBe(4 / NARRATION_CHARS_PER_SEC);
+    expect(estimateNarrationSecondsBefore(["abcd", "efgh"], 0)).toBe(0);
+    expect(estimateNarrationSecondsBefore(["abcd", "efgh"], 2)).toBe(8 / NARRATION_CHARS_PER_SEC);
   });
 });

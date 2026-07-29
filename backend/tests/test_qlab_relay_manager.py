@@ -6,7 +6,13 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from app.director.qlab_relay_manager import QlabRelayConfig, QlabRelayManager, get_qlab_relay_manager
+from app.director.output_targets import apply_overrides
+from app.director.qlab_relay_manager import (
+    QlabRelayConfig,
+    QlabRelayManager,
+    _prepare_relay_listen,
+    get_qlab_relay_manager,
+)
 
 
 @pytest.fixture
@@ -23,6 +29,20 @@ def relay_manager() -> QlabRelayManager:
 def _sample_config() -> QlabRelayConfig:
     return QlabRelayConfig(
         listen_host="127.0.0.1",
+        pixera_listen_port=18990,
+        light_listen_port=17000,
+        light_listener_enabled=True,
+        qlab_host="127.0.0.1",
+        qlab_port=53000,
+        feedback_enabled=False,
+        avatar_done_host="127.0.0.1",
+        avatar_done_port=18991,
+    )
+
+
+def _stage_config() -> QlabRelayConfig:
+    return QlabRelayConfig(
+        listen_host="172.27.27.1",
         pixera_listen_port=18990,
         light_listen_port=17000,
         light_listener_enabled=True,
@@ -98,3 +118,41 @@ def test_relay_start_idempotent_when_already_running(
     again = relay_manager.start()
     assert again.managed is True
     assert mock_popen.call_count == 1
+
+
+@patch("app.director.qlab_relay_manager._can_bind_udp")
+@patch("app.director.qlab_relay_manager.relay_config")
+def test_prepare_relay_listen_falls_back_to_localhost(
+    mock_relay_config: MagicMock,
+    mock_can_bind: MagicMock,
+) -> None:
+    apply_overrides(reset=True)
+    stage = _stage_config()
+    local = _sample_config()
+    mock_relay_config.return_value = local
+
+    def bind_ok(host: str, port: int) -> bool:
+        return host == "127.0.0.1"
+
+    mock_can_bind.side_effect = bind_ok
+
+    config, notice, error = _prepare_relay_listen(stage)
+    assert error is None
+    assert notice
+    assert "172.27.27.1" in notice
+    assert config.listen_host == "127.0.0.1"
+    apply_overrides(reset=True)
+
+
+@patch("app.director.qlab_relay_manager.relay_config")
+@patch("app.director.qlab_relay_manager._can_bind_udp", return_value=False)
+def test_prepare_relay_listen_reports_unbindable_host(
+    _mock_can_bind: MagicMock,
+    mock_relay_config: MagicMock,
+) -> None:
+    mock_relay_config.return_value = _stage_config()
+    config, notice, error = _prepare_relay_listen(_stage_config())
+    assert notice is None
+    assert error
+    assert "172.27.27.1" in error
+    assert "127.0.0.1" in error

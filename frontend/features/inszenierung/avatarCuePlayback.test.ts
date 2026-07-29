@@ -166,10 +166,10 @@ describe("avatarCuePlayback position helpers", () => {
         {
           csv_cue_ids: ["first"],
           text_excerpt: "Alpha.",
-          char_offset: 0,
+          char_offset: 12,
           csv_sequence_index: 0,
-          start_sentence_index: 0,
-          end_sentence_index: 0,
+          start_sentence_index: 1,
+          end_sentence_index: 1,
           avatar_layers: []
         },
         {
@@ -177,8 +177,8 @@ describe("avatarCuePlayback position helpers", () => {
           text_excerpt: "gamma",
           char_offset: 12,
           csv_sequence_index: 1,
-          start_sentence_index: 1,
-          end_sentence_index: 1,
+          start_sentence_index: 0,
+          end_sentence_index: 0,
           avatar_layers: []
         }
       ]
@@ -244,7 +244,7 @@ describe("avatar done gate", () => {
     });
   });
 
-  it("pauses narrator only before the next avatar when previous still pending", async () => {
+  it("serializes avatars without pausing narrator when previous still pending", async () => {
     const { isAvatarDoneGateEnabled, waitForAvatarVideosDone, postDirectorExecuteLayered } =
       await import("@/lib/api/director");
     const { setPlaybackPaused } = await import("@/lib/api/client");
@@ -319,7 +319,7 @@ describe("avatar done gate", () => {
 
     const secondFire = fireAvatarSegmentIfDue(second, 0.5, async () => undefined, () => false);
     await vi.waitFor(() => {
-      expect(setPlaybackPaused).toHaveBeenCalledWith(true);
+      expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(1);
     });
     resolveDone({
       status: "done",
@@ -329,7 +329,7 @@ describe("avatar done gate", () => {
     });
     await secondFire;
     expect(waitForAvatarVideosDone).toHaveBeenCalled();
-    expect(setPlaybackPaused).toHaveBeenCalledWith(false);
+    expect(setPlaybackPaused).not.toHaveBeenCalled();
   });
 
   it("flushPendingAvatarDoneGate waits for in-flight clip at show end", async () => {

@@ -30,6 +30,7 @@ import {
 import {
   INITIAL_TEXT_SYNC_STATE,
   runTextSyncPlayback,
+  softAbortTextSyncPlayback,
   stopTextSyncPlayback,
   type TextSyncPlaybackState
 } from "@/features/inszenierung/teil2TextSyncPlayback";
@@ -458,7 +459,7 @@ function AuffuehrungContent() {
     void playFrom(from, mode);
   }
 
-  function handlePlayTeil2(startSentenceIndex = 0) {
+  function handlePlayTeil2() {
     if (teil2Running && teil2Paused) {
       setPlaybackPaused(false);
       if (usesTextSync) setTextSyncPlayback((prev) => ({ ...prev, paused: false }));
@@ -466,7 +467,9 @@ function AuffuehrungContent() {
       return;
     }
     if (teil2Running) return;
-    void playTeil2(startSentenceIndex);
+    const completed = usesTextSync ? textSyncPlayback.completed : anarchyPlayback.completed;
+    const from = completed ? 0 : Math.max(0, teil2ProgressIndex);
+    void playTeil2(from);
   }
 
   function handleJumpToAvatarSegment(segmentIndex: number) {
@@ -475,15 +478,18 @@ function AuffuehrungContent() {
     const segment = teil2Plan.avatar_segments[segmentIndex];
     if (!segment) return;
 
-    // Soft seek: bump generation + stop audio only. Do NOT emergency_stop here —
+    // Soft seek: bump generation + stop audio + Done-gate. Do NOT emergency_stop here —
     // that races with re-arm and can leave emergency_stop_active stuck or drop Probebetrieb.
     abortRef.current = true;
     playbackGenRef.current += 1;
     stopPlayback();
+    softAbortTextSyncPlayback();
     setTextSyncPlayback((prev) => ({
       ...prev,
       running: false,
       paused: true,
+      sentenceIndex: segment.start_sentence_index,
+      completed: false,
       activeOscBridge: null
     }));
     setAnarchyPlayback((prev) => ({ ...prev, running: false, paused: true }));
@@ -530,8 +536,20 @@ function AuffuehrungContent() {
       activeOscBridge: null,
       activeOscCommand: null
     }));
-    setAnarchyPlayback((prev) => ({ ...prev, running: false, paused: true }));
-    setTextSyncPlayback((prev) => ({ ...prev, running: false, paused: true }));
+    // Keep Teil-2 sentence/moment index for Stop→Play resume.
+    setAnarchyPlayback((prev) => ({
+      ...prev,
+      running: false,
+      paused: true,
+      completed: false
+    }));
+    setTextSyncPlayback((prev) => ({
+      ...prev,
+      running: false,
+      paused: true,
+      completed: false,
+      activeOscBridge: null
+    }));
   }
 
   function handleRemotePlay() {
@@ -953,7 +971,7 @@ function AuffuehrungContent() {
               items={liveTimelineItems}
               mediaCatalog={mediaCatalog}
               editHref={`/inszenierung?id=${corpus.id}`}
-              onPlay={() => handlePlayTeil2(0)}
+              onPlay={() => handlePlayTeil2()}
               onPause={handlePause}
               onStop={handleStop}
               onSkipNext={usesTextSync ? () => handleSkipTeil2(1) : undefined}

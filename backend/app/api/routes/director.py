@@ -375,6 +375,7 @@ def _qlab_relay_status_response() -> QlabRelayStatusResponse:
         qlab_port=status.qlab_port,
         feedback_enabled=status.feedback_enabled,
         error=status.error,
+        notice=status.notice,
     )
 
 

@@ -14,6 +14,7 @@ import type { PerformanceSpeaker } from "@/lib/types/director";
 import {
   INITIAL_TEXT_SYNC_STATE,
   runTextSyncPlayback,
+  softAbortTextSyncPlayback,
   stopTextSyncPlayback,
   type TextSyncPlaybackState
 } from "@/features/inszenierung/teil2TextSyncPlayback";
@@ -152,26 +153,44 @@ function AuffuehrungContent() {
   }
 
   function stop() {
+    const bookmark = Math.max(
+      0,
+      usesTextSync ? textSyncPlayback.sentenceIndex : anarchyPlayback.momentIndex
+    );
     abortRef.current = true;
     genRef.current += 1;
     stopPlayback();
     if (usesTextSync) stopTextSyncPlayback();
     else stopAnarchyPlayback();
-    setTextSyncPlayback({ ...INITIAL_TEXT_SYNC_STATE, paused: true });
-    setAnarchyPlayback({ ...INITIAL_ANARCHY_STATE, paused: true });
+    // Keep position for Stop→Play resume (Teil-1 parity).
+    setTextSyncPlayback({
+      ...INITIAL_TEXT_SYNC_STATE,
+      paused: true,
+      sentenceIndex: bookmark,
+      completed: false
+    });
+    setAnarchyPlayback({
+      ...INITIAL_ANARCHY_STATE,
+      paused: true,
+      momentIndex: bookmark,
+      completed: false
+    });
   }
 
-  function handlePlay(startSentenceIndex = 0) {
+  function handlePlay() {
     if (paused && running) {
       resume();
       return;
     }
     if (running) return;
-    void play(startSentenceIndex);
+    const completed = usesTextSync ? textSyncPlayback.completed : anarchyPlayback.completed;
+    const bookmark = usesTextSync ? textSyncPlayback.sentenceIndex : anarchyPlayback.momentIndex;
+    const from = completed ? 0 : Math.max(0, bookmark);
+    void play(from);
   }
 
   useRemoteTransportListener({
-    onPlay: () => handlePlay(0),
+    onPlay: () => handlePlay(),
     onPause: pause,
     onStop: stop
   });
@@ -184,7 +203,15 @@ function AuffuehrungContent() {
     abortRef.current = true;
     genRef.current += 1;
     stopPlayback();
-    setTextSyncPlayback((prev) => ({ ...prev, running: false, paused: true }));
+    softAbortTextSyncPlayback();
+    setTextSyncPlayback((prev) => ({
+      ...prev,
+      running: false,
+      paused: true,
+      sentenceIndex: segment.start_sentence_index,
+      completed: false,
+      activeOscBridge: null
+    }));
     setAnarchyPlayback((prev) => ({ ...prev, running: false, paused: true }));
     window.setTimeout(() => {
       void play(segment.start_sentence_index, undefined, { forceRestart: true });
@@ -308,7 +335,7 @@ function AuffuehrungContent() {
           running={running}
           paused={paused}
           canPlay={canPlay}
-          onPlay={() => handlePlay(0)}
+          onPlay={() => handlePlay()}
           onPause={pause}
           onStop={stop}
         />

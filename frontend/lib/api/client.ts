@@ -99,6 +99,8 @@ let playbackPaused = false;
 let playbackRate = 1;
 let narratorVolume = 1;
 let narratorMuted = false;
+/** Settles the in-flight playBlob when stop/seek aborts before onended. */
+let activePlaySettle: (() => void) | null = null;
 
 type PlaybackPauseListener = (paused: boolean) => void;
 const playbackPauseListeners = new Set<PlaybackPauseListener>();
@@ -185,9 +187,16 @@ export function setPlaybackPaused(paused: boolean): void {
   notifyPlaybackPause(paused);
 }
 
+function settleActivePlay(): void {
+  const settle = activePlaySettle;
+  activePlaySettle = null;
+  settle?.();
+}
+
 export function stopPlayback(): void {
   playbackPaused = false;
   notifyPlaybackPause(false);
+  settleActivePlay();
   stopCurrentAudio();
 }
 
@@ -208,12 +217,44 @@ export function playBlob(
   }
 ): Promise<void> {
   return new Promise((resolve, reject) => {
+    // Previous playBlob must settle; otherwise stop/seek leaves the old loop hanging on await.
+    settleActivePlay();
     stopCurrentAudio();
     const url = URL.createObjectURL(blob);
     const audio = new Audio(url);
     currentAudio = audio;
     audio.playbackRate = playbackRate;
     applyNarratorGain(audio);
+
+    let settled = false;
+    let abortPoll: ReturnType<typeof setInterval> | null = null;
+    const finish = (outcome: () => void) => {
+      if (settled) return;
+      settled = true;
+      if (activePlaySettle === onAbortSettle) activePlaySettle = null;
+      if (abortPoll != null) clearInterval(abortPoll);
+      abortPoll = null;
+      audio.onplay = null;
+      audio.ontimeupdate = null;
+      audio.onended = null;
+      audio.onerror = null;
+      URL.revokeObjectURL(url);
+      if (currentAudio === audio) currentAudio = null;
+      outcome();
+    };
+
+    const onAbortSettle = () => {
+      audio.pause();
+      finish(() => resolve());
+    };
+    activePlaySettle = onAbortSettle;
+
+    abortPoll = setInterval(() => {
+      if (hooks?.shouldAbort?.()) {
+        onAbortSettle();
+      }
+    }, 80);
+
     audio.onplay = () => {
       hooks?.onPlay?.();
     };
@@ -221,32 +262,31 @@ export function playBlob(
       hooks?.onTimeUpdate?.(audio.currentTime, audio.duration);
     };
     audio.onended = () => {
-      URL.revokeObjectURL(url);
-      if (currentAudio === audio) currentAudio = null;
-      resolve();
+      finish(() => resolve());
     };
     audio.onerror = () => {
-      URL.revokeObjectURL(url);
-      if (currentAudio === audio) currentAudio = null;
-      reject(new Error("Audio playback failed"));
+      finish(() => reject(new Error("Audio playback failed")));
     };
 
     const startPlayback = async () => {
       if (playbackPaused) {
         const ok = await waitWhilePlaybackPaused(hooks?.shouldAbort ?? (() => false));
         if (!ok) {
-          URL.revokeObjectURL(url);
-          if (currentAudio === audio) currentAudio = null;
-          reject(new Error("Playback aborted"));
+          finish(() => resolve());
           return;
         }
+      }
+      if (settled || hooks?.shouldAbort?.()) {
+        finish(() => resolve());
+        return;
       }
       try {
         await audio.play();
       } catch (err) {
-        URL.revokeObjectURL(url);
-        if (currentAudio === audio) currentAudio = null;
-        reject(err instanceof Error ? err : new Error("Audio playback failed"));
+        if (settled) return;
+        finish(() =>
+          reject(err instanceof Error ? err : new Error("Audio playback failed"))
+        );
       }
     };
 

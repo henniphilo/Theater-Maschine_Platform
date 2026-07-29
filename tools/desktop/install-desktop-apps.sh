@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Installiert Start-/Stop-Apps auf dem macOS-Desktop.
+# Installiert AutoPlay Start-/Stop-Apps auf dem macOS-Desktop.
+# Eigene Namen (AutoPlay.app) — überschreibt nicht Theatermaschine.app vom Burgtheater-Projekt.
 #
 #   ./tools/desktop/install-desktop-apps.sh
 #   make desktop-install
@@ -8,25 +9,25 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 DESKTOP="${HOME}/Desktop"
-START_SH="${ROOT}/tools/desktop/start-theatermaschine.sh"
-STOP_SH="${ROOT}/tools/desktop/stop-theatermaschine.sh"
-START_APP="${DESKTOP}/Theatermaschine.app"
-STOP_APP="${DESKTOP}/Theatermaschine Stop.app"
+START_SH="${ROOT}/tools/desktop/start-autoplay.sh"
+STOP_SH="${ROOT}/tools/desktop/stop-autoplay.sh"
+ICONS_BUILD="${ROOT}/tools/desktop/icons/build-icons.sh"
+START_APP="${DESKTOP}/AutoPlay.app"
+STOP_APP="${DESKTOP}/AutoPlay Stop.app"
 
-chmod +x "$START_SH" "$STOP_SH" "$0"
+chmod +x "$START_SH" "$STOP_SH" "$ICONS_BUILD" "$0"
 
 if [[ "$(uname -s)" != "Darwin" ]]; then
   echo "Desktop-Apps sind nur für macOS vorgesehen." >&2
   exit 1
 fi
 
-# AppleScript: Befehl in Terminal ausführen (sichtbare Logs, Ctrl+C möglich)
 compile_terminal_app() {
   local app_path=$1
   local script_path=$2
   local title=$3
   local tmp
-  tmp="$(mktemp -t tm-launcher).applescript"
+  tmp="$(mktemp -t autoplay-launcher).applescript"
   cat >"$tmp" <<EOF
 on run
   set shPath to "${script_path}"
@@ -42,18 +43,31 @@ EOF
   rm -f "$tmp"
 }
 
-compile_terminal_app "$START_APP" "$START_SH" "Theatermaschine"
-compile_terminal_app "$STOP_APP" "$STOP_SH" "Theatermaschine Stop"
+apply_app_icon() {
+  local app_path=$1
+  local icns_path=$2
+  if [[ ! -f "$icns_path" ]]; then
+    return 0
+  fi
+  cp "$icns_path" "$app_path/Contents/Resources/applet.icns"
+  touch "$app_path"
+}
 
-# Optional: System-Icons setzen (Script Editor / Stop-Symbol)
-# Start ≈ Terminal, Stop ≈ Auswerfen — ohne Custom-Asset
-if command -v fileicon >/dev/null 2>&1; then
-  :
-fi
+ICON_OUTPUT="$("$ICONS_BUILD")"
+START_ICNS="$(printf '%s\n' "$ICON_OUTPUT" | sed -n '1p')"
+STOP_ICNS="$(printf '%s\n' "$ICON_OUTPUT" | sed -n '2p')"
+
+compile_terminal_app "$START_APP" "$START_SH" "AutoPlay"
+compile_terminal_app "$STOP_APP" "$STOP_SH" "AutoPlay Stop"
+
+apply_app_icon "$START_APP" "$START_ICNS"
+apply_app_icon "$STOP_APP" "$STOP_ICNS"
 
 echo "Installiert:"
 echo "  $START_APP"
 echo "  $STOP_APP"
 echo ""
-echo "Doppelklick auf „Theatermaschine“ startet make run und öffnet http://localhost:3003"
-echo "Doppelklick auf „Theatermaschine Stop“ beendet den Stack."
+echo "Doppelklick auf „AutoPlay“ startet make run und öffnet http://localhost:3004/productions"
+echo "Doppelklick auf „AutoPlay Stop“ beendet den Stack."
+echo ""
+echo "Hinweis: Burgtheater-Launcher heißen „Theatermaschine“ — dort separat mit make desktop-install installieren."

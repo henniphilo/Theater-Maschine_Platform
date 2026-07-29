@@ -1,11 +1,21 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 
-import { executeCueSafely } from "@/features/show/cuePlayback";
+import {
+  createCuePlaybackContext,
+  executeCueSafely,
+  markTimeCuesAsFired,
+  markTimeCuesBefore
+} from "@/features/show/cuePlayback";
 import type { DramaturgyDecision } from "@/lib/types/director";
 
 vi.mock("@/lib/api/director", () => ({
   postDirectorExecute: vi.fn(),
-  isDirectorPerformanceAborted: vi.fn(() => false)
+  isDirectorPerformanceAborted: vi.fn(() => false),
+  fetchDirectorStatus: vi.fn()
+}));
+
+vi.mock("@/lib/api/client", () => ({
+  sleepWallMs: vi.fn().mockResolvedValue(true)
 }));
 
 import { postDirectorExecute } from "@/lib/api/director";
@@ -89,5 +99,33 @@ describe("executeCueSafely", () => {
 
     expect(elapsed).toBeLessThan(50);
     expect(highlightDone).toBe(false);
+  });
+});
+
+describe("markTimeCuesBefore", () => {
+  const dramaturgy: DramaturgyDecision = {
+    reason: "cues",
+    tags: [],
+    mood: "neutral",
+    intensity: 0.5,
+    timestamp: 0,
+    cue_points: [
+      { trigger: "time", time_offset_sec: 2, function: "past", intensity: 0.5 },
+      { trigger: "time", time_offset_sec: 10, function: "future", intensity: 0.5 },
+      { trigger: "sentence_end", sentence_index: 0, time_offset_sec: 0, function: "sentence", intensity: 0.5 }
+    ]
+  };
+
+  it("marks only time cues at or before the seek clock", () => {
+    const ctx = createCuePlaybackContext(dramaturgy, "text", async () => undefined, () => false);
+    markTimeCuesBefore(ctx, 5);
+    expect(ctx.fired.size).toBe(1);
+    expect([...ctx.fired][0]).toContain("2");
+  });
+
+  it("markTimeCuesAsFired still marks all time cues", () => {
+    const ctx = createCuePlaybackContext(dramaturgy, "text", async () => undefined, () => false);
+    markTimeCuesAsFired(ctx);
+    expect(ctx.fired.size).toBe(2);
   });
 });

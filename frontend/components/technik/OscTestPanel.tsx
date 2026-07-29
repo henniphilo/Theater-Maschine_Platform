@@ -450,6 +450,11 @@ export function OscTestPanel() {
             {relayStatus.error}
           </p>
         ) : null}
+        {relayStatus?.notice && relayManaged ? (
+          <p className="textMuted" role="status">
+            {relayStatus.notice}
+          </p>
+        ) : null}
       </div>
 
       <div className="oscTestGrid">

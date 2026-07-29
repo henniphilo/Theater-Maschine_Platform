@@ -74,7 +74,7 @@ run: native-deps ## Docker-Infrastruktur + natives Backend (run-native.sh)
 
 native: run ## Alias für make run
 
-desktop-install: ## Start-/Stop-Apps auf dem macOS-Desktop installieren
+desktop-install: ## AutoPlay Start-/Stop-Apps auf dem macOS-Desktop installieren
 	"$(ROOT)/tools/desktop/install-desktop-apps.sh"
 
 qlab-relay: ## Pixera + Licht-OSC → QLab (:8990 + :7000 → :53000) — docs/qlab_setup.md
