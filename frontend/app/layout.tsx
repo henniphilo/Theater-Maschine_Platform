@@ -1,23 +1,23 @@
 import "./globals.css";
-import { Inter } from "next/font/google";
+import { Source_Sans_3 } from "next/font/google";
 import { ReactNode } from "react";
 
 import { AppShell } from "@/components/layout/AppShell";
 
-const inter = Inter({
+const sourceSans = Source_Sans_3({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-inter"
+  variable: "--font-source-sans"
 });
 
 export const metadata = {
-  title: "AutoPlay",
-  description: "Dramaturgie. Automation. Performance."
+  title: "Theater-Maschine",
+  description: "Dramaturgie. Automation. Bühne."
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="de" className={inter.variable} suppressHydrationWarning>
+    <html lang="de" className={sourceSans.variable} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           }}
         />
       </head>
-      <body className={inter.className}>
+      <body className={sourceSans.className}>
         <AppShell>{children}</AppShell>
       </body>
     </html>

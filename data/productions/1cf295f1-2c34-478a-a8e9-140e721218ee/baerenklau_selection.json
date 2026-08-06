@@ -1,0 +1,120 @@
+{
+  "part": 1,
+  "scene": "Bärenklau",
+  "script_id": "1cf295f1-2c34-478a-a8e9-140e721218ee",
+  "beat_id": "715bba6b-a3e0-4196-b470-daca0e41877c",
+  "selected_by": [
+    "Claude",
+    "ChatGPT"
+  ],
+  "final_sounds": [
+    "maschinen_grundader",
+    "leere_zwischen_saetzen",
+    "kaefigecho",
+    "archiv_rauschen",
+    "erinnerungsglitch",
+    "herz_unter_glas"
+  ],
+  "final_music": [
+    "maschinen_grundader"
+  ],
+  "final_videos": [
+    "kuscheltierschlachtung",
+    "bitcoinfahrt",
+    "affenslowodysee",
+    "avatar_iv_video",
+    "avatar_iv_video2",
+    "derhaseverlaesstdiebuehne",
+    "esellaeuft"
+  ],
+  "final_lights": [
+    "buehne_kalt_hart",
+    "spot_tisch",
+    "blendung_magenta",
+    "blendung_zuschauerraum",
+    "vorbuehnenzug",
+    "fluegel",
+    "gegenlicht_lichteinfall"
+  ],
+  "dramaturgical_reading": "**Claude:** Dann einigen wir uns auf drei Schlüsselmomente:\n\n«Jetzt wird gar nicht mehr geteilt» — Sound: zerreißend, kalt; Licht: Verhörstich.\n\n«Oft töte ich mehr, als ich selber essen kann» — Video: maschinell-fließend; Licht: Schlachthaus-Weiß.\n\n«Nix is fix» — Stille, Lichtflackern, danach Schwarz.\n\nDer Stücktext wird jetzt aufgeführt — Regie drückt",
+  "cue_strategy": "Teil 1 — Gesamttext; Stichwort-Cues aus Dramaturgen-Stimmungen",
+  "discussion_turns": [
+    {
+      "speaker": "anthropic",
+      "content": "Beim Stichwort «Manchmal muß man fürs Umbringen halt die Hände nehmen»: und «Oft töte ich mehr, als ich selber essen kann» enthüllen die bestialische Logik hinter Markt- und Politiksprache. Die Grundstimmung ist lakonisch-brutal: ein Affe redet Klartext, und der Klartext ist erschreckend vernünftig (Sound).",
+      "proposed_decision": null,
+      "media_mentions": [
+        {
+          "medium": "sound",
+          "media_id": "maschinen_grundader",
+          "keyword": "Manchmal muß man fürs Umbringen halt die Hände nehmen",
+          "char_offset": 0
+        }
+      ]
+    },
+    {
+      "speaker": "openai",
+      "content": "Beim Stichwort «Ja, die alte Welt ist auch weg»: signalisiert den Verlust bekannter Ordnungen, was von einer erdrückenden Leere begleitet wird. Die Stimmung ist unruhig, knapp vor der Explosion. Licht, das sich zurücknimmt und einem kalten Surren weicht, könnte die entfesselte Technologie und das menschliche Scheitern entlarven (Sound).",
+      "proposed_decision": null,
+      "media_mentions": [
+        {
+          "medium": "sound",
+          "media_id": "leere_zwischen_saetzen",
+          "keyword": "Ja, die alte Welt ist auch weg",
+          "char_offset": 0
+        }
+      ]
+    },
+    {
+      "speaker": "anthropic",
+      "content": "Claude: Drei Vorschläge:\nBeim Stichwort «Fürs Essen aber stets ein Besteck»: metallisch-rituelles Klirren, fast zeremoniell (Sound).\nBeim Stichwort «Fürs Essen aber stets ein Besteck»: warmes Tischrestaurantlicht, das sofort in kaltes Neon kippt — Entlarvung bürgerlicher Verblendung (Licht).\nBeim Stichwort «Nix is fix»: plötzliche Stille, Licht flackert (Sound).",
+      "proposed_decision": null,
+      "media_mentions": [
+        {
+          "medium": "sound",
+          "media_id": "kaefigecho",
+          "keyword": "Fürs Essen aber stets ein Besteck",
+          "char_offset": 25
+        },
+        {
+          "medium": "light",
+          "media_id": "buehne_kalt_hart",
+          "keyword": "Fürs Essen aber stets ein Besteck",
+          "char_offset": 25
+        },
+        {
+          "medium": "sound",
+          "media_id": "leere_zwischen_saetzen",
+          "keyword": "Nix is fix",
+          "char_offset": 293
+        }
+      ]
+    },
+    {
+      "speaker": "openai",
+      "content": "ChatGPT: Claudes Vorschläge überzeugen insgesamt, doch wir können die Stimmungen noch weiter schärfen. «Jetzt wird gar nicht mehr geteilt, was man gut begründen kann» könnte durch Sound: zerreißendes Papier begleitet werden und Licht: stichartig beleuchtet, wie in einem Verhör — um den Bruch mit alten Prinzipien zu entlarven.",
+      "proposed_decision": null,
+      "media_mentions": []
+    },
+    {
+      "speaker": "anthropic",
+      "content": "Claude: Dann einigen wir uns auf drei Schlüsselmomente:\nBeim Stichwort «Jetzt wird gar nicht mehr geteilt»: zerreißend, kalt (Sound).\nBeim Stichwort «Nix is fix»: Stille, Lichtflackern, danach Schwarz (Sound).\nDer Stücktext wird jetzt aufgeführt — Regie drückt",
+      "proposed_decision": null,
+      "media_mentions": [
+        {
+          "medium": "sound",
+          "media_id": "kaefigecho",
+          "keyword": "Jetzt wird gar nicht mehr geteilt",
+          "char_offset": 56
+        },
+        {
+          "medium": "sound",
+          "media_id": "leere_zwischen_saetzen",
+          "keyword": "Nix is fix",
+          "char_offset": 134
+        }
+      ]
+    }
+  ],
+  "created_at": "2026-07-29T16:01:31.575475Z"
+}

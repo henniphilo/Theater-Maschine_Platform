@@ -104,9 +104,20 @@ class DramaturgyAnalysisEntry(BaseModel):
     blocked_reason: str | None = None
 
 
+class DramaturgyAnalysisSummary(BaseModel):
+    total_decisions: int = 0
+    executed_count: int = 0
+    blocked_count: int = 0
+    silence_count: int = 0
+    silence_ratio: float = 0.0
+    function_counts: dict[str, int] = Field(default_factory=dict)
+    blocked_reasons: dict[str, int] = Field(default_factory=dict)
+
+
 class DramaturgyAnalysisResponse(BaseModel):
     entries: list[DramaturgyAnalysisEntry] = Field(default_factory=list)
     dramaturgy_state: dict[str, object] = Field(default_factory=dict)
+    summary: DramaturgyAnalysisSummary = Field(default_factory=DramaturgyAnalysisSummary)
 
 
 class DirectorStatusResponse(BaseModel):
@@ -125,6 +136,7 @@ class DirectorStatusResponse(BaseModel):
     open_proposals: list[CueProposal] = Field(default_factory=list)
     avatar_done_gate_enabled: bool = False
     avatar_done_gate: dict[str, object] = Field(default_factory=dict)
+    avatar_done_source: str = "qlab"
     active_production_id: str | None = None
     active_production_name: str | None = None
     active_production_slug: str | None = None

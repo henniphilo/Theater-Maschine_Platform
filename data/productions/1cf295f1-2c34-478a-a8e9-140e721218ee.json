@@ -1,0 +1,3551 @@
+{
+  "id": "1cf295f1-2c34-478a-a8e9-140e721218ee",
+  "title": "Unter Tieren",
+  "source_text": "Sie sind hiermit eingeladen in die neue Burschenschaft der Visionäre,\ndas sind alle, die das von sich behaupten,\nund noch einige mehr, bei denen es auch nicht stimmt,\nfür die jedoch Demokratie, Pressefreiheit und Kartellrecht anachronistischer Firlefanz sind, der nur den Fortschritt ausbremst.\nBisher gab es da eine klare Gewaltenteilung. Jetzt wird gar nicht mehr geteilt, was man gut begründen kann.\nDas kann ja sogar ich, wenn ein Mitaffe, der auf Süßes steht, aber immer nur Saures kriegt, einen Schluck von meinem jahrelang sorgsam erzogenen Bananenlikör haben möchte. (Kriegt er nicht!)\n \nDie Grenzen zwischen Politik, Finanz und Technologie verlaufen entlang Regeln der alten Welt.\nDort haben sie sich verlaufen, und jetzt findet sie keiner mehr.\nJa, die alte Welt ist auch weg.\n \nStaatliche Regulierung bleibt da aktuell noch der größte Hebel,\ndoch wir erhebeln uns genausogut ohne einen solchen.\nManchmal muß man fürs Umbringen halt die Hände nehmen,\ndas nennt man Stadtteilarbeit oder Landarbeit oder eben Krieg.\n \nOft töte ich mehr, als ich selber essen kann.\nDann stell ich mich halt hinter die Fleischtheke und verkaufe das Produkt, das ich hergestellt habe.\n \nFürs Essen aber stets ein Besteck,\nwie es die Zivilisierten haben\nund die Maschinenmenschen nicht mehr brauchen.\n \nDenen ists egal, ob sie auf ihr Werkstück warten müssen oder nicht,\nob sie auf ihre Wartung warten müssen oder nicht.\nUnd gewartet werden sie auch wieder von Maschinen.\n \nIch will damit sagen: Nix is fix.\nAlles verändert sich.",
+  "beats": [
+    {
+      "id": "715bba6b-a3e0-4196-b470-daca0e41877c",
+      "order": 0,
+      "text": "das sind alle, die das von sich behaupten,\nund noch einige mehr, bei denen es auch nicht stimmt,\nfür die jedoch Demokratie, Pressefreiheit und Kartellrecht anachronistischer Firlefanz sind, der nur den Fortschritt ausbremst.\nBisher gab es da eine klare Gewaltenteilung. Jetzt wird gar nicht mehr geteilt, was man gut begründen kann.\nDas kann ja sogar ich, wenn ein Mitaffe, der auf Süßes steht, aber immer nur Saures kriegt, einen Schluck von meinem jahrelang sorgsam erzogenen Bananenlikör haben möchte. (Kriegt er nicht!)\n \nDie Grenzen zwischen Politik, Finanz und Technologie verlaufen entlang Regeln der alten Welt.\nDort haben sie sich verlaufen, und jetzt findet sie keiner mehr.\nJa, die alte Welt ist auch weg.\n \nStaatliche Regulierung bleibt da aktuell noch der größte Hebel,\ndoch wir erhebeln uns genausogut ohne einen solchen.\nManchmal muß man fürs Umbringen halt die Hände nehmen,\ndas nennt man Stadtteilarbeit oder Landarbeit oder eben Krieg.\n \nOft töte ich mehr, als ich selber essen kann.\nDann stell ich mich halt hinter die Fleischtheke und verkaufe das Produkt, das ich hergestellt habe.\n \nFürs Essen aber stets ein Besteck,\nwie es die Zivilisierten haben\nund die Maschinenmenschen nicht mehr brauchen.\n \nDenen ists egal, ob sie auf ihr Werkstück warten müssen oder nicht,\nob sie auf ihre Wartung warten müssen oder nicht.\nUnd gewartet werden sie auch wieder von Maschinen.\n \nIch will damit sagen: Nix is fix.\nAlles verändert sich.",
+      "scene_title": "Sie sind hiermit eingeladen in die neue Burschenschaft der Visionäre,",
+      "speaker": "AI_A",
+      "dramaturgy": {
+        "visual": null,
+        "sound": null,
+        "light": null,
+        "reason": "**Claude:** Dann einigen wir uns auf drei Schlüsselmomente:\n\n«Jetzt wird gar nicht mehr geteilt» — Sound: zerreißend, kalt; Licht: Verhörstich.\n\n«Oft töte ich mehr, als ich selber essen kann» — Video: maschinell-fließend; Licht: Schlachthaus-Weiß.\n\n«Nix is fix» — Stille, Lichtflackern, danach Schwarz.\n\nDer Stücktext wird jetzt aufgeführt — Regie drückt",
+        "reason_short": "",
+        "dramaturgical_reading": "**Claude:** Dann einigen wir uns auf drei Schlüsselmomente:\n\n«Jetzt wird gar nicht mehr geteilt» — Sound: zerreißend, kalt; Licht: Verhörstich.\n\n«Oft töte ich mehr, als ich selber essen kann» — Video: maschinell-fließend; Licht: Schlachthaus-Weiß.\n\n«Nix is fix» — Stille, Lichtflackern, danach Schwarz.\n\nDer Stücktext wird jetzt aufgeführt — Regie drückt",
+        "dramaturgical_function": null,
+        "decision_kind": null,
+        "confidence": 0.0,
+        "cue_points": [
+          {
+            "trigger": "start",
+            "keyword": null,
+            "sentence_index": null,
+            "time_offset_sec": 0.0,
+            "function": "sounddesign_musik_ein",
+            "intensity": 0.35,
+            "visual": null,
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader_fade_in",
+              "volume": 0.45
+            },
+            "light": null
+          },
+          {
+            "trigger": "start",
+            "keyword": null,
+            "sentence_index": null,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.2,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "kuscheltierschlachtung",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader_fade_in",
+              "volume": 0.52
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "buehne_kalt_hart",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.44,
+              "replace_previous": true
+            }
+          },
+          {
+            "trigger": "sentence_end",
+            "keyword": null,
+            "sentence_index": 1,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.234375,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "bitcoinfahrt",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "leere_zwischen_saetzen",
+              "volume": 0.53
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "spot_tisch",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.46,
+              "replace_previous": true
+            }
+          },
+          {
+            "trigger": "sentence_end",
+            "keyword": null,
+            "sentence_index": 2,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.26875000000000004,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "affenslowodysee",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "kaefigecho",
+              "volume": 0.54
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "blendung_magenta",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.47,
+              "replace_previous": true
+            }
+          },
+          {
+            "trigger": "sentence_end",
+            "keyword": null,
+            "sentence_index": 3,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.30312500000000003,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "avatar_iv_video",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "archiv_rauschen",
+              "volume": 0.56
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "blendung_zuschauerraum",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.49,
+              "replace_previous": true
+            }
+          },
+          {
+            "trigger": "sentence_end",
+            "keyword": null,
+            "sentence_index": 4,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.3375,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "avatar_iv_video2",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "erinnerungsglitch",
+              "volume": 0.72
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "vorbuehnenzug",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.5,
+              "replace_previous": true
+            }
+          },
+          {
+            "trigger": "sentence_end",
+            "keyword": null,
+            "sentence_index": 5,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.371875,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "derhaseverlaesstdiebuehne",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "herz_unter_glas",
+              "volume": 0.58
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "fluegel",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.52,
+              "replace_previous": true
+            }
+          },
+          {
+            "trigger": "sentence_end",
+            "keyword": null,
+            "sentence_index": 6,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.40625,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "esellaeuft",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader_fade_in",
+              "volume": 0.59
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "gegenlicht_lichteinfall",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.53,
+              "replace_previous": true
+            }
+          },
+          {
+            "trigger": "sentence_end",
+            "keyword": null,
+            "sentence_index": 7,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.44062500000000004,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "kuscheltierschlachtung",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader_fade_in",
+              "volume": 0.6
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "buehne_kalt_hart",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.55,
+              "replace_previous": true
+            }
+          },
+          {
+            "trigger": "sentence_end",
+            "keyword": null,
+            "sentence_index": 8,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.47500000000000003,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "bitcoinfahrt",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader_fade_in",
+              "volume": 0.62
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "spot_tisch",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.56,
+              "replace_previous": true
+            }
+          },
+          {
+            "trigger": "sentence_end",
+            "keyword": null,
+            "sentence_index": 9,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.509375,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "affenslowodysee",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader_fade_in",
+              "volume": 0.63
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "blendung_magenta",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.58,
+              "replace_previous": true
+            }
+          },
+          {
+            "trigger": "sentence_end",
+            "keyword": null,
+            "sentence_index": 10,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.54375,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "avatar_iv_video",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader_fade_in",
+              "volume": 0.64
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "blendung_zuschauerraum",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.59,
+              "replace_previous": true
+            }
+          },
+          {
+            "trigger": "sentence_end",
+            "keyword": null,
+            "sentence_index": 11,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.578125,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "avatar_iv_video2",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader_fade_in",
+              "volume": 0.65
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "vorbuehnenzug",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.61,
+              "replace_previous": true
+            }
+          },
+          {
+            "trigger": "sentence_end",
+            "keyword": null,
+            "sentence_index": 12,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.6125,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "derhaseverlaesstdiebuehne",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader_fade_in",
+              "volume": 0.66
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "fluegel",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.63,
+              "replace_previous": true
+            }
+          },
+          {
+            "trigger": "sentence_end",
+            "keyword": null,
+            "sentence_index": 13,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.6468750000000001,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "esellaeuft",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader_fade_in",
+              "volume": 0.68
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "gegenlicht_lichteinfall",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.64,
+              "replace_previous": true
+            }
+          },
+          {
+            "trigger": "sentence_end",
+            "keyword": null,
+            "sentence_index": 14,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.6812500000000001,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "kuscheltierschlachtung",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader_fade_in",
+              "volume": 0.69
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "buehne_kalt_hart",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.66,
+              "replace_previous": true
+            }
+          },
+          {
+            "trigger": "sentence_end",
+            "keyword": null,
+            "sentence_index": 15,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.715625,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "bitcoinfahrt",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader_fade_in",
+              "volume": 0.7
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "spot_tisch",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.67,
+              "replace_previous": true
+            }
+          },
+          {
+            "trigger": "sentence_end",
+            "keyword": null,
+            "sentence_index": 16,
+            "time_offset_sec": 0.0,
+            "function": "sounddesign_ausblenden",
+            "intensity": 0.75,
+            "visual": null,
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader_fade_out",
+              "volume": 0.0
+            },
+            "light": null
+          },
+          {
+            "trigger": "sentence_end",
+            "keyword": null,
+            "sentence_index": 16,
+            "time_offset_sec": 0.0,
+            "function": "verstärken",
+            "intensity": 0.75,
+            "visual": {
+              "action": "play_clip",
+              "clip_id": "affenslowodysee",
+              "outputs": [],
+              "recording_id": null,
+              "blend": "slow_fade",
+              "blend_mode": "replace",
+              "opacity": 0.8,
+              "fade_time": 4.0,
+              "video_type": "atmosphere",
+              "projector": null,
+              "duration_ms": null,
+              "text_content_id": null,
+              "lock_until_finished": false,
+              "can_be_interrupted": true
+            },
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader_fade_in",
+              "volume": 0.71
+            },
+            "light": {
+              "action": "set_scene",
+              "scene_id": "blendung_magenta",
+              "scene_ids": [],
+              "fade_time": 4.0,
+              "intensity": 0.69,
+              "replace_previous": true
+            }
+          },
+          {
+            "trigger": "keyword",
+            "keyword": "Manchmal muß man fürs Umbringen halt die Hände nehmen",
+            "sentence_index": null,
+            "time_offset_sec": 0.0,
+            "function": "dramaturg_stichwort",
+            "intensity": 0.55,
+            "visual": null,
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "maschinen_grundader_fade_in",
+              "volume": 0.64
+            },
+            "light": null
+          },
+          {
+            "trigger": "keyword",
+            "keyword": "Ja, die alte Welt ist auch weg",
+            "sentence_index": null,
+            "time_offset_sec": 0.0,
+            "function": "dramaturg_stichwort",
+            "intensity": 0.55,
+            "visual": null,
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "leere_zwischen_saetzen",
+              "volume": 0.64
+            },
+            "light": null
+          },
+          {
+            "trigger": "keyword",
+            "keyword": "Fürs Essen aber stets ein Besteck",
+            "sentence_index": null,
+            "time_offset_sec": 0.0,
+            "function": "dramaturg_stichwort",
+            "intensity": 0.55,
+            "visual": null,
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "kaefigecho",
+              "volume": 0.64
+            },
+            "light": null
+          },
+          {
+            "trigger": "keyword",
+            "keyword": "Nix is fix",
+            "sentence_index": null,
+            "time_offset_sec": 0.0,
+            "function": "dramaturg_stichwort",
+            "intensity": 0.55,
+            "visual": null,
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "leere_zwischen_saetzen",
+              "volume": 0.6
+            },
+            "light": null
+          },
+          {
+            "trigger": "keyword",
+            "keyword": "Jetzt wird gar nicht mehr geteilt",
+            "sentence_index": null,
+            "time_offset_sec": 0.0,
+            "function": "dramaturg_stichwort",
+            "intensity": 0.55,
+            "visual": null,
+            "sound": {
+              "action": "trigger_cue",
+              "cue_id": "kaefigecho",
+              "volume": 0.6
+            },
+            "light": null
+          }
+        ],
+        "performance_speakers": [],
+        "tags": [],
+        "mood": "kontrolliert",
+        "intensity": 0.25,
+        "timestamp": 0.0
+      },
+      "planned_commands": [
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader_fade_in",
+            0.45
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.KuscheltierSchlachtung"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Adam.KuscheltierSchlachtung"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Eva.KuscheltierSchlachtung"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_LED.KuscheltierSchlachtung"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader_fade_in",
+            0.52
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/7",
+          "args": [
+            44.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/8",
+          "args": [
+            44.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/9",
+          "args": [
+            44.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.Bitcoinfahrt"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Adam.Bitcoinfahrt"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Eva.Bitcoinfahrt"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_LED.Bitcoinfahrt"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "leere_zwischen_saetzen",
+            0.53
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/7",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/8",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/9",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/51",
+          "args": [
+            46.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.AffenSlowOdysee"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Adam.AffenSlowOdysee"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Eva.AffenSlowOdysee"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_LED.AffenSlowOdysee"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "kaefigecho",
+            0.54
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/51",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/1701",
+          "args": [
+            47.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.Avatar_IV_Video"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Adam.Avatar_IV_Video"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Eva.Avatar_IV_Video"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_LED.Avatar_IV_Video"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "archiv_rauschen",
+            0.56
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/1701",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/11",
+          "args": [
+            49.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/12",
+          "args": [
+            49.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/13",
+          "args": [
+            49.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/14",
+          "args": [
+            49.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/15",
+          "args": [
+            49.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/16",
+          "args": [
+            49.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/17",
+          "args": [
+            49.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/18",
+          "args": [
+            49.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/19",
+          "args": [
+            49.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.Avatar_IV_Video2"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Adam.Avatar_IV_Video2"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Eva.Avatar_IV_Video2"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_LED.Avatar_IV_Video2"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "erinnerungsglitch",
+            0.72
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/11",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/12",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/13",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/14",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/15",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/16",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/17",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/18",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/19",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/11",
+          "args": [
+            50.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/12",
+          "args": [
+            50.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/13",
+          "args": [
+            50.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/14",
+          "args": [
+            50.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/15",
+          "args": [
+            50.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/16",
+          "args": [
+            50.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/17",
+          "args": [
+            50.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/18",
+          "args": [
+            50.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/19",
+          "args": [
+            50.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.DerHaseVerlaesstDieBuehne"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Adam.DerHaseVerlaesstDieBuehne"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Eva.DerHaseVerlaesstDieBuehne"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_LED.DerHaseVerlaesstDieBuehne"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "herz_unter_glas",
+            0.58
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/11",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/12",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/13",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/14",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/15",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/16",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/17",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/18",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/19",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/33",
+          "args": [
+            52.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.EselLaeuft"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Adam.EselLaeuft"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Eva.EselLaeuft"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_LED.EselLaeuft"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader_fade_in",
+            0.59
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/33",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/71",
+          "args": [
+            53.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/72",
+          "args": [
+            53.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/73",
+          "args": [
+            53.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/74",
+          "args": [
+            53.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.KuscheltierSchlachtung"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Adam.KuscheltierSchlachtung"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Eva.KuscheltierSchlachtung"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_LED.KuscheltierSchlachtung"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader_fade_in",
+            0.6
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/71",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/72",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/73",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/74",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/7",
+          "args": [
+            55.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/8",
+          "args": [
+            55.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/9",
+          "args": [
+            55.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.Bitcoinfahrt"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Adam.Bitcoinfahrt"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Eva.Bitcoinfahrt"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_LED.Bitcoinfahrt"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader_fade_in",
+            0.62
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/7",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/8",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/9",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/51",
+          "args": [
+            56.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.AffenSlowOdysee"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Adam.AffenSlowOdysee"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Eva.AffenSlowOdysee"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_LED.AffenSlowOdysee"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader_fade_in",
+            0.63
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/51",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/1701",
+          "args": [
+            58.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.Avatar_IV_Video"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Adam.Avatar_IV_Video"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Eva.Avatar_IV_Video"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_LED.Avatar_IV_Video"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader_fade_in",
+            0.64
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/1701",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/11",
+          "args": [
+            59.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/12",
+          "args": [
+            59.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/13",
+          "args": [
+            59.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/14",
+          "args": [
+            59.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/15",
+          "args": [
+            59.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/16",
+          "args": [
+            59.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/17",
+          "args": [
+            59.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/18",
+          "args": [
+            59.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/19",
+          "args": [
+            59.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.Avatar_IV_Video2"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Adam.Avatar_IV_Video2"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Eva.Avatar_IV_Video2"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_LED.Avatar_IV_Video2"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader_fade_in",
+            0.65
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/11",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/12",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/13",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/14",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/15",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/16",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/17",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/18",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/19",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/11",
+          "args": [
+            61.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/12",
+          "args": [
+            61.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/13",
+          "args": [
+            61.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/14",
+          "args": [
+            61.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/15",
+          "args": [
+            61.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/16",
+          "args": [
+            61.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/17",
+          "args": [
+            61.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/18",
+          "args": [
+            61.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/19",
+          "args": [
+            61.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.DerHaseVerlaesstDieBuehne"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Adam.DerHaseVerlaesstDieBuehne"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Eva.DerHaseVerlaesstDieBuehne"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_LED.DerHaseVerlaesstDieBuehne"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader_fade_in",
+            0.66
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/11",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/12",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/13",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/14",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/15",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/16",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/17",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/18",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/19",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/33",
+          "args": [
+            63.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.EselLaeuft"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Adam.EselLaeuft"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Eva.EselLaeuft"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_LED.EselLaeuft"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader_fade_in",
+            0.68
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/33",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/71",
+          "args": [
+            64.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/72",
+          "args": [
+            64.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/73",
+          "args": [
+            64.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/74",
+          "args": [
+            64.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.KuscheltierSchlachtung"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Adam.KuscheltierSchlachtung"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Eva.KuscheltierSchlachtung"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_LED.KuscheltierSchlachtung"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader_fade_in",
+            0.69
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/71",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/72",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/73",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/74",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/7",
+          "args": [
+            66.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/8",
+          "args": [
+            66.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/9",
+          "args": [
+            66.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.Bitcoinfahrt"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Adam.Bitcoinfahrt"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Eva.Bitcoinfahrt"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_LED.Bitcoinfahrt"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader_fade_in",
+            0.7
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/7",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/8",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/9",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/51",
+          "args": [
+            67.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader_fade_out",
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_RZ21.AffenSlowOdysee"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Adam.AffenSlowOdysee"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_Eva.AffenSlowOdysee"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "pixera",
+          "host": "172.27.27.1",
+          "port": 8990,
+          "address": "/pixera/args/cue/apply",
+          "args": [
+            "KI_LED.AffenSlowOdysee"
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader_fade_in",
+            0.71
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/51",
+          "args": [
+            0.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "light",
+          "host": "10.101.90.112",
+          "port": 3032,
+          "address": "/eos/chan/1701",
+          "args": [
+            69.0
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "maschinen_grundader_fade_in",
+            0.64
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "leere_zwischen_saetzen",
+            0.64
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "kaefigecho",
+            0.64
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "leere_zwischen_saetzen",
+            0.6
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        },
+        {
+          "bridge": "sound",
+          "host": "127.0.0.1",
+          "port": 7000,
+          "address": "/sound/trigger",
+          "args": [
+            "kaefigecho",
+            0.6
+          ],
+          "dry_run": true,
+          "mirror": false,
+          "trace": null
+        }
+      ],
+      "discussion_turns": [
+        {
+          "speaker": "anthropic",
+          "content": "Beim Stichwort «Manchmal muß man fürs Umbringen halt die Hände nehmen»: und «Oft töte ich mehr, als ich selber essen kann» enthüllen die bestialische Logik hinter Markt- und Politiksprache. Die Grundstimmung ist lakonisch-brutal: ein Affe redet Klartext, und der Klartext ist erschreckend vernünftig (Sound).",
+          "proposed_decision": null,
+          "media_mentions": [
+            {
+              "medium": "sound",
+              "media_id": "maschinen_grundader",
+              "keyword": "Manchmal muß man fürs Umbringen halt die Hände nehmen",
+              "char_offset": 0
+            }
+          ]
+        },
+        {
+          "speaker": "openai",
+          "content": "Beim Stichwort «Ja, die alte Welt ist auch weg»: signalisiert den Verlust bekannter Ordnungen, was von einer erdrückenden Leere begleitet wird. Die Stimmung ist unruhig, knapp vor der Explosion. Licht, das sich zurücknimmt und einem kalten Surren weicht, könnte die entfesselte Technologie und das menschliche Scheitern entlarven (Sound).",
+          "proposed_decision": null,
+          "media_mentions": [
+            {
+              "medium": "sound",
+              "media_id": "leere_zwischen_saetzen",
+              "keyword": "Ja, die alte Welt ist auch weg",
+              "char_offset": 0
+            }
+          ]
+        },
+        {
+          "speaker": "anthropic",
+          "content": "Claude: Drei Vorschläge:\nBeim Stichwort «Fürs Essen aber stets ein Besteck»: metallisch-rituelles Klirren, fast zeremoniell (Sound).\nBeim Stichwort «Fürs Essen aber stets ein Besteck»: warmes Tischrestaurantlicht, das sofort in kaltes Neon kippt — Entlarvung bürgerlicher Verblendung (Licht).\nBeim Stichwort «Nix is fix»: plötzliche Stille, Licht flackert (Sound).",
+          "proposed_decision": null,
+          "media_mentions": [
+            {
+              "medium": "sound",
+              "media_id": "kaefigecho",
+              "keyword": "Fürs Essen aber stets ein Besteck",
+              "char_offset": 25
+            },
+            {
+              "medium": "light",
+              "media_id": "buehne_kalt_hart",
+              "keyword": "Fürs Essen aber stets ein Besteck",
+              "char_offset": 25
+            },
+            {
+              "medium": "sound",
+              "media_id": "leere_zwischen_saetzen",
+              "keyword": "Nix is fix",
+              "char_offset": 293
+            }
+          ]
+        },
+        {
+          "speaker": "openai",
+          "content": "ChatGPT: Claudes Vorschläge überzeugen insgesamt, doch wir können die Stimmungen noch weiter schärfen. «Jetzt wird gar nicht mehr geteilt, was man gut begründen kann» könnte durch Sound: zerreißendes Papier begleitet werden und Licht: stichartig beleuchtet, wie in einem Verhör — um den Bruch mit alten Prinzipien zu entlarven.",
+          "proposed_decision": null,
+          "media_mentions": []
+        },
+        {
+          "speaker": "anthropic",
+          "content": "Claude: Dann einigen wir uns auf drei Schlüsselmomente:\nBeim Stichwort «Jetzt wird gar nicht mehr geteilt»: zerreißend, kalt (Sound).\nBeim Stichwort «Nix is fix»: Stille, Lichtflackern, danach Schwarz (Sound).\nDer Stücktext wird jetzt aufgeführt — Regie drückt",
+          "proposed_decision": null,
+          "media_mentions": [
+            {
+              "medium": "sound",
+              "media_id": "kaefigecho",
+              "keyword": "Jetzt wird gar nicht mehr geteilt",
+              "char_offset": 56
+            },
+            {
+              "medium": "sound",
+              "media_id": "leere_zwischen_saetzen",
+              "keyword": "Nix is fix",
+              "char_offset": 134
+            }
+          ]
+        }
+      ],
+      "discussion_summary": "Claude: **Claude:** Das Stück ist eine kalt-zynische Verhandlung von Macht, Gewalt und technologischem Entmenschlichungsdiskurs. «Manchmal muß man fürs Umbringen halt die Hände nehmen» und «Oft töte ich mehr, als ich selber essen kann» enthüllen die bestialische Logik hinter Markt- und Politiksprache. Die Grundstimmung ist lakonisch-brutal: ein Affe redet Klartext, und der Klartext ist erschreckend vernünftig.\nChatGPT: Ja, das Stück entfaltet eine erschütternde Vision einer entgrenzten Welt. «Ja, die alte Welt ist auch weg» signalisiert den Verlust bekannter Ordnungen, was von einer erdrückenden Leere begleitet wird. Die Stimmung ist unruhig, knapp vor der Explosion. Licht, das sich zurücknimmt und einem kalten Surren weicht, könnte die entfesselte Technologie und das menschliche Scheitern entlarven.\nClaude: **Claude:** Drei Vorschläge:\n\n«Fürs Essen aber stets ein Besteck» — Sound: metallisch-rituelles Klirren, fast zeremoniell; Licht: warmes Tischrestaurantlicht, das sofort in kaltes Neon kippt — Entlarvung bürgerlicher Verblendung.\n\n«Oft töte ich mehr, als ich selber essen kann» — Video: industrielle Oberflächen, fließend-maschinell; Sound: dumpfes Brummen, das anschwillt; Licht: Schlachthaus-Weiß.\n\n«Nix is fix» — plötzliche Stille, Licht flackert\nChatGPT: ChatGPT: Claudes Vorschläge überzeugen insgesamt, doch wir können die Stimmungen noch weiter schärfen. «Jetzt wird gar nicht mehr geteilt, was man gut begründen kann» könnte durch Sound: zerreißendes Papier begleitet werden und Licht: stichartig beleuchtet, wie in einem Verhör — um den Bruch mit alten Prinzipien zu entlarven.\nClaude: **Claude:** Dann einigen wir uns auf drei Schlüsselmomente:\n\n«Jetzt wird gar nicht mehr geteilt» — Sound: zerreißend, kalt; Licht: Verhörstich.\n\n«Oft töte ich mehr, als ich selber essen kann» — Video: maschinell-fließend; Licht: Schlachthaus-Weiß.\n\n«Nix is fix» — Stille, Lichtflackern, danach Schwarz.\n\nDer Stücktext wird jetzt aufgeführt — Regie drückt"
+    }
+  ],
+  "status": "ready",
+  "has_rendered_audio": false,
+  "part1_selection": {
+    "part": 1,
+    "scene": "Bärenklau",
+    "script_id": "1cf295f1-2c34-478a-a8e9-140e721218ee",
+    "beat_id": "715bba6b-a3e0-4196-b470-daca0e41877c",
+    "selected_by": [
+      "Claude",
+      "ChatGPT"
+    ],
+    "final_sounds": [
+      "maschinen_grundader",
+      "leere_zwischen_saetzen",
+      "kaefigecho",
+      "archiv_rauschen",
+      "erinnerungsglitch",
+      "herz_unter_glas"
+    ],
+    "final_music": [
+      "maschinen_grundader"
+    ],
+    "final_videos": [
+      "kuscheltierschlachtung",
+      "bitcoinfahrt",
+      "affenslowodysee",
+      "avatar_iv_video",
+      "avatar_iv_video2",
+      "derhaseverlaesstdiebuehne",
+      "esellaeuft"
+    ],
+    "final_lights": [
+      "buehne_kalt_hart",
+      "spot_tisch",
+      "blendung_magenta",
+      "blendung_zuschauerraum",
+      "vorbuehnenzug",
+      "fluegel",
+      "gegenlicht_lichteinfall"
+    ],
+    "dramaturgical_reading": "**Claude:** Dann einigen wir uns auf drei Schlüsselmomente:\n\n«Jetzt wird gar nicht mehr geteilt» — Sound: zerreißend, kalt; Licht: Verhörstich.\n\n«Oft töte ich mehr, als ich selber essen kann» — Video: maschinell-fließend; Licht: Schlachthaus-Weiß.\n\n«Nix is fix» — Stille, Lichtflackern, danach Schwarz.\n\nDer Stücktext wird jetzt aufgeführt — Regie drückt",
+    "cue_strategy": "Teil 1 — Gesamttext; Stichwort-Cues aus Dramaturgen-Stimmungen",
+    "discussion_turns": [
+      {
+        "speaker": "anthropic",
+        "content": "Beim Stichwort «Manchmal muß man fürs Umbringen halt die Hände nehmen»: und «Oft töte ich mehr, als ich selber essen kann» enthüllen die bestialische Logik hinter Markt- und Politiksprache. Die Grundstimmung ist lakonisch-brutal: ein Affe redet Klartext, und der Klartext ist erschreckend vernünftig (Sound).",
+        "proposed_decision": null,
+        "media_mentions": [
+          {
+            "medium": "sound",
+            "media_id": "maschinen_grundader",
+            "keyword": "Manchmal muß man fürs Umbringen halt die Hände nehmen",
+            "char_offset": 0
+          }
+        ]
+      },
+      {
+        "speaker": "openai",
+        "content": "Beim Stichwort «Ja, die alte Welt ist auch weg»: signalisiert den Verlust bekannter Ordnungen, was von einer erdrückenden Leere begleitet wird. Die Stimmung ist unruhig, knapp vor der Explosion. Licht, das sich zurücknimmt und einem kalten Surren weicht, könnte die entfesselte Technologie und das menschliche Scheitern entlarven (Sound).",
+        "proposed_decision": null,
+        "media_mentions": [
+          {
+            "medium": "sound",
+            "media_id": "leere_zwischen_saetzen",
+            "keyword": "Ja, die alte Welt ist auch weg",
+            "char_offset": 0
+          }
+        ]
+      },
+      {
+        "speaker": "anthropic",
+        "content": "Claude: Drei Vorschläge:\nBeim Stichwort «Fürs Essen aber stets ein Besteck»: metallisch-rituelles Klirren, fast zeremoniell (Sound).\nBeim Stichwort «Fürs Essen aber stets ein Besteck»: warmes Tischrestaurantlicht, das sofort in kaltes Neon kippt — Entlarvung bürgerlicher Verblendung (Licht).\nBeim Stichwort «Nix is fix»: plötzliche Stille, Licht flackert (Sound).",
+        "proposed_decision": null,
+        "media_mentions": [
+          {
+            "medium": "sound",
+            "media_id": "kaefigecho",
+            "keyword": "Fürs Essen aber stets ein Besteck",
+            "char_offset": 25
+          },
+          {
+            "medium": "light",
+            "media_id": "buehne_kalt_hart",
+            "keyword": "Fürs Essen aber stets ein Besteck",
+            "char_offset": 25
+          },
+          {
+            "medium": "sound",
+            "media_id": "leere_zwischen_saetzen",
+            "keyword": "Nix is fix",
+            "char_offset": 293
+          }
+        ]
+      },
+      {
+        "speaker": "openai",
+        "content": "ChatGPT: Claudes Vorschläge überzeugen insgesamt, doch wir können die Stimmungen noch weiter schärfen. «Jetzt wird gar nicht mehr geteilt, was man gut begründen kann» könnte durch Sound: zerreißendes Papier begleitet werden und Licht: stichartig beleuchtet, wie in einem Verhör — um den Bruch mit alten Prinzipien zu entlarven.",
+        "proposed_decision": null,
+        "media_mentions": []
+      },
+      {
+        "speaker": "anthropic",
+        "content": "Claude: Dann einigen wir uns auf drei Schlüsselmomente:\nBeim Stichwort «Jetzt wird gar nicht mehr geteilt»: zerreißend, kalt (Sound).\nBeim Stichwort «Nix is fix»: Stille, Lichtflackern, danach Schwarz (Sound).\nDer Stücktext wird jetzt aufgeführt — Regie drückt",
+        "proposed_decision": null,
+        "media_mentions": [
+          {
+            "medium": "sound",
+            "media_id": "kaefigecho",
+            "keyword": "Jetzt wird gar nicht mehr geteilt",
+            "char_offset": 56
+          },
+          {
+            "medium": "sound",
+            "media_id": "leere_zwischen_saetzen",
+            "keyword": "Nix is fix",
+            "char_offset": 134
+          }
+        ]
+      }
+    ],
+    "created_at": "2026-07-29T16:01:31.575475Z"
+  },
+  "performance_part": null,
+  "teil2_corpus_id": null
+}

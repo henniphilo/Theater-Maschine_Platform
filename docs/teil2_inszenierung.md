@@ -47,7 +47,7 @@ Legacy-Routen `/inszenierung/analyse` und `/inszenierung/komposition` leiten auf
 ### Zwei Cue-Spuren
 
 1. **Textgebunden** (`dramaturgy.cue_points`): Chunkweise LLM-Zuweisung — das LLM **findet selbst** dramaturgisch auffällige Stichworte im Text (keine vorgegebene Wortliste), mehrere Cues pro Abschnitt, stimmungsunabhängig, Anarchie steigt mit Textposition.
-2. **Atmosphäre parallel** (`atmosphere_cue_points`): zeitbasierte B-Roll-Clips auf freien Beamern.
+2. **Atmosphäre parallel** (`atmosphere_cue_points`): zeitbasierte B-Roll-/Begleit-Clips auf **allen freien** Beamern (ohne laufenden Avatar). Anzahl und Dichte steigen mit der Anarchie-Kurve.
 
 Teil 2 nutzt **keine** Multi-LLM-Diskussion wie Teil 1. Chunkweise Stichwort-Entdeckung + Cue-Zuweisung durch das LLM; Regel-Fallback (`extract_text_fallback_keywords`) nur ohne API.
 

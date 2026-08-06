@@ -8,14 +8,16 @@ const KIND_LABELS: Record<CueAnnotationKind, string> = {
   light: "Licht",
   sound: "Sound",
   video: "Video",
-  avatar: "Avatar"
+  avatar: "Avatar",
+  space: "Stille"
 };
 
 const KIND_CLASS: Record<CueAnnotationKind, string> = {
   light: "teil2CueBadgeLight",
   sound: "teil2CueBadgeSound",
   video: "teil2CueBadgeVideo",
-  avatar: "teil2CueBadgeAvatar"
+  avatar: "teil2CueBadgeAvatar",
+  space: "teil2CueBadgeSpace"
 };
 
 type Teil2ScriptCueOverviewProps = {
@@ -44,7 +46,7 @@ export function Teil2ScriptCueOverview({ overview }: Teil2ScriptCueOverviewProps
     <section className="col" style={{ gap: "1rem" }}>
       <div className="row" style={{ gap: "0.5rem", flexWrap: "wrap" }}>
         <span className="textMuted">Filter:</span>
-        {(["all", "light", "sound", "video", "avatar"] as const).map((kind) => (
+        {(["all", "light", "sound", "video", "avatar", "space"] as const).map((kind) => (
           <button
             key={kind}
             type="button"

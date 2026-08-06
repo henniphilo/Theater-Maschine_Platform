@@ -155,6 +155,7 @@ def align_avatar_csv_to_script(
             _layers_from_cues(group),
             anarchy_level=anarchy_level,
             used=used_projectors,
+            seed=sequence_index,
         )
         enriched_layers: list[AvatarSpeechLayer] = []
         for layer_index, layer in enumerate(layers):

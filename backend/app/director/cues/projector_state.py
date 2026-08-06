@@ -23,6 +23,16 @@ PROJECTORS = LEGACY_OUTPUT_SLOTS
 ProjectorTarget = str
 
 
+def _cue_projector_ids(cue: VisualCue) -> list[str]:
+    if cue.outputs:
+        ids = [assignment.output_id for assignment in cue.outputs if assignment.output_id]
+        if ids:
+            return ids
+    if cue.projector:
+        return [cue.projector]
+    return []
+
+
 def estimate_avatar_duration_ms(text: str | None, duration_ms: int | None) -> int:
     if duration_ms is not None and duration_ms > 0:
         return duration_ms
@@ -94,26 +104,28 @@ class ProjectorState:
         text_excerpt: str | None = None,
     ) -> tuple[bool, str | None]:
         now = now or datetime.now(UTC)
-        projector = cue.projector
-        if projector is None and cue.outputs:
-            projector = cue.outputs[0].output_id
-        if projector not in self.slots:
+        projectors = _cue_projector_ids(cue)
+        if not projectors:
             return True, None
 
-        slot = self.slots[projector]
-        if not slot.is_locked(now):
-            return True, None
+        for projector in projectors:
+            if projector not in self.slots:
+                continue
 
-        if cue.video_type == "avatar" and cue.lock_until_finished:
-            if self.allow_avatar_interrupt and cue.can_be_interrupted:
-                return True, None
-            return False, f"projector_locked:{projector}"
+            slot = self.slots[projector]
+            if not slot.is_locked(now):
+                continue
 
-        if cue.video_type == "atmosphere" and projector in self.atmosphere_free_slots:
-            return True, None
+            if cue.video_type == "avatar" and cue.lock_until_finished:
+                if self.allow_avatar_interrupt and cue.can_be_interrupted:
+                    continue
+                return False, f"projector_locked:{projector}"
 
-        if slot.video_type == "avatar" and not self.allow_avatar_interrupt:
-            return False, f"avatar_active:{projector}"
+            if cue.video_type == "atmosphere" and projector in self.atmosphere_free_slots:
+                continue
+
+            if slot.video_type == "avatar" and not self.allow_avatar_interrupt:
+                return False, f"avatar_active:{projector}"
 
         return True, None
 
@@ -135,23 +147,34 @@ class ProjectorState:
         text_excerpt: str | None = None,
     ) -> None:
         now = now or datetime.now(UTC)
-        projector = cue.projector
-        if projector is None and cue.outputs:
-            projector = cue.outputs[0].output_id
-        if projector not in self.slots:
+        projectors = _cue_projector_ids(cue)
+        if not projectors:
             return
 
-        slot = self.slots[projector]
-        slot.active_clip_id = cue.clip_id
-        slot.video_type = cue.video_type
-
+        lock_until: datetime | None
         if cue.video_type == "avatar" and cue.lock_until_finished:
             ms = estimate_avatar_duration_ms(text_excerpt, cue.duration_ms)
-            slot.locked_until = now + timedelta(milliseconds=ms)
-        elif cue.video_type == "atmosphere" and projector in self.atmosphere_free_slots:
-            slot.locked_until = None
+            lock_until = now + timedelta(milliseconds=ms)
+        elif cue.video_type == "atmosphere":
+            lock_until = None
         elif cue.duration_ms:
-            slot.locked_until = now + timedelta(milliseconds=cue.duration_ms)
+            lock_until = now + timedelta(milliseconds=cue.duration_ms)
+        else:
+            lock_until = None
+
+        for projector in projectors:
+            if projector not in self.slots:
+                continue
+            if cue.video_type == "atmosphere" and projector in self.atmosphere_free_slots:
+                slot = self.slots[projector]
+                slot.active_clip_id = cue.clip_id
+                slot.video_type = cue.video_type
+                slot.locked_until = None
+                continue
+            slot = self.slots[projector]
+            slot.active_clip_id = cue.clip_id
+            slot.video_type = cue.video_type
+            slot.locked_until = lock_until
 
     def release(self, projector: str) -> None:
         with self._lock:

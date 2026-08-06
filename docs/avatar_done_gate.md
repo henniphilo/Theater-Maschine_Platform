@@ -18,12 +18,13 @@ Gegenteiliger Drift (Video fertig vor Textanker): **kein** Warten auf den Anker 
 | Pfad | Stand |
 |------|--------|
 | **QLab (lokaler Test via Relay)** | implementiert |
-| **Pixera (Bühne)** | vorbereitet, noch nicht verdrahtet — siehe unten |
+| **Pixera (Bühne)** | Option A verdrahtet — Pixera-Cue sendet `/avatar/done`; Trace `avatar.done_expected` |
 
 Feature-Flag (Backend `.env`):
 
 ```env
 AVATAR_DONE_GATE_ENABLED=true
+AVATAR_DONE_SOURCE=qlab
 AVATAR_DONE_OSC_HOST=127.0.0.1
 AVATAR_DONE_OSC_PORT=8991
 AVATAR_DONE_TIMEOUT_GRACE_MS=2000
@@ -150,42 +151,47 @@ Während einer Wait-Anfrage: Signal-Trace `avatar.done_received` / `avatar.done_
 
 ---
 
-## Pixera (Bühne) — vorbereitet, noch offen
+## Pixera (Bühne) — Option A verdrahtet
 
-Pixera-OSC (`/pixera/args/cue/apply`) ist **fire-and-forget** und liefert **kein** Clip-Ende. Für die Bühne brauchen wir einen der folgenden Wege (noch nicht implementiert):
+Pixera-OSC (`/pixera/args/cue/apply`) ist fire-and-forget und liefert kein Clip-Ende.
+**Gewählter Venue-Pfad: Option A** — jeder Avatar-Clip sendet am Ende `/avatar/done` an die Theatermaschine.
+Backend und Frontend-Wait-API bleiben unverändert (gleiche Adresse wie QLab-Test).
 
-### Option A — Cue sendet OSC/String selbst (empfohlen prüfen)
+### Setup Venue
 
-In der Pixera-Timeline am Ende jedes Avatar-Clips (oder via Control / CueAppliedActions / String-Output am Cue):
+```env
+# backend/.env — Show-Rechner
+AVATAR_DONE_GATE_ENABLED=true
+AVATAR_DONE_SOURCE=pixera
+AVATAR_DONE_OSC_HOST=0.0.0.0
+AVATAR_DONE_OSC_PORT=8991
+AVATAR_DONE_TIMEOUT_GRACE_MS=2000
+```
+
+In der Pixera-Timeline am Ende jedes **Avatar**-Clips (Control / CueAppliedActions / String-Output):
 
 ```
 /avatar/done  "KI_Adam.BK1_Caro"
 ```
 
-an `AVATAR_DONE_OSC_HOST:AVATAR_DONE_OSC_PORT` der Theatermaschine.
+an `AVATAR_DONE_OSC_HOST:AVATAR_DONE_OSC_PORT` der Theatermaschine (Cue-Name exakt wie beim Start).
 
-Vorteil: gleiche Adresse wie QLab-Pfad, Backend bleibt unverändert.  
-Aufwand: einmalig Cue-Programmierung / Modul in Pixera.
-
-### Option B — JSON/TCP Monitoring
-
-Pixera Native API per JSON/TCP: Transport-Status / Monitoring pollen oder Events empfangen, Backend mappt „Clip fertig“ → `AvatarDoneGate.signal_done`.
-
-Vorteil: keine Cue-seitige Verdrahtung.  
-Aufwand: neuer Bridge-Client, Handles/Timeline-Mapping, robuste Reconnect-Logik.
-
-### Option C — Dauer-Timer (Fallback)
-
-Weiterhin CSV-`duration_ms` als Timeout (schon im Gate als Sicherheitsnetz). Nicht frame-genau, aber ohne Pixera-Feedback nutzbar.
+Bei aktivem Gate und `AVATAR_DONE_SOURCE=pixera` schreibt `PixeraBridge.apply_cue` ein Trace-Event
+`avatar.done_expected`, damit Operatoren fehlende Done-Signale im Signal-Trace sehen.
 
 ### Checkliste Bühne
 
-- [ ] Entscheidung A vs. B mit Technik/Pixera-Operator
-- [ ] Netz: Show-Rechner erreicht Pixera; Rückkanal zur Maschine erlaubt (Firewall/UDP)
+- [x] Entscheidung: Option A (Cue sendet `/avatar/done`)
+- [ ] Netz: Show-Rechner erreicht Pixera; Rückkanal UDP :8991 erlaubt
 - [ ] Nur **Avatar**-Clips senden Done — Atmosphäre nicht
-- [ ] `AVATAR_DONE_GATE_ENABLED=true` auf dem Show-Rechner
-- [ ] Probe: ein Avatar-Clip → TTS parallel; am nächsten Anker wartet TTS bis Done; Atmosphäre parallel ungestört
-- [ ] Docs hier + `.env.example` aktualisieren, sobald der Pixera-Pfad feststeht
+- [ ] `AVATAR_DONE_GATE_ENABLED=true` und `AVATAR_DONE_SOURCE=pixera`
+- [ ] Probe: Avatar-Clip → TTS parallel; am nächsten Anker wartet TTS bis Done
+- [ ] Trace: `avatar.done_expected` gefolgt von `avatar.done_received`
+
+### Option B / C (nicht Standard)
+
+- **B** JSON/TCP Monitoring — optional später, kein MVP
+- **C** CSV-`duration_ms` Timeout bleibt als Sicherheitsnetz im Gate
 
 ---
 

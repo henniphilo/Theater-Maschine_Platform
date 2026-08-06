@@ -8,6 +8,7 @@ from app.director.cues.cue_points import min_cue_points_for_text
 from app.director.dialogue.builder import build_dialogue_event
 from app.director.dramaturgy.rules_text import dramaturgy_rules_excerpt
 from app.director.dramaturgy.llm_director import LLMDirector
+from app.director.dramaturgy.state import DramaturgyState
 from app.director.outputs.osc_commands import build_osc_commands
 from app.schemas.script import DiscussionTurn, ScriptBeat
 from app.services.ai_service import AIService
@@ -164,6 +165,7 @@ class DramaturgyWorkshopService:
         self._validate_providers()
         catalog_hint = str(self.llm_director.catalog_allowlist(compact=True))[:900]
         max_per_dramaturg = settings.dramaturgy_statements_per_dramaturg
+        dramaturgy_state = DramaturgyState()
 
         for beat in beats:
             discussion_lines: list[str] = []
@@ -252,7 +254,9 @@ class DramaturgyWorkshopService:
                     event,
                     model=openai_model,
                     discussion_context=discussion_summary,
+                    dramaturgy_state=dramaturgy_state,
                 )
+                dramaturgy_state.apply_decision(decision, executed=True)
                 planned = build_osc_commands(decision, dry_run=True)
                 turns_payload = [t.model_dump(mode="json") for t in discussion_turns]
 

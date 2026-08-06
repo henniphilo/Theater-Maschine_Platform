@@ -88,7 +88,7 @@ export type AvatarTextSegment = {
   avatar_layers: AvatarSpeechLayer[];
 };
 
-export type CueAnnotationKind = "light" | "sound" | "video" | "avatar";
+export type CueAnnotationKind = "light" | "sound" | "video" | "avatar" | "space";
 
 export type CueAnnotation = {
   kind: CueAnnotationKind;

@@ -1,21 +1,42 @@
 "use client";
 
+import type { Route } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
 import { WorkshopStatusBar } from "@/components/layout/WorkshopStatusBar";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { apiBaseUrl } from "@/lib/api/base";
 
-const LINKS = [
-  { href: "/productions", label: "Produktionen", short: "Produktionen", icon: "productions" },
-  { href: "/technik", label: "Technik-Test", short: "Technik", icon: "technik" },
-  { href: "/dramaturgie", label: "Teil 1", short: "Dramaturgie", icon: "dramaturgie" },
-  { href: "/inszenierung", label: "Teil 2", short: "Inszenierung", icon: "inszenierung" },
-  { href: "/auffuehrung", label: "Aufführung", short: "Aufführung", icon: "auffuehrung" }
-] as const;
+type NavLink = {
+  href: Route;
+  label: string;
+  short: string;
+  icon: NavIcon;
+};
 
-type NavIcon = (typeof LINKS)[number]["icon"];
+type NavIcon =
+  | "productions"
+  | "technik"
+  | "dramaturgie"
+  | "inszenierung"
+  | "auffuehrung"
+  | "stueck"
+  | "director"
+  | "remote";
+
+/** Single flat register list — same items in sidebar and top tabs. */
+const LINKS: NavLink[] = [
+  { href: "/productions" as Route, label: "Produktionen", short: "Produktionen", icon: "productions" },
+  { href: "/technik" as Route, label: "Technik-Test", short: "Technik", icon: "technik" },
+  { href: "/dramaturgie" as Route, label: "Teil 1", short: "Dramaturgie", icon: "dramaturgie" },
+  { href: "/stueck" as Route, label: "Stück", short: "Stück", icon: "stueck" },
+  { href: "/inszenierung" as Route, label: "Teil 2", short: "Inszenierung", icon: "inszenierung" },
+  { href: "/auffuehrung" as Route, label: "Aufführung", short: "Aufführung", icon: "auffuehrung" },
+  { href: "/director" as Route, label: "Director", short: "Director", icon: "director" },
+  { href: "/remote" as Route, label: "Remote", short: "Remote", icon: "remote" }
+];
 
 function NavIconSvg({ name }: { name: NavIcon }) {
   const common = {
@@ -54,6 +75,13 @@ function NavIconSvg({ name }: { name: NavIcon }) {
           <path d="M8 7h8M8 11h6" />
         </svg>
       );
+    case "stueck":
+      return (
+        <svg {...common}>
+          <path d="M4 4h16v16H4z" />
+          <path d="M8 8h8M8 12h8M8 16h5" />
+        </svg>
+      );
     case "inszenierung":
       return (
         <svg {...common}>
@@ -69,15 +97,75 @@ function NavIconSvg({ name }: { name: NavIcon }) {
           <path d="M10 8.5v7l6-3.5-6-3.5Z" fill="currentColor" stroke="none" />
         </svg>
       );
+    case "director":
+      return (
+        <svg {...common}>
+          <path d="M12 3v18" />
+          <path d="M5 8h14" />
+          <path d="M7 8v5a5 5 0 0 0 10 0V8" />
+        </svg>
+      );
+    case "remote":
+      return (
+        <svg {...common}>
+          <rect x="7" y="2" width="10" height="20" rx="2" />
+          <circle cx="12" cy="17" r="1.2" fill="currentColor" stroke="none" />
+        </svg>
+      );
   }
 }
 
 function isActive(pathname: string, href: string) {
+  if (href === "/inszenierung") {
+    return pathname === "/inszenierung" || pathname.startsWith("/inszenierung/");
+  }
+  if (href === "/auffuehrung") {
+    return pathname === "/auffuehrung" || pathname.startsWith("/auffuehrung/");
+  }
   return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+function useBackendHealth(enabled: boolean) {
+  const [online, setOnline] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (!enabled) return;
+    let cancelled = false;
+    let timer: number | undefined;
+
+    const tick = async () => {
+      try {
+        const res = await fetch(`${apiBaseUrl()}/health`, { cache: "no-store" });
+        if (!cancelled) setOnline(res.ok);
+      } catch {
+        if (!cancelled) setOnline(false);
+      }
+      if (!cancelled) {
+        timer = window.setTimeout(() => {
+          void tick();
+        }, 8000);
+      }
+    };
+
+    void tick();
+    return () => {
+      cancelled = true;
+      if (timer !== undefined) window.clearTimeout(timer);
+    };
+  }, [enabled]);
+
+  return online;
 }
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const isRemote = pathname === "/remote" || pathname.startsWith("/remote/");
+  const backendOnline = useBackendHealth(!isRemote);
+
+  // Phone remote: no chrome. Everywhere else: classic sidebar + top register tabs.
+  if (isRemote) {
+    return <div className="appShell appShellRemote">{children}</div>;
+  }
 
   return (
     <div className="appShell">
@@ -89,8 +177,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             </svg>
           </span>
           <div className="appSidebarBrandText">
-            <span className="appBrandMark">AutoPlay</span>
-            <span className="appBrandClaim">Dramaturgie. Automation. Performance.</span>
+            <span className="appBrandMark">Theater-Maschine</span>
+            <span className="appBrandClaim">Dramaturgie · Automation · Bühne</span>
           </div>
         </div>
 
@@ -114,10 +202,19 @@ export function AppShell({ children }: { children: ReactNode }) {
 
         <div className="appSidebarFooter">
           <div className="appSidebarStatus">
-            <span className="appSidebarStatusDot" aria-hidden="true" />
+            <span
+              className={
+                backendOnline === false
+                  ? "appSidebarStatusDot appSidebarStatusDotOffline"
+                  : "appSidebarStatusDot"
+              }
+              aria-hidden="true"
+            />
             <div>
-              <strong>AutoPlay</strong>
-              <span>Online</span>
+              <strong>Backend</strong>
+              <span>
+                {backendOnline === null ? "Prüfe …" : backendOnline ? "Online" : "Offline"}
+              </span>
             </div>
           </div>
         </div>
@@ -125,7 +222,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       <div className="appShellMain">
         <header className="appTopbar">
-          <nav className="appTopNav" aria-label="Bereiche">
+          <nav className="appTopNav" aria-label="Register">
             {LINKS.map((link) => {
               const active = isActive(pathname, link.href);
               return (

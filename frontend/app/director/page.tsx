@@ -37,11 +37,17 @@ function FlagButton({
   );
 }
 
+function densityValue(state: Record<string, unknown> | undefined, key: string): number {
+  const raw = state?.[key];
+  return typeof raw === "number" ? Math.max(0, Math.min(1, raw)) : 0;
+}
+
 export default function DirectorPage() {
   const [status, setStatus] = useState<DirectorStatus | null>(null);
   const [error, setError] = useState("");
   const [recordingId, setRecordingId] = useState("recording_live_001");
   const [loading, setLoading] = useState(false);
+  const [showDebug, setShowDebug] = useState(false);
 
   const refresh = useCallback(async () => {
     try {
@@ -156,16 +162,28 @@ export default function DirectorPage() {
 
   const lastEvent = status?.last_event;
   const lastDecision = status?.last_decision;
+  const dramaturgyState = (status?.dramaturgy_state ?? {}) as Record<string, unknown>;
+  const musicDensity = densityValue(dramaturgyState, "music_density");
+  const videoDensity = densityValue(dramaturgyState, "video_density");
+  const totalDensity = densityValue(dramaturgyState, "total_media_density");
+  const decisionReason = displayReasonShort(
+    typeof lastDecision?.reason_short === "string" ? lastDecision.reason_short : null,
+    typeof lastDecision?.reason === "string" ? lastDecision.reason : null
+  );
+  const decisionFunction =
+    typeof lastDecision?.dramaturgical_function === "string"
+      ? lastDecision.dramaturgical_function
+      : null;
+  const decisionKind =
+    typeof lastDecision?.decision_kind === "string" ? lastDecision.decision_kind : null;
 
   return (
     <main className="container col">
       <div className="pageHeader">
         <h1>Live-Regie Operator</h1>
-        <Link href="/">← Zur Debatte</Link>
+        <Link href="/director/analysis">Probe-Analyse →</Link>
       </div>
-      <p className="textMuted">
-        Semi-autonome Regie: Safety-Flags, Emergency Stop, Aufnahme-Steuerung.
-      </p>
+      <p className="textMuted">Safety zuerst, dann Regievorschläge — Debug nur bei Bedarf.</p>
 
       {status?.active_production_id ? (
         <p>
@@ -179,8 +197,7 @@ export default function DirectorPage() {
         </p>
       ) : (
         <p className="textMuted">
-          Keine aktive Produktion —{" "}
-          <Link href={"/productions" as Route}>Produktionen</Link>
+          Keine aktive Produktion — <Link href={"/productions" as Route}>Produktionen</Link>
         </p>
       )}
 
@@ -194,6 +211,31 @@ export default function DirectorPage() {
         <h2>Safety & Steuerung</h2>
         {status ? (
           <>
+            <div className="row" style={{ flexWrap: "wrap", gap: "0.75rem", alignItems: "center" }}>
+              <button
+                type="button"
+                className="emergencyStopBtn"
+                onClick={handleEmergencyStop}
+                disabled={loading}
+              >
+                Emergency Stop
+              </button>
+              <button
+                type="button"
+                onClick={handleEmergencyClear}
+                disabled={loading || !status.safety.emergency_stop_active}
+              >
+                Emergency aufheben
+              </button>
+              <button type="button" onClick={() => refresh()} disabled={loading}>
+                Status aktualisieren
+              </button>
+            </div>
+            {status.safety.emergency_stop_active ? (
+              <p className="textError" role="alert">
+                Emergency Stop aktiv — Ausgabe gesperrt.
+              </p>
+            ) : null}
             <div className="row" style={{ flexWrap: "wrap" }}>
               <FlagButton
                 label="Autopilot"
@@ -226,27 +268,53 @@ export default function DirectorPage() {
                 disabled={loading}
               />
             </div>
-            <div className="row">
-              <button type="button" onClick={handleEmergencyStop} disabled={loading}>
-                Emergency Stop
-              </button>
-              <button
-                type="button"
-                onClick={handleEmergencyClear}
-                disabled={loading || !status.safety.emergency_stop_active}
-              >
-                Emergency aufheben
-              </button>
-              <button type="button" onClick={() => refresh()} disabled={loading}>
-                Status aktualisieren
-              </button>
-            </div>
-            {status.safety.emergency_stop_active ? (
-              <p className="textError">Emergency Stop aktiv — Ausgabe gesperrt.</p>
-            ) : null}
           </>
         ) : (
           <p className="textFaint">Lade Status …</p>
+        )}
+      </section>
+
+      <section className="card col">
+        <h2>Letzte Regieentscheidung</h2>
+        {lastDecision ? (
+          <div className="directorDecisionCard">
+            <strong>
+              {dramaturgicalFunctionLabel(decisionFunction) || decisionKind || "Entscheidung"}
+            </strong>
+            {decisionReason ? <p style={{ margin: 0 }}>{decisionReason}</p> : null}
+            <p className="textMuted" style={{ margin: 0, fontSize: "0.9rem" }}>
+              Ausgeführt: {status?.last_executed ? "ja" : "nein"}
+              {status?.last_blocked_reason ? ` · blockiert: ${status.last_blocked_reason}` : ""}
+              {decisionKind === "none" ? " · Stille / Space" : ""}
+            </p>
+          </div>
+        ) : (
+          <p className="textFaint">Noch keine Entscheidung.</p>
+        )}
+      </section>
+
+      <section className="card col">
+        <h2>Mediendichte</h2>
+        {status?.dramaturgy_state ? (
+          <div className="directorDensityMeter">
+            {(
+              [
+                ["Musik", musicDensity],
+                ["Video", videoDensity],
+                ["Gesamt", totalDensity]
+              ] as const
+            ).map(([label, value]) => (
+              <div key={label} className="directorDensityRow">
+                <span>{label}</span>
+                <div className="directorDensityTrack" aria-hidden="true">
+                  <div className="directorDensityFill" style={{ width: `${Math.round(value * 100)}%` }} />
+                </div>
+                <span>{Math.round(value * 100)}%</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="textFaint">Noch kein Zustand.</p>
         )}
       </section>
 
@@ -271,9 +339,6 @@ export default function DirectorPage() {
 
       <section className="card col">
         <h2>Dramaturgie-Vorschläge</h2>
-        <p className="textMuted">
-          <Link href="/director/analysis">Probe-Analyse anzeigen →</Link>
-        </p>
         {status?.open_proposals?.length ? (
           <ul style={{ margin: 0, paddingLeft: 0, listStyle: "none" }}>
             {status.open_proposals.map((proposal) => {
@@ -286,7 +351,10 @@ export default function DirectorPage() {
                   <strong>{proposal.text_snippet || "Regievorschlag"}</strong>
                   {reason ? (
                     <span className="textMuted">
-                      {dramaturgicalFunctionLabel(proposal.dramaturgical_function ?? proposal.decision?.dramaturgical_function)} · – {reason}
+                      {dramaturgicalFunctionLabel(
+                        proposal.dramaturgical_function ?? proposal.decision?.dramaturgical_function
+                      )}{" "}
+                      · – {reason}
                     </span>
                   ) : null}
                   <div className="row">
@@ -311,45 +379,6 @@ export default function DirectorPage() {
           </ul>
         ) : (
           <p className="textFaint">Keine offenen Vorschläge.</p>
-        )}
-      </section>
-
-      <section className="card col">
-        <h2>Dramaturgie-Zustand</h2>
-        {status?.dramaturgy_state ? (
-          <pre style={{ margin: 0, whiteSpace: "pre-wrap", fontSize: "0.85rem" }}>
-            {JSON.stringify(status.dramaturgy_state, null, 2)}
-          </pre>
-        ) : (
-          <p className="textFaint">Noch kein Zustand.</p>
-        )}
-      </section>
-
-      <section className="card col">
-        <h2>Letzter Dialogue-Event</h2>
-        {lastEvent ? (
-          <pre style={{ margin: 0, whiteSpace: "pre-wrap", fontSize: "0.85rem" }}>
-            {JSON.stringify(lastEvent, null, 2)}
-          </pre>
-        ) : (
-          <p className="textFaint">Noch kein Event — Debatte starten oder Test-Event senden.</p>
-        )}
-      </section>
-
-      <section className="card col">
-        <h2>Letzte Regieentscheidung</h2>
-        {lastDecision ? (
-          <>
-            <p style={{ margin: 0 }}>
-              Ausgeführt: {status?.last_executed ? "ja" : "nein"}
-              {status?.last_blocked_reason ? ` (blockiert: ${status.last_blocked_reason})` : ""}
-            </p>
-            <pre style={{ margin: 0, whiteSpace: "pre-wrap", fontSize: "0.85rem" }}>
-              {JSON.stringify(lastDecision, null, 2)}
-            </pre>
-          </>
-        ) : (
-          <p className="textFaint">Noch keine Entscheidung.</p>
         )}
       </section>
 
@@ -389,6 +418,33 @@ export default function DirectorPage() {
           </ul>
         ) : (
           <p className="textFaint">Keine aktiven Cues.</p>
+        )}
+      </section>
+
+      <section className="card col">
+        <div className="row" style={{ justifyContent: "space-between", alignItems: "center" }}>
+          <h2 style={{ margin: 0 }}>Debug</h2>
+          <button type="button" onClick={() => setShowDebug((v) => !v)} aria-expanded={showDebug}>
+            {showDebug ? "Ausblenden" : "Rohdaten zeigen"}
+          </button>
+        </div>
+        {showDebug ? (
+          <>
+            <h3>Dramaturgie-Zustand</h3>
+            <pre style={{ margin: 0, whiteSpace: "pre-wrap", fontSize: "0.85rem" }}>
+              {JSON.stringify(status?.dramaturgy_state ?? {}, null, 2)}
+            </pre>
+            <h3>Letzter Dialogue-Event</h3>
+            <pre style={{ margin: 0, whiteSpace: "pre-wrap", fontSize: "0.85rem" }}>
+              {JSON.stringify(lastEvent ?? null, null, 2)}
+            </pre>
+            <h3>Letzte Entscheidung (roh)</h3>
+            <pre style={{ margin: 0, whiteSpace: "pre-wrap", fontSize: "0.85rem" }}>
+              {JSON.stringify(lastDecision ?? null, null, 2)}
+            </pre>
+          </>
+        ) : (
+          <p className="textFaint">JSON-Rohdaten sind ausgeblendet.</p>
         )}
       </section>
     </main>

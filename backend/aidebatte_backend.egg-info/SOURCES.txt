@@ -243,6 +243,7 @@ tests/test_director_production_context.py
 tests/test_director_trace_context.py
 tests/test_dramaturg_labels.py
 tests/test_dramaturgy.py
+tests/test_dramaturgy_analysis_summary.py
 tests/test_dramaturgy_reason_short.py
 tests/test_dramaturgy_rules_text.py
 tests/test_dramaturgy_text.py

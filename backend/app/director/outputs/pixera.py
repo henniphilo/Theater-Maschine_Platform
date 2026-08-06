@@ -46,3 +46,30 @@ class PixeraBridge:
 
     def apply_cue(self, pixera_cue_name: str) -> None:
         self._send("/pixera/args/cue/apply", pixera_cue_name)
+        self._note_avatar_done_expectation(pixera_cue_name)
+
+    def _note_avatar_done_expectation(self, pixera_cue_name: str) -> None:
+        """Venue Pixera path (Option A): cue end must send /avatar/done back.
+
+        Backend already listens for /avatar/done. This emits a trace hint so operators
+        can verify that Pixera timelines are wired to the same cue name.
+        """
+        if not settings.avatar_done_gate_enabled:
+            return
+        if settings.avatar_done_source not in {"pixera", "manual"}:
+            return
+        try:
+            from app.director.outputs.signal_trace import emit_signal_trace_event
+
+            emit_signal_trace_event(
+                "avatar.done_expected",
+                status="armed",
+                bridge="pixera",
+                cue_id=pixera_cue_name,
+                detail=(
+                    f"Expect /avatar/done {pixera_cue_name!r} on "
+                    f"{settings.avatar_done_osc_host}:{settings.avatar_done_osc_port}"
+                ),
+            )
+        except Exception:
+            return

@@ -19,12 +19,31 @@ AVATAR_DEFAULT_PROJECTOR: dict[str, str] = {
 
 
 def projector_mode_for_anarchy(anarchy_level: float) -> str:
-    """Blend/layer semantics for high anarchy — not «all beamers on one clip»."""
+    """single = one primary beamer; all = primary may be mirrored to more surfaces."""
     return "all" if anarchy_level >= 0.5 else "single"
+
+
+def mirror_count_for_anarchy(anarchy_level: float) -> int:
+    """How many *additional* beamers get the same clip (besides primary)."""
+    if anarchy_level >= 0.75:
+        return 2
+    if anarchy_level >= 0.3:
+        return 1
+    return 0
 
 
 def _default_projector(avatar: str) -> str:
     return AVATAR_DEFAULT_PROJECTOR.get(avatar.lower(), "rz21")
+
+
+def _rotated_preferred(avatar: str, seed: int) -> str:
+    """Rotate character defaults so the same avatar does not stick to one beamer."""
+    base = _default_projector(avatar)
+    try:
+        base_index = STAGE_BEAMER_ORDER.index(base)
+    except ValueError:
+        base_index = 0
+    return STAGE_BEAMER_ORDER[(base_index + max(0, seed)) % len(STAGE_BEAMER_ORDER)]
 
 
 def pick_distinct_projector(
@@ -45,6 +64,7 @@ def pick_distinct_projector(
     pool = [p for p in STAGE_BEAMER_ORDER if p not in used_set]
     if pool:
         return pool[fallback_index % len(pool)]
+    # All beamers already used in this rotation window — keep cycling, never sticky-adam.
     return STAGE_BEAMER_ORDER[fallback_index % len(STAGE_BEAMER_ORDER)]
 
 
@@ -61,26 +81,70 @@ def pick_atmosphere_projectors(
     return [pool[(seed + index) % len(pool)] for index in range(max(1, count))]
 
 
+def mirror_outputs_for_clip(
+    primary: str,
+    clip_id: str,
+    *,
+    occupied: set[str],
+    mirror_count: int,
+    seed: int = 0,
+) -> list[VisualOutputAssignment]:
+    """Same clip on primary + up to mirror_count additional free beamers."""
+    outputs = [VisualOutputAssignment(output_id=primary, clip_id=clip_id)]
+    if mirror_count <= 0:
+        return outputs
+    candidates = [p for p in STAGE_BEAMER_ORDER if p not in occupied]
+    if not candidates:
+        return outputs
+    start = seed % len(candidates)
+    ordered = candidates[start:] + candidates[:start]
+    for projector in ordered[:mirror_count]:
+        outputs.append(VisualOutputAssignment(output_id=projector, clip_id=clip_id))
+    return outputs
+
+
 def assign_projectors_for_layers(
     layers: list[AvatarSpeechLayer],
     *,
     anarchy_level: float,
     used: set[str] | None = None,
+    seed: int = 0,
 ) -> list[AvatarSpeechLayer]:
-    """Assign exactly one distinct projector per chorus layer."""
-    del anarchy_level  # blend mode handled in build_avatar_visual_cue
-    used_projectors = used if used is not None else set()
-    updated: list[AvatarSpeechLayer] = []
+    """Assign projectors per chorus layer; optionally mirror the same clip to more beamers.
 
+    Within one call, each layer gets a distinct *primary* projector.
+    When anarchy is moderate/high, the same clip may also run on additional free surfaces.
+    """
+    used_projectors = used if used is not None else set()
+    # Rotation window: once all beamers were primary targets, free them for the next cycle.
+    if len(used_projectors) >= len(ALL_PROJECTORS):
+        used_projectors.clear()
+
+    primaries: list[str] = []
     for index, layer in enumerate(layers):
-        preferred = layer.projector or _default_projector(layer.avatar)
+        preferred = layer.projector or _rotated_preferred(layer.avatar, seed + index)
         projector = pick_distinct_projector(
             preferred=preferred,
             used=used_projectors,
-            fallback_index=index,
+            fallback_index=seed + index,
         )
         used_projectors.add(projector)
-        outputs = [VisualOutputAssignment(output_id=projector, clip_id=layer.video_clip_id)]
+        primaries.append(projector)
+
+    occupied: set[str] = set(primaries)
+    mirrors = mirror_count_for_anarchy(anarchy_level)
+    updated: list[AvatarSpeechLayer] = []
+
+    for index, (layer, projector) in enumerate(zip(layers, primaries, strict=True)):
+        outputs = mirror_outputs_for_clip(
+            projector,
+            layer.video_clip_id,
+            occupied=occupied - {projector},
+            mirror_count=mirrors,
+            seed=seed + index * 3,
+        )
+        for assignment in outputs:
+            occupied.add(assignment.output_id)
         updated.append(
             layer.model_copy(
                 update={

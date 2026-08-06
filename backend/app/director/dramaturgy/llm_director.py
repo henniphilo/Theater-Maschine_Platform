@@ -11,6 +11,7 @@ from app.director.dramaturgy.function_mapping import normalize_dramaturgical_fun
 from app.director.dramaturgy.reason_short import enrich_decision_metadata, is_valid_reason_short
 from app.director.dramaturgy.rules_text import dramaturgy_rules_excerpt, load_dramaturgy_rules
 from app.director.media.database import MediaDatabase
+from app.director.dramaturgy.state import DramaturgyState
 from app.services.ai_service import AIService
 from app.services.video_cue_catalog import get_video_cue_catalog_service
 from app.services.video_scope import VideoScope
@@ -135,17 +136,36 @@ class LLMDirector:
         *,
         model: str = "gpt-4o",
         discussion_context: str = "",
+        dramaturgy_state: DramaturgyState | dict[str, object] | None = None,
     ) -> DramaturgyDecision:
+        state_snapshot = self._state_snapshot(dramaturgy_state)
         if settings.director_dramaturgy_mode == "rules":
-            return self.rule_engine.decide(event)
+            state_obj = dramaturgy_state if isinstance(dramaturgy_state, DramaturgyState) else None
+            return self.rule_engine.decide(event, dramaturgy_state=state_obj)
 
         try:
-            raw = await self._call_llm(event, model=model, discussion_context=discussion_context)
+            raw = await self._call_llm(
+                event,
+                model=model,
+                discussion_context=discussion_context,
+                dramaturgy_state=state_snapshot,
+            )
             decision = self._parse_decision(raw, event)
             self.validate_decision(decision, text=event.text)
             return enrich_decision_metadata(decision)
         except (DramaturgyValidationError, json.JSONDecodeError, KeyError, ValueError):
-            return self.rule_engine.decide(event)
+            state_obj = dramaturgy_state if isinstance(dramaturgy_state, DramaturgyState) else None
+            return self.rule_engine.decide(event, dramaturgy_state=state_obj)
+
+    @staticmethod
+    def _state_snapshot(
+        dramaturgy_state: DramaturgyState | dict[str, object] | None,
+    ) -> dict[str, object]:
+        if dramaturgy_state is None:
+            return {}
+        if isinstance(dramaturgy_state, DramaturgyState):
+            return dramaturgy_state.snapshot()
+        return dict(dramaturgy_state)
 
     async def _call_llm(
         self,
@@ -153,10 +173,12 @@ class LLMDirector:
         *,
         model: str,
         discussion_context: str,
+        dramaturgy_state: dict[str, object] | None = None,
     ) -> str:
         catalog = json.dumps(self.catalog_allowlist(compact=True), ensure_ascii=False)
         rules = dramaturgy_rules_excerpt(max_chars=settings.dramaturgy_rules_excerpt_chars)
         min_points = min_cue_points_for_text(event.text)
+        state_json = json.dumps(dramaturgy_state or {}, ensure_ascii=False)
         system = (
             "Du arbeitest als professionelle Theaterdramaturgin und Live-Medienkünstlerin. "
             "Deine Aufgabe ist nicht, jede Textstelle zu bebildern oder zu vertonen — "
@@ -165,6 +187,8 @@ class LLMDirector:
             "formulierbar sein. "
             "Berücksichtige: aktuellen Text, Szene, laufende Ebenen, Medien-Dichte, Wiederholungen, "
             "Verständlichkeit der Sprache, die Möglichkeit nichts zu tun, und Material zu beenden. "
+            "Der Live-Zustand (DramaturgyState) ist verbindlich: bei hoher Dichte eher space/release/"
+            "fade_to_black/stop_clip wählen statt neue Starts. "
             "Bevorzuge präzise Entscheidungen gegenüber vielen. "
             "Überraschung durch Kontrast, Timing, Wiederaufnahme oder Reduktion — nicht durch Zufall. "
             "Gib für jede Entscheidung reason_short: höchstens ein kurzer deutscher Satz mit dramaturgischer Funktion. "
@@ -179,6 +203,7 @@ class LLMDirector:
             f"Textabschnitt:\n{event.text}\n\n"
             f"Thema/Kontext: {event.topic}\n"
             f"Stimmung: {event.mood}, Intensität: {event.intensity}, Tags: {event.tags}\n\n"
+            f"Live-DramaturgyState:\n{state_json}\n\n"
             f"Dramaturgie-Diskussion:\n{discussion_context or '(keine)'}\n\n"
             f"Medien-Allowlist:\n{catalog}\n\n"
             f"Mindestens {min_points} cue_points für diesen Abschnitt, ODER decision_kind=none mit Begründung.\n"
@@ -194,7 +219,11 @@ class LLMDirector:
             '"performance_speakers":["AI_A","AI_B"]}\n'
             'Beispiel Nichtstun: {"decision_kind":"none","dramaturgical_function":"space",'
             '"reason_short":"Lässt den neuen Gedanken ohne mediale Begleitung beginnen.",'
-            '"confidence":0.88,"cue_points":[],"reason":"...","mood":"...","intensity":0.5,"timestamp":0}'
+            '"confidence":0.88,"cue_points":[],"reason":"...","mood":"...","intensity":0.5,"timestamp":0}\n'
+            'Beispiel Entlastung: {"decision_kind":"modify","dramaturgical_function":"release",'
+            '"reason_short":"Blendet das Bild aus, damit der nächste Satz freier steht.",'
+            '"cue_points":[{"trigger":"start","function":"release","visual":'
+            '{"action":"fade_to_black","fade_time":3}}],"mood":"...","intensity":0.4,"timestamp":0}'
         )
         return await self.ai.generate(
             "openai",

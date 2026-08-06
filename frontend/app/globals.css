@@ -14,14 +14,14 @@
   --color-text-secondary: #d1d5db;
   --color-text-muted: #9ca3af;
 
-  --color-accent: #4ade80;
-  --color-accent-hover: #6ee7a0;
-  --color-accent-soft: rgba(74, 222, 128, 0.14);
+  --color-accent: #d4a05a;
+  --color-accent-hover: #e0b574;
+  --color-accent-soft: rgba(212, 160, 90, 0.16);
   --color-accent-ink: #0a0b0d;
 
-  --color-success: #4ade80;
+  --color-success: #5cb88a;
   --color-warning: #d9a441;
-  --color-danger: #f87171;
+  --color-danger: #e85d5d;
   --color-info: #6fa9c7;
 
   --sidebar-width: 220px;
@@ -38,11 +38,12 @@
   --space-5: 24px;
   --space-6: 32px;
 
-  --font-sans: var(--font-inter), Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-source-sans), "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-sans);
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 
   --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.35);
-  --focus-ring: 0 0 0 2px var(--color-bg), 0 0 0 4px rgba(74, 222, 128, 0.45);
+  --focus-ring: 0 0 0 2px var(--color-bg), 0 0 0 4px rgba(212, 160, 90, 0.45);
 
   /* Legacy aliases used by existing class names */
   --bg: var(--color-bg);
@@ -79,18 +80,18 @@
   --color-text-secondary: #4b5563;
   --color-text-muted: #6b7280;
 
-  --color-accent: #16a34a;
-  --color-accent-hover: #15803d;
-  --color-accent-soft: rgba(22, 163, 74, 0.12);
+  --color-accent: #b45309;
+  --color-accent-hover: #92400e;
+  --color-accent-soft: rgba(180, 83, 9, 0.12);
   --color-accent-ink: #ffffff;
 
-  --color-success: #16a34a;
+  --color-success: #15803d;
   --color-warning: #b45309;
   --color-danger: #dc2626;
   --color-info: #0369a1;
 
   --shadow-soft: 0 4px 18px rgba(15, 23, 20, 0.06);
-  --focus-ring: 0 0 0 2px var(--color-bg), 0 0 0 4px rgba(22, 163, 74, 0.35);
+  --focus-ring: 0 0 0 2px var(--color-bg), 0 0 0 4px rgba(180, 83, 9, 0.35);
 }
 
 * {
@@ -165,6 +166,7 @@ body {
   letter-spacing: -0.03em;
   color: var(--color-text);
   line-height: 1.2;
+  font-family: var(--font-sans);
 }
 
 .appSidebarBrand .appBrandClaim {
@@ -211,7 +213,7 @@ body {
   position: relative;
   color: var(--color-text);
   background: var(--color-accent-soft);
-  border-color: rgba(74, 222, 128, 0.18);
+  border-color: rgba(212, 160, 90, 0.22);
 }
 
 .appSidebarLinkActive::before {
@@ -256,8 +258,8 @@ body {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.2);
+  background: var(--color-success);
+  box-shadow: 0 0 0 3px rgba(92, 184, 138, 0.2);
   flex-shrink: 0;
 }
 
@@ -301,6 +303,7 @@ body {
   align-items: stretch;
   gap: var(--space-1);
   overflow-x: auto;
+  scrollbar-width: thin;
 }
 
 .appTopNavLink {
@@ -310,11 +313,12 @@ body {
   padding: 1rem 0.85rem;
   text-decoration: none;
   color: var(--color-text-muted);
+  font-family: var(--font-sans);
   font-size: 0.88rem;
-  font-weight: 500;
+  font-weight: 600;
   white-space: nowrap;
   border-bottom: 2px solid transparent;
-  transition: color 0.15s;
+  transition: color 0.15s, border-color 0.15s;
 }
 
 .appTopNavLink:hover {
@@ -356,7 +360,7 @@ body {
 
 .themeToggle[aria-pressed="true"] {
   background: var(--color-accent-soft);
-  border-color: rgba(74, 222, 128, 0.35);
+  border-color: rgba(212, 160, 90, 0.35);
   color: var(--color-accent);
 }
 
@@ -365,7 +369,7 @@ body {
 }
 
 [data-theme="light"] .themeToggle[aria-pressed="true"] {
-  border-color: rgba(22, 163, 74, 0.35);
+  border-color: rgba(180, 83, 9, 0.35);
 }
 
 .appContent {
@@ -384,9 +388,238 @@ body {
 
 .pageHeader h1 {
   margin: 0;
+  font-family: var(--font-sans);
   font-size: 1.65rem;
   font-weight: 700;
   letter-spacing: -0.03em;
+}
+
+.appShellRemote {
+  min-height: 100vh;
+}
+
+.appSidebarStatusDotOffline {
+  background: var(--color-danger);
+  box-shadow: 0 0 0 3px rgba(232, 93, 93, 0.2);
+}
+
+/* Shared status / chip language for live surfaces */
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 1.75rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-raised);
+  color: var(--color-text-secondary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.statusPillAccent {
+  background: var(--color-accent-soft);
+  border-color: rgba(212, 160, 90, 0.35);
+  color: var(--color-accent);
+}
+
+.statusPillAccent::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(212, 160, 90, 0.2);
+  flex-shrink: 0;
+}
+
+.statusPillMuted {
+  background: transparent;
+  color: var(--color-text-muted);
+}
+
+.statusPillDanger {
+  background: rgba(232, 93, 93, 0.12);
+  border-color: rgba(232, 93, 93, 0.35);
+  color: var(--color-danger);
+}
+
+.homeHero {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-5);
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(212, 160, 90, 0.12), transparent 55%),
+    radial-gradient(ellipse 60% 50% at 90% 80%, rgba(232, 93, 93, 0.08), transparent 50%),
+    var(--color-bg);
+}
+
+.homeHeroBrand {
+  font-family: var(--font-sans);
+  font-size: clamp(2.2rem, 4.5vw, 3.2rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.homeHeroLead {
+  max-width: 36rem;
+  font-size: 1.1rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.homeModeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4);
+}
+
+.homeModeCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: rgba(22, 24, 26, 0.7);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s;
+}
+
+.homeModeCard:hover {
+  border-color: rgba(212, 160, 90, 0.4);
+  background: var(--color-surface-raised);
+  transform: translateY(-2px);
+}
+
+.homeModeCard h2 {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.homeModeCard p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.92rem;
+}
+
+.emergencyStopBtn {
+  min-height: 3.25rem;
+  min-width: 11rem;
+  padding: 0.75rem 1.4rem;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-danger);
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 0 0 3px rgba(232, 93, 93, 0.25);
+}
+
+.emergencyStopBtn:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.emergencyStopBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.directorDecisionCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-raised);
+}
+
+.directorDensityMeter {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.directorDensityRow {
+  display: grid;
+  grid-template-columns: 7rem 1fr 3rem;
+  gap: var(--space-2);
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.directorDensityTrack {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--color-border);
+  overflow: hidden;
+}
+
+.directorDensityFill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--color-accent);
+}
+
+.reviewSummaryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-3);
+}
+
+.reviewStat {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-raised);
+}
+
+.reviewStat strong {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.reviewStat span {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+.scriptCueChipSpace {
+  background: rgba(212, 160, 90, 0.12);
+  border-color: rgba(212, 160, 90, 0.3);
+  color: var(--color-accent);
+}
+
+.teil2CueBadgeSpace {
+  background: rgba(212, 160, 90, 0.14);
+  color: var(--color-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .homeModeCard,
+  .liveBadge,
+  .machineStartBtn {
+    transition: none;
+  }
+
+  .homeModeCard:hover {
+    transform: none;
+  }
 }
 
 .container {
@@ -551,7 +784,7 @@ code {
   margin-bottom: 0;
   border-radius: 999px;
   background: var(--color-accent-soft);
-  border: 1px solid rgba(74, 222, 128, 0.28);
+  border: 1px solid rgba(212, 160, 90, 0.28);
   color: var(--color-text-secondary);
   max-width: 22rem;
   text-align: left;
@@ -569,7 +802,7 @@ code {
   border-radius: 50%;
   background: var(--color-accent);
   vertical-align: middle;
-  box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.2);
+  box-shadow: 0 0 0 2px rgba(212, 160, 90, 0.2);
 }
 
 .workshopStatusBarError {
@@ -1040,8 +1273,8 @@ select:disabled {
 }
 
 .oscTestGroupActive {
-  border-color: rgba(74, 222, 128, 0.35);
-  box-shadow: inset 0 0 0 1px rgba(74, 222, 128, 0.12);
+  border-color: rgba(212, 160, 90, 0.35);
+  box-shadow: inset 0 0 0 1px rgba(212, 160, 90, 0.12);
 }
 
 .oscTestGroupHead {
@@ -1073,9 +1306,9 @@ select:disabled {
 
 .oscTestGroupActive .oscTestGroupIcon {
   background: var(--color-accent-soft);
-  border-color: rgba(74, 222, 128, 0.4);
+  border-color: rgba(212, 160, 90, 0.4);
   color: var(--color-accent);
-  box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.1);
+  box-shadow: 0 0 0 4px rgba(212, 160, 90, 0.1);
 }
 
 .oscTestTarget {
@@ -1189,7 +1422,7 @@ select:disabled {
 
 .oscTestActive::before {
   background: var(--color-accent);
-  box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.2);
+  box-shadow: 0 0 0 2px rgba(212, 160, 90, 0.2);
 }
 
 .oscTestIdle::before {
@@ -1700,7 +1933,7 @@ select:disabled {
   min-width: 56px;
   min-height: 56px;
   font-size: 1.15rem;
-  box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.15), 0 8px 20px rgba(74, 222, 128, 0.2);
+  box-shadow: 0 0 0 4px rgba(212, 160, 90, 0.15), 0 8px 20px rgba(212, 160, 90, 0.2);
 }
 
 .transportBtnPause {
@@ -1925,16 +2158,24 @@ hr {
 }
 
 .narratorMuteBtn {
-  min-height: 2rem;
-  padding: 0.35rem 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.75rem;
+  padding: 0.3rem 0.7rem;
   border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 600;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-raised);
+  color: var(--color-text-secondary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
 }
 
 .narratorMuteBtnActive {
-  background: rgba(248, 113, 113, 0.12);
-  border-color: rgba(248, 113, 113, 0.4);
+  background: rgba(232, 93, 93, 0.12);
+  border-color: rgba(232, 93, 93, 0.4);
   color: var(--color-danger);
 }
 
@@ -2022,7 +2263,7 @@ hr {
 }
 
 .signalMonitorTermLine-osc {
-  color: #4ade80;
+  color: #d4a05a;
 }
 
 .signalMonitorTermLine-midi {
@@ -2072,7 +2313,10 @@ hr {
 
 .liveDashboardTitle {
   margin: 0;
+  font-family: var(--font-sans);
   font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 .liveDashboardSubtitle {
@@ -2116,17 +2360,22 @@ hr {
 }
 
 .liveAbschnittTab {
-  padding: 0.35rem 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.75rem;
+  padding: 0.3rem 0.7rem;
   border-radius: 999px;
   border: 1px solid var(--color-border);
   color: var(--color-text-muted);
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .liveAbschnittTabActive {
   background: var(--color-accent-soft);
-  border-color: rgba(74, 222, 128, 0.35);
+  border-color: rgba(212, 160, 90, 0.35);
   color: var(--color-accent);
 }
 
@@ -2153,6 +2402,26 @@ hr {
   flex-wrap: wrap;
   justify-content: center;
   gap: var(--space-2);
+}
+
+.liveTransportSecondary button {
+  min-height: 2.25rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface-raised);
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.liveTransportSecondary button:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+}
+
+.liveTransportSecondary button:disabled {
+  opacity: 0.45;
 }
 
 .liveTimelineCard {
@@ -2194,8 +2463,8 @@ hr {
 }
 
 .liveTimelineTickDone {
-  background: rgba(74, 222, 128, 0.28);
-  border-color: rgba(74, 222, 128, 0.35);
+  background: rgba(212, 160, 90, 0.28);
+  border-color: rgba(212, 160, 90, 0.35);
   color: var(--color-accent);
 }
 
@@ -2203,7 +2472,7 @@ hr {
   background: var(--color-accent);
   border-color: var(--color-accent);
   color: var(--color-accent-ink);
-  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.2);
+  box-shadow: 0 0 0 3px rgba(212, 160, 90, 0.2);
   transform: scale(1.08);
 }
 
@@ -2257,12 +2526,12 @@ hr {
 }
 
 [data-theme="light"] .liveTimelineTickDone {
-  background: rgba(22, 163, 74, 0.18);
-  border-color: rgba(22, 163, 74, 0.3);
+  background: rgba(180, 83, 9, 0.18);
+  border-color: rgba(180, 83, 9, 0.3);
 }
 
 [data-theme="light"] .liveTimelineTickActive {
-  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+  box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.15);
 }
 
 [data-theme="light"] .signalMonitorLine-osc code {
@@ -2275,15 +2544,17 @@ hr {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
+  min-height: 1.75rem;
   padding: 0.3rem 0.7rem;
   border-radius: 999px;
   background: var(--color-accent-soft);
-  border: 1px solid rgba(74, 222, 128, 0.35);
+  border: 1px solid rgba(212, 160, 90, 0.35);
   color: var(--color-accent);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  line-height: 1;
 }
 
 .liveBadge::before {
@@ -2292,11 +2563,11 @@ hr {
   height: 7px;
   border-radius: 50%;
   background: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.2);
+  box-shadow: 0 0 0 3px rgba(212, 160, 90, 0.2);
 }
 
 [data-theme="light"] .liveBadge {
-  border-color: rgba(22, 163, 74, 0.3);
+  border-color: rgba(180, 83, 9, 0.3);
 }
 
 .livePage .pageHeader {
@@ -2365,13 +2636,17 @@ hr {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.35rem 0.65rem;
+  min-height: 1.75rem;
+  padding: 0.3rem 0.7rem;
   border-radius: 999px;
   border: 1px solid var(--color-border);
   background: var(--color-surface-raised);
   color: var(--color-text-muted);
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1;
 }
 
 .liveSignalChip::before {
@@ -2380,17 +2655,18 @@ hr {
   height: 7px;
   border-radius: 50%;
   background: var(--color-text-muted);
+  flex-shrink: 0;
 }
 
 .liveSignalChipOn {
   color: var(--color-accent);
-  border-color: rgba(74, 222, 128, 0.3);
+  border-color: rgba(212, 160, 90, 0.35);
   background: var(--color-accent-soft);
 }
 
 .liveSignalChipOn::before {
   background: var(--color-accent);
-  box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.18);
+  box-shadow: 0 0 0 3px rgba(212, 160, 90, 0.2);
 }
 
 .liveActionRow {
@@ -2432,7 +2708,7 @@ hr {
 
 .teil2SentenceBlockActive .teil2SegmentIndex {
   background: var(--color-accent-soft);
-  border-color: rgba(74, 222, 128, 0.35);
+  border-color: rgba(212, 160, 90, 0.35);
   color: var(--color-accent);
 }
 
@@ -2472,7 +2748,7 @@ hr {
 }
 
 [data-theme="light"] .transportBtnPlay {
-  box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.12), 0 8px 18px rgba(22, 163, 74, 0.18);
+  box-shadow: 0 0 0 4px rgba(180, 83, 9, 0.12), 0 8px 18px rgba(180, 83, 9, 0.18);
 }
 
 [data-theme="light"] a.machineStartBtn,
@@ -2542,7 +2818,7 @@ hr {
   background: var(--color-accent);
   color: var(--color-accent-ink);
   border-color: transparent;
-  box-shadow: 0 8px 22px rgba(74, 222, 128, 0.22);
+  box-shadow: 0 8px 22px rgba(212, 160, 90, 0.22);
 }
 
 .remoteBtnPause {
@@ -2561,5 +2837,5 @@ hr {
 }
 
 [data-theme="light"] .remoteBtnPlay {
-  box-shadow: 0 8px 18px rgba(22, 163, 74, 0.2);
+  box-shadow: 0 8px 18px rgba(180, 83, 9, 0.2);
 }

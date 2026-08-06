@@ -131,6 +131,7 @@ export type DirectorStatus = {
   dramaturgy_state?: Record<string, unknown>;
   open_proposals?: CueProposal[];
   avatar_done_gate_enabled?: boolean;
+  avatar_done_source?: string;
   active_production_id?: string | null;
   active_production_name?: string | null;
   active_production_slug?: string | null;

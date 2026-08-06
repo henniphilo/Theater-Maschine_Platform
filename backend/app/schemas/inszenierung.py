@@ -11,7 +11,7 @@ from app.director.cues.cue_models import (
 )
 
 InszenierungStatus = Literal["draft", "analyzed", "composed", "preparing", "ready"]
-CueAnnotationKind = Literal["light", "sound", "video", "avatar"]
+CueAnnotationKind = Literal["light", "sound", "video", "avatar", "space"]
 SpeechMode = Literal["tts", "avatar_video", "silent"]
 ScriptSource = Literal["avatar_delfin_wolf"]
 ProjectorMode = Literal["single", "all"]

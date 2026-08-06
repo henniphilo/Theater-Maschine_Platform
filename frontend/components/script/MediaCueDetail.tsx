@@ -84,6 +84,10 @@ export function MediaCueDetail({
   const lightScene = dramaturgy.light?.scene_id ? media?.lightById[dramaturgy.light.scene_id] : undefined;
   const functionLabel = dramaturgicalFunctionLabel(dramaturgy.dramaturgical_function);
   const reasonShort = displayReasonShort(dramaturgy.reason_short, dramaturgy.reason);
+  const isSilence =
+    dramaturgy.decision_kind === "none" ||
+    dramaturgy.dramaturgical_function === "space" ||
+    (cuePoints.length === 0 && !dramaturgy.visual && !dramaturgy.sound && !dramaturgy.light);
 
   return (
     <div className={`mediaCueDetail${compact ? " mediaCueDetailCompact" : ""}`}>
@@ -92,6 +96,11 @@ export function MediaCueDetail({
           {functionLabel ? `${functionLabel}` : null}
           {reasonShort ? `${functionLabel ? " · " : ""}– ${reasonShort}` : null}
         </p>
+      ) : null}
+      {isSilence ? (
+        <div className="scriptCueRow">
+          <span className="scriptCueChip scriptCueChipSpace">STILLE</span>
+        </div>
       ) : null}
       {dramaturgy.dramaturgical_reading ? (
         <p className="textMuted" style={{ fontSize: "0.9rem" }}>

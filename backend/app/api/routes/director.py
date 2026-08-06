@@ -96,6 +96,7 @@ def _status_response(db: Session | None = None) -> DirectorStatusResponse:
         open_proposals=_pipeline.proposals.list_open(),
         avatar_done_gate_enabled=settings.avatar_done_gate_enabled,
         avatar_done_gate=get_avatar_done_gate().status_snapshot(),
+        avatar_done_source=settings.avatar_done_source,
         active_production_id=active.get("active_production_id"),
         active_production_name=active.get("active_production_name"),
         active_production_slug=active.get("active_production_slug"),

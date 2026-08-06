@@ -44,7 +44,18 @@ export type DramaturgyAnalysisEntry = {
   blocked_reason?: string | null;
 };
 
+export type DramaturgyAnalysisSummary = {
+  total_decisions: number;
+  executed_count: number;
+  blocked_count: number;
+  silence_count: number;
+  silence_ratio: number;
+  function_counts: Record<string, number>;
+  blocked_reasons: Record<string, number>;
+};
+
 export type DramaturgyAnalysisResponse = {
   entries: DramaturgyAnalysisEntry[];
   dramaturgy_state: Record<string, unknown>;
+  summary?: DramaturgyAnalysisSummary;
 };

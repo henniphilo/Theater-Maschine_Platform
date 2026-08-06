@@ -136,11 +136,13 @@ class Settings(BaseSettings):
     visual_output: Literal["pixera", "touchdesigner", "both"] = "pixera"
     pixera_osc_host: str | None = None
     pixera_osc_port: int | None = None
-    # Avatar-video completion gate (QLab test now; Pixera stage later — docs/avatar_done_gate.md)
+    # Avatar-video completion gate (QLab test / Pixera stage via /avatar/done — docs/avatar_done_gate.md)
     avatar_done_gate_enabled: bool = False
     avatar_done_osc_host: str = "127.0.0.1"
     avatar_done_osc_port: int = 8991
     avatar_done_timeout_grace_ms: int = 2000
+    # Venue path: pixera cues must send /avatar/done <cue_name> back to avatar_done_osc_*
+    avatar_done_source: Literal["qlab", "pixera", "manual"] = "qlab"
     qlab_host: str = "127.0.0.1"
     qlab_port: int = 53000
     uvicorn_access_log: bool = False

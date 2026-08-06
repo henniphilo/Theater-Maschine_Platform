@@ -139,7 +139,9 @@ class DirectorPipeline:
             intensity=event.intensity,
             tags=list(event.tags),
         )
-        decision = enrich_decision_metadata(self.engine.decide(event))
+        decision = enrich_decision_metadata(
+            self.engine.decide(event, dramaturgy_state=self.dramaturgy_state)
+        )
         conflict = check_conflicts(decision, self.dramaturgy_state)
         if not conflict.allowed and conflict.reason:
             blocked_reason = conflict.reason

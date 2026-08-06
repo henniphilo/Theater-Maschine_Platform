@@ -7,7 +7,8 @@ class OpenAIProvider:
     def __init__(self) -> None:
         if not settings.openai_api_key:
             raise RuntimeError("OPENAI_API_KEY not configured")
-        self.client = AsyncOpenAI(api_key=settings.openai_api_key)
+        # Bound hangs so Teil-2 prepare cannot stick forever on a silent API wait.
+        self.client = AsyncOpenAI(api_key=settings.openai_api_key, timeout=90.0)
 
     async def generate(
         self, model: str, messages: list[dict[str, str]], max_tokens: int = 2048

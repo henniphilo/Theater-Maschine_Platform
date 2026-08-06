@@ -21,14 +21,9 @@ class Teil2PrepareJobService:
         self._prepare = get_teil2_prepare_service()
 
     def is_running(self, corpus_id: str) -> bool:
+        """Only a live asyncio task counts — stale disk status must not block forever."""
         task = _active_tasks.get(corpus_id)
-        if task is not None and not task.done():
-            return True
-        try:
-            corpus = self._store.get(corpus_id)
-        except Exception:
-            return False
-        return corpus.status == "preparing"
+        return task is not None and not task.done()
 
     def start(
         self,
@@ -43,6 +38,14 @@ class Teil2PrepareJobService:
         corpus = self._store.get(corpus_id)
         if not (corpus.script_text or "").strip():
             raise ValueError("Kein Aufführungstext — zuerst Text hochladen")
+
+        # Clear zombie "preparing" left behind after reload / hung LLM calls.
+        if corpus.status == "preparing":
+            logger.warning(
+                "Clearing stale prepare status for %s (phase=%s)",
+                corpus_id,
+                corpus.prepare_phase,
+            )
 
         self._store.set_preparing(corpus_id, phase="analyse")
         task = asyncio.create_task(

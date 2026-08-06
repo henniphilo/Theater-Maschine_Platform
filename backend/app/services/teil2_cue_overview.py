@@ -2,7 +2,13 @@
 
 from __future__ import annotations
 
-from app.director.cues.cue_models import CuePoint, CuePointTrigger, DramaturgyDecision
+from app.director.cues.cue_models import (
+    CuePoint,
+    CuePointTrigger,
+    DecisionKind,
+    DramaturgyDecision,
+    VisualAction,
+)
 from app.schemas.inszenierung import (
     AvatarTextSegment,
     CueAnnotation,
@@ -73,6 +79,17 @@ def _annotations_from_cue_point(
                 time_sec=point.time_offset_sec if point.trigger == CuePointTrigger.TIME else None,
                 sentence_index=point.sentence_index,
                 reason=cue_reason,
+            )
+        )
+    elif point.visual and point.visual.action in {"fade_to_black", "stop_clip", VisualAction.FADE_TO_BLACK, VisualAction.STOP_CLIP}:
+        action = getattr(point.visual.action, "value", point.visual.action)
+        annotations.append(
+            CueAnnotation(
+                kind="space",
+                label="Fade" if "fade" in str(action) else "Stop",
+                time_sec=point.time_offset_sec if point.trigger == CuePointTrigger.TIME else None,
+                sentence_index=point.sentence_index,
+                reason=cue_reason or "Bildfläche entlasten",
             )
         )
     sound_id = _sound_label(point.sound)
@@ -158,6 +175,19 @@ def build_cue_overview(
                 reason_short=dramaturgy.reason_short or None,
             )
         )
+
+    if dramaturgy.decision_kind == DecisionKind.NONE:
+        # Surface intentional silence on the first sentence when no cue points exist.
+        target = 0 if sentences else None
+        if target is not None and not by_sentence.get(target):
+            by_sentence[target].append(
+                CueAnnotation(
+                    kind="space",
+                    label="Stille",
+                    sentence_index=target,
+                    reason=dramaturgy.reason_short or dramaturgy_reason or "Bewusstes Nichtstun",
+                )
+            )
 
     for index in range(len(sentences)):
         by_sentence[index].extend(_avatar_annotations_for_sentence(index, avatar_segments))

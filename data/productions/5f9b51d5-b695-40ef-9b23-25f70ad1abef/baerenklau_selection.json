@@ -1,0 +1,130 @@
+{
+  "part": 1,
+  "scene": "Bärenklau",
+  "script_id": "5f9b51d5-b695-40ef-9b23-25f70ad1abef",
+  "beat_id": "2d823f4e-641b-4a0d-a6e7-e76f52836b33",
+  "selected_by": [
+    "Claude",
+    "ChatGPT"
+  ],
+  "final_sounds": [
+    "archiv_rauschen",
+    "erinnerungsglitch",
+    "herz_unter_glas",
+    "kaefigecho",
+    "leere_zwischen_saetzen",
+    "maschinen_grundader"
+  ],
+  "final_music": [
+    "maschinen_grundader"
+  ],
+  "final_videos": [
+    "affenslowodysee",
+    "avatar_iv_video",
+    "avatar_iv_video2",
+    "bitcoinfahrt",
+    "derhaseverlaesstdiebuehne",
+    "esellaeuft"
+  ],
+  "final_lights": [
+    "blackout",
+    "blendung_magenta",
+    "blendung_zuschauerraum",
+    "buehne_kalt_hart",
+    "fluegel",
+    "gegenlicht_lichteinfall"
+  ],
+  "dramaturgical_reading": "**Claude:** Dann einigen wir uns auf drei Hauptmarker:\n\n«Jetzt wird gar nicht mehr geteilt» — Sound: maschinelles Brummen; Licht: kalt-weißes Deckenlicht, schattenlos.\n\n«Oft töte ich mehr» — Sound: metallisches Schweigen; Licht: enger Verhörspot.\n\n«Alles verändert sich» — Sound: dumpfer Puls; Licht: flackernd, instabil.\n\nDer Stücktext wird jetzt aufgeführt — Regie, du kannst Play",
+  "cue_strategy": "Teil 1 — Gesamttext; Stichwort-Cues aus Dramaturgen-Stimmungen",
+  "discussion_turns": [
+    {
+      "speaker": "anthropic",
+      "content": "Beim Stichwort «Jetzt wird gar nicht mehr geteilt»: und «Oft töte ich mehr, als ich selber essen kann» entfaltet sich ein zynischer Kreislauf aus Macht, Produktion und Vernichtung. Die Grundstimmung: sachlich-kalt, fast buchhalterhaft — aber darunter brodelt Gewalt (Sound).",
+      "proposed_decision": null,
+      "media_mentions": [
+        {
+          "medium": "sound",
+          "media_id": "kaefigecho",
+          "keyword": "Jetzt wird gar nicht mehr geteilt",
+          "char_offset": 0
+        }
+      ]
+    },
+    {
+      "speaker": "openai",
+      "content": "Beim Stichwort «Ja, die alte Welt ist auch weg.»: Hier wird der Verlust der alten Werte als vollendete Tatsachen hingestellt. Die Stimmung hierzu könnte dröhnend und kalt sein. Ein weiteres Beispiel: In «Manchmal muß man fürs Umbringen halt die Hände nehmen» klingt der pragmatische Zynismus nach Getöse, das verstört und verstärkt (Sound).",
+      "proposed_decision": null,
+      "media_mentions": [
+        {
+          "medium": "sound",
+          "media_id": "kaefigecho",
+          "keyword": "Ja, die alte Welt ist auch weg.",
+          "char_offset": 0
+        }
+      ]
+    },
+    {
+      "speaker": "anthropic",
+      "content": "Claude: Drei Stimmungsmarker für den Bogen des Stücks:\nBeim Stichwort «Jetzt wird gar nicht mehr geteilt»: ruhige, formale Oberflächen — entlarvend kalt (Video).\nBeim Stichwort «Oft töte ich mehr, als ich selber essen kann»: kurzes Schweigen, dann metallisches Schaben (Sound).\nBeim Stichwort «Oft töte ich mehr, als ich selber essen kann»: Verhörspot, schmal (Licht).\n«Alles verändert sich» —",
+      "proposed_decision": null,
+      "media_mentions": [
+        {
+          "medium": "video",
+          "media_id": "derhaseverlaesstdiebuehne",
+          "keyword": "Jetzt wird gar nicht mehr geteilt",
+          "char_offset": 55
+        },
+        {
+          "medium": "sound",
+          "media_id": "kaefigecho",
+          "keyword": "Oft töte ich mehr, als ich selber essen kann",
+          "char_offset": 162
+        },
+        {
+          "medium": "light",
+          "media_id": "spot_tisch",
+          "keyword": "Oft töte ich mehr, als ich selber essen kann",
+          "char_offset": 162
+        }
+      ]
+    },
+    {
+      "speaker": "openai",
+      "content": "ChatGPT: Die Auswahl der Stimmungen passt gut zum Text. Bei «Alles verändert sich» würde ich die Geräusche verstärken: Sound könnte wie ein dumpfer Herzschlag sein, der aus stählernen Maschinen hallt, Licht wäre flackernd, unruhig, als ob etwas im Raum sich bewegt und verschiebt; Video könnte fragmentierte digitale Bilder zeigen, die sich wandeln und auflösen.",
+      "proposed_decision": null,
+      "media_mentions": []
+    },
+    {
+      "speaker": "anthropic",
+      "content": "Claude: Dann einigen wir uns auf drei Hauptmarker:\nBeim Stichwort «Jetzt wird gar nicht mehr geteilt»: kalt-weißes Deckenlicht, schattenlos (Licht).\nBeim Stichwort «Oft töte ich mehr»: metallisches Schweigen (Sound).\nBeim Stichwort «Oft töte ich mehr»: enger Verhörspot (Licht).\nBeim Stichwort «Alles verändert sich»: dumpfer Puls (Sound).\nDer Stücktext wird jetzt aufgeführt — Regie, du kannst Play",
+      "proposed_decision": null,
+      "media_mentions": [
+        {
+          "medium": "light",
+          "media_id": "buehne_kalt_hart",
+          "keyword": "Jetzt wird gar nicht mehr geteilt",
+          "char_offset": 51
+        },
+        {
+          "medium": "sound",
+          "media_id": "kaefigecho",
+          "keyword": "Oft töte ich mehr",
+          "char_offset": 149
+        },
+        {
+          "medium": "light",
+          "media_id": "spot_tisch",
+          "keyword": "Oft töte ich mehr",
+          "char_offset": 149
+        },
+        {
+          "medium": "sound",
+          "media_id": "herz_unter_glas",
+          "keyword": "Alles verändert sich",
+          "char_offset": 279
+        }
+      ]
+    }
+  ],
+  "created_at": "2026-07-29T15:57:00.459769Z"
+}

@@ -30,7 +30,7 @@ def test_chorus_gets_distinct_projectors():
     assert all(len(layer.outputs) == 1 for layer in assigned)
 
 
-def test_chorus_high_anarchy_still_uses_distinct_single_beamers():
+def test_chorus_high_anarchy_mirrors_same_clip_onto_free_beamers():
     layers = [
         AvatarSpeechLayer(avatar_speech_id="BK1", avatar="baerenklau", video_clip_id="bk1_caro"),
         AvatarSpeechLayer(avatar_speech_id="BK2", avatar="baerenklau", video_clip_id="bk1_caroline"),
@@ -39,30 +39,64 @@ def test_chorus_high_anarchy_still_uses_distinct_single_beamers():
     assigned = assign_projectors_for_layers(layers, anarchy_level=0.85)
     projectors = [layer.projector for layer in assigned]
     assert len(set(projectors)) == 3
-    assert all(len(layer.outputs) == 1 for layer in assigned)
+    # Three primaries leave one free beamer for a mirror of the same clip.
+    assert sum(len(layer.outputs) for layer in assigned) >= 4
+    mirrored = next(layer for layer in assigned if len(layer.outputs) > 1)
+    assert {out.clip_id for out in mirrored.outputs} == {mirrored.video_clip_id}
+
+
+def test_single_avatar_mirrors_across_multiple_projectors():
+    layers = [AvatarSpeechLayer(avatar_speech_id="t1", avatar="delphin", video_clip_id="thiemo")]
+    assigned = assign_projectors_for_layers(layers, anarchy_level=0.4, seed=2)
+    assert len(assigned[0].outputs) >= 2
+    assert {out.clip_id for out in assigned[0].outputs} == {"thiemo"}
+    assert len({out.output_id for out in assigned[0].outputs}) == len(assigned[0].outputs)
 
 
 def test_sequential_segments_rotate_projectors_with_shared_used_set():
     layers_a = [AvatarSpeechLayer(avatar_speech_id="t1", avatar="delphin", video_clip_id="thiemo")]
     layers_b = [AvatarSpeechLayer(avatar_speech_id="b1", avatar="delphin", video_clip_id="branko")]
     used: set[str] = set()
-    assigned_a = assign_projectors_for_layers(layers_a, anarchy_level=0.2, used=used)
-    assigned_b = assign_projectors_for_layers(layers_b, anarchy_level=0.2, used=used)
+    assigned_a = assign_projectors_for_layers(layers_a, anarchy_level=0.2, used=used, seed=0)
+    assigned_b = assign_projectors_for_layers(layers_b, anarchy_level=0.2, used=used, seed=1)
     assert assigned_a[0].projector != assigned_b[0].projector
 
 
-def test_avatar_visual_cue_uses_layer_blend_when_anarchic():
+def test_rotation_continues_after_all_beamers_used():
+    used: set[str] = set()
+    primaries: list[str] = []
+    for index in range(8):
+        layers = [
+            AvatarSpeechLayer(
+                avatar_speech_id=f"t{index}",
+                avatar="delphin",
+                video_clip_id=f"clip{index}",
+            )
+        ]
+        assigned = assign_projectors_for_layers(
+            layers, anarchy_level=0.2, used=used, seed=index
+        )
+        primaries.append(assigned[0].projector)
+    assert len(set(primaries[:4])) == 4
+    assert len(set(primaries[4:])) >= 3
+
+
+def test_avatar_visual_cue_preserves_multi_outputs():
     layer = AvatarSpeechLayer(
         avatar_speech_id="BK1",
         avatar="baerenklau",
         video_clip_id="avatar2",
         projector="rz21",
-        outputs=[VisualOutputAssignment(output_id="rz21", clip_id="avatar2")],
+        outputs=[
+            VisualOutputAssignment(output_id="rz21", clip_id="avatar2"),
+            VisualOutputAssignment(output_id="adam", clip_id="avatar2"),
+        ],
     )
     cue = build_avatar_visual_cue(layer, anarchy_level=0.6, duration_ms=5000)
     assert cue.blend_mode == "layer"
     assert cue.video_type == "avatar"
-    assert len(cue.outputs) == 1
+    assert len(cue.outputs) == 2
+    assert {out.output_id for out in cue.outputs} == {"rz21", "adam"}
 
 
 def test_atmosphere_avoids_all_avatar_beamers_when_one_free():

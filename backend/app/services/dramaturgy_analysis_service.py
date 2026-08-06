@@ -3,10 +3,15 @@
 from __future__ import annotations
 
 import json
+from collections import Counter
 from pathlib import Path
 
 from app.core.config import settings
-from app.schemas.director import DramaturgyAnalysisEntry, DramaturgyAnalysisResponse
+from app.schemas.director import (
+    DramaturgyAnalysisEntry,
+    DramaturgyAnalysisResponse,
+    DramaturgyAnalysisSummary,
+)
 
 
 def _load_trace_entries(limit: int) -> list[DramaturgyAnalysisEntry]:
@@ -45,6 +50,32 @@ def _load_trace_entries(limit: int) -> list[DramaturgyAnalysisEntry]:
     return entries
 
 
+def build_analysis_summary(entries: list[DramaturgyAnalysisEntry]) -> DramaturgyAnalysisSummary:
+    total = len(entries)
+    executed = sum(1 for item in entries if item.executed)
+    blocked = sum(1 for item in entries if item.blocked_reason)
+    silence = sum(
+        1
+        for item in entries
+        if str(item.decision).lower() == "none"
+        or str(item.dramaturgical_function).lower() == "space"
+    )
+    function_counts: dict[str, int] = {}
+    for item in entries:
+        label = item.dramaturgical_function or "unbekannt"
+        function_counts[label] = function_counts.get(label, 0) + 1
+    blocked_reasons = Counter(item.blocked_reason for item in entries if item.blocked_reason)
+    return DramaturgyAnalysisSummary(
+        total_decisions=total,
+        executed_count=executed,
+        blocked_count=blocked,
+        silence_count=silence,
+        silence_ratio=round(silence / total, 3) if total else 0.0,
+        function_counts=dict(sorted(function_counts.items(), key=lambda kv: (-kv[1], kv[0]))),
+        blocked_reasons=dict(sorted(blocked_reasons.items(), key=lambda kv: (-kv[1], kv[0]))),
+    )
+
+
 def load_dramaturgy_analysis(
     *,
     limit: int = 100,
@@ -59,6 +90,7 @@ def load_dramaturgy_analysis(
     return DramaturgyAnalysisResponse(
         entries=merged,
         dramaturgy_state=dramaturgy_state or {},
+        summary=build_analysis_summary(merged),
     )
 
 

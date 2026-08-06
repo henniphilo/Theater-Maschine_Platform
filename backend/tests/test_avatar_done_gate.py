@@ -46,6 +46,39 @@ def test_gate_accepts_early_orphan_done() -> None:
     assert result.wait_ms == 0
 
 
+def test_avatar_done_status_includes_source(monkeypatch) -> None:
+    monkeypatch.setattr(settings, "avatar_done_gate_enabled", True)
+    monkeypatch.setattr(settings, "avatar_done_source", "pixera")
+    client = TestClient(app)
+    response = client.get("/api/v1/director/status")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["avatar_done_gate_enabled"] is True
+    assert body["avatar_done_source"] == "pixera"
+
+
+def test_pixera_apply_emits_done_expected(monkeypatch) -> None:
+    monkeypatch.setattr(settings, "avatar_done_gate_enabled", True)
+    monkeypatch.setattr(settings, "avatar_done_source", "pixera")
+    monkeypatch.setattr(settings, "osc_dry_run", True)
+    monkeypatch.setattr(settings, "signal_trace_enabled", True)
+
+    from app.director.outputs.pixera import PixeraBridge
+
+    events: list[str] = []
+
+    def capture(event: str, **kwargs) -> None:
+        events.append(event)
+
+    monkeypatch.setattr(
+        "app.director.outputs.signal_trace.emit_signal_trace_event",
+        capture,
+    )
+    bridge = PixeraBridge(dry_run=True)
+    bridge.apply_cue("KI_Adam.BK1_Caro")
+    assert "avatar.done_expected" in events
+
+
 def test_avatar_done_wait_api_disabled(monkeypatch) -> None:
     monkeypatch.setattr(settings, "avatar_done_gate_enabled", False)
     client = TestClient(app)

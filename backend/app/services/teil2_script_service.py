@@ -213,6 +213,7 @@ def build_timeline_from_csv(
 
     moments = apply_anarchy_curve(ensure_moment_ids(moments), curve)
 
+    used_projectors: set[str] = set()
     for moment in moments:
         mode = projector_mode_for_anarchy(moment.anarchy_level)
         moment.projector_mode = mode  # type: ignore[assignment]
@@ -220,6 +221,8 @@ def build_timeline_from_csv(
             assigned = assign_projectors_for_layers(
                 moment.avatar_layers,
                 anarchy_level=moment.anarchy_level,
+                used=used_projectors,
+                seed=moment.order,
             )
             duration = moment.duration_hint_ms
             visual_cues = [

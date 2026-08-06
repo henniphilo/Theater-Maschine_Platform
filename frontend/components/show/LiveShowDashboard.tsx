@@ -102,7 +102,7 @@ export function LiveShowDashboard({
         </div>
         <div className="liveDashboardHeaderControls">
           <PlaybackSpeedControl compact disabled={running && !paused} />
-          <span className={`liveSignalChip${running && !paused ? " liveSignalChipOn" : ""}`}>
+          <span className={`statusPill${running && !paused ? " statusPillAccent" : " statusPillMuted"}`}>
             System {running && !paused ? "OK" : "Bereit"}
           </span>
         </div>
@@ -119,7 +119,7 @@ export function LiveShowDashboard({
           </div>
 
           <div className="liveAbschnittTabs" role="tablist" aria-label="Stimme">
-            <span className="liveAbschnittTab liveAbschnittTabActive" role="tab" aria-selected="true">
+            <span className="statusPill statusPillAccent" role="tab" aria-selected="true">
               Erzähler
             </span>
           </div>

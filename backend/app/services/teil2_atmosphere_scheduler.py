@@ -19,8 +19,11 @@ from app.schemas.inszenierung import AnarchyCurve, AvatarTextSegment, Gesamtkonz
 from app.services.ai_service import AIService
 from app.services.avatar_duration import estimate_duration_ms
 from app.services.part2_cue_density import cue_intervals_for_anarchy
-from app.services.teil2_atmosphere_cues import inject_atmosphere_visuals
-from app.services.teil2_projector_assignment import ALL_PROJECTORS, pick_atmosphere_projectors
+from app.services.teil2_projector_assignment import (
+    ALL_PROJECTORS,
+    STAGE_BEAMER_ORDER,
+    pick_atmosphere_projectors,
+)
 from app.services.video_scope import _clip_ids_for_scope
 
 
@@ -130,6 +133,8 @@ def _validate_atmosphere_points(
     allowed_projectors: set[str],
     max_time_sec: float,
 ) -> list[CuePoint]:
+    from app.director.cues.cue_models import VisualAction
+
     validated: list[CuePoint] = []
     for point in points:
         if point.trigger != CuePointTrigger.TIME and str(point.trigger) != "time":
@@ -137,13 +142,36 @@ def _validate_atmosphere_points(
         if point.time_offset_sec < 0 or point.time_offset_sec > max_time_sec + 5:
             continue
         visual = point.visual
-        if visual is None or not visual.clip_id:
+        if visual is None:
             continue
-        if visual.clip_id not in allowed_clips:
-            continue
+        action = visual.action
+        is_release = action in {VisualAction.FADE_TO_BLACK, VisualAction.STOP_CLIP, "fade_to_black", "stop_clip"}
         projector = visual.projector
         if not projector and visual.outputs:
             projector = visual.outputs[0].output_id  # type: ignore[assignment]
+        if projector and projector not in allowed_projectors:
+            continue
+        if is_release:
+            validated.append(
+                CuePoint(
+                    trigger=CuePointTrigger.TIME,
+                    time_offset_sec=round(point.time_offset_sec, 2),
+                    function=point.function or "release",
+                    intensity=point.intensity,
+                    visual=VisualCue(
+                        action=VisualAction.FADE_TO_BLACK
+                        if "fade" in str(getattr(action, "value", action))
+                        else VisualAction.STOP_CLIP,
+                        fade_time=visual.fade_time or 3.0,
+                        projector=projector,
+                    ),
+                )
+            )
+            continue
+        if not visual.clip_id:
+            continue
+        if visual.clip_id not in allowed_clips:
+            continue
         if projector not in allowed_projectors:
             continue
         validated.append(
@@ -159,6 +187,66 @@ def _validate_atmosphere_points(
     return validated
 
 
+def _anarchy_at_time(time_sec: float, total_sec: float, curve: AnarchyCurve) -> float:
+    if total_sec <= 0:
+        return curve.end
+    t = max(0.0, min(1.0, time_sec / total_sec))
+    return curve.start + (curve.end - curve.start) * t
+
+
+def atmosphere_fill_count(free_count: int, anarchy: float) -> int:
+    """How many free beamers get Begleitvideo — escalates with anarchy."""
+    if free_count <= 0:
+        return 0
+    if anarchy < 0.15:
+        return 0
+    if anarchy < 0.35:
+        return min(1, free_count)
+    if anarchy < 0.55:
+        return min(2, free_count)
+    # Mid/high anarchy: cover every beamer that is not playing an avatar.
+    return free_count
+
+
+def _ordered_free_projectors(free: list[str], *, seed: int) -> list[str]:
+    """Rotate STAGE_BEAMER_ORDER so Adam/Eva stay preferred but don't stick."""
+    ordered = [p for p in STAGE_BEAMER_ORDER if p in free]
+    if not ordered:
+        return list(free)
+    start = seed % len(ordered)
+    return ordered[start:] + ordered[:start]
+
+
+def _fill_free_projectors_at(
+    *,
+    time_sec: float,
+    free: list[str],
+    anarchy: float,
+    pool: list[str],
+    clip_index: int,
+) -> tuple[list[CuePoint], int]:
+    """Place distinct Begleitclips on free beamers for one time tick."""
+    fill_n = atmosphere_fill_count(len(free), anarchy)
+    if fill_n <= 0 or not pool:
+        return [], clip_index
+    targets = _ordered_free_projectors(free, seed=int(time_sec * 10) + clip_index)[:fill_n]
+    points: list[CuePoint] = []
+    next_index = clip_index
+    for projector in targets:
+        clip_id = pool[next_index % len(pool)]
+        next_index += 1
+        points.append(
+            CuePoint(
+                trigger=CuePointTrigger.TIME,
+                time_offset_sec=round(time_sec, 2),
+                function="atmosphaere",
+                intensity=round(max(0.35, min(1.0, anarchy)), 2),
+                visual=_assign_atmosphere_visual(clip_id, projector),
+            )
+        )
+    return points, next_index
+
+
 def _rule_based_atmosphere_points(
     *,
     script_text: str,
@@ -168,52 +256,95 @@ def _rule_based_atmosphere_points(
     avatar_clip_ids: set[str],
     dramaturgy: DramaturgyDecision,
 ) -> list[CuePoint]:
-    """Fallback: derive time cues from sentence-based injection."""
-    working = dramaturgy.model_copy(deep=True)
-    if not working.cue_points:
-        working.cue_points = [
-            CuePoint(
-                trigger=CuePointTrigger.SENTENCE_END,
-                sentence_index=index,
-                function="atmosphaere",
-                intensity=0.5,
-            )
-            for index in range(len(sentences))
-        ]
-    injected = inject_atmosphere_visuals(
-        working,
-        sentences=sentences,
-        segments=segments,
-        curve=curve,
-        avatar_clip_ids=avatar_clip_ids,
-    )
+    """Walk the show timeline and fill free (non-avatar) beamers with B-roll.
+
+    Density and how many free surfaces get a clip both escalate with the anarchy curve.
+    ``sentences`` / ``dramaturgy`` are unused but kept for call-site compatibility.
+    """
+    _ = (sentences, dramaturgy)
+    pool = _atmosphere_clip_pool(avatar_clip_ids=avatar_clip_ids)
+    if not pool:
+        return []
+
     total_sec = estimate_script_duration_sec(script_text, segments)
     windows = build_avatar_windows(script_text, segments, total_sec)
-    sentence_duration = total_sec / max(1, len(sentences))
     points: list[CuePoint] = []
-    for point in injected.cue_points:
-        if not point.visual or not point.visual.clip_id:
-            continue
-        index = point.sentence_index or 0
-        time_sec = min(total_sec - 1.0, index * sentence_duration)
-        projector = point.visual.projector
-        if not projector and point.visual.outputs:
-            projector = point.visual.outputs[0].output_id
-        if not projector:
-            free = free_projectors_at(windows, time_sec)
-            if not free:
-                continue
-            projector = pick_atmosphere_projectors(1, reserved=set(ALL_PROJECTORS) - set(free), seed=index)[0]
-        points.append(
-            CuePoint(
-                trigger=CuePointTrigger.TIME,
-                time_offset_sec=round(time_sec, 2),
-                function=point.function or "atmosphaere",
-                intensity=point.intensity,
-                visual=_assign_atmosphere_visual(point.visual.clip_id, projector),
-            )
+    clip_index = 0
+    time_sec = 2.0  # slight lead-in so first avatar can land
+
+    while time_sec < total_sec:
+        anarchy = _anarchy_at_time(time_sec, total_sec, curve)
+        video_min, video_max = cue_intervals_for_anarchy(anarchy)["video"]
+        step = max(3.0, (video_min + video_max) / 2.0)
+        free = free_projectors_at(windows, time_sec)
+        batch, clip_index = _fill_free_projectors_at(
+            time_sec=time_sec,
+            free=free,
+            anarchy=anarchy,
+            pool=pool,
+            clip_index=clip_index,
         )
+        points.extend(batch)
+        time_sec += step
+
+    points.sort(key=lambda item: item.time_offset_sec)
     return points
+
+
+def _expand_points_onto_free_projectors(
+    points: list[CuePoint],
+    *,
+    windows: list[AvatarWindow],
+    curve: AnarchyCurve,
+    total_sec: float,
+    allowed_clips: set[str],
+) -> list[CuePoint]:
+    """Ensure each atmosphere tick also covers other free beamers (LLM densify)."""
+    pool = sorted(allowed_clips)
+    if not pool:
+        return points
+
+    by_time: dict[float, list[CuePoint]] = {}
+    for point in points:
+        by_time.setdefault(point.time_offset_sec, []).append(point)
+
+    expanded: list[CuePoint] = []
+    clip_index = 0
+    for time_sec in sorted(by_time):
+        group = by_time[time_sec]
+        used = set()
+        for point in group:
+            visual = point.visual
+            if visual is None:
+                continue
+            projector = visual.projector
+            if not projector and visual.outputs:
+                projector = visual.outputs[0].output_id  # type: ignore[assignment]
+            if projector:
+                used.add(projector)
+            if visual.clip_id:
+                expanded.append(point)
+
+        free = [p for p in free_projectors_at(windows, time_sec) if p not in used]
+        anarchy = _anarchy_at_time(time_sec, total_sec, curve)
+        # Already have some cues — fill remaining free up to fill_count total.
+        already = len(used)
+        target_total = atmosphere_fill_count(already + len(free), anarchy)
+        need = max(0, target_total - already)
+        if need <= 0 or not free:
+            continue
+        batch, clip_index = _fill_free_projectors_at(
+            time_sec=time_sec,
+            free=free,
+            anarchy=max(anarchy, 0.55),  # force fill remaining once a tick exists
+            pool=pool,
+            clip_index=clip_index,
+        )
+        # atmosphere_fill_count with boosted anarchy may overshoot — trim to need
+        expanded.extend(batch[:need])
+
+    expanded.sort(key=lambda item: item.time_offset_sec)
+    return expanded
 
 
 def _timeline_summary(windows: list[AvatarWindow], total_sec: float) -> str:
@@ -300,15 +431,22 @@ class Teil2AtmosphereScheduler:
             f"Geschätzte Dauer: {total_sec:.0f}s\n\n"
             f"Skript-Auszug:\n{digest}\n\n"
             f"Avatar-Belegung (reservierte Beamers):\n{timeline}\n\n"
-            "Plane Atmosphären-Videos (OhneAvatare) auf FREIEN Beamern.\n"
+            "Plane Atmosphären-/Begleit-Videos (OhneAvatare) auf FREIEN Beamern.\n"
             "KEIN Dialog. Stimmungsunabhängig — variiere Clips nach Zeit/Anarchie, nicht nach Text.\n"
-            f"Rhythmus: alle {video_interval[0]:.0f}–{video_interval[1]:.0f}s ein neuer Clip.\n"
+            f"Rhythmus: alle {video_interval[0]:.0f}–{video_interval[1]:.0f}s neue Clips.\n"
+            "Pro Zeitstempel: mehrere cue_points mit gleichem time_offset_sec, "
+            "je ein anderer freier Projektor (Begleitung parallel zu Avataren).\n"
+            "Je höher die Anarchie, desto mehr freie Flächen gleichzeitig belegen.\n"
             f"Nur clip_id aus: {clip_sample}\n"
             f"Projektoren: rz21, adam, eva, led — nur freie zum jeweiligen time_offset_sec.\n"
             f"Gesamtdauer: {total_sec:.0f}s\n\n"
             'Antworte nur mit JSON: {"cue_points":[{"trigger":"time","time_offset_sec":12.0,'
             '"function":"atmosphaere","intensity":0.5,'
-            '"visual":{"clip_id":"clyde","projector":"adam","video_type":"atmosphere"}}]}'
+            '"visual":{"clip_id":"clyde","projector":"adam","video_type":"atmosphere"}},'
+            '{"trigger":"time","time_offset_sec":12.0,"function":"atmosphaere","intensity":0.5,'
+            '"visual":{"clip_id":"strand","projector":"eva","video_type":"atmosphere"}},'
+            '{"trigger":"time","time_offset_sec":40.0,"function":"release","intensity":0.3,'
+            '"visual":{"action":"fade_to_black","fade_time":4,"projector":"adam"}}]}'
         )
         raw = await self.ai.generate(
             "openai",
@@ -317,8 +455,11 @@ class Teil2AtmosphereScheduler:
                 {
                     "role": "system",
                     "content": (
-                        "Du planst B-Roll auf freien Projektoren. Kein Dialog. "
+                        "Du planst B-Roll/Begleitvideo auf freien Projektoren. Kein Dialog. "
                         "Stimmungsunabhängig — Rhythmus und Anarchie, nicht Textinhalt. "
+                        "Avatar-Beamers nie belegen. Freie Flächen parallel mit verschiedenen Clips füllen. "
+                        "Plane auch bewusst Leerstellen: fade_to_black oder stop_clip, "
+                        "damit die Atmosphäre atmet und nicht nur startet. "
                         "Keine Avatar-Clips. Nur gültiges JSON."
                     ),
                 },
@@ -360,7 +501,13 @@ class Teil2AtmosphereScheduler:
                     visual=_assign_atmosphere_visual(visual.clip_id, projector),  # type: ignore[arg-type]
                 )
             )
-        return rerouted
+        return _expand_points_onto_free_projectors(
+            rerouted,
+            windows=windows,
+            curve=gesamtkonzept.anarchy_curve,
+            total_sec=total_sec,
+            allowed_clips=allowed_clips,
+        )
 
 
 _scheduler: Teil2AtmosphereScheduler | None = None
