@@ -751,6 +751,103 @@ code {
   box-shadow: var(--shadow-soft);
 }
 
+.runtimeSettingsRow {
+  display: grid;
+  grid-template-columns: minmax(12rem, 1.2fr) minmax(10rem, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.runtimeSettingsLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.runtimeSettingsLabelRow {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.runtimeSettingsLabel label {
+  font-weight: 600;
+}
+
+.settingInfoTip {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.settingInfoTipTrigger {
+  width: 1.15rem;
+  height: 1.15rem;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-raised);
+  color: var(--color-text-secondary);
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-style: italic;
+  font-family: Georgia, "Times New Roman", serif;
+  line-height: 1;
+  cursor: help;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settingInfoTipTrigger:hover,
+.settingInfoTipTrigger:focus-visible {
+  color: var(--color-text);
+  border-color: var(--color-text-secondary);
+  outline: none;
+}
+
+.settingInfoTipBubble {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 0.4rem);
+  z-index: 20;
+  width: min(22rem, 70vw);
+  padding: 0.65rem 0.75rem;
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  font-size: 0.85rem;
+  font-weight: 400;
+  line-height: 1.4;
+  box-shadow: var(--shadow-soft);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(0.15rem);
+  transition: opacity 0.12s ease, transform 0.12s ease, visibility 0.12s;
+}
+
+.settingInfoTip:hover .settingInfoTipBubble,
+.settingInfoTip:focus-within .settingInfoTipBubble {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+@media (max-width: 720px) {
+  .runtimeSettingsRow {
+    grid-template-columns: 1fr;
+  }
+
+  .settingInfoTipBubble {
+    left: auto;
+    right: 0;
+  }
+}
+
 .row {
   display: flex;
   gap: var(--space-3);

@@ -46,6 +46,7 @@ app/director/qlab_relay_manager.py
 app/director/recording.py
 app/director/remote_transport.py
 app/director/run_state.py
+app/director/runtime_settings.py
 app/director/signal_trace_analysis.py
 app/director/technik_hold.py
 app/director/cues/__init__.py
@@ -305,6 +306,7 @@ tests/test_rule_json_adapter.py
 tests/test_rule_model.py
 tests/test_rule_service.py
 tests/test_run_epoch_queue.py
+tests/test_runtime_settings.py
 tests/test_script_api.py
 tests/test_script_splitter.py
 tests/test_signal_trace.py

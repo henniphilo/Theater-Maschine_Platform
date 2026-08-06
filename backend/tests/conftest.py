@@ -95,8 +95,10 @@ def director_test_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     import app.director.technik_hold as technik_hold_mod
     from app.director.output_targets import apply_overrides
     from app.director.outputs.light_tcp import close_light_tcp
+    from app.director.runtime_settings import reset_runtime_settings_for_tests
 
     apply_overrides(reset=True)
+    reset_runtime_settings_for_tests(persist_path=tmp_path / "runtime_settings.json")
 
     technik_hold_mod._manager = None
     technik_hold_mod.get_technik_hold_manager(director_routes._pipeline).stop()

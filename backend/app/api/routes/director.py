@@ -44,6 +44,8 @@ from app.schemas.director import (
     OutputTargetsResponse,
     OutputTargetsUpdateRequest,
     QlabRelayStatusResponse,
+    RuntimeSettingsResponse,
+    RuntimeSettingsUpdateRequest,
     TraceContext,
 )
 
@@ -455,6 +457,40 @@ def _output_targets_response() -> OutputTargetsResponse:
 def get_output_targets() -> OutputTargetsResponse:
     _ensure_enabled()
     return _output_targets_response()
+
+
+@router.get("/runtime-settings", response_model=RuntimeSettingsResponse)
+def get_runtime_settings() -> RuntimeSettingsResponse:
+    _ensure_enabled()
+    from app.director.runtime_settings import get_snapshot
+
+    snap = get_snapshot()
+    return RuntimeSettingsResponse(
+        defaults=snap["defaults"],
+        overrides=snap["overrides"],
+        effective=snap["effective"],
+    )
+
+
+@router.patch("/runtime-settings", response_model=RuntimeSettingsResponse)
+def patch_runtime_settings(payload: RuntimeSettingsUpdateRequest) -> RuntimeSettingsResponse:
+    _ensure_enabled()
+    from app.director.runtime_settings import apply_runtime_settings, get_snapshot
+
+    try:
+        apply_runtime_settings(
+            dict(payload.values) if payload.values else None,
+            reset=payload.reset,
+            clear_keys=list(payload.clear_keys) if payload.clear_keys else None,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
+    snap = get_snapshot()
+    return RuntimeSettingsResponse(
+        defaults=snap["defaults"],
+        overrides=snap["overrides"],
+        effective=snap["effective"],
+    )
 
 
 @router.patch("/output-targets", response_model=OutputTargetsResponse)

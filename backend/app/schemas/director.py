@@ -232,6 +232,18 @@ class OutputTargetsUpdateRequest(BaseModel):
     reset: bool = False
 
 
+class RuntimeSettingsResponse(BaseModel):
+    defaults: dict[str, object]
+    overrides: dict[str, object]
+    effective: dict[str, object]
+
+
+class RuntimeSettingsUpdateRequest(BaseModel):
+    values: dict[str, object] = Field(default_factory=dict)
+    clear_keys: list[str] = Field(default_factory=list)
+    reset: bool = False
+
+
 class QlabRelayStatusResponse(BaseModel):
     running: bool
     managed: bool

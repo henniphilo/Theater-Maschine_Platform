@@ -23,6 +23,9 @@ node_modules/
 # Generated TTS cache
 backend/data/
 
+# Operator runtime overrides (non-secret; machine-local)
+data/runtime_settings.json
+
 # Director logs
 logs/
 

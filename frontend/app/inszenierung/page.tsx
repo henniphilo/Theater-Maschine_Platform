@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { Teil2ScriptCueOverview } from "@/components/show/Teil2ScriptCueOverview";
+import { RuntimeSettingsPanel } from "@/components/settings/RuntimeSettingsPanel";
 import {
   createCorpus,
   fetchCorpus,
@@ -224,6 +225,7 @@ export default function InszenierungPage() {
               <option value="AI_A">Stimme A</option>
               <option value="AI_B">Stimme B</option>
             </select>
+            <RuntimeSettingsPanel compact />
             <button type="button" className="machineStartBtn" disabled={!canPrepare} onClick={() => void handlePrepare()}>
               {preparing || corpus.status === "preparing"
                 ? `Vorbereiten …${preparePhaseLabel}`

@@ -348,6 +348,18 @@ export type OutputTargetsUpdate = {
   reset?: boolean;
 };
 
+export type RuntimeSettings = {
+  defaults: Record<string, unknown>;
+  overrides: Record<string, unknown>;
+  effective: Record<string, unknown>;
+};
+
+export type RuntimeSettingsUpdate = {
+  values?: Record<string, unknown>;
+  clear_keys?: string[];
+  reset?: boolean;
+};
+
 export async function fetchOutputTargets(): Promise<OutputTargets> {
   const res = await apiFetch("/director/output-targets");
   if (!res.ok) throw new Error("Output targets unavailable");
@@ -363,6 +375,25 @@ export async function patchOutputTargets(payload: OutputTargetsUpdate): Promise<
   if (!res.ok) {
     const body = await res.json().catch(() => ({ detail: "Output targets update failed" }));
     throw new Error(body.detail ?? "Output targets update failed");
+  }
+  return res.json();
+}
+
+export async function fetchRuntimeSettings(): Promise<RuntimeSettings> {
+  const res = await apiFetch("/director/runtime-settings");
+  if (!res.ok) throw new Error("Runtime settings unavailable");
+  return res.json();
+}
+
+export async function patchRuntimeSettings(payload: RuntimeSettingsUpdate): Promise<RuntimeSettings> {
+  const res = await apiFetch("/director/runtime-settings", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ detail: "Runtime settings update failed" }));
+    throw new Error(typeof body.detail === "string" ? body.detail : "Runtime settings update failed");
   }
   return res.json();
 }

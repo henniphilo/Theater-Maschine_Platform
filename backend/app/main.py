@@ -36,6 +36,9 @@ limiter = Limiter(key_func=get_remote_address)
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
+    from app.director.runtime_settings import load_persisted_overrides
+
+    load_persisted_overrides()
     if settings.avatar_done_gate_enabled:
         start_avatar_done_listener(
             host=settings.avatar_done_osc_host,

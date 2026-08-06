@@ -19,6 +19,7 @@ type NavLink = {
 type NavIcon =
   | "productions"
   | "technik"
+  | "einstellungen"
   | "dramaturgie"
   | "inszenierung"
   | "auffuehrung"
@@ -30,6 +31,7 @@ type NavIcon =
 const LINKS: NavLink[] = [
   { href: "/productions" as Route, label: "Produktionen", short: "Produktionen", icon: "productions" },
   { href: "/technik" as Route, label: "Technik-Test", short: "Technik", icon: "technik" },
+  { href: "/einstellungen" as Route, label: "Einstellungen", short: "Einstellungen", icon: "einstellungen" },
   { href: "/dramaturgie" as Route, label: "Teil 1", short: "Dramaturgie", icon: "dramaturgie" },
   { href: "/stueck" as Route, label: "Stück", short: "Stück", icon: "stueck" },
   { href: "/inszenierung" as Route, label: "Teil 2", short: "Inszenierung", icon: "inszenierung" },
@@ -65,6 +67,20 @@ function NavIconSvg({ name }: { name: NavIcon }) {
         <svg {...common}>
           <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
           <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9c.3.6.9 1 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z" />
+        </svg>
+      );
+    case "einstellungen":
+      return (
+        <svg {...common}>
+          <path d="M4 6h10" />
+          <path d="M18 6h2" />
+          <circle cx="16" cy="6" r="2" />
+          <path d="M4 12h2" />
+          <path d="M10 12h10" />
+          <circle cx="8" cy="12" r="2" />
+          <path d="M4 18h10" />
+          <path d="M18 18h2" />
+          <circle cx="16" cy="18" r="2" />
         </svg>
       );
     case "dramaturgie":
