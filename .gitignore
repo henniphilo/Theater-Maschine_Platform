@@ -25,6 +25,7 @@ backend/data/
 
 # Operator runtime overrides (non-secret; machine-local)
 data/runtime_settings.json
+data/extra_media_overrides.json
 
 # Director logs
 logs/

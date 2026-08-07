@@ -32,9 +32,20 @@ class LLMDirector:
         self.rule_engine = DramaturgyEngine(self.media_db)
 
     def catalog_allowlist(self, *, compact: bool = False, video_scope: VideoScope = "part2") -> dict[str, Any]:
+        from app.services.extra_media_overrides import is_dramaturgy_active
+
         video_catalog = get_video_cue_catalog_service().load(video_scope)
-        allowed_video_ids = {clip.id for clip in video_catalog.clips}
+        allowed_video_ids = {
+            clip.id
+            for clip in video_catalog.clips
+            if is_dramaturgy_active("video", clip.id)
+        }
         videos = [v for v in self.media_db.videos if v.id in allowed_video_ids]
+        lights = [
+            s
+            for s in self.media_db.light_scenes
+            if s.id != "blackout" and is_dramaturgy_active("light", s.id)
+        ]
         if compact:
             return {
                 "videos": [{"id": v.id, "tags": v.tags[:4], "moods": v.moods[:3]} for v in videos],
@@ -56,8 +67,7 @@ class LLMDirector:
                 ],
                 "lights": [
                     {"id": s.id, "moods": s.moods[:3], "channels": s.channels[:6]}
-                    for s in self.media_db.light_scenes
-                    if s.id != "blackout"
+                    for s in lights
                 ],
             }
         return {
@@ -101,8 +111,7 @@ class LLMDirector:
                     "fixtures": s.fixtures,
                     "moods": s.moods,
                 }
-                for s in self.media_db.light_scenes
-                if s.id != "blackout"
+                for s in lights
             ],
             "light_inventory_source": self.media_db.light_inventory.get(
                 "source", "media/light/Kanal Übersicht.xlsx"
@@ -279,10 +288,16 @@ class LLMDirector:
         if decision.reason_short and not is_valid_reason_short(decision.reason_short):
             raise DramaturgyValidationError("invalid reason_short")
 
-        video_ids = {v.id for v in self.media_db.videos}
+        from app.services.extra_media_overrides import is_dramaturgy_active
+
+        video_ids = {v.id for v in self.media_db.videos if is_dramaturgy_active("video", v.id)}
         recording_ids = {r.id for r in self.media_db.recordings}
         sound_ids = {s.id for s in self.media_db.dramaturgy_sounds}
-        light_ids = {s.id for s in self.media_db.light_scenes}
+        light_ids = {
+            s.id
+            for s in self.media_db.light_scenes
+            if s.id != "blackout" and is_dramaturgy_active("light", s.id)
+        }
         output_ids = {p.id for p in get_video_cue_catalog_service().load().projectors}
 
         def _validate_visual(visual, *, context: str) -> None:

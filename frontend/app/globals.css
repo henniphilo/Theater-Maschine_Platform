@@ -776,6 +776,37 @@ code {
   font-weight: 600;
 }
 
+.cueAdminTableWrap {
+  overflow-x: auto;
+}
+
+.cueAdminTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.cueAdminTable th,
+.cueAdminTable td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.55rem 0.4rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.cueAdminTable th {
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+.cueAdminTable tr.isRemoved {
+  opacity: 0.55;
+}
+
+.mediaCueAdmin {
+  gap: var(--space-4);
+}
+
 .settingInfoTip {
   position: relative;
   display: inline-flex;

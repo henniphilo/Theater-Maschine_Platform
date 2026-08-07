@@ -118,6 +118,7 @@ app/schemas/debate.py
 app/schemas/device.py
 app/schemas/director.py
 app/schemas/discussion.py
+app/schemas/extra_media.py
 app/schemas/inszenierung.py
 app/schemas/media_mentions.py
 app/schemas/part1_selection.py
@@ -149,6 +150,7 @@ app/services/dramaturg_labels.py
 app/services/dramaturgy_analysis_service.py
 app/services/dramaturgy_text.py
 app/services/dramaturgy_workshop_service.py
+app/services/extra_media_overrides.py
 app/services/inszenierung_analyse_service.py
 app/services/inszenierung_bundle_service.py
 app/services/inszenierung_import.py
@@ -251,6 +253,7 @@ tests/test_dramaturgy_text.py
 tests/test_dramaturgy_workshop.py
 tests/test_eos_light.py
 tests/test_export_qlab_cue_list.py
+tests/test_extra_media_overrides.py
 tests/test_fake_receivers.py
 tests/test_health.py
 tests/test_import_avatar_textzuordnung.py

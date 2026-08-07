@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { MediaCueAdminPanel } from "@/components/settings/MediaCueAdminPanel";
 import { RuntimeSettingsPanel } from "@/components/settings/RuntimeSettingsPanel";
 
 export default function EinstellungenPage() {
@@ -13,6 +14,7 @@ export default function EinstellungenPage() {
         <Link href="/technik">Zur Technik →</Link>
       </p>
       <RuntimeSettingsPanel />
+      <MediaCueAdminPanel />
     </main>
   );
 }

@@ -39,7 +39,8 @@ def catalog_json_path() -> Path:
 
 
 class SoundCueCatalogService:
-    def load(self) -> SoundCueCatalog:
+    def load_raw(self) -> SoundCueCatalog:
+        """Catalog from CSV/JSON without operator overlays."""
         overview = resolve_sound_overview_path(_data_dir())
         if overview is not None:
             catalog = load_sound_cues_from_csv(overview)
@@ -50,6 +51,11 @@ class SoundCueCatalogService:
         if path.is_file():
             return SoundCueCatalog.model_validate_json(path.read_text(encoding="utf-8"))
         return SoundCueCatalog()
+
+    def load(self) -> SoundCueCatalog:
+        from app.services.extra_media_overrides import merge_sound_catalog
+
+        return merge_sound_catalog(self.load_raw())
 
     @staticmethod
     def _write_json_cache(catalog: SoundCueCatalog, *, source: str) -> None:

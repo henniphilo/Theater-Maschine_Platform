@@ -4,6 +4,7 @@ from __future__ import annotations
 
 # catalog pixera_name → OSC pixera_name (from OSCBefehllisteAvatare.txt)
 CATALOG_TO_OSC_PIXERA: dict[str, str] = {
+    "Ipad": "IPad",
     "BAK1_NicolasPflanzen3": "BAK1_Nicolas_Pflanzen",
     "BK0_Waran": "BKO_Waren",
     "MO1_SebMusik": "MO1_Seb_Musik",

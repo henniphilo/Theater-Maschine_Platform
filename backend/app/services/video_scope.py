@@ -112,6 +112,8 @@ def _avatar_clip_ids() -> set[str]:
 
 
 def build_video_catalog(scope: VideoScope = "part2") -> VideoCueCatalog:
+    from app.services.extra_media_overrides import merge_video_catalog
+
     base = _load_base_catalog()
     allowed = _clip_ids_for_scope(scope)
     avatar_ids = _avatar_clip_ids() if scope == "part2" else set()
@@ -125,25 +127,28 @@ def build_video_catalog(scope: VideoScope = "part2") -> VideoCueCatalog:
             updated = clip.model_copy(update={"video_type": "avatar"})
         clips.append(updated)
 
-    return base.model_copy(update={"clips": clips})
+    scoped = base.model_copy(update={"clips": clips})
+    return merge_video_catalog(scoped)
 
 
 def osc_availability_by_clip(scope: VideoScope = "part2") -> dict[str, set[str]]:
     """clip_id → output_ids with Pixera cues in scope."""
+    from app.services.extra_media_overrides import merge_osc_availability
+
     catalog = _load_base_catalog()
     paths = _osc_paths_for_scope(scope)
     if not paths:
-        return {clip.id: {p.id for p in catalog.projectors} for clip in catalog.clips}
+        availability = {clip.id: {p.id for p in catalog.projectors} for clip in catalog.clips}
+    else:
+        prefix_to_id = {p.pixera_prefix: p.id for p in catalog.projectors}
+        prefix_to_id["KI_KI_RZ21"] = "rz21"
+        name_to_id = _name_to_id_map(catalog.clips)
 
-    prefix_to_id = {p.pixera_prefix: p.id for p in catalog.projectors}
-    prefix_to_id["KI_KI_RZ21"] = "rz21"
-    name_to_id = _name_to_id_map(catalog.clips)
-
-    availability: dict[str, set[str]] = {}
-    for prefix, pixera_name in _parse_osc_pairs(paths):
-        output_id = prefix_to_id.get(prefix)
-        clip_id = _clip_id_for_pixera_name(pixera_name, name_to_id)
-        if not output_id or not clip_id:
-            continue
-        availability.setdefault(clip_id, set()).add(output_id)
-    return availability
+        availability = {}
+        for prefix, pixera_name in _parse_osc_pairs(paths):
+            output_id = prefix_to_id.get(prefix)
+            clip_id = _clip_id_for_pixera_name(pixera_name, name_to_id)
+            if not output_id or not clip_id:
+                continue
+            availability.setdefault(clip_id, set()).add(output_id)
+    return merge_osc_availability(availability, catalog)

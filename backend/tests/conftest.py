@@ -100,6 +100,10 @@ def director_test_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     apply_overrides(reset=True)
     reset_runtime_settings_for_tests(persist_path=tmp_path / "runtime_settings.json")
 
+    from app.services.extra_media_overrides import reset_extra_media_for_tests
+
+    reset_extra_media_for_tests(persist_path=tmp_path / "extra_media_overrides.json")
+
     technik_hold_mod._manager = None
     technik_hold_mod.get_technik_hold_manager(director_routes._pipeline).stop()
     light_desk_mod._manager = None

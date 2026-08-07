@@ -1,11 +1,20 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query
 
 from app.core.config import settings
 from app.director.output_targets import effective_light_target, effective_video_target
 from app.director.media.database import MediaDatabase
 from app.schemas.avatar_speech import AvatarSpeechCatalog
+from app.schemas.extra_media import (
+    CueAdminPatchRequest,
+    CueAdminResponse,
+    CueKind,
+    ExtraLightCreateRequest,
+    ExtraSoundCreateRequest,
+    ExtraVideoCreateRequest,
+)
 from app.schemas.sound_cues import SoundCueCatalog
 from app.schemas.video_cues import VideoCueCatalog
+from app.services import extra_media_overrides as extra_media
 from app.services.sound_cue_catalog import get_sound_cue_catalog_service
 from app.services.video_cue_catalog import get_video_cue_catalog_service
 from app.services.avatar_speech_catalog import get_avatar_speech_catalog_service
@@ -30,6 +39,56 @@ def get_video_cues(video_scope: VideoScope = Query(default="part2")) -> VideoCue
 @router.get("/avatar-speech", response_model=AvatarSpeechCatalog)
 def get_avatar_speech() -> AvatarSpeechCatalog:
     return _avatar_catalog.load()
+
+
+@router.get("/cue-admin", response_model=CueAdminResponse)
+def get_cue_admin() -> CueAdminResponse:
+    return extra_media.build_cue_admin_response()
+
+
+@router.post("/cue-admin/video")
+def create_extra_video(body: ExtraVideoCreateRequest) -> dict:
+    try:
+        entry = extra_media.add_extra_video(body)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return entry.model_dump()
+
+
+@router.post("/cue-admin/sound")
+def create_extra_sound(body: ExtraSoundCreateRequest) -> dict:
+    try:
+        entry = extra_media.add_extra_sound(body)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return entry.model_dump()
+
+
+@router.post("/cue-admin/light")
+def create_extra_light(body: ExtraLightCreateRequest) -> dict:
+    try:
+        entry = extra_media.add_extra_light(body)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return entry.model_dump()
+
+
+@router.patch("/cue-admin/{kind}/{cue_id}")
+def patch_cue_admin(kind: CueKind, cue_id: str, body: CueAdminPatchRequest) -> dict:
+    try:
+        flags = extra_media.patch_cue(kind, cue_id, body)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return flags.model_dump()
+
+
+@router.delete("/cue-admin/{kind}/{cue_id}")
+def delete_cue_admin(kind: CueKind, cue_id: str) -> dict:
+    try:
+        extra_media.delete_extra(kind, cue_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"ok": True, "id": cue_id, "kind": kind}
 
 
 @router.get("/catalog")

@@ -137,7 +137,11 @@ class MediaDatabase:
         self.videos, self.recordings = partition_visual_assets(visual_assets)
 
         self.sounds = get_sound_cue_catalog_service().to_sound_assets()
-        self.light_scenes = [LightScene.model_validate(s) for s in light_data.get("scenes", [])]
+        from app.services.extra_media_overrides import merge_light_scenes
+
+        self.light_scenes = merge_light_scenes(
+            [LightScene.model_validate(s) for s in light_data.get("scenes", [])]
+        )
         self.rules = DramaturgyRules(
             keyword_tags=rules_data.get("keyword_tags", {}),
             mood_keywords=rules_data.get("mood_keywords", {}),
