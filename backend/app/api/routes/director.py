@@ -47,6 +47,10 @@ from app.schemas.director import (
     RuntimeSettingsResponse,
     RuntimeSettingsUpdateRequest,
     TraceContext,
+    VenueProfileActivateRequest,
+    VenueProfileLightUpdateRequest,
+    VenueProfileResponse,
+    VenueProfilesResponse,
 )
 
 router = APIRouter(prefix="/director", tags=["director"])
@@ -414,19 +418,29 @@ def _output_targets_response() -> OutputTargetsResponse:
         default_video_target,
         effective_light_target,
         effective_video_target,
+        effective_video_targets,
         get_override_state,
     )
+    from app.services.venue_profiles import list_profiles
 
     overrides = get_override_state()
     default_video_host, default_video_port = default_video_target()
     effective_video_host, effective_video_port = effective_video_target()
     default_light_host, default_light_port = default_light_target()
     effective_light_host, effective_light_port = effective_light_target()
+    all_video = [
+        OutputTargetEndpoint(host=host, port=port) for host, port in effective_video_targets()
+    ]
 
     video_override = None
-    if overrides.video_host is not None or overrides.video_port is not None:
+    if overrides.video_hosts is not None or overrides.video_port is not None:
+        primary_host = (
+            overrides.video_hosts[0]
+            if overrides.video_hosts
+            else default_video_host
+        )
         video_override = OutputTargetEndpoint(
-            host=overrides.video_host or default_video_host,
+            host=primary_host,
             port=overrides.video_port if overrides.video_port is not None else default_video_port,
         )
 
@@ -437,6 +451,12 @@ def _output_targets_response() -> OutputTargetsResponse:
             port=overrides.light_port if overrides.light_port is not None else default_light_port,
         )
 
+    venue_id = None
+    try:
+        venue_id = list_profiles().active_id
+    except Exception:
+        venue_id = None
+
     return OutputTargetsResponse(
         visual_output=settings.visual_output,
         light_output=settings.light_output,
@@ -444,12 +464,31 @@ def _output_targets_response() -> OutputTargetsResponse:
             default=OutputTargetEndpoint(host=default_video_host, port=default_video_port),
             override=video_override,
             effective=OutputTargetEndpoint(host=effective_video_host, port=effective_video_port),
+            effective_hosts=all_video,
         ),
         light=OutputTargetChannel(
             default=OutputTargetEndpoint(host=default_light_host, port=default_light_port),
             override=light_override,
             effective=OutputTargetEndpoint(host=effective_light_host, port=effective_light_port),
+            effective_hosts=[
+                OutputTargetEndpoint(host=effective_light_host, port=effective_light_port)
+            ],
         ),
+        venue_profile_id=venue_id,
+    )
+
+
+def _venue_profile_response(profile) -> VenueProfileResponse:
+    return VenueProfileResponse(
+        id=profile.id,
+        label=profile.label,
+        self_host=profile.self_host,
+        video_hosts=list(profile.video_hosts),
+        video_port=profile.video_port,
+        light_host=profile.light_host,
+        light_port=profile.light_port,
+        light_configured=profile.light_configured,
+        notes=profile.notes,
     )
 
 
@@ -496,15 +535,20 @@ def patch_runtime_settings(payload: RuntimeSettingsUpdateRequest) -> RuntimeSett
 @router.patch("/output-targets", response_model=OutputTargetsResponse)
 def patch_output_targets(payload: OutputTargetsUpdateRequest) -> OutputTargetsResponse:
     _ensure_enabled()
-    from app.director.output_targets import apply_overrides, refresh_pipeline_targets
+    from app.director.output_targets import apply_overrides, parse_host_list, refresh_pipeline_targets
 
-    if payload.video_host is not None and not payload.video_host.strip():
-        raise HTTPException(status_code=400, detail="video_host must not be empty")
+    hosts = payload.video_hosts
+    if hosts is None and payload.video_host is not None:
+        hosts = parse_host_list(payload.video_host)
+        if not hosts:
+            raise HTTPException(status_code=400, detail="video_host must not be empty")
+    if hosts is not None and not hosts:
+        raise HTTPException(status_code=400, detail="video_hosts must not be empty")
     if payload.light_host is not None and not payload.light_host.strip():
         raise HTTPException(status_code=400, detail="light_host must not be empty")
 
     apply_overrides(
-        video_host=payload.video_host,
+        video_hosts=hosts,
         video_port=payload.video_port,
         light_host=payload.light_host,
         light_port=payload.light_port,
@@ -512,6 +556,50 @@ def patch_output_targets(payload: OutputTargetsUpdateRequest) -> OutputTargetsRe
     )
     refresh_pipeline_targets()
     return _output_targets_response()
+
+
+@router.get("/venue-profiles", response_model=VenueProfilesResponse)
+def get_venue_profiles() -> VenueProfilesResponse:
+    _ensure_enabled()
+    from app.services.venue_profiles import list_profiles
+
+    state = list_profiles()
+    return VenueProfilesResponse(
+        active_id=state.active_id,
+        profiles=[_venue_profile_response(p) for p in state.profiles],
+    )
+
+
+@router.post("/venue-profiles/activate", response_model=VenueProfilesResponse)
+def post_venue_profile_activate(payload: VenueProfileActivateRequest) -> VenueProfilesResponse:
+    _ensure_enabled()
+    from app.services.venue_profiles import activate_profile, list_profiles
+
+    try:
+        activate_profile(payload.profile_id)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    state = list_profiles()
+    return VenueProfilesResponse(
+        active_id=state.active_id,
+        profiles=[_venue_profile_response(p) for p in state.profiles],
+    )
+
+
+@router.patch("/venue-profiles/{profile_id}/light", response_model=VenueProfileResponse)
+def patch_venue_profile_light(
+    profile_id: str, payload: VenueProfileLightUpdateRequest
+) -> VenueProfileResponse:
+    _ensure_enabled()
+    from app.services.venue_profiles import update_profile_light
+
+    try:
+        profile = update_profile_light(profile_id, payload.light_host, payload.light_port)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return _venue_profile_response(profile)
 
 
 def _light_desk_status_response() -> LightDeskStatusResponse:

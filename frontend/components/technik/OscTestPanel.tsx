@@ -28,6 +28,15 @@ import { fetchMediaCatalog } from "@/lib/api/media";
 import type { MediaCatalog } from "@/lib/types/media";
 import { formatLightChannelLabel } from "@/lib/types/media";
 import { formatMidiTrigger } from "@/lib/midi/format";
+import { VenueProfilePanel } from "@/components/settings/VenueProfilePanel";
+
+function videoHostsFromTargets(targets: OutputTargets): string {
+  const hosts = targets.video.effective_hosts;
+  if (hosts && hosts.length > 0) {
+    return hosts.map((h) => h.host).join(", ");
+  }
+  return targets.video.effective.host;
+}
 
 export function OscTestPanel() {
   const [catalog, setCatalog] = useState<MediaCatalog | null>(null);
@@ -88,7 +97,7 @@ export function OscTestPanel() {
     fetchOutputTargets()
       .then((targets) => {
         setOutputTargets(targets);
-        setVideoHost(targets.video.effective.host);
+        setVideoHost(videoHostsFromTargets(targets));
         setVideoPort(String(targets.video.effective.port));
         setLightHost(targets.light.effective.host);
         setLightPort(String(targets.light.effective.port));
@@ -100,6 +109,19 @@ export function OscTestPanel() {
     refreshStatus();
     const id = setInterval(refreshStatus, 2000);
     return () => clearInterval(id);
+  }, [refreshStatus]);
+
+  const reloadTargetsFromServer = useCallback(async () => {
+    const targets = await fetchOutputTargets();
+    setOutputTargets(targets);
+    setVideoHost(videoHostsFromTargets(targets));
+    setVideoPort(String(targets.video.effective.port));
+    setLightHost(targets.light.effective.host);
+    setLightPort(String(targets.light.effective.port));
+    setTargetsDirty(false);
+    const catalogRes = await fetchMediaCatalog("part2");
+    setCatalog(catalogRes);
+    refreshStatus();
   }, [refreshStatus]);
 
   const sendVideo = useCallback(async () => {
@@ -353,11 +375,18 @@ export function OscTestPanel() {
     (outputTargets?.visual_output ?? catalog?.pixera?.output) === "pixera" ||
     (outputTargets?.visual_output ?? catalog?.pixera?.output) === "both";
   const effectiveVideo = outputTargets?.video.effective;
+  const effectiveVideoHosts = outputTargets?.video.effective_hosts;
   const effectiveLight = outputTargets?.light.effective;
-  const videoTarget = effectiveVideo
+  const videoHostLabel =
+    effectiveVideoHosts && effectiveVideoHosts.length > 0
+      ? effectiveVideoHosts.map((h) => `${h.host}:${h.port}`).join(" · ")
+      : effectiveVideo
+        ? `${effectiveVideo.host}:${effectiveVideo.port}`
+        : null;
+  const videoTarget = videoHostLabel
     ? videoUsesPixera
-      ? `Pixera ${catalog?.pixera?.address ?? "/pixera/args/cue/apply"} · ${effectiveVideo.host}:${effectiveVideo.port}`
-      : `TouchDesigner ${effectiveVideo.host}:${effectiveVideo.port}`
+      ? `Pixera ${catalog?.pixera?.address ?? "/pixera/args/cue/apply"} · ${videoHostLabel}`
+      : `TouchDesigner ${videoHostLabel}`
     : videoUsesPixera
       ? `Pixera ${catalog?.pixera?.address ?? "/pixera/args/cue/apply"} · ${catalog?.pixera?.osc_host}:${catalog?.pixera?.osc_port}`
       : `TouchDesigner ${catalog?.touchdesigner?.osc_host}:${catalog?.touchdesigner?.osc_port}`;
@@ -395,6 +424,13 @@ export function OscTestPanel() {
 
   return (
     <section className="card col oscTestPanel">
+      <VenueProfilePanel
+        onActivated={() => {
+          void reloadTargetsFromServer().catch((err) => {
+            setError(err instanceof Error ? err.message : "Ziele nach Venue-Wechsel nicht ladbar");
+          });
+        }}
+      />
       <p className="textMuted" style={{ marginTop: 0 }}>
         Video, Sound und Licht jeweils einzeln testen — wie am Licht-Pult: Signal senden, halten oder stoppen.
         {dryRun ? <span className="oscTestWarn"> · DRY-RUN aktiv</span> : null}
@@ -479,7 +515,7 @@ export function OscTestPanel() {
           </p>
           <div className="oscTestTargetFields row">
             <label className="oscTestChannel">
-              <span>Video IP/Host</span>
+              <span>Video IP/Host (mehrere mit Komma)</span>
               <input
                 type="text"
                 value={videoHost}
@@ -489,6 +525,7 @@ export function OscTestPanel() {
                 }}
                 disabled={targetsLoading}
                 autoComplete="off"
+                placeholder="192.168.14.11, 192.168.14.12"
               />
             </label>
             <label className="oscTestChannel">

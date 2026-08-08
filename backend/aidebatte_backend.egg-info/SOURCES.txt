@@ -195,6 +195,7 @@ app/services/teil2_script_service.py
 app/services/teil2_text_alignment.py
 app/services/text_split.py
 app/services/tts_service.py
+app/services/venue_profiles.py
 app/services/video_cue_catalog.py
 app/services/video_pixera_aliases.py
 app/services/video_scope.py
@@ -336,6 +337,7 @@ tests/test_teil2_scene_filter.py
 tests/test_teil2_script_service.py
 tests/test_teil2_text_alignment.py
 tests/test_touchdesigner_bridge.py
+tests/test_venue_profiles.py
 tests/test_video_pixera_aliases.py
 tests/test_video_scope.py
 tests/test_visual_outputs.py

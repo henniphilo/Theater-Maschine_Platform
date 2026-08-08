@@ -21,18 +21,19 @@ def test_collect_rows_includes_all_osc_sources() -> None:
     module = _load_module()
     rows = module.collect_rows()
     sources = {row["source"] for row in rows}
-    assert "database" in sources
+    # Root OSCBefehlliste.txt overlaps atmosphere → merged label database+atmosphere
+    assert any(s == "database" or s.startswith("database") for s in sources)
     assert "avatar" in sources
-    assert "atmosphere" in sources
+    assert any("atmosphere" in s for s in sources)
     assert len(rows) == 404
 
 
-def test_bak1_uses_alias_for_qlab_number() -> None:
+def test_bak1_qlab_number_matches_osc_list() -> None:
     module = _load_module()
     rows = module.collect_rows()
     match = next(row for row in rows if row["clip_part"] == "BAK1_NicolasPflanzen3" and row["projector"] == "rz21")
     assert match["clip_id"] == "bak1_nicolaspflanzen3"
-    assert match["qlab_cue_number"] == "KI_RZ21.BAK1_Nicolas_Pflanzen"
+    assert match["qlab_cue_number"] == "KI_RZ21.BAK1_NicolasPflanzen3"
     assert match["source"] == "avatar"
 
 

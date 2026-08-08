@@ -215,6 +215,7 @@ class OutputTargetChannel(BaseModel):
     default: OutputTargetEndpoint
     override: OutputTargetEndpoint | None = None
     effective: OutputTargetEndpoint
+    effective_hosts: list[OutputTargetEndpoint] = Field(default_factory=list)
 
 
 class OutputTargetsResponse(BaseModel):
@@ -222,14 +223,42 @@ class OutputTargetsResponse(BaseModel):
     light_output: str
     video: OutputTargetChannel
     light: OutputTargetChannel
+    venue_profile_id: str | None = None
 
 
 class OutputTargetsUpdateRequest(BaseModel):
     video_host: str | None = None
+    video_hosts: list[str] | None = None
     video_port: int | None = Field(default=None, ge=1, le=65535)
     light_host: str | None = None
     light_port: int | None = Field(default=None, ge=1, le=65535)
     reset: bool = False
+
+
+class VenueProfileResponse(BaseModel):
+    id: str
+    label: str
+    self_host: str | None = None
+    video_hosts: list[str]
+    video_port: int
+    light_host: str | None = None
+    light_port: int | None = None
+    light_configured: bool = False
+    notes: str = ""
+
+
+class VenueProfilesResponse(BaseModel):
+    active_id: str
+    profiles: list[VenueProfileResponse]
+
+
+class VenueProfileActivateRequest(BaseModel):
+    profile_id: str = Field(min_length=1, max_length=40)
+
+
+class VenueProfileLightUpdateRequest(BaseModel):
+    light_host: str = Field(min_length=1, max_length=120)
+    light_port: int = Field(ge=1, le=65535)
 
 
 class RuntimeSettingsResponse(BaseModel):

@@ -1,7 +1,7 @@
 from pythonosc import udp_client
 
 from app.core.config import settings
-from app.director.output_targets import effective_video_target
+from app.director.output_targets import effective_video_target, effective_video_targets
 from app.director.outputs.osc_log import log_osc_command
 from app.director.outputs.udp_client import create_udp_client
 
@@ -11,38 +11,66 @@ class PixeraBridge:
         self,
         host: str | None = None,
         port: int | None = None,
+        hosts: list[tuple[str, int]] | None = None,
         dry_run: bool | None = None,
     ) -> None:
-        self.host = host or effective_video_target()[0]
-        self.port = port or effective_video_target()[1]
+        if hosts is not None:
+            self._targets = [(h, p) for h, p in hosts if h]
+        elif host is not None:
+            resolved_port = port if port is not None else effective_video_target()[1]
+            self._targets = [(host, resolved_port)]
+        else:
+            self._targets = list(effective_video_targets())
+        if not self._targets:
+            self._targets = [effective_video_target()]
+        # Primary target kept for adapters / status that expect a single host.
+        self.host = self._targets[0][0]
+        self.port = self._targets[0][1]
         self.dry_run = settings.osc_dry_run if dry_run is None else dry_run
-        self._client: udp_client.SimpleUDPClient | None = None
-        if not self.dry_run:
-            self._client = create_udp_client(self.host, self.port)
+        self._clients: list[tuple[str, int, udp_client.SimpleUDPClient | None]] = []
+        self._rebuild_clients()
+
+    def _rebuild_clients(self) -> None:
+        self._clients = []
+        for host, port in self._targets:
+            client = None if self.dry_run else create_udp_client(host, port)
+            self._clients.append((host, port, client))
+
+    @property
+    def targets(self) -> list[tuple[str, int]]:
+        return list(self._targets)
 
     def _send(self, address: str, *args: object) -> None:
-        dry_run = self.dry_run or self._client is None
-        log_osc_command(
-            self.host,
-            self.port,
-            address,
-            list(args),
-            dry_run=dry_run,
-            bridge="pixera",
-        )
-        if dry_run:
-            return
-        self._client.send_message(address, list(args))
+        for host, port, client in self._clients:
+            dry_run = self.dry_run or client is None
+            log_osc_command(
+                host,
+                port,
+                address,
+                list(args),
+                dry_run=dry_run,
+                bridge="pixera",
+            )
+            if dry_run:
+                continue
+            client.send_message(address, list(args))
 
-    def reconfigure(self, host: str | None = None, port: int | None = None) -> None:
-        if host is not None:
-            self.host = host
-        if port is not None:
-            self.port = port
-        if not self.dry_run:
-            self._client = create_udp_client(self.host, self.port)
-        else:
-            self._client = None
+    def reconfigure(
+        self,
+        host: str | None = None,
+        port: int | None = None,
+        hosts: list[tuple[str, int]] | None = None,
+    ) -> None:
+        if hosts is not None:
+            self._targets = [(h, p) for h, p in hosts if h] or list(effective_video_targets())
+        elif host is not None:
+            resolved_port = port if port is not None else self.port
+            self._targets = [(host, resolved_port)]
+        elif port is not None:
+            self._targets = [(h, port) for h, _ in self._targets]
+        self.host = self._targets[0][0]
+        self.port = self._targets[0][1]
+        self._rebuild_clients()
 
     def apply_cue(self, pixera_cue_name: str) -> None:
         self._send("/pixera/args/cue/apply", pixera_cue_name)

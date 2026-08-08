@@ -617,11 +617,16 @@ class DirectorPipeline:
             _execute_logger.exception("active production device emergency_stop failed")
 
     def refresh_output_targets(self) -> None:
-        from app.director.output_targets import effective_light_target, effective_video_target
+        from app.director.output_targets import (
+            effective_light_target,
+            effective_video_target,
+            effective_video_targets,
+        )
 
+        video_targets = effective_video_targets()
         video_host, video_port = effective_video_target()
         light_host, light_port = effective_light_target()
-        self.pixera.reconfigure(video_host, video_port)
+        self.pixera.reconfigure(hosts=video_targets)
         self.touchdesigner.reconfigure(video_host, video_port)
         self.lighting.reconfigure(light_host, light_port)
 

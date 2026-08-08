@@ -331,6 +331,7 @@ export type OutputTargetChannel = {
   default: OutputTargetEndpoint;
   override: OutputTargetEndpoint | null;
   effective: OutputTargetEndpoint;
+  effective_hosts?: OutputTargetEndpoint[];
 };
 
 export type OutputTargets = {
@@ -338,14 +339,33 @@ export type OutputTargets = {
   light_output: string;
   video: OutputTargetChannel;
   light: OutputTargetChannel;
+  venue_profile_id?: string | null;
 };
 
 export type OutputTargetsUpdate = {
   video_host?: string;
+  video_hosts?: string[];
   video_port?: number;
   light_host?: string;
   light_port?: number;
   reset?: boolean;
+};
+
+export type VenueProfile = {
+  id: string;
+  label: string;
+  self_host: string | null;
+  video_hosts: string[];
+  video_port: number;
+  light_host: string | null;
+  light_port: number | null;
+  light_configured: boolean;
+  notes: string;
+};
+
+export type VenueProfiles = {
+  active_id: string;
+  profiles: VenueProfile[];
 };
 
 export type RuntimeSettings = {
@@ -375,6 +395,25 @@ export async function patchOutputTargets(payload: OutputTargetsUpdate): Promise<
   if (!res.ok) {
     const body = await res.json().catch(() => ({ detail: "Output targets update failed" }));
     throw new Error(body.detail ?? "Output targets update failed");
+  }
+  return res.json();
+}
+
+export async function fetchVenueProfiles(): Promise<VenueProfiles> {
+  const res = await apiFetch("/director/venue-profiles");
+  if (!res.ok) throw new Error("Venue profiles unavailable");
+  return res.json();
+}
+
+export async function activateVenueProfile(profileId: string): Promise<VenueProfiles> {
+  const res = await apiFetch("/director/venue-profiles/activate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ profile_id: profileId })
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ detail: "Venue profile switch failed" }));
+    throw new Error(typeof body.detail === "string" ? body.detail : "Venue profile switch failed");
   }
   return res.json();
 }

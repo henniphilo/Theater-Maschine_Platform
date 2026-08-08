@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "active_id": "hallein",
+  "profiles": [
+    {
+      "id": "burgtheater",
+      "label": "Burgtheater",
+      "self_host": null,
+      "video_hosts": [
+        "172.27.27.1"
+      ],
+      "video_port": 8990,
+      "light_host": "10.101.90.112",
+      "light_port": 3032,
+      "notes": "Pixera 172.27.27.1:8990 · EOS 10.101.90.112:3032"
+    },
+    {
+      "id": "hallein",
+      "label": "Hallein",
+      "self_host": "192.168.14.15",
+      "video_hosts": [
+        "192.168.14.11",
+        "192.168.14.12"
+      ],
+      "video_port": 8990,
+      "light_host": null,
+      "light_port": null,
+      "notes": "Video fan-out an beide Pixera-Rechner. Show-Mac: 192.168.14.15. Licht noch unbekannt."
+    }
+  ]
+}

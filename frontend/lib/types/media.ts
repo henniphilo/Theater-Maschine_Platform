@@ -50,6 +50,7 @@ export type MediaCatalog = {
   pixera?: {
     output: string;
     osc_host: string;
+    osc_hosts?: string[];
     osc_port: number;
     osc_dry_run: boolean;
     address: string;

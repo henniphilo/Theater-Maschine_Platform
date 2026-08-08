@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { MediaCueAdminPanel } from "@/components/settings/MediaCueAdminPanel";
 import { RuntimeSettingsPanel } from "@/components/settings/RuntimeSettingsPanel";
+import { VenueProfilePanel } from "@/components/settings/VenueProfilePanel";
 
 export default function EinstellungenPage() {
   return (
@@ -13,6 +14,7 @@ export default function EinstellungenPage() {
         Laufzeit-Overrides für Dramaturgie, Ausgaben und Teil-2-Prepare — getrennt vom Technik-Test.{" "}
         <Link href="/technik">Zur Technik →</Link>
       </p>
+      <VenueProfilePanel />
       <RuntimeSettingsPanel />
       <MediaCueAdminPanel />
     </main>

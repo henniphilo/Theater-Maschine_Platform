@@ -1,7 +1,11 @@
 from fastapi import APIRouter, HTTPException, Query
 
 from app.core.config import settings
-from app.director.output_targets import effective_light_target, effective_video_target
+from app.director.output_targets import (
+    effective_light_target,
+    effective_video_target,
+    effective_video_targets,
+)
 from app.director.media.database import MediaDatabase
 from app.schemas.avatar_speech import AvatarSpeechCatalog
 from app.schemas.extra_media import (
@@ -97,6 +101,7 @@ def get_media_catalog(video_scope: VideoScope = Query(default="part2")) -> dict:
     video_catalog = _video_catalog.load(video_scope)
     allowed_video_ids = {clip.id for clip in video_catalog.clips}
     video_host, video_port = effective_video_target()
+    video_targets = effective_video_targets()
     light_host, light_port = effective_light_target()
     return {
         "videos": [v.model_dump() for v in db.videos if v.id in allowed_video_ids],
@@ -123,6 +128,7 @@ def get_media_catalog(video_scope: VideoScope = Query(default="part2")) -> dict:
         "pixera": {
             "output": settings.visual_output,
             "osc_host": video_host,
+            "osc_hosts": [host for host, _port in video_targets],
             "osc_port": video_port,
             "osc_dry_run": settings.osc_dry_run,
             "address": video_catalog.osc_address,
