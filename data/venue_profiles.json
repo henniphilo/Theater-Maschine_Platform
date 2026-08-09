@@ -1,6 +1,7 @@
 {
   "version": 1,
   "active_id": "hallein",
+  "video_backup_enabled": false,
   "profiles": [
     {
       "id": "burgtheater",
@@ -23,9 +24,9 @@
         "192.168.14.12"
       ],
       "video_port": 8990,
-      "light_host": null,
-      "light_port": null,
-      "notes": "Video fan-out an beide Pixera-Rechner. Show-Mac: 192.168.14.15. Licht noch unbekannt."
+      "light_host": "192.168.4.10",
+      "light_port": 8000,
+      "notes": "Primär Pixera 192.168.14.11; .12 ist Backup (Toggle). Show-Mac: 192.168.14.15. Licht 192.168.4.10:8000."
     }
   ]
 }

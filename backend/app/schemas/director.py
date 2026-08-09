@@ -192,6 +192,40 @@ class TechnikHoldStatusResponse(BaseModel):
     light_scene_id: str | None = None
 
 
+class VideoSweepStartRequest(BaseModel):
+    scope: Literal["part1", "part2"] = "part2"
+    gap_ms: int = Field(default=100, ge=50, le=5000)
+
+
+class VideoSweepItemResult(BaseModel):
+    index: int
+    cue_name: str
+    prefix: str
+    clip_name: str
+    status: Literal["ok", "failed", "dry_run", "blocked"]
+    error: str | None = None
+    sent_at: float | None = None
+
+
+class VideoSweepStatusResponse(BaseModel):
+    active: bool
+    finished: bool = False
+    cancelled: bool = False
+    scope: str = "part2"
+    gap_ms: int = 100
+    total: int = 0
+    completed: int = 0
+    failed_count: int = 0
+    dry_run: bool = False
+    target: str = ""
+    report_path: str | None = None
+    error: str | None = None
+    started_at: str | None = None
+    finished_at: str | None = None
+    results: list[VideoSweepItemResult] = Field(default_factory=list)
+    failed: list[VideoSweepItemResult] = Field(default_factory=list)
+
+
 class LightDeskStatusResponse(BaseModel):
     tcp_connected: bool
     output: str = "tcp"
@@ -250,10 +284,17 @@ class VenueProfileResponse(BaseModel):
 class VenueProfilesResponse(BaseModel):
     active_id: str
     profiles: list[VenueProfileResponse]
+    video_backup_enabled: bool = False
+    video_backup_available: bool = False
+    video_backup_host: str | None = None
 
 
 class VenueProfileActivateRequest(BaseModel):
     profile_id: str = Field(min_length=1, max_length=40)
+
+
+class VenueVideoBackupUpdateRequest(BaseModel):
+    enabled: bool
 
 
 class VenueProfileLightUpdateRequest(BaseModel):

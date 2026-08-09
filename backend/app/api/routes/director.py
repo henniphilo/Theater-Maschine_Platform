@@ -37,6 +37,9 @@ from app.schemas.director import (
     SafetyUpdateRequest,
     TechnikHoldStatusResponse,
     TechnikStopRequest,
+    VideoSweepStartRequest,
+    VideoSweepStatusResponse,
+    VideoSweepItemResult,
     LightDeskStatusResponse,
     LightSendRequest,
     OutputTargetChannel,
@@ -51,6 +54,7 @@ from app.schemas.director import (
     VenueProfileLightUpdateRequest,
     VenueProfileResponse,
     VenueProfilesResponse,
+    VenueVideoBackupUpdateRequest,
 )
 
 router = APIRouter(prefix="/director", tags=["director"])
@@ -366,6 +370,77 @@ def get_technik_status() -> TechnikHoldStatusResponse:
     return _technik_status_response()
 
 
+def _video_sweep_status_response() -> VideoSweepStatusResponse:
+    from app.director.video_pixera_sweep import get_video_pixera_sweep_manager
+
+    state = get_video_pixera_sweep_manager(_pipeline).status()
+    results = [
+        VideoSweepItemResult(
+            index=item.index,
+            cue_name=item.cue_name,
+            prefix=item.prefix,
+            clip_name=item.clip_name,
+            status=item.status,
+            error=item.error,
+            sent_at=item.sent_at,
+        )
+        for item in state.results
+    ]
+    failed = [item for item in results if item.status in {"failed", "blocked"}]
+    return VideoSweepStatusResponse(
+        active=state.active,
+        finished=state.finished,
+        cancelled=state.cancelled,
+        scope=state.scope,
+        gap_ms=state.gap_ms,
+        total=state.total,
+        completed=state.completed,
+        failed_count=len(failed),
+        dry_run=state.dry_run,
+        target=state.target,
+        report_path=state.report_path,
+        error=state.error,
+        started_at=state.started_at,
+        finished_at=state.finished_at,
+        results=results,
+        failed=failed,
+    )
+
+
+@router.post("/technik/video-sweep/start", response_model=VideoSweepStatusResponse)
+def post_video_sweep_start(payload: VideoSweepStartRequest | None = None) -> VideoSweepStatusResponse:
+    """Send all OSC-list Pixera video cues sequentially; record transport failures."""
+    _ensure_enabled()
+    from app.director.technik_hold import get_technik_hold_manager
+    from app.director.video_pixera_sweep import get_video_pixera_sweep_manager
+
+    body = payload or VideoSweepStartRequest()
+    # Avoid overlapping held clip while sweeping projectors.
+    get_technik_hold_manager(_pipeline).stop(send_visual=True, send_sound=False, send_light=False)
+    try:
+        get_video_pixera_sweep_manager(_pipeline).start(scope=body.scope, gap_ms=body.gap_ms)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return _video_sweep_status_response()
+
+
+@router.post("/technik/video-sweep/stop", response_model=VideoSweepStatusResponse)
+def post_video_sweep_stop() -> VideoSweepStatusResponse:
+    _ensure_enabled()
+    from app.director.video_pixera_sweep import get_video_pixera_sweep_manager
+
+    get_video_pixera_sweep_manager(_pipeline).stop()
+    return _video_sweep_status_response()
+
+
+@router.get("/technik/video-sweep/status", response_model=VideoSweepStatusResponse)
+def get_video_sweep_status() -> VideoSweepStatusResponse:
+    _ensure_enabled()
+    return _video_sweep_status_response()
+
+
 def _qlab_relay_status_response() -> QlabRelayStatusResponse:
     from app.director.qlab_relay_manager import get_qlab_relay_manager
 
@@ -561,29 +636,49 @@ def patch_output_targets(payload: OutputTargetsUpdateRequest) -> OutputTargetsRe
 @router.get("/venue-profiles", response_model=VenueProfilesResponse)
 def get_venue_profiles() -> VenueProfilesResponse:
     _ensure_enabled()
-    from app.services.venue_profiles import list_profiles
+    return _venue_profiles_response()
+
+
+def _venue_profiles_response() -> VenueProfilesResponse:
+    from app.services.venue_profiles import get_active_profile, list_profiles, video_backup_available
 
     state = list_profiles()
+    active = get_active_profile()
+    backup_hosts = active.video_hosts[1:] if len(active.video_hosts) > 1 else []
     return VenueProfilesResponse(
         active_id=state.active_id,
         profiles=[_venue_profile_response(p) for p in state.profiles],
+        video_backup_enabled=state.video_backup_enabled,
+        video_backup_available=video_backup_available(active),
+        video_backup_host=backup_hosts[0] if backup_hosts else None,
     )
 
 
 @router.post("/venue-profiles/activate", response_model=VenueProfilesResponse)
 def post_venue_profile_activate(payload: VenueProfileActivateRequest) -> VenueProfilesResponse:
     _ensure_enabled()
-    from app.services.venue_profiles import activate_profile, list_profiles
+    from app.services.venue_profiles import activate_profile
 
     try:
         activate_profile(payload.profile_id)
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
-    state = list_profiles()
-    return VenueProfilesResponse(
-        active_id=state.active_id,
-        profiles=[_venue_profile_response(p) for p in state.profiles],
-    )
+    return _venue_profiles_response()
+
+
+@router.patch("/venue-profiles/video-backup", response_model=VenueProfilesResponse)
+def patch_venue_video_backup(payload: VenueVideoBackupUpdateRequest) -> VenueProfilesResponse:
+    """Enable/disable backup Pixera host(s) after the primary (e.g. Hallein .12)."""
+    _ensure_enabled()
+    from app.services.venue_profiles import set_video_backup_enabled, video_backup_available
+
+    if payload.enabled and not video_backup_available():
+        raise HTTPException(
+            status_code=400,
+            detail="Aktives Venue hat keinen Backup-Video-Host",
+        )
+    set_video_backup_enabled(payload.enabled)
+    return _venue_profiles_response()
 
 
 @router.patch("/venue-profiles/{profile_id}/light", response_model=VenueProfileResponse)

@@ -366,6 +366,9 @@ export type VenueProfile = {
 export type VenueProfiles = {
   active_id: string;
   profiles: VenueProfile[];
+  video_backup_enabled: boolean;
+  video_backup_available: boolean;
+  video_backup_host: string | null;
 };
 
 export type RuntimeSettings = {
@@ -418,6 +421,21 @@ export async function activateVenueProfile(profileId: string): Promise<VenueProf
   return res.json();
 }
 
+export async function patchVenueVideoBackup(enabled: boolean): Promise<VenueProfiles> {
+  const res = await apiFetch("/director/venue-profiles/video-backup", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ enabled })
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ detail: "Video-Backup-Toggle fehlgeschlagen" }));
+    throw new Error(
+      typeof body.detail === "string" ? body.detail : "Video-Backup-Toggle fehlgeschlagen"
+    );
+  }
+  return res.json();
+}
+
 export async function fetchRuntimeSettings(): Promise<RuntimeSettings> {
   const res = await apiFetch("/director/runtime-settings");
   if (!res.ok) throw new Error("Runtime settings unavailable");
@@ -466,6 +484,70 @@ export async function postTechnikStop(payload: TechnikStopRequest = {}): Promise
 export async function fetchTechnikStatus(): Promise<TechnikHoldStatus> {
   const res = await apiFetch("/director/technik/status");
   if (!res.ok) throw new Error("Technik status unavailable");
+  return res.json();
+}
+
+export type VideoSweepItemResult = {
+  index: number;
+  cue_name: string;
+  prefix: string;
+  clip_name: string;
+  status: "ok" | "failed" | "dry_run" | "blocked";
+  error: string | null;
+  sent_at: number | null;
+};
+
+export type VideoSweepStatus = {
+  active: boolean;
+  finished: boolean;
+  cancelled: boolean;
+  scope: string;
+  gap_ms: number;
+  total: number;
+  completed: number;
+  failed_count: number;
+  dry_run: boolean;
+  target: string;
+  report_path: string | null;
+  error: string | null;
+  started_at: string | null;
+  finished_at: string | null;
+  results: VideoSweepItemResult[];
+  failed: VideoSweepItemResult[];
+};
+
+export type VideoSweepStartRequest = {
+  scope?: "part1" | "part2";
+  gap_ms?: number;
+};
+
+export async function postVideoSweepStart(
+  payload: VideoSweepStartRequest = {}
+): Promise<VideoSweepStatus> {
+  const res = await apiFetch("/director/technik/video-sweep/start", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ detail: "Video-Sweep start failed" }));
+    throw new Error(typeof body.detail === "string" ? body.detail : "Video-Sweep start failed");
+  }
+  return res.json();
+}
+
+export async function postVideoSweepStop(): Promise<VideoSweepStatus> {
+  const res = await apiFetch("/director/technik/video-sweep/stop", { method: "POST" });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ detail: "Video-Sweep stop failed" }));
+    throw new Error(typeof body.detail === "string" ? body.detail : "Video-Sweep stop failed");
+  }
+  return res.json();
+}
+
+export async function fetchVideoSweepStatus(): Promise<VideoSweepStatus> {
+  const res = await apiFetch("/director/technik/video-sweep/status");
+  if (!res.ok) throw new Error("Video-Sweep status unavailable");
   return res.json();
 }
 

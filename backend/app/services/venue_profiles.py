@@ -44,6 +44,8 @@ class VenueProfile(BaseModel):
 class VenueProfilesState(BaseModel):
     version: int = 1
     active_id: str = "burgtheater"
+    # Extra video hosts after the first are backups (e.g. Hallein .12).
+    video_backup_enabled: bool = False
     profiles: list[VenueProfile] = Field(default_factory=list)
 
 
@@ -90,15 +92,59 @@ def _default_state() -> VenueProfilesState:
                 self_host="192.168.14.15",
                 video_hosts=["192.168.14.11", "192.168.14.12"],
                 video_port=8990,
-                light_host=None,
-                light_port=None,
+                light_host="192.168.4.10",
+                light_port=8000,
                 notes=(
-                    "Video fan-out an beide Pixera-Rechner. "
-                    "Show-Mac: 192.168.14.15. Licht noch unbekannt."
+                    "Primär Pixera 192.168.14.11; .12 ist Backup (Toggle). "
+                    "Show-Mac: 192.168.14.15. Licht 192.168.4.10:8000."
                 ),
             ),
         ],
     )
+
+
+def resolve_video_hosts(profile: VenueProfile, *, backup_enabled: bool | None = None) -> list[str]:
+    """Primary host always; additional hosts only when backup fan-out is enabled."""
+    hosts = list(profile.video_hosts)
+    if len(hosts) <= 1:
+        return hosts
+    enabled = video_backup_enabled() if backup_enabled is None else backup_enabled
+    if enabled:
+        return hosts
+    return [hosts[0]]
+
+
+def video_backup_enabled() -> bool:
+    with _lock:
+        return bool(load_state().video_backup_enabled)
+
+
+def video_backup_available(profile: VenueProfile | None = None) -> bool:
+    active = profile or get_active_profile()
+    return len(active.video_hosts) > 1
+
+
+def set_video_backup_enabled(enabled: bool, *, refresh_pipeline: bool = True) -> VenueProfilesState:
+    """Persist backup toggle and re-apply active venue video targets."""
+    from app.director.output_targets import apply_overrides, refresh_pipeline_targets
+
+    with _lock:
+        state = load_state()
+        state.video_backup_enabled = bool(enabled)
+        save_state(state)
+        profile = next((p for p in state.profiles if p.id == state.active_id), state.profiles[0])
+        hosts = resolve_video_hosts(profile, backup_enabled=state.video_backup_enabled)
+        port = profile.video_port
+
+    apply_overrides(video_hosts=hosts, video_port=port)
+    if refresh_pipeline:
+        refresh_pipeline_targets()
+    logger.info(
+        "venue_profiles: video_backup_enabled=%s video=%s",
+        enabled,
+        ",".join(hosts),
+    )
+    return list_profiles()
 
 
 def load_state() -> VenueProfilesState:
@@ -153,9 +199,10 @@ def activate_profile(profile_id: str, *, refresh_pipeline: bool = True) -> Venue
             raise KeyError(f"Unknown venue profile {profile_id!r}")
         state.active_id = profile.id
         save_state(state)
+        hosts = resolve_video_hosts(profile, backup_enabled=state.video_backup_enabled)
 
     apply_overrides(
-        video_hosts=list(profile.video_hosts),
+        video_hosts=hosts,
         video_port=profile.video_port,
         light_host=profile.light_host,
         light_port=profile.light_port,
@@ -164,11 +211,12 @@ def activate_profile(profile_id: str, *, refresh_pipeline: bool = True) -> Venue
     if refresh_pipeline:
         refresh_pipeline_targets()
     logger.info(
-        "venue_profiles: activated %s video=%s:%s light=%s",
+        "venue_profiles: activated %s video=%s:%s light=%s backup=%s",
         profile.id,
-        ",".join(profile.video_hosts),
+        ",".join(hosts),
         profile.video_port,
         f"{profile.light_host}:{profile.light_port}" if profile.light_configured else "unset",
+        state.video_backup_enabled,
     )
     return profile
 

@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import {
   activateVenueProfile,
   fetchVenueProfiles,
+  patchVenueVideoBackup,
   type VenueProfile,
   type VenueProfiles
 } from "@/lib/api/director";
@@ -46,8 +47,34 @@ export function VenueProfilePanel({ onActivated }: Props) {
     [onActivated]
   );
 
+  const toggleBackup = useCallback(
+    async (enabled: boolean) => {
+      setError("");
+      setLoading(true);
+      try {
+        const profiles = await patchVenueVideoBackup(enabled);
+        setData(profiles);
+        onActivated?.();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Backup-Toggle fehlgeschlagen");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [onActivated]
+  );
+
   const active: VenueProfile | null =
     data?.profiles.find((p) => p.id === data.active_id) ?? null;
+  const backupAvailable = Boolean(data?.video_backup_available);
+  const backupEnabled = Boolean(data?.video_backup_enabled);
+  const backupHost = data?.video_backup_host ?? active?.video_hosts[1] ?? null;
+  const effectiveHosts =
+    active == null
+      ? []
+      : backupEnabled || active.video_hosts.length <= 1
+        ? active.video_hosts
+        : [active.video_hosts[0]];
 
   return (
     <section className="panel col" style={{ gap: "0.75rem" }}>
@@ -83,10 +110,27 @@ export function VenueProfilePanel({ onActivated }: Props) {
           <div>
             Video:{" "}
             <code>
-              {active.video_hosts.join(", ")}:{active.video_port}
+              {effectiveHosts.join(", ")}:{active.video_port}
             </code>
-            {active.video_hosts.length > 1 ? " (Fan-out an alle)" : null}
+            {backupAvailable && backupEnabled ? " (inkl. Backup)" : null}
+            {backupAvailable && !backupEnabled ? " (nur Primär)" : null}
           </div>
+          {backupAvailable && backupHost ? (
+            <label
+              className="row"
+              style={{ alignItems: "center", gap: "0.5rem", marginTop: "0.35rem" }}
+            >
+              <input
+                type="checkbox"
+                checked={backupEnabled}
+                disabled={loading}
+                onChange={(e) => void toggleBackup(e.target.checked)}
+              />
+              <span>
+                Backup-Pixera <code>{backupHost}</code> mitsenden
+              </span>
+            </label>
+          ) : null}
           <div>
             Licht:{" "}
             {active.light_configured ? (

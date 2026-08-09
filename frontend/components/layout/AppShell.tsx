@@ -193,8 +193,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             </svg>
           </span>
           <div className="appSidebarBrandText">
-            <span className="appBrandMark">Theater-Maschine</span>
-            <span className="appBrandClaim">Dramaturgie · Automation · Bühne</span>
+            <span className="appBrandMark">AutoPlay</span>
+            <span className="appBrandClaim">theater-maschine</span>
           </div>
         </div>
 

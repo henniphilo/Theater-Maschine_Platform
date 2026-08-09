@@ -3,10 +3,10 @@ import Link from "next/link";
 export default function Page() {
   return (
     <main className="container homeHero">
-      <p className="textMuted" style={{ margin: 0, letterSpacing: "0.08em", textTransform: "uppercase", fontSize: "0.75rem" }}>
-        Live-Regie
+      <h1 className="homeHeroBrand">AutoPlay</h1>
+      <p className="textMuted" style={{ margin: 0, fontSize: "0.95rem", letterSpacing: "0.04em" }}>
+        theater-maschine
       </p>
-      <h1 className="homeHeroBrand">Theater-Maschine</h1>
       <p className="homeHeroLead">
         Dramaturgie schreiben, Inszenierung vorbereiten, Aufführung steuern — mit einem Menschen am Regiepult.
       </p>

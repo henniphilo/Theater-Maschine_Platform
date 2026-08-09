@@ -28,6 +28,7 @@ def _isolate_venue(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
             {
                 "version": 1,
                 "active_id": "burgtheater",
+                "video_backup_enabled": False,
                 "profiles": [
                     {
                         "id": "burgtheater",
@@ -45,8 +46,8 @@ def _isolate_venue(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
                         "self_host": "192.168.14.15",
                         "video_hosts": ["192.168.14.11", "192.168.14.12"],
                         "video_port": 8990,
-                        "light_host": None,
-                        "light_port": None,
+                        "light_host": "192.168.4.10",
+                        "light_port": 8000,
                         "notes": "test hallein",
                     },
                 ],
@@ -63,7 +64,7 @@ def _isolate_venue(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     apply_overrides(reset=True)
 
 
-def test_activate_hallein_sets_dual_video_hosts() -> None:
+def test_activate_hallein_uses_primary_only_by_default() -> None:
     res = client.post(
         "/api/v1/director/venue-profiles/activate",
         json={"profile_id": "hallein"},
@@ -71,17 +72,39 @@ def test_activate_hallein_sets_dual_video_hosts() -> None:
     assert res.status_code == 200
     body = res.json()
     assert body["active_id"] == "hallein"
+    assert body["video_backup_enabled"] is False
+    assert body["video_backup_available"] is True
+    assert body["video_backup_host"] == "192.168.14.12"
 
     hosts = effective_video_targets()
-    assert hosts == [("192.168.14.11", 8990), ("192.168.14.12", 8990)]
+    assert hosts == [("192.168.14.11", 8990)]
     assert effective_video_target() == ("192.168.14.11", 8990)
 
     targets = client.get("/api/v1/director/output-targets").json()
-    assert [h["host"] for h in targets["video"]["effective_hosts"]] == [
-        "192.168.14.11",
-        "192.168.14.12",
-    ]
+    assert [h["host"] for h in targets["video"]["effective_hosts"]] == ["192.168.14.11"]
     assert targets["venue_profile_id"] == "hallein"
+
+
+def test_enable_video_backup_fans_out_to_hallein_hosts() -> None:
+    client.post("/api/v1/director/venue-profiles/activate", json={"profile_id": "hallein"})
+    res = client.patch(
+        "/api/v1/director/venue-profiles/video-backup",
+        json={"enabled": True},
+    )
+    assert res.status_code == 200
+    body = res.json()
+    assert body["video_backup_enabled"] is True
+    assert effective_video_targets() == [
+        ("192.168.14.11", 8990),
+        ("192.168.14.12", 8990),
+    ]
+
+    disabled = client.patch(
+        "/api/v1/director/venue-profiles/video-backup",
+        json={"enabled": False},
+    )
+    assert disabled.status_code == 200
+    assert effective_video_targets() == [("192.168.14.11", 8990)]
 
 
 def test_activate_burgtheater_restores_single_host() -> None:
@@ -94,12 +117,18 @@ def test_activate_burgtheater_restores_single_host() -> None:
     assert effective_video_targets() == [("172.27.27.1", 8990)]
 
 
-def test_hallein_light_cleared_when_unknown() -> None:
+def test_activate_hallein_sets_light_target() -> None:
+    from app.director.output_targets import effective_light_target
+
     client.post("/api/v1/director/venue-profiles/activate", json={"profile_id": "burgtheater"})
-    client.post("/api/v1/director/venue-profiles/activate", json={"profile_id": "hallein"})
+    res = client.post("/api/v1/director/venue-profiles/activate", json={"profile_id": "hallein"})
+    assert res.status_code == 200
     state = venue_mod.list_profiles()
     hallein = next(p for p in state.profiles if p.id == "hallein")
-    assert hallein.light_configured is False
+    assert hallein.light_configured is True
+    assert hallein.light_host == "192.168.4.10"
+    assert hallein.light_port == 8000
+    assert effective_light_target() == ("192.168.4.10", 8000)
 
 
 def test_pixera_bridge_fans_out_to_all_hosts(monkeypatch: pytest.MonkeyPatch) -> None:

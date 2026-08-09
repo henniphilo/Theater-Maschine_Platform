@@ -49,6 +49,7 @@ app/director/run_state.py
 app/director/runtime_settings.py
 app/director/signal_trace_analysis.py
 app/director/technik_hold.py
+app/director/video_pixera_sweep.py
 app/director/cues/__init__.py
 app/director/cues/cue_models.py
 app/director/cues/cue_points.py
@@ -339,6 +340,7 @@ tests/test_teil2_text_alignment.py
 tests/test_touchdesigner_bridge.py
 tests/test_venue_profiles.py
 tests/test_video_pixera_aliases.py
+tests/test_video_pixera_sweep.py
 tests/test_video_scope.py
 tests/test_visual_outputs.py
 tests/test_visualize_show_logs.py

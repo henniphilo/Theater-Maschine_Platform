@@ -8,6 +8,7 @@ import {
   fetchOutputTargets,
   fetchQlabRelayStatus,
   fetchTechnikStatus,
+  fetchVideoSweepStatus,
   patchOutputTargets,
   postLightConnect,
   postLightDisconnect,
@@ -19,10 +20,13 @@ import {
   postQlabRelayStop,
   postTechnikStart,
   postTechnikStop,
+  postVideoSweepStart,
+  postVideoSweepStop,
   type LightDeskStatus,
   type OutputTargets,
   type QlabRelayStatus,
-  type TechnikHoldStatus
+  type TechnikHoldStatus,
+  type VideoSweepStatus
 } from "@/lib/api/director";
 import { fetchMediaCatalog } from "@/lib/api/media";
 import type { MediaCatalog } from "@/lib/types/media";
@@ -61,6 +65,8 @@ export function OscTestPanel() {
   const [targetsDirty, setTargetsDirty] = useState(false);
   const [relayStatus, setRelayStatus] = useState<QlabRelayStatus | null>(null);
   const [relayLoading, setRelayLoading] = useState(false);
+  const [sweepStatus, setSweepStatus] = useState<VideoSweepStatus | null>(null);
+  const [sweepLoading, setSweepLoading] = useState(false);
 
   const refreshLightOscLog = useCallback(async () => {
     try {
@@ -82,6 +88,7 @@ export function OscTestPanel() {
       })
       .catch(() => setLightStatus(null));
     fetchQlabRelayStatus().then(setRelayStatus).catch(() => setRelayStatus(null));
+    fetchVideoSweepStatus().then(setSweepStatus).catch(() => setSweepStatus(null));
     void refreshLightOscLog();
   }, [refreshLightOscLog]);
 
@@ -110,6 +117,14 @@ export function OscTestPanel() {
     const id = setInterval(refreshStatus, 2000);
     return () => clearInterval(id);
   }, [refreshStatus]);
+
+  useEffect(() => {
+    if (!sweepStatus?.active) return;
+    const id = setInterval(() => {
+      fetchVideoSweepStatus().then(setSweepStatus).catch(() => setSweepStatus(null));
+    }, 400);
+    return () => clearInterval(id);
+  }, [sweepStatus?.active]);
 
   const reloadTargetsFromServer = useCallback(async () => {
     const targets = await fetchOutputTargets();
@@ -179,6 +194,32 @@ export function OscTestPanel() {
       setVideoLoading(false);
     }
   }, []);
+
+  const startVideoSweep = useCallback(async () => {
+    setError("");
+    setSweepLoading(true);
+    try {
+      setSweepStatus(await postVideoSweepStart({ scope: "part2", gap_ms: 100 }));
+      refreshStatus();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Video-Sweep fehlgeschlagen");
+    } finally {
+      setSweepLoading(false);
+    }
+  }, [refreshStatus]);
+
+  const stopVideoSweep = useCallback(async () => {
+    setError("");
+    setSweepLoading(true);
+    try {
+      setSweepStatus(await postVideoSweepStop());
+      refreshStatus();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Video-Sweep-Stopp fehlgeschlagen");
+    } finally {
+      setSweepLoading(false);
+    }
+  }, [refreshStatus]);
 
   const sendSound = useCallback(async () => {
     setError("");
@@ -420,6 +461,11 @@ export function OscTestPanel() {
   const lightConnected = lightStatus?.tcp_connected ?? false;
   const lightActive = Boolean(lightStatus?.scene_id || lightStatus?.hold_active);
   const videoHolding = Boolean(holdStatus?.active && holdStatus.send_visual);
+  const sweepActive = Boolean(sweepStatus?.active);
+  const sweepProgress =
+    sweepStatus && sweepStatus.total > 0
+      ? Math.min(100, Math.round((sweepStatus.completed / sweepStatus.total) * 100))
+      : 0;
   const soundHolding = Boolean(holdStatus?.active && holdStatus.send_sound);
 
   return (
@@ -494,7 +540,7 @@ export function OscTestPanel() {
       </div>
 
       <div className="oscTestGrid">
-        <div className={`oscTestGroup${videoHolding ? " oscTestGroupActive" : ""}`}>
+        <div className={`oscTestGroup${videoHolding || sweepActive ? " oscTestGroupActive" : ""}`}>
           <div className="oscTestGroupHead">
             <span className="oscTestGroupIcon oscTestGroupIconVideo" aria-hidden="true">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
@@ -504,8 +550,12 @@ export function OscTestPanel() {
             </span>
             <div>
               <h3>Video</h3>
-              <p className={videoHolding ? "oscTestActive" : "oscTestIdle"} role="status">
-                {videoHolding ? `halten · Clip ${holdStatus?.clip_id}` : "inaktiv"}
+              <p className={videoHolding || sweepActive ? "oscTestActive" : "oscTestIdle"} role="status">
+                {sweepActive
+                  ? `Sweep ${sweepStatus?.completed ?? 0}/${sweepStatus?.total ?? 0}`
+                  : videoHolding
+                    ? `halten · Clip ${holdStatus?.clip_id}`
+                    : "inaktiv"}
               </p>
             </div>
           </div>
@@ -560,15 +610,90 @@ export function OscTestPanel() {
             </select>
           </label>
           <div className="row oscTestActions">
-            <button type="button" disabled={videoLoading} onClick={() => void sendVideo()}>
+            <button type="button" disabled={videoLoading || sweepActive} onClick={() => void sendVideo()}>
               Signal senden
             </button>
-            <button type="button" className="machineStartBtn" disabled={videoLoading} onClick={() => void holdVideo()}>
+            <button
+              type="button"
+              className="machineStartBtn"
+              disabled={videoLoading || sweepActive}
+              onClick={() => void holdVideo()}
+            >
               Signal halten
             </button>
-            <button type="button" className="oscTestStopBtn" disabled={videoLoading} onClick={() => void stopVideo()}>
+            <button
+              type="button"
+              className="oscTestStopBtn"
+              disabled={videoLoading || sweepActive}
+              onClick={() => void stopVideo()}
+            >
               Signal stoppen
             </button>
+          </div>
+          <div className="oscTestSweep">
+            <p className="textMuted oscTestTarget">
+              Pro Clip OSC an alle verfügbaren Projektoren (RZ21, Adam, Eva, LED), dann 100 ms Pause
+              bis zum nächsten Clip. Transportfehler werden dokumentiert; Pixera-interne fehlende
+              Timelines erkennt UDP nicht automatisch.
+            </p>
+            <div className="row oscTestActions">
+              <button
+                type="button"
+                className="machineStartBtn"
+                disabled={sweepLoading || sweepActive || !videoUsesPixera}
+                onClick={() => void startVideoSweep()}
+              >
+                Alle Video-Cues sweepen
+              </button>
+              <button
+                type="button"
+                className="oscTestStopBtn"
+                disabled={sweepLoading || !sweepActive}
+                onClick={() => void stopVideoSweep()}
+              >
+                Sweep stoppen
+              </button>
+            </div>
+            {sweepStatus && (sweepStatus.active || sweepStatus.finished) ? (
+              <div className="oscTestLog" aria-live="polite">
+                <div className="machineProgressRow">
+                  <div className="machineProgressTrack" aria-hidden="true">
+                    <div className="machineProgressFill" style={{ width: `${sweepProgress}%` }} />
+                  </div>
+                  <p className="textMuted" style={{ margin: 0 }}>
+                    {sweepStatus.completed}/{sweepStatus.total}
+                    {sweepStatus.gap_ms ? ` · ${sweepStatus.gap_ms} ms` : ""}
+                    {sweepStatus.dry_run ? " · DRY-RUN" : ""}
+                    {sweepStatus.cancelled ? " · abgebrochen" : ""}
+                    {sweepStatus.finished && !sweepStatus.active
+                      ? ` · ${sweepStatus.failed_count} fehlgeschlagen`
+                      : null}
+                  </p>
+                </div>
+                {sweepStatus.failed_count > 0 ? (
+                  <ul className="oscLogList">
+                    {sweepStatus.failed.map((item) => (
+                      <li key={`${item.index}-${item.clip_name}`}>
+                        {item.clip_name}
+                        {item.error ? ` — ${item.error}` : ` — ${item.status}`}
+                      </li>
+                    ))}
+                  </ul>
+                ) : sweepStatus.finished ? (
+                  <p className="textMuted">Keine Transportfehler.</p>
+                ) : null}
+                {sweepStatus.report_path ? (
+                  <p className="textMuted" style={{ marginBottom: 0 }}>
+                    Report: <code>{sweepStatus.report_path}</code>
+                  </p>
+                ) : null}
+                {sweepStatus.error ? (
+                  <p className="textError" role="alert">
+                    {sweepStatus.error}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
           </div>
         </div>
 

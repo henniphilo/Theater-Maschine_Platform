@@ -1569,6 +1569,12 @@ select:disabled {
   background: var(--color-bg-secondary);
 }
 
+.oscTestSweep {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
 .oscLogList {
   list-style: none;
   padding: 0;

@@ -11,8 +11,8 @@ const sourceSans = Source_Sans_3({
 });
 
 export const metadata = {
-  title: "Theater-Maschine",
-  description: "Dramaturgie. Automation. Bühne."
+  title: "AutoPlay",
+  description: "theater-maschine — Dramaturgie. Automation. Bühne."
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
