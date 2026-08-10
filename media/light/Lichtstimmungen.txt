@@ -20,7 +20,7 @@ Quelle: `media/light/Light Channels KI.txt` · Preset **Pr.91** wo nicht anders 
 | blendung_zuschauerraum | Ch. 11–19 | Alias: Zuschauerraum Blendung (wie vorbuehnenzug) |
 | musiker | Ch. 46 | Musiker (Erweiterung Inventar) |
 | palmen | Ch. 372, 37 | Palmen (Erweiterung Inventar) |
-| lautsprecher_buehne | Ch. 34 | Lautsprecher Bühne |
+| lautsprecher_buehne | Ch. 44 | Lautsprecher Bühne |
 | warme_buehnenflaeche | Ch. 6, 10 | Warme Fläche Bühne |
 | luster_treppen | Ch. 151, 152 | Luster Treppen |
 | blackout | /eos/key/out | Alles aus |

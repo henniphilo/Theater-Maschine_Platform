@@ -97,6 +97,14 @@ export function SignalMonitoringPanel() {
     el.scrollTop = el.scrollHeight;
   }, [lines]);
 
+  function clearTerminal() {
+    // Drop the UI buffer only. Keep prevTail so the next poll appends only
+    // lines written after clear — not the whole osc.log window again.
+    setLines([]);
+    setError("");
+    stickToBottom.current = true;
+  }
+
   const tryout = status?.safety.performance_tryout;
   const emergency = status?.safety.emergency_stop_active;
 
@@ -107,13 +115,23 @@ export function SignalMonitoringPanel() {
           <h2>Signal-Monitoring</h2>
           <p className="textMuted">Terminal-Ausgabe · OSC / MIDI (logs/osc.log)</p>
         </div>
-        <span
-          className={
-            emergency ? "liveSignalChip" : "liveSignalChip liveSignalChipOn"
-          }
-        >
-          {emergency ? "Emergency" : tryout ? "Probe" : "Live"}
-        </span>
+        <div className="signalMonitorHeaderActions">
+          <button
+            type="button"
+            disabled={lines.length === 0 && !error}
+            onClick={clearTerminal}
+            aria-label="Terminal-Ausgabe leeren"
+          >
+            Clear
+          </button>
+          <span
+            className={
+              emergency ? "liveSignalChip" : "liveSignalChip liveSignalChipOn"
+            }
+          >
+            {emergency ? "Emergency" : tryout ? "Probe" : "Live"}
+          </span>
+        </div>
       </header>
 
       <div className="signalMonitorMeta" aria-label="Aktive Cues">

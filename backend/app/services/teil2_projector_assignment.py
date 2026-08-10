@@ -2,12 +2,16 @@
 
 from __future__ import annotations
 
+from typing import TypeVar
+
 from app.director.cues.cue_models import VisualCue, VisualOutputAssignment
 from app.schemas.inszenierung import AvatarSpeechLayer
 
 ALL_PROJECTORS: tuple[str, ...] = ("rz21", "adam", "eva", "led")
 # Side beamers first for atmosphere + avatar rotation (Adam/Eva Bühnenbeamer).
 STAGE_BEAMER_ORDER: tuple[str, ...] = ("adam", "eva", "rz21", "led")
+# Adam/Eva must never go dark when free — atmosphere fills them whenever no avatar owns them.
+STAGE_ALWAYS_ATMOSPHERE: tuple[str, ...] = ("adam", "eva")
 
 AVATAR_DEFAULT_PROJECTOR: dict[str, str] = {
     "delphin": "rz21",
@@ -17,10 +21,44 @@ AVATAR_DEFAULT_PROJECTOR: dict[str, str] = {
     "wolf": "led",
 }
 
+T = TypeVar("T")
+
 
 def projector_mode_for_anarchy(anarchy_level: float) -> str:
     """single = one primary beamer; all = primary may be mirrored to more surfaces."""
     return "all" if anarchy_level >= 0.5 else "single"
+
+
+def chorus_performer_count(candidate_count: int, anarchy_level: float) -> int:
+    """How many same-text avatar clips perform at this anarchy level.
+
+    Multiple CSV rows can share identical text (chorus candidates). The rule is:
+    low anarchy → one performer; mid → up to two; high → full chorus.
+    """
+    if candidate_count <= 1:
+        return candidate_count
+    if anarchy_level < 0.35:
+        return 1
+    if anarchy_level < 0.65:
+        return min(2, candidate_count)
+    return candidate_count
+
+
+def select_chorus_candidates(
+    candidates: list[T],
+    *,
+    anarchy_level: float,
+    seed: int = 0,
+) -> list[T]:
+    """Pick which same-text avatar videos perform (one, some, or all)."""
+    if not candidates:
+        return []
+    count = chorus_performer_count(len(candidates), anarchy_level)
+    if count >= len(candidates):
+        return list(candidates)
+    start = seed % len(candidates)
+    rotated = candidates[start:] + candidates[:start]
+    return rotated[:count]
 
 
 def mirror_count_for_anarchy(anarchy_level: float) -> int:
@@ -79,6 +117,33 @@ def pick_atmosphere_projectors(
     if not pool:
         return ["rz21"] * max(1, count)
     return [pool[(seed + index) % len(pool)] for index in range(max(1, count))]
+
+
+def atmosphere_targets_for_free(
+    free: list[str],
+    *,
+    anarchy: float,
+    seed: int = 0,
+) -> list[str]:
+    """Beamers that get atmosphere at this tick.
+
+    Adam and Eva are always filled when free (no avatar). Additional free surfaces
+    (rz21, led) escalate with anarchy.
+    """
+    free_set = set(free)
+    always = [p for p in STAGE_ALWAYS_ATMOSPHERE if p in free_set]
+    others = [p for p in STAGE_BEAMER_ORDER if p in free_set and p not in always]
+    if anarchy < 0.35:
+        extra_n = 0
+    elif anarchy < 0.55:
+        extra_n = min(1, len(others))
+    else:
+        extra_n = len(others)
+    if not others or extra_n <= 0:
+        return always
+    start = seed % len(others)
+    ordered = others[start:] + others[:start]
+    return always + ordered[:extra_n]
 
 
 def mirror_outputs_for_clip(

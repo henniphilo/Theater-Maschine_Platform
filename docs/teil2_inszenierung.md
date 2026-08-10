@@ -47,7 +47,7 @@ Legacy-Routen `/inszenierung/analyse` und `/inszenierung/komposition` leiten auf
 ### Zwei Cue-Spuren
 
 1. **Textgebunden** (`dramaturgy.cue_points`): Chunkweise LLM-Zuweisung — das LLM **findet selbst** dramaturgisch auffällige Stichworte im Text (keine vorgegebene Wortliste), mehrere Cues pro Abschnitt, stimmungsunabhängig, Anarchie steigt mit Textposition.
-2. **Atmosphäre parallel** (`atmosphere_cue_points`): zeitbasierte B-Roll-/Begleit-Clips auf **allen freien** Beamern (ohne laufenden Avatar). Anzahl und Dichte steigen mit der Anarchie-Kurve.
+2. **Atmosphäre parallel** (`atmosphere_cue_points`): zeitbasierte B-Roll-/Begleit-Clips. **Adam und Eva** bekommen Atmosphäre, sobald dort kein Avatar läuft; weitere freie Beamer je nach Anarchie.
 
 Teil 2 nutzt **keine** Multi-LLM-Diskussion wie Teil 1. Chunkweise Stichwort-Entdeckung + Cue-Zuweisung durch das LLM; Regel-Fallback (`extract_text_fallback_keywords`) nur ohne API.
 
@@ -75,13 +75,17 @@ Quelle: `media/video/Avatar Textzuordnung.csv` (export aus `Textzuordnung Del-Wo
 
 1. CSV-Zeilen in **Aufführungsreihenfolge** (`csv_sequence_index`)
 2. Performance-Text und CSV-`text` normalisieren → `char_offset` im Skript
-3. Chorus: aufeinanderfolgende gleiche Texte → ein Segment, mehrere `avatar_layers` (gleicher Moment, verschiedene Projektoren/Clips — OSC aus `OSCBefehllisteAvatare.txt`)
-4. Atmosphäre parallel auf **freien** Beamern (`OSCBefehllisteOhneAvatare.txt`)
-5. Nicht gefundene Zeilen → `alignment_warnings`
+3. Chorus-Kandidaten: aufeinanderfolgende gleiche Texte → ein Segment, `csv_cue_ids` = alle Kandidaten
+4. **Chorus-Auswahl** (wer performt): Anarchie entscheidet, ob **einer**, **zwei** oder **alle** Kandidaten spielen (`select_chorus_candidates` → `avatar_layers`)
+   - `< 0.35`: ein Performer (rotiert über Segmente)
+   - `< 0.65`: bis zu zwei parallel
+   - `≥ 0.65`: voller Chorus (alle Clips, verschiedene Projektoren)
+5. Atmosphäre parallel: **Adam und Eva stets belegt**, solange kein Avatar dort läuft — sonst Atmosphäre (`OSCBefehllisteOhneAvatare.txt`). Weitere freie Beamer (rz21, led) je nach Anarchie
+6. Nicht gefundene Zeilen → `alignment_warnings`
 
-**Playback:** Avatar-OSC nur **eins nach dem anderen** in CSV-Reihenfolge, wenn die TTS-Stimme den Textanker (`char_offset`) erreicht — kein Nachladen aller offenen Clips am Ende.
+**Playback:** Avatar-OSC nur **eins nach dem anderen** in CSV-Reihenfolge, wenn die TTS-Stimme den Textanker (`char_offset`) erreicht — kein Nachladen aller offenen Clips am Ende. Chorus-Layer eines Segments feuern gleichzeitig.
 
-Beispiel: Stimme erreicht «24 Der Bärenklauer…» → OSC `KI_Adam.BK1_Caro` (Chorus ggf. parallel auf Eva/RZ21).
+Beispiel: Stimme erreicht «24 Der Bärenklauer…» → OSC `KI_Adam.BK1_Caro` (bei höherer Anarchie ggf. weitere Kandidaten parallel auf Eva/RZ21).
 
 Alte Pläne ohne `char_offset` / `csv_sequence_index` — einmal **neu vorbereiten**.
 

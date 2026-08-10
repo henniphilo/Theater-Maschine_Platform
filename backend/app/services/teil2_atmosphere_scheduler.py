@@ -22,6 +22,7 @@ from app.services.part2_cue_density import cue_intervals_for_anarchy
 from app.services.teil2_projector_assignment import (
     ALL_PROJECTORS,
     STAGE_BEAMER_ORDER,
+    atmosphere_targets_for_free,
     pick_atmosphere_projectors,
 )
 from app.services.video_scope import _clip_ids_for_scope
@@ -195,16 +196,19 @@ def _anarchy_at_time(time_sec: float, total_sec: float, curve: AnarchyCurve) -> 
 
 
 def atmosphere_fill_count(free_count: int, anarchy: float) -> int:
-    """How many free beamers get Begleitvideo — escalates with anarchy."""
+    """Legacy helper: how many free beamers get Begleitvideo (anarchy escalation).
+
+    Prefer ``atmosphere_targets_for_free`` — Adam/Eva are always filled when free.
+    """
     if free_count <= 0:
         return 0
-    if anarchy < 0.15:
-        return 0
+    # Approximate: always prefer at least the two stage beamers when available.
+    always = min(2, free_count)
+    others = max(0, free_count - always)
     if anarchy < 0.35:
-        return min(1, free_count)
+        return always
     if anarchy < 0.55:
-        return min(2, free_count)
-    # Mid/high anarchy: cover every beamer that is not playing an avatar.
+        return always + min(1, others)
     return free_count
 
 
@@ -225,11 +229,17 @@ def _fill_free_projectors_at(
     pool: list[str],
     clip_index: int,
 ) -> tuple[list[CuePoint], int]:
-    """Place distinct Begleitclips on free beamers for one time tick."""
-    fill_n = atmosphere_fill_count(len(free), anarchy)
-    if fill_n <= 0 or not pool:
+    """Place distinct Begleitclips on free beamers for one time tick.
+
+    Adam/Eva always get atmosphere when free; other free beamers escalate with anarchy.
+    """
+    if not free or not pool:
         return [], clip_index
-    targets = _ordered_free_projectors(free, seed=int(time_sec * 10) + clip_index)[:fill_n]
+    targets = atmosphere_targets_for_free(
+        free, anarchy=anarchy, seed=int(time_sec * 10) + clip_index
+    )
+    if not targets:
+        return [], clip_index
     points: list[CuePoint] = []
     next_index = clip_index
     for projector in targets:
@@ -327,21 +337,25 @@ def _expand_points_onto_free_projectors(
 
         free = [p for p in free_projectors_at(windows, time_sec) if p not in used]
         anarchy = _anarchy_at_time(time_sec, total_sec, curve)
-        # Already have some cues — fill remaining free up to fill_count total.
-        already = len(used)
-        target_total = atmosphere_fill_count(already + len(free), anarchy)
-        need = max(0, target_total - already)
-        if need <= 0 or not free:
+        # Fill remaining free beamers up to the Adam/Eva + anarchy target set.
+        target_set = set(
+            atmosphere_targets_for_free(
+                list(used) + free,
+                anarchy=max(anarchy, 0.55),
+                seed=int(time_sec * 10),
+            )
+        )
+        need_projectors = [p for p in target_set if p not in used and p in free]
+        if not need_projectors:
             continue
         batch, clip_index = _fill_free_projectors_at(
             time_sec=time_sec,
-            free=free,
-            anarchy=max(anarchy, 0.55),  # force fill remaining once a tick exists
+            free=need_projectors,
+            anarchy=max(anarchy, 0.55),
             pool=pool,
             clip_index=clip_index,
         )
-        # atmosphere_fill_count with boosted anarchy may overshoot — trim to need
-        expanded.extend(batch[:need])
+        expanded.extend(batch)
 
     expanded.sort(key=lambda item: item.time_offset_sec)
     return expanded
@@ -434,9 +448,11 @@ class Teil2AtmosphereScheduler:
             "Plane Atmosphären-/Begleit-Videos (OhneAvatare) auf FREIEN Beamern.\n"
             "KEIN Dialog. Stimmungsunabhängig — variiere Clips nach Zeit/Anarchie, nicht nach Text.\n"
             f"Rhythmus: alle {video_interval[0]:.0f}–{video_interval[1]:.0f}s neue Clips.\n"
+            "Pflicht: Adam und Eva müssen immer etwas zeigen, sobald kein Avatar dort läuft "
+            "(Atmosphäre auf jedem freien Adam/Eva).\n"
             "Pro Zeitstempel: mehrere cue_points mit gleichem time_offset_sec, "
             "je ein anderer freier Projektor (Begleitung parallel zu Avataren).\n"
-            "Je höher die Anarchie, desto mehr freie Flächen gleichzeitig belegen.\n"
+            "Je höher die Anarchie, desto mehr zusätzliche freie Flächen (rz21, led).\n"
             f"Nur clip_id aus: {clip_sample}\n"
             f"Projektoren: rz21, adam, eva, led — nur freie zum jeweiligen time_offset_sec.\n"
             f"Gesamtdauer: {total_sec:.0f}s\n\n"

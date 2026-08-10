@@ -46,7 +46,7 @@ def _isolate_venue(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
                         "self_host": "192.168.14.15",
                         "video_hosts": ["192.168.14.11", "192.168.14.12"],
                         "video_port": 8990,
-                        "light_host": "192.168.4.10",
+                        "light_host": "192.168.4.9",
                         "light_port": 8000,
                         "notes": "test hallein",
                     },
@@ -126,9 +126,9 @@ def test_activate_hallein_sets_light_target() -> None:
     state = venue_mod.list_profiles()
     hallein = next(p for p in state.profiles if p.id == "hallein")
     assert hallein.light_configured is True
-    assert hallein.light_host == "192.168.4.10"
+    assert hallein.light_host == "192.168.4.9"
     assert hallein.light_port == 8000
-    assert effective_light_target() == ("192.168.4.10", 8000)
+    assert effective_light_target() == ("192.168.4.9", 8000)
 
 
 def test_pixera_bridge_fans_out_to_all_hosts(monkeypatch: pytest.MonkeyPatch) -> None:

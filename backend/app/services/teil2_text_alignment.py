@@ -10,7 +10,11 @@ from app.schemas.inszenierung import AvatarSpeechLayer, AvatarTextSegment
 from app.services.avatar_duration import layer_duration_ms
 from app.services.avatar_speech_catalog import normalize_avatar_text
 from app.services.inszenierung_validation import normalize_whitespace
-from app.services.teil2_projector_assignment import assign_projectors_for_layers, build_avatar_visual_cue
+from app.services.teil2_projector_assignment import (
+    assign_projectors_for_layers,
+    build_avatar_visual_cue,
+    select_chorus_candidates,
+)
 from app.services.text_split import sentence_char_ranges, sentence_index_at_offset
 
 _UNICODE_BREAK_CHARS = frozenset(
@@ -133,13 +137,23 @@ def align_avatar_csv_to_script(
     cues: list[AvatarSpeechCue],
     *,
     anarchy_level: float = 0.2,
+    anarchy_curve: tuple[float, float] | None = None,
 ) -> tuple[list[AvatarTextSegment], list[str]]:
     ranges = sentence_char_ranges(script_text)
     warnings: list[str] = []
     segments: list[AvatarTextSegment] = []
     used_projectors: set[str] = set()
+    groups = group_cues_into_segments(cues)
+    group_count = max(1, len(groups))
 
-    for sequence_index, group in enumerate(group_cues_into_segments(cues)):
+    for sequence_index, group in enumerate(groups):
+        if anarchy_curve is not None:
+            start, end = anarchy_curve
+            t = sequence_index / max(1, group_count - 1) if group_count > 1 else 0.0
+            level = start + (end - start) * t
+        else:
+            level = anarchy_level
+
         cue_text = group[0].text
         offset = find_text_offset(script_text, cue_text)
         if offset is None:
@@ -151,18 +165,22 @@ def align_avatar_csv_to_script(
         end_offset = offset + max(20, len(normalize_whitespace(cue_text)) - 1)
         end_index = sentence_index_at_offset(ranges, min(end_offset, len(script_text) - 1))
 
+        # Same text → candidates; anarchy decides one / some / all perform.
+        performers = select_chorus_candidates(
+            group, anarchy_level=level, seed=sequence_index
+        )
         layers = assign_projectors_for_layers(
-            _layers_from_cues(group),
-            anarchy_level=anarchy_level,
+            _layers_from_cues(performers),
+            anarchy_level=level,
             used=used_projectors,
             seed=sequence_index,
         )
         enriched_layers: list[AvatarSpeechLayer] = []
         for layer_index, layer in enumerate(layers):
-            cue = group[layer_index]
+            cue = performers[layer_index]
             visual = build_avatar_visual_cue(
                 layer,
-                anarchy_level=anarchy_level,
+                anarchy_level=level,
                 duration_ms=layer_duration_ms(cue),
             )
             enriched_layers.append(layer.model_copy(update={"visual_cue": visual}))

@@ -30,6 +30,33 @@ def test_chorus_gets_distinct_projectors():
     assert all(len(layer.outputs) == 1 for layer in assigned)
 
 
+def test_chorus_performer_count_by_anarchy():
+    from app.services.teil2_projector_assignment import (
+        chorus_performer_count,
+        select_chorus_candidates,
+    )
+
+    candidates = ["a", "b", "c"]
+    assert chorus_performer_count(3, 0.2) == 1
+    assert chorus_performer_count(3, 0.5) == 2
+    assert chorus_performer_count(3, 0.8) == 3
+    assert select_chorus_candidates(candidates, anarchy_level=0.2, seed=0) == ["a"]
+    assert select_chorus_candidates(candidates, anarchy_level=0.2, seed=1) == ["b"]
+    assert len(select_chorus_candidates(candidates, anarchy_level=0.5, seed=0)) == 2
+
+
+def test_atmosphere_targets_always_include_adam_eva_when_free():
+    from app.services.teil2_projector_assignment import atmosphere_targets_for_free
+
+    low = atmosphere_targets_for_free(["adam", "eva", "rz21", "led"], anarchy=0.1, seed=0)
+    assert low == ["adam", "eva"]
+    high = atmosphere_targets_for_free(["adam", "eva", "led"], anarchy=0.8, seed=0)
+    assert set(high) == {"adam", "eva", "led"}
+    # Avatar owns adam — only free stage beamer stays mandatory.
+    only_eva = atmosphere_targets_for_free(["eva", "led"], anarchy=0.1, seed=0)
+    assert only_eva == ["eva"]
+
+
 def test_chorus_high_anarchy_mirrors_same_clip_onto_free_beamers():
     layers = [
         AvatarSpeechLayer(avatar_speech_id="BK1", avatar="baerenklau", video_clip_id="bk1_caro"),

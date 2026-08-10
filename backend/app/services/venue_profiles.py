@@ -92,11 +92,11 @@ def _default_state() -> VenueProfilesState:
                 self_host="192.168.14.15",
                 video_hosts=["192.168.14.11", "192.168.14.12"],
                 video_port=8990,
-                light_host="192.168.4.10",
+                light_host="192.168.4.9",
                 light_port=8000,
                 notes=(
                     "Primär Pixera 192.168.14.11; .12 ist Backup (Toggle). "
-                    "Show-Mac: 192.168.14.15. Licht 192.168.4.10:8000."
+                    "Show-Mac: 192.168.14.15. Licht 192.168.4.9:8000 (EOS TCP)."
                 ),
             ),
         ],

@@ -33,6 +33,7 @@ from app.services.teil2_projector_assignment import (
     assign_projectors_for_layers,
     build_avatar_visual_cue,
     projector_mode_for_anarchy,
+    select_chorus_candidates,
 )
 
 SCRIPT_SOURCE = "avatar_delfin_wolf"
@@ -218,8 +219,13 @@ def build_timeline_from_csv(
         mode = projector_mode_for_anarchy(moment.anarchy_level)
         moment.projector_mode = mode  # type: ignore[assignment]
         if moment.avatar_layers:
-            assigned = assign_projectors_for_layers(
+            performers = select_chorus_candidates(
                 moment.avatar_layers,
+                anarchy_level=moment.anarchy_level,
+                seed=moment.order,
+            )
+            assigned = assign_projectors_for_layers(
+                performers,
                 anarchy_level=moment.anarchy_level,
                 used=used_projectors,
                 seed=moment.order,
@@ -243,6 +249,9 @@ def build_timeline_from_csv(
             if len(assigned) == 1:
                 moment.avatar_speech_id = assigned[0].avatar_speech_id
                 moment.avatar_video_clip_id = assigned[0].video_clip_id
+            else:
+                moment.avatar_speech_id = None
+                moment.avatar_video_clip_id = None
         moment.overlap_with_previous = (
             overlap_for_anarchy(moment.anarchy_level) if moment.order > 0 else 0.0
         )

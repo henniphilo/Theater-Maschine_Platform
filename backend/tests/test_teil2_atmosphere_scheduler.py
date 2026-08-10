@@ -42,11 +42,62 @@ def test_free_projectors_excludes_avatar_beamer() -> None:
 
 
 def test_atmosphere_fill_count_escalates_with_anarchy() -> None:
-    assert atmosphere_fill_count(3, 0.1) == 0
-    assert atmosphere_fill_count(3, 0.25) == 1
-    assert atmosphere_fill_count(3, 0.45) == 2
+    # Adam/Eva always count toward fill when free (approx. always=2 of 3).
+    assert atmosphere_fill_count(3, 0.1) == 2
+    assert atmosphere_fill_count(3, 0.4) == 3
     assert atmosphere_fill_count(3, 0.7) == 3
-    assert atmosphere_fill_count(1, 0.9) == 1
+    assert atmosphere_fill_count(1, 0.1) == 1
+    assert atmosphere_fill_count(0, 0.9) == 0
+
+
+def test_rule_fallback_always_covers_adam_eva_when_free(monkeypatch) -> None:
+    monkeypatch.setattr("app.core.config.settings.director_dramaturgy_mode", "rules")
+    from app.services.teil2_atmosphere_scheduler import Teil2AtmosphereScheduler
+
+    script = "A" * 1500
+    # Avatar only on rz21 — Adam/Eva must get atmosphere even at low anarchy.
+    segments = [
+        AvatarTextSegment(
+            csv_cue_ids=["bak1"],
+            text_excerpt="avatar",
+            char_offset=100,
+            start_sentence_index=0,
+            end_sentence_index=0,
+            avatar_layers=[
+                AvatarSpeechLayer(
+                    avatar_speech_id="bak1",
+                    avatar="baerenklau",
+                    video_clip_id="bak1_clip",
+                    projector="rz21",
+                    outputs=[VisualOutputAssignment(output_id="rz21", clip_id="bak1_clip")],
+                )
+            ],
+        )
+    ]
+    scheduler = Teil2AtmosphereScheduler()
+    points = __import__("asyncio").run(
+        scheduler.schedule(
+            script_text=script,
+            sentences=["Satz."],
+            segments=segments,
+            gesamtkonzept=__import__(
+                "app.schemas.inszenierung", fromlist=["Gesamtkonzept"]
+            ).Gesamtkonzept(anarchy_curve=AnarchyCurve(start=0.05, end=0.2)),
+            dramaturgy=DramaturgyDecision(
+                reason="test", tags=[], mood="calm", intensity=0.2, cue_points=[]
+            ),
+            avatar_clip_ids={"bak1_clip"},
+        )
+    )
+    assert points
+    projectors = {
+        p.visual.projector
+        for p in points
+        if p.visual is not None and p.visual.projector
+    }
+    assert "adam" in projectors
+    assert "eva" in projectors
+    assert "rz21" not in projectors
 
 
 def test_rule_fallback_produces_time_cues(monkeypatch) -> None:

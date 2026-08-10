@@ -165,6 +165,7 @@ class Teil2PrepareService:
             script_text,
             catalog.cues,
             anarchy_level=0.35,
+            anarchy_curve=(0.35, 1.0),
         )
 
     async def _compact_analyse(self, corpus: SceneCorpus, *, openai_model: str) -> Gesamtkonzept:

@@ -160,9 +160,9 @@
     },
     {
       "id": "lautsprecher_buehne",
-      "description": "Lautsprecher auf der Bühne — Ch. 34",
+      "description": "Lautsprecher auf der Bühne — Ch. 44",
       "location": "Bühne",
-      "channels": ["34"],
+      "channels": ["44"],
       "fixtures": ["OL 3er"],
       "moods": ["technik", "lautsprecher", "buehne"],
       "intensity_min": 0.3,

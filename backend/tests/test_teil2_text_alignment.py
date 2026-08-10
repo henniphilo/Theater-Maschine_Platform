@@ -39,7 +39,7 @@ def test_align_finds_baerenklauer_sentence_index():
     assert segments[0].avatar_layers[0].visual_cue.duration_ms == 15_000
 
 
-def test_chorus_groups_into_one_segment_with_three_layers():
+def test_chorus_groups_into_one_segment_with_selected_layers():
     chorus_text = (
         "24 Der Bärenklauer Ich steige mit, ich steige hoch, ich wachse, "
         "mit allem, was ich habe, Ich schieße Geld nach, alles wird mehr werden, "
@@ -54,11 +54,21 @@ def test_chorus_groups_into_one_segment_with_three_layers():
     groups = group_cues_into_segments(cues)
     assert len(groups) == 1
     assert len(groups[0]) == 3
-    segments, warnings = align_avatar_csv_to_script(script, cues)
+
+    # Low anarchy → one performer; all candidates remain in csv_cue_ids.
+    low, warnings = align_avatar_csv_to_script(script, cues, anarchy_level=0.2)
     assert not warnings
-    assert len(segments) == 1
-    assert len(segments[0].avatar_layers) == 3
-    assert segments[0].csv_cue_ids == ["bk1_caro", "bk1_caroline", "bk1_thomas"]
+    assert len(low) == 1
+    assert low[0].csv_cue_ids == ["bk1_caro", "bk1_caroline", "bk1_thomas"]
+    assert len(low[0].avatar_layers) == 1
+
+    # High anarchy → full chorus.
+    high, _ = align_avatar_csv_to_script(script, cues, anarchy_level=0.8)
+    assert len(high[0].avatar_layers) == 3
+
+    # Mid anarchy → up to two.
+    mid, _ = align_avatar_csv_to_script(script, cues, anarchy_level=0.5)
+    assert len(mid[0].avatar_layers) == 2
 
 
 def test_missing_text_emits_warning():
