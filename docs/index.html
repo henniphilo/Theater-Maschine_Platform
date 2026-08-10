@@ -3,180 +3,144 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Theatermaschine — KI-Debatte als dramaturgische Textquelle und semi-autonome Live-Regie für Video, Ton und Licht.">
+  <meta name="description" content="AutoPlay — Live-Regie für Theater: Dramaturgie, Stimme und Bühnenmedien in einem Ablauf.">
   <meta name="theme-color" content="#0a0b0d">
-  <title>Theatermaschine — AutoPlay Live-Regie</title>
+  <meta property="og:title" content="AutoPlay">
+  <meta property="og:description" content="Dramaturgie schreiben, Inszenierung vorbereiten, Aufführung steuern — mit einem Menschen am Regiepult.">
+  <meta property="og:type" content="website">
+  <title>AutoPlay — theater-maschine</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div class="bg" aria-hidden="true"></div>
+  <a class="skip" href="#main">Zum Inhalt</a>
 
-  <header class="site-header">
-    <div class="wrap">
-      <a class="logo" href="#top">
-        <span class="logo-mark" aria-hidden="true">
-          <svg width="12" height="12" viewBox="0 0 10 10" fill="currentColor">
+  <header class="top">
+    <div class="wrap top-inner">
+      <a class="brand" href="#top" aria-label="AutoPlay — Start">
+        <span class="brand-icon" aria-hidden="true">
+          <svg width="12" height="12" viewBox="0 0 10 10" fill="currentColor" aria-hidden="true">
             <path d="M2.2 1.1v7.8L8.6 5 2.2 1.1z"></path>
           </svg>
         </span>
-        <span class="logo-text">
-          <strong>AutoPlay</strong>
-          <span>Dramaturgie. Automation. Performance.</span>
+        <span class="brand-text">
+          <span class="brand-mark">AutoPlay</span>
+          <span class="brand-claim">theater-maschine</span>
         </span>
       </a>
-      <nav aria-label="Seitenabschnitte">
-        <a href="#was">Was ist das?</a>
+      <nav class="nav" aria-label="Abschnitte">
+        <a href="#ablauf">Ablauf</a>
         <a href="#modi">Modi</a>
-        <a href="#technik">Technik</a>
-        <a href="#docs">Dokumentation</a>
+        <a href="https://github.com/henniphilo/Theater-Maschine_Platform" target="_blank" rel="noopener noreferrer">GitHub</a>
       </nav>
     </div>
   </header>
 
-  <main id="top">
-    <section class="hero">
-      <div class="wrap">
-        <div class="hero-inner">
-          <p class="eyebrow">
-            <span class="eyebrow-dot" aria-hidden="true"></span>
-            Burgtheater · Live Performance
-          </p>
-          <h1>KI-Debatte trifft <em>Bühnenregie</em></h1>
-          <p class="lead">
-            Zwei KIs diskutieren live — während AutoPlay Video, Sound und Licht
-            in Echtzeit auslöst. Operator im Loop: Autopilot, Overrides, Emergency Stop.
-          </p>
-          <div class="cta-row">
-            <a class="btn btn-primary" href="https://github.com/henniphilo/Theater-Maschine_Burgtheater" target="_blank" rel="noopener noreferrer">
-              Repository auf GitHub
-            </a>
-            <a class="btn btn-ghost" href="https://github.com/henniphilo/Theater-Maschine_Burgtheater#schnellstart-docker" target="_blank" rel="noopener noreferrer">
-              Schnellstart lesen
-            </a>
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="hero-brand">
+      <div class="hero-stage" aria-hidden="true">
+        <div class="stage-beam stage-beam-a"></div>
+        <div class="stage-beam stage-beam-b"></div>
+        <div class="stage-floor"></div>
+        <div class="stage-cue">
+          <div class="cue-rail">
+            <span class="cue-tick"></span>
+            <span class="cue-tick"></span>
+            <span class="cue-tick"></span>
+            <span class="cue-tick"></span>
+            <span class="cue-tick"></span>
+            <span class="cue-tick"></span>
+            <span class="cue-tick"></span>
+            <span class="cue-tick"></span>
+          </div>
+          <div class="cue-head"></div>
+          <div class="cue-labels">
+            <span>VIDEO</span>
+            <span>SOUND</span>
+            <span>LIGHT</span>
           </div>
         </div>
       </div>
-    </section>
 
-    <section class="section" id="was">
-      <div class="wrap">
-        <h2 class="section-title">Was die Maschine macht</h2>
-        <p class="section-intro">
-          Text wird zur Dramaturgie — Dramaturgie wird zu Cues — Cues werden zu OSC, MIDI und Licht am Pult.
+      <div class="wrap hero-copy">
+        <h1 id="hero-brand" class="hero-brand">AutoPlay</h1>
+        <p class="hero-headline">Live-Regie für Text, Stimme und Bühne.</p>
+        <p class="hero-lead">
+          Dramaturgie schreiben, Inszenierung vorbereiten, Aufführung steuern —
+          mit einem Menschen am Regiepult.
         </p>
-        <div class="grid-3">
-          <article class="card">
-            <span class="tag">Textquelle</span>
-            <h3>KI-Debatte</h3>
-            <p>GPT und Claude diskutieren abwechselnd über ein Thema. Optional mit TTS — Siri auf dem Mac oder edge-tts in Docker.</p>
-          </article>
-          <article class="card">
-            <span class="tag">Regie</span>
-            <h3>Director Pipeline</h3>
-            <p>Regeln und LLM wählen Clips, Sounds und Lichtstimmungen. Der Scheduler achtet auf Abstände, Safety und Operator-Overrides.</p>
-          </article>
-          <article class="card">
-            <span class="tag">Ausgabe</span>
-            <h3>Live auf der Bühne</h3>
-            <p>Pixera für Video, MIDI/Ableton für Ton, EOS per TCP für Licht. TouchDesigner optional im Signalweg.</p>
-          </article>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="https://github.com/henniphilo/Theater-Maschine_Platform" target="_blank" rel="noopener noreferrer">
+            Repository öffnen
+          </a>
+          <a class="btn btn-ghost" href="https://github.com/henniphilo/Theater-Maschine_Platform#schnellstart" target="_blank" rel="noopener noreferrer">
+            Schnellstart
+          </a>
         </div>
       </div>
     </section>
 
-    <section class="section" id="modi">
+    <section class="section" id="ablauf" aria-labelledby="ablauf-title">
       <div class="wrap">
-        <h2 class="section-title">Zwei Inszenierungs-Modi</h2>
-        <p class="section-intro">Teil 1 für den Stücktext-Workshop — Teil 2 für die AVATAR-Aufführung mit Text-Sync.</p>
+        <h2 id="ablauf-title">Ein Signalweg</h2>
+        <p class="section-lead">
+          Dramaturgie entscheidet <em>was</em> und <em>warum</em> — Scheduler und Adapter entscheiden
+          <em>wie</em> und <em>ob</em> es an die Hardware geht.
+        </p>
+        <ol class="flow" aria-label="Signalweg">
+          <li>
+            <strong>Text</strong>
+            <span>Stück oder Korpus vorbereiten</span>
+          </li>
+          <li>
+            <strong>Entscheidung</strong>
+            <span>Regeln und LLM-Vorschläge</span>
+          </li>
+          <li>
+            <strong>Cue</strong>
+            <span>geplant, mit Safety-Checks</span>
+          </li>
+          <li>
+            <strong>Bühne</strong>
+            <span>OSC · MIDI · TCP</span>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section section-modi" id="modi" aria-labelledby="modi-title">
+      <div class="wrap">
+        <h2 id="modi-title">Zwei Modi</h2>
+        <p class="section-lead">
+          Workshop und Aufführung — getrennt gedacht, gemeinsam auf derselben Pipeline.
+        </p>
         <div class="modes">
-          <article class="mode-card teil1">
-            <h3>Teil 1 — Stücktext</h3>
-            <ul>
-              <li>Dramaturgen-Workshop → Stücktext → Aufführung</li>
-              <li>Sequentiell: Diskussion, dann Stücktext</li>
-              <li>Pixera-Clips per Dramaturgie-Entscheidung</li>
-              <li>UI: <code>/dramaturgie</code>, <code>/auffuehrung</code></li>
-            </ul>
+          <article>
+            <h3>Teil 1</h3>
+            <p>Dramaturgie-Workshop, Stücktext und sequentielle Aufführung mit dramaturgischen Cues.</p>
           </article>
-          <article class="mode-card teil2">
-            <h3>Teil 2 — Text-Sync</h3>
-            <ul>
-              <li>AVATAR-Text hochladen → Vorbereiten → Aufführung</li>
-              <li>Eine KI-Stimme als Master-Clock</li>
-              <li>Avatar-Video feuert am CSV-Stichwort im Text</li>
-              <li>UI: <code>/inszenierung</code>, <code>/inszenierung/auffuehrung</code></li>
-            </ul>
+          <article>
+            <h3>Teil 2</h3>
+            <p>Text-Sync mit TTS als Taktgeber — Avatare und Atmosphäre feuern am Stichwort.</p>
           </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="technik">
-      <div class="wrap">
-        <h2 class="section-title">Architektur</h2>
-        <p class="section-intro">Browser, Backend und Bühnentechnik — klar getrennt, live verbunden.</p>
-        <pre class="pipeline" aria-label="Architektur-Diagramm"><code>Browser (Next.js)
-    │
-    ├── Debatte (SSE) ──────► <span class="hl">FastAPI</span> ──► OpenAI / Anthropic
-    │                              │
-    │                              ├── PostgreSQL · Redis · TTS
-    │                              │
-    │                              └── <span class="hl2">Director Pipeline</span>
-    │                                    │
-    │                                    ├── DramaturgyEngine
-    │                                    ├── MediaDatabase
-    │                                    ├── CueScheduler + Safety
-    │                                    └── OSC ──► Pixera · MIDI · <span class="hl3">EOS Licht</span>
-    │
-    └── Operator-UI (<span class="hl">/director</span>) ──► REST + SSE</code></pre>
-      </div>
-    </section>
-
-    <section class="section" id="docs">
-      <div class="wrap">
-        <h2 class="section-title">Dokumentation</h2>
-        <p class="section-intro">Alles Weitere im Repository — Setup, Ableton, TouchDesigner, Teil-2-Workflow.</p>
-        <div class="links-grid">
-          <a class="link-card" href="https://github.com/henniphilo/Theater-Maschine_Burgtheater/blob/main/README.md" target="_blank" rel="noopener noreferrer">
-            <strong>README</strong>
-            <span>Schnellstart, Konfiguration, Bedienung</span>
-          </a>
-          <a class="link-card" href="https://github.com/henniphilo/Theater-Maschine_Burgtheater/blob/main/docs/architektur.md" target="_blank" rel="noopener noreferrer">
-            <strong>Architektur</strong>
-            <span>Signale, Setup, Bühnen-Diagramme</span>
-          </a>
-          <a class="link-card" href="https://github.com/henniphilo/Theater-Maschine_Burgtheater/blob/main/docs/teil2_inszenierung.md" target="_blank" rel="noopener noreferrer">
-            <strong>Teil 2 Inszenierung</strong>
-            <span>Text-Sync, Avatare, Prepare-Flow</span>
-          </a>
-          <a class="link-card" href="https://github.com/henniphilo/Theater-Maschine_Burgtheater/blob/main/docs/ableton_setup.md" target="_blank" rel="noopener noreferrer">
-            <strong>Ableton Setup</strong>
-            <span>MIDI-Routing für Sound-Cues</span>
-          </a>
-          <a class="link-card" href="https://github.com/henniphilo/Theater-Maschine_Burgtheater/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">
-            <strong>Lizenz</strong>
-            <span>MIT — frei nutzbar und erweiterbar</span>
-          </a>
         </div>
       </div>
     </section>
   </main>
 
-  <footer class="site-footer">
-    <div class="wrap">
+  <footer class="foot">
+    <div class="wrap foot-inner">
       <p>
-        Theatermaschine · AutoPlay ·
-        <a href="https://github.com/henniphilo/Theater-Maschine_Burgtheater">GitHub</a> ·
-        MIT License · © 2026 henniphilo
-      </p>
-      <div class="status-pill">
-        <span class="eyebrow-dot" aria-hidden="true"></span>
         <strong>AutoPlay</strong>
-        <span>Online</span>
-      </div>
+        · theater-maschine ·
+        Referenz: Burgtheater / <em>Unter Tieren</em>
+      </p>
+      <p>
+        <a href="https://github.com/henniphilo/Theater-Maschine_Platform">GitHub</a>
+        · MIT
+      </p>
     </div>
   </footer>
 </body>

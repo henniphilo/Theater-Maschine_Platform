@@ -4,6 +4,9 @@
 
 Die Maschine verbindet dramaturgische Vorbereitung mit technischer Ausführung auf der Bühne: Stücktext oder Aufführungstext wird vorbereitet, Stimmen laufen als Taktgeber, und Cues steuern Projektoren, Ableton/QLab und das Lichtpult. Ein Mensch am Operator-Pult kann jederzeit eingreifen (Autopilot, Kanal-Sperren, Emergency Stop).
 
+**Produktname in der UI:** AutoPlay · Intro-Seite (GitHub Pages): https://henniphilo.github.io/Theater-Maschine_Platform/  
+(Quelle: `docs/index.html` — in Repo-Settings → Pages → Branch `main` / Ordner `/docs` aktivieren.)
+
 **Kein Login.** API-Keys und Venue-IPs liegen lokal in `backend/.env` — nicht committen.
 
 Referenzproduktion: Burgtheater / *Unter Tieren* (Jelinek). Die Plattform wird schrittweise produktionsunabhängig; bestehende Show-Flows bleiben nutzbar.
