@@ -31,8 +31,10 @@
         </span>
       </a>
       <nav class="nav" aria-label="Abschnitte">
+        <a href="#kontext">Kontext</a>
         <a href="#ablauf">Ablauf</a>
         <a href="#modi">Modi</a>
+        <a href="#docs">Docs</a>
         <a href="https://github.com/henniphilo/Theater-Maschine_Platform" target="_blank" rel="noopener noreferrer">GitHub</a>
       </nav>
     </div>
@@ -65,11 +67,13 @@
       </div>
 
       <div class="wrap hero-copy">
+        <p class="hero-eyebrow">Open Source · FastAPI + Next.js · Burgtheater-Referenz</p>
         <h1 id="hero-brand" class="hero-brand">AutoPlay</h1>
         <p class="hero-headline">Live-Regie für Text, Stimme und Bühne.</p>
         <p class="hero-lead">
-          Dramaturgie schreiben, Inszenierung vorbereiten, Aufführung steuern —
-          mit einem Menschen am Regiepult.
+          AutoPlay ist die Oberfläche der <strong>theater-maschine</strong>: ein Live-Regiesystem,
+          das dramaturgische Vorbereitung mit technischer Ausführung verbindet — Video, Ton und Licht
+          in Echtzeit, mit einem Menschen am Operator-Pult.
         </p>
         <div class="hero-cta">
           <a class="btn btn-primary" href="https://github.com/henniphilo/Theater-Maschine_Platform" target="_blank" rel="noopener noreferrer">
@@ -79,6 +83,57 @@
             Schnellstart
           </a>
         </div>
+      </div>
+    </section>
+
+    <section class="section" id="kontext" aria-labelledby="kontext-title">
+      <div class="wrap">
+        <h2 id="kontext-title">Wofür ist das?</h2>
+        <p class="section-lead">
+          Entstanden aus der medialen Inszenierung von <em>Unter Tieren</em> (Elfriede Jelinek) am
+          Burgtheater — entwickelt sich zu einer produktionsunabhängigen Plattform für Theater,
+          in der jede Show eigene Assets, Cues, Geräte und Regeln mitbringt.
+        </p>
+        <div class="cards">
+          <article class="card">
+            <span class="card-tag">Auf der Probe</span>
+            <h3>Vorbereiten &amp; prüfen</h3>
+            <p>Stücktext oder Aufführungskorpus hochladen, Stimmen wählen, Cues durchspielen — einzelne Kanäle unter <code>/technik</code> testen, bevor der Saal voll ist.</p>
+          </article>
+          <article class="card">
+            <span class="card-tag">In der Aufführung</span>
+            <h3>Semi-autonom, nicht blind</h3>
+            <p>TTS als Taktgeber, Regeln und LLM wählen Medien — der Operator kann Autopilot, Kanal-Sperren und Emergency Stop jederzeit nutzen. Optional Play/Pause vom Handy unter <code>/remote</code>.</p>
+          </article>
+          <article class="card">
+            <span class="card-tag">Architektur</span>
+            <h3>Dramaturgie ≠ Hardware</h3>
+            <p>Entscheidungen bleiben abstrakt; Ausführung läuft über Scheduler und Adapter. Keine direkten OSC- oder Lichtbefehle aus der Dramaturgie-Schicht.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-roles" aria-labelledby="rollen-title">
+      <div class="wrap">
+        <h2 id="rollen-title">Für wen</h2>
+        <ul class="roles">
+          <li>
+            <strong>Dramaturgie / Regie</strong>
+            <span>Stück vorbereiten, Text markieren, Inszenierung planen</span>
+            <code>/dramaturgie</code> · <code>/inszenierung</code>
+          </li>
+          <li>
+            <strong>Technik</strong>
+            <span>Video-, Sound- und Lichtwege einzeln prüfen</span>
+            <code>/technik</code>
+          </li>
+          <li>
+            <strong>Operator</strong>
+            <span>Live-Regie, Safety, Overrides während der Show</span>
+            <code>/director</code>
+          </li>
+        </ul>
       </div>
     </section>
 
@@ -92,7 +147,7 @@
         <ol class="flow" aria-label="Signalweg">
           <li>
             <strong>Text</strong>
-            <span>Stück oder Korpus vorbereiten</span>
+            <span>Stück, Dialog oder Aufführungskorpus</span>
           </li>
           <li>
             <strong>Entscheidung</strong>
@@ -107,6 +162,24 @@
             <span>OSC · MIDI · TCP</span>
           </li>
         </ol>
+        <div class="outputs">
+          <article>
+            <h3>Stimme</h3>
+            <p>TTS (<code>say</code> nativ oder edge-tts) als dramaturgischer oder Aufführungstakt.</p>
+          </article>
+          <article>
+            <h3>Video</h3>
+            <p>OSC an Pixera / TouchDesigner — Avatare, Atmosphären, Blackout über mehrere Projektoren.</p>
+          </article>
+          <article>
+            <h3>Ton</h3>
+            <p>MIDI an Ableton oder QLab; Sound-Cues werden getriggert, nicht als WAV abgespielt.</p>
+          </article>
+          <article>
+            <h3>Licht</h3>
+            <p>TCP (JSON) ans Lichtpult oder OSC über die Medienschnittstelle.</p>
+          </article>
+        </div>
       </div>
     </section>
 
@@ -118,13 +191,52 @@
         </p>
         <div class="modes">
           <article>
-            <h3>Teil 1</h3>
-            <p>Dramaturgie-Workshop, Stücktext und sequentielle Aufführung mit dramaturgischen Cues.</p>
+            <h3>Teil 1 — Stücktext</h3>
+            <p>Workshop → markierter Stücktext → Aufführung. Zwei KIs diskutieren als Textquelle; Pixera-Clips folgen dramaturgischen Entscheidungen.</p>
+            <ul>
+              <li>Sequentiell: Diskussion, dann Stücktext + Cues</li>
+              <li>UI: <code>/dramaturgie</code>, <code>/auffuehrung</code></li>
+            </ul>
           </article>
           <article>
-            <h3>Teil 2</h3>
-            <p>Text-Sync mit TTS als Taktgeber — Avatare und Atmosphäre feuern am Stichwort.</p>
+            <h3>Teil 2 — Text-Sync</h3>
+            <p>AVATAR-Aufführungstext hochladen, vorbereiten, abspielen. Eine KI-Stimme ist Master-Clock; Video feuert am CSV-Stichwort im Text.</p>
+            <ul>
+              <li>Prepare-Flow: Alignment, Stimmen, Cue-Check</li>
+              <li>UI: <code>/inszenierung</code>, <code>/inszenierung/auffuehrung</code></li>
+            </ul>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="docs" aria-labelledby="docs-title">
+      <div class="wrap">
+        <h2 id="docs-title">Weiterlesen</h2>
+        <p class="section-lead">
+          Setup, Architektur und Show-Betrieb — alles im Repository.
+        </p>
+        <div class="doc-links">
+          <a href="https://github.com/henniphilo/Theater-Maschine_Platform/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+            <strong>README</strong>
+            <span>Schnellstart, Konfiguration, Bedienung</span>
+          </a>
+          <a href="https://github.com/henniphilo/Theater-Maschine_Platform/blob/main/docs/architektur.md" target="_blank" rel="noopener noreferrer">
+            <strong>Architektur</strong>
+            <span>Signale, Bühnen-Setup, Diagramme</span>
+          </a>
+          <a href="https://github.com/henniphilo/Theater-Maschine_Platform/blob/main/docs/teil2_inszenierung.md" target="_blank" rel="noopener noreferrer">
+            <strong>Teil 2</strong>
+            <span>Text-Sync, Avatare, Prepare-Flow</span>
+          </a>
+          <a href="https://github.com/henniphilo/Theater-Maschine_Platform/blob/main/docs/ableton_setup.md" target="_blank" rel="noopener noreferrer">
+            <strong>Ableton</strong>
+            <span>MIDI-Routing für Sound-Cues</span>
+          </a>
+          <a href="https://www.burgtheater.at/produktionen/unter-tieren" target="_blank" rel="noopener noreferrer">
+            <strong>Unter Tieren</strong>
+            <span>Referenzproduktion am Burgtheater</span>
+          </a>
         </div>
       </div>
     </section>

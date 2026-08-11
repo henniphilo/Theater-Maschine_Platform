@@ -287,9 +287,28 @@ button:focus-visible {
 
 .hero-copy {
   position: relative;
-  max-width: 38rem;
+  max-width: 42rem;
   padding-bottom: 7.5rem;
   animation: rise 0.9s var(--ease) both;
+}
+
+.hero-eyebrow {
+  display: inline-block;
+  margin: 0 0 1rem;
+  padding: 0.3rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 0.35rem;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.hero-lead strong {
+  color: var(--text);
+  font-weight: 600;
 }
 
 .hero-brand {
@@ -430,6 +449,117 @@ button:focus-visible {
   font-size: 0.95rem;
 }
 
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  padding: 1.35rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--surface);
+}
+
+.card-tag {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 0.3rem;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.card h3 {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.card p {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.section-roles {
+  padding-top: 0;
+}
+
+.roles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.roles li {
+  display: grid;
+  grid-template-columns: minmax(8rem, 11rem) 1fr auto;
+  gap: 0.75rem 1.25rem;
+  align-items: baseline;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.roles li:last-child {
+  border-bottom: none;
+}
+
+.roles strong {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.roles span {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.outputs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+.outputs h3 {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--info);
+  letter-spacing: -0.02em;
+}
+
+.outputs p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  padding: 0.12em 0.35em;
+  border-radius: 0.25rem;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-2);
+}
+
 .section-modi {
   background: linear-gradient(180deg, transparent, rgba(16, 17, 20, 0.85));
 }
@@ -450,9 +580,56 @@ button:focus-visible {
 }
 
 .modes p {
-  margin: 0;
+  margin: 0 0 0.75rem;
   max-width: 28rem;
   color: var(--text-2);
+}
+
+.modes ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.modes li + li {
+  margin-top: 0.35rem;
+}
+
+.doc-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.doc-links a {
+  display: block;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  background: var(--surface);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.doc-links a:hover {
+  border-color: rgba(212, 160, 90, 0.35);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.doc-links strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.doc-links span {
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.45;
 }
 
 /* ——— Footer ——— */
@@ -544,6 +721,19 @@ button:focus-visible {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .outputs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .roles li {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
+
   .modes {
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -579,6 +769,10 @@ button:focus-visible {
   }
 
   .flow {
+    grid-template-columns: 1fr;
+  }
+
+  .outputs {
     grid-template-columns: 1fr;
   }
 
