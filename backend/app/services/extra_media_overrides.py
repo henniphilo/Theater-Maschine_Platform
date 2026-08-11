@@ -139,6 +139,19 @@ def effective_flags(
             return active, removed
     flags = overlay.overrides.get(cue_id)
     if flags is None:
+        # Venue-specific default safety overrides.
+        # Hallein: deaktiviert "blendung_magenta" (Ch. 1701) standardmäßig.
+        # Operator Overrides (via extra_admin patch) must still win, therefore
+        # this only applies when there is no override entry for this cue id.
+        if kind == "light" and cue_id == "blendung_magenta":
+            try:
+                from app.services.venue_profiles import get_active_profile
+
+                if get_active_profile().id == "hallein":
+                    return False, False
+            except Exception:
+                # Fail open: if venue state cannot be read, use defaults.
+                pass
         return default_active, False
     active = default_active if flags.dramaturgy_active is None else flags.dramaturgy_active
     removed = bool(flags.removed) if flags.removed is not None else False

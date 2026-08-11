@@ -116,9 +116,9 @@
     },
     {
       "id": "musiker",
-      "description": "Musiker — Ch. 46",
+      "description": "Musiker — Ch. 56",
       "location": "Musikbereich",
-      "channels": ["46"],
+      "channels": ["56"],
       "fixtures": ["OL 4er"],
       "moods": ["musik", "musiker", "fokus"],
       "intensity_min": 0.35,
@@ -132,6 +132,17 @@
       "channels": ["27"],
       "fixtures": ["OL 2er"],
       "moods": ["musik", "klavier", "intim"],
+      "intensity_min": 0.3,
+      "intensity_max": 0.9,
+      "fade_time": 2.0
+    },
+    {
+      "id": "klaviertasten",
+      "description": "Klaviertasten — Ch. 26",
+      "location": "Bühne",
+      "channels": ["26"],
+      "fixtures": ["OL 2er"],
+      "moods": ["musik", "klaviertasten", "intim"],
       "intensity_min": 0.3,
       "intensity_max": 0.9,
       "fade_time": 2.0

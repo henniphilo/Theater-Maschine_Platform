@@ -13,12 +13,13 @@ Quelle: `media/light/Light Channels KI.txt` · Preset **Pr.91** wo nicht anders 
 | gegenlicht_weich | Gr. 13, 23 | Gegenlicht weich, homogen ausgeleuchtete Bühne |
 | wolkenprospekt_boden | Gr. 12 | Neonlicht vor dem Wolkenprospekt am Boden |
 | klavier | Ch. 27 | Klavierlicht |
+| klaviertasten | Ch. 26 | Klaviertasten |
 | fluegel | Ch. 33 | Flügellicht |
 | zwei_spots | Ch. 52, 54 | 2 Lichtspots nebeneinander |
 | spot_tisch | Ch. 51 | Spot am Tisch, Schauspielergruppe |
 | vorbuehnenzug | Ch. 11–19 | Zuschauerraum Blendung |
 | blendung_zuschauerraum | Ch. 11–19 | Alias: Zuschauerraum Blendung (wie vorbuehnenzug) |
-| musiker | Ch. 46 | Musiker (Erweiterung Inventar) |
+| musiker | Ch. 56 | Musiker (Erweiterung Inventar) |
 | palmen | Ch. 372, 37 | Palmen (Erweiterung Inventar) |
 | lautsprecher_buehne | Ch. 44 | Lautsprecher Bühne |
 | warme_buehnenflaeche | Ch. 6, 10 | Warme Fläche Bühne |
