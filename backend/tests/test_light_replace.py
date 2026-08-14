@@ -20,7 +20,7 @@ def test_light_scene_replaces_previous_with_intensity_zero() -> None:
     commands = build_osc_commands(decision, dry_run=True)
     light_cmds = [c for c in commands if c.bridge == "light" and not c.mirror]
     assert not any(c.address.endswith("/key/out") for c in light_cmds)
-    assert any(c.address == "/eos/chan/46/full" for c in light_cmds)
+    assert any(c.address == "/eos/chan/56/full" for c in light_cmds)
 
     decision2 = DramaturgyDecision(
         light=LightCue(scene_id="saallicht", intensity=0.8),
@@ -32,7 +32,7 @@ def test_light_scene_replaces_previous_with_intensity_zero() -> None:
     )
     commands2 = build_osc_commands(decision2, dry_run=True)
     light_cmds2 = [c for c in commands2 if c.bridge == "light" and not c.mirror]
-    zero_cmds = [c for c in light_cmds2 if c.address == "/eos/chan/46" and c.args == [0.0]]
+    zero_cmds = [c for c in light_cmds2 if c.address == "/eos/chan/56" and c.args == [0.0]]
     assert zero_cmds, "previous musiker channel should fade to 0"
     assert any(c.address == "/eos/group/2" and c.args == [80.0] for c in light_cmds2)
 
@@ -50,10 +50,10 @@ def test_combined_light_scenes_share_one_fade_out_pass() -> None:
     light_cmds = [c for c in commands if c.bridge == "light" and not c.mirror]
     assert not any(c.address.endswith("/key/out") for c in light_cmds)
     addresses = {c.address for c in light_cmds}
-    assert "/eos/chan/46" in addresses
+    assert "/eos/chan/56" in addresses
     assert "/eos/chan/6" in addresses
     assert "/eos/chan/10" in addresses
-    partial = [c for c in light_cmds if c.address == "/eos/chan/46"]
+    partial = [c for c in light_cmds if c.address == "/eos/chan/56"]
     assert partial and partial[0].args == [80.0]
 
 
@@ -82,7 +82,7 @@ def test_explicit_light_off_uses_intensity_zero() -> None:
         dry_run=True,
     )
     light_cmds = [c for c in off if c.bridge == "light" and not c.mirror]
-    assert any(c.address == "/eos/chan/46" and c.args == [0.0] for c in light_cmds)
+    assert any(c.address == "/eos/chan/56" and c.args == [0.0] for c in light_cmds)
 
 
 def test_group_scene_emits_eos_group_command() -> None:

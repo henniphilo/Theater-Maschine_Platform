@@ -231,6 +231,11 @@ class SoundMidiBridge:
             return self._port_name
         if settings.sound_midi_port:
             return settings.sound_midi_port
+        # In dry-run mode we must not probe real MIDI devices.
+        # Some environments (e.g. CI containers) abort the process inside rtmidi
+        # instead of raising a normal Python exception.
+        if self._is_dry_run():
+            return "(midi dry-run)"
         try:
             import mido
 

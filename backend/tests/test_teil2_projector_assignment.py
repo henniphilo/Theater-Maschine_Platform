@@ -49,12 +49,14 @@ def test_atmosphere_targets_always_include_adam_eva_when_free():
     from app.services.teil2_projector_assignment import atmosphere_targets_for_free
 
     low = atmosphere_targets_for_free(["adam", "eva", "rz21", "led"], anarchy=0.1, seed=0)
-    assert low == ["adam", "eva"]
+    assert "adam" in low and "eva" in low
+    assert len(low) >= 3
     high = atmosphere_targets_for_free(["adam", "eva", "led"], anarchy=0.8, seed=0)
     assert set(high) == {"adam", "eva", "led"}
-    # Avatar owns adam — only free stage beamer stays mandatory.
+    # Avatar owns adam — free stage beamer stays mandatory, plus one extra if free.
     only_eva = atmosphere_targets_for_free(["eva", "led"], anarchy=0.1, seed=0)
-    assert only_eva == ["eva"]
+    assert only_eva[0] == "eva"
+    assert "led" in only_eva
 
 
 def test_chorus_high_anarchy_mirrors_same_clip_onto_free_beamers():

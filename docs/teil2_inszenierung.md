@@ -60,7 +60,7 @@ Teil 2 nutzt **keine** Multi-LLM-Diskussion wie Teil 1. Chunkweise Stichwort-Ent
 | `Stücktext/AVATAR Text Delfin bis Wolf.txt` | Kanon-Vorlage (optional) |
 | `media/video/Avatar Textzuordnung.csv` | Avatar → Text → Clip, Aufführungsreihenfolge (Spalte «Zeit» = **Sekunden**, z. B. `0:07:00` → 7 s) |
 | `media/video/OSCBefehllisteAvatare.txt` | Pixera OSC — Avatar-Clips |
-| `media/video/OSCBefehllisteOhneAvatare.txt` | Pixera OSC — Atmosphären (inkl. LED) |
+| `media/video/OSCBefehllisteOhneAvatare.txt` | Pixera OSC — Atmosphären (inkl. LED); nur Clips auf allen vier Beamern, ohne Random/Avatar2 |
 
 API: `GET /api/v1/inszenierung/script` — Kanon + Beat-Vorschau  
 API: `PATCH /api/v1/inszenierung/{id}` — `script_text` speichern  
@@ -80,7 +80,7 @@ Quelle: `media/video/Avatar Textzuordnung.csv` (export aus `Textzuordnung Del-Wo
    - `< 0.35`: ein Performer (rotiert über Segmente)
    - `< 0.65`: bis zu zwei parallel
    - `≥ 0.65`: voller Chorus (alle Clips, verschiedene Projektoren)
-5. Atmosphäre parallel: **Adam und Eva stets belegt**, solange kein Avatar dort läuft — sonst Atmosphäre (`OSCBefehllisteOhneAvatare.txt`). Weitere freie Beamer (rz21, led) je nach Anarchie
+5. Atmosphäre parallel: **ab Aufführungsbeginn dicht** (ca. alle 5–8 s), Adam und Eva stets belegt sobald frei, früh ein weiterer Beamer. **Bonnie und Clyde** mehrmals als Begleitvideo-OSC. Weitere Flächen (rz21, led) mit steigender Anarchie.
 6. Nicht gefundene Zeilen → `alignment_warnings`
 
 **Playback:** Avatar-OSC nur **eins nach dem anderen** in CSV-Reihenfolge, wenn die TTS-Stimme den Textanker (`char_offset`) erreicht — kein Nachladen aller offenen Clips am Ende. Chorus-Layer eines Segments feuern gleichzeitig.

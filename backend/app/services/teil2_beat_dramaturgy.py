@@ -12,7 +12,7 @@ from app.schemas.inszenierung import CompositionMoment, Gesamtkonzept
 from app.services.inszenierung_validation import dramaturgy_with_anarchy
 from app.services.teil2_projector_assignment import pick_atmosphere_projectors
 
-_ATMOSPHERE_CLIPS = ("clyde", "strand", "black", "maschinen_grundader")
+_ATMOSPHERE_CLIPS = ("clyde", "bonnie", "strand", "black", "maschinen_grundader")
 
 
 def build_dramaturgy_for_beat(

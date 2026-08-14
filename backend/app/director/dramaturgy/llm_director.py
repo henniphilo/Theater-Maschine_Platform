@@ -33,13 +33,10 @@ class LLMDirector:
 
     def catalog_allowlist(self, *, compact: bool = False, video_scope: VideoScope = "part2") -> dict[str, Any]:
         from app.services.extra_media_overrides import is_dramaturgy_active
+        from app.services.video_scope import usable_dramaturgy_video_ids
 
         video_catalog = get_video_cue_catalog_service().load(video_scope)
-        allowed_video_ids = {
-            clip.id
-            for clip in video_catalog.clips
-            if is_dramaturgy_active("video", clip.id)
-        }
+        allowed_video_ids = usable_dramaturgy_video_ids(video_scope)
         videos = [v for v in self.media_db.videos if v.id in allowed_video_ids]
         lights = [
             s
@@ -127,9 +124,11 @@ class LLMDirector:
                 "Unterschiedliche Videos: pro output_id eigene clip_id in outputs[].",
                 "Ohne outputs[] und ohne projector: clip_id auf allen Beamern (RZ21, Adam, Eva, LED), sofern in der OSC-Liste vorhanden.",
                 "Teil 1: nur Atmosphären-Clips (OSCBefehllisteOhneAvatare). Teil 2: zusätzlich Erzähler-Avatare (Inge, Sebastian, …).",
+                "Pflicht-Begleitvideo: bonnie und clyde mehrmals als OSC-Atmosphäre in der Aufführung — nicht nur einmal, nicht dauernd.",
                 "Nur ein Beamer: visual.projector setzen oder outputs[] mit genau einem output_id.",
                 "Licht: nur scene_id aus lights[] — Kanäle laut Kanal-Übersicht.",
                 "Licht kombinieren: light.scene_ids mit mehreren IDs (z. B. [\"musiker\", \"warme_buehnenflaeche\"]).",
+                "Pflichtlicht Avatare: Bei SCH4_Thomas und WO2_Branko muss klaviertasten in light.scene_ids enthalten sein (zusätzlich zu anderen Stimmungen).",
                 "Jeder neue Licht-Cue ersetzt den vorherigen (Key Out, dann neue Kanäle/Gruppen).",
                 "Licht-Intensität: light.intensity 0.0–1.0 (0.35 = dezent, 1.0 = voll); fehlt → cue_point.intensity.",
                 "Sound: nur cue_id aus sounds[] (play / fade_in / fade_out / out) — MIDI an Ableton.",
@@ -289,8 +288,9 @@ class LLMDirector:
             raise DramaturgyValidationError("invalid reason_short")
 
         from app.services.extra_media_overrides import is_dramaturgy_active
+        from app.services.video_scope import usable_dramaturgy_video_ids
 
-        video_ids = {v.id for v in self.media_db.videos if is_dramaturgy_active("video", v.id)}
+        video_ids = usable_dramaturgy_video_ids("part2")
         recording_ids = {r.id for r in self.media_db.recordings}
         sound_ids = {s.id for s in self.media_db.dramaturgy_sounds}
         light_ids = {

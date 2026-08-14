@@ -40,6 +40,12 @@ def test_add_extra_video_persists_and_merges(tmp_path: Path) -> None:
     availability = osc_availability_by_clip("part2")
     assert availability.get("meintestclip") == {"rz21"}
 
+    from app.services.video_scope import atmosphere_clip_ids, usable_dramaturgy_video_ids
+
+    assert "meintestclip" not in atmosphere_clip_ids()
+    assert "meintestclip" not in usable_dramaturgy_video_ids("part2")
+    assert "meintestclip" not in usable_dramaturgy_video_ids("part1")
+
 
 def test_extra_video_all_projectors(tmp_path: Path) -> None:
     extra_media.reset_extra_media_for_tests(persist_path=tmp_path / "extra_media_overrides.json")

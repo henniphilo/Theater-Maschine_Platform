@@ -19,6 +19,8 @@ OSC_ATMOSPHERE_OUT = MEDIA_VIDEO / "OSCBefehllisteOhneAvatare.txt"
 VIDEO_CSV = MEDIA_VIDEO / "Video Übersicht.csv"
 PROJECTOR_CSV = MEDIA_VIDEO / "Projektor Übersicht.csv"
 
+EXCLUDED_ATMOSPHERE_PIXERA = frozenset({"Random", "Avatar2"})
+
 NUMBERS_TO_PIXERA: dict[str, str] = {
     "Hier unter der Erde": "HierUnterDerErde",
     "Tier unter der Erde": "TierUnterDerErde",
@@ -140,6 +142,8 @@ def parse_existing_osc_by_prefix(path: Path) -> dict[str, list[str]]:
     if not path.is_file():
         return by_prefix
     for prefix, pixera_name in parse_osc_befehlliste(path):
+        if pixera_name in EXCLUDED_ATMOSPHERE_PIXERA:
+            continue
         by_prefix.setdefault(prefix, [])
         if pixera_name not in by_prefix[prefix]:
             by_prefix[prefix].append(pixera_name)
@@ -147,7 +151,7 @@ def parse_existing_osc_by_prefix(path: Path) -> dict[str, list[str]]:
 
 
 def merge_osc_atmosphere_befehlliste(rows: list[dict[str, str | int]]) -> tuple[int, int]:
-    """Merge atmosphere clips into OSC list — all projectors, preserve existing order."""
+    """Merge atmosphere clips into OSC list — only clips laid out on all projectors."""
     prefixes = load_projector_prefixes()
     by_prefix = parse_existing_osc_by_prefix(OSC_ATMOSPHERE_OUT)
     for prefix in prefixes:
@@ -156,20 +160,28 @@ def merge_osc_atmosphere_befehlliste(rows: list[dict[str, str | int]]) -> tuple[
     new_clips = 0
     for row in rows:
         pixera_name = str(row["pixera_name"])
+        if pixera_name in EXCLUDED_ATMOSPHERE_PIXERA:
+            continue
         for prefix in prefixes:
             names = by_prefix[prefix]
             if pixera_name not in names:
                 names.append(pixera_name)
                 new_clips += 1
 
+    common = None
+    for prefix in prefixes:
+        names = [name for name in by_prefix.get(prefix, []) if name not in EXCLUDED_ATMOSPHERE_PIXERA]
+        common = set(names) if common is None else common & set(names)
+    ordered = [name for name in by_prefix.get(prefixes[0], []) if name in (common or set())]
+
     blocks: list[str] = []
     for prefix in prefixes:
-        for pixera_name in by_prefix.get(prefix, []):
+        for pixera_name in ordered:
             blocks.append(f'("/pixera/args/cue/apply", "{prefix}.{pixera_name}")')
         blocks.append("")
 
     OSC_ATMOSPHERE_OUT.write_text("\n".join(blocks).rstrip() + "\n", encoding="utf-8")
-    return new_clips, sum(len(v) for v in by_prefix.values())
+    return new_clips, len(prefixes) * len(ordered)
 
 
 def sync_video_overview(rows: list[dict[str, str | int]]) -> None:

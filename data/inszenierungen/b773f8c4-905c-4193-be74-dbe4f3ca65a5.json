@@ -1,0 +1,1553 @@
+{
+  "id": "b773f8c4-905c-4193-be74-dbe4f3ca65a5",
+  "title": "Stale",
+  "scenes": [],
+  "script_source": null,
+  "script_text": "Ein Satz reicht.",
+  "status": "ready",
+  "prepare_phase": null,
+  "prepare_error": null,
+  "gesamtkonzept": {
+    "thesis": "Geld erscheint bei den Tieren als Austauschlogik, Schuldzuweisung und Sprachmaske.",
+    "money_themes": [
+      "Austausch",
+      "Schuld",
+      "Wert",
+      "Rendite"
+    ],
+    "animal_positions": [
+      {
+        "animal": "Avatar-Skript",
+        "stance": "im Aufführungstext",
+        "money_angle": "Geld / Ökonomie"
+      }
+    ],
+    "cross_scene_links": [
+      {
+        "label": "Geld-Klammer",
+        "scene_ids": [
+          "avatar"
+        ],
+        "note": "Querverweis über den Aufführungstext"
+      }
+    ],
+    "anarchy_curve": {
+      "start": 0.35,
+      "end": 1.0
+    },
+    "discussion_summary": "Kompakt-Analyse (Regel-Fallback)"
+  },
+  "composition": null,
+  "teil2_plan": {
+    "performance_speaker": "narrator",
+    "sentences": [
+      "Ein Satz reicht."
+    ],
+    "sentence_char_starts": [
+      0
+    ],
+    "avatar_segments": [],
+    "dramaturgy": {
+      "visual": null,
+      "sound": null,
+      "light": null,
+      "reason": "Teil-2 Stichwort-Cues (Regel-Fallback ohne LLM)",
+      "reason_short": "",
+      "dramaturgical_reading": "",
+      "dramaturgical_function": null,
+      "decision_kind": null,
+      "confidence": 0.0,
+      "cue_points": [
+        {
+          "trigger": "keyword",
+          "keyword": "reicht",
+          "sentence_index": 0,
+          "time_offset_sec": 0.0,
+          "function": "entfremden",
+          "intensity": 0.74,
+          "visual": null,
+          "sound": {
+            "action": "trigger_cue",
+            "cue_id": "erinnerungsglitch_fade_in",
+            "volume": 0.82
+          },
+          "light": {
+            "action": "set_scene",
+            "scene_id": "saallicht",
+            "scene_ids": [],
+            "fade_time": 3.5839999999999996,
+            "intensity": 0.8,
+            "replace_previous": true
+          }
+        }
+      ],
+      "performance_speakers": [],
+      "tags": [
+        "teil2",
+        "text_sync",
+        "keyword",
+        "anarchy",
+        "fallback"
+      ],
+      "mood": "anarchy",
+      "intensity": 1.0,
+      "timestamp": 0.0
+    },
+    "atmosphere_cue_points": [
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 2.0,
+        "function": "atmosphaere",
+        "intensity": 0.37,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "black",
+          "outputs": [
+            {
+              "output_id": "adam",
+              "clip_id": "black",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "adam",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 2.0,
+        "function": "atmosphaere",
+        "intensity": 0.37,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "clyde",
+          "outputs": [
+            {
+              "output_id": "eva",
+              "clip_id": "clyde",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "eva",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 2.0,
+        "function": "atmosphaere",
+        "intensity": 0.37,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "black",
+          "outputs": [
+            {
+              "output_id": "rz21",
+              "clip_id": "black",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "rz21",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 17.57,
+        "function": "atmosphaere",
+        "intensity": 0.5,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "clyde",
+          "outputs": [
+            {
+              "output_id": "adam",
+              "clip_id": "clyde",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "adam",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 17.57,
+        "function": "atmosphaere",
+        "intensity": 0.5,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "black",
+          "outputs": [
+            {
+              "output_id": "eva",
+              "clip_id": "black",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "eva",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 17.57,
+        "function": "atmosphaere",
+        "intensity": 0.5,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "clyde",
+          "outputs": [
+            {
+              "output_id": "rz21",
+              "clip_id": "clyde",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "rz21",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 29.76,
+        "function": "atmosphaere",
+        "intensity": 0.61,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "black",
+          "outputs": [
+            {
+              "output_id": "adam",
+              "clip_id": "black",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "adam",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 29.76,
+        "function": "atmosphaere",
+        "intensity": 0.61,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "clyde",
+          "outputs": [
+            {
+              "output_id": "eva",
+              "clip_id": "clyde",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "eva",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 29.76,
+        "function": "atmosphaere",
+        "intensity": 0.61,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "black",
+          "outputs": [
+            {
+              "output_id": "led",
+              "clip_id": "black",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "led",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 29.76,
+        "function": "atmosphaere",
+        "intensity": 0.61,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "clyde",
+          "outputs": [
+            {
+              "output_id": "rz21",
+              "clip_id": "clyde",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "rz21",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 39.75,
+        "function": "atmosphaere",
+        "intensity": 0.69,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "black",
+          "outputs": [
+            {
+              "output_id": "adam",
+              "clip_id": "black",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "adam",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 39.75,
+        "function": "atmosphaere",
+        "intensity": 0.69,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "clyde",
+          "outputs": [
+            {
+              "output_id": "eva",
+              "clip_id": "clyde",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "eva",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 39.75,
+        "function": "atmosphaere",
+        "intensity": 0.69,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "black",
+          "outputs": [
+            {
+              "output_id": "led",
+              "clip_id": "black",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "led",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 39.75,
+        "function": "atmosphaere",
+        "intensity": 0.69,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "clyde",
+          "outputs": [
+            {
+              "output_id": "rz21",
+              "clip_id": "clyde",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "rz21",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 48.22,
+        "function": "atmosphaere",
+        "intensity": 0.77,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "black",
+          "outputs": [
+            {
+              "output_id": "adam",
+              "clip_id": "black",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "adam",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 48.22,
+        "function": "atmosphaere",
+        "intensity": 0.77,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "clyde",
+          "outputs": [
+            {
+              "output_id": "eva",
+              "clip_id": "clyde",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "eva",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 48.22,
+        "function": "atmosphaere",
+        "intensity": 0.77,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "black",
+          "outputs": [
+            {
+              "output_id": "rz21",
+              "clip_id": "black",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "rz21",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 48.22,
+        "function": "atmosphaere",
+        "intensity": 0.77,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "clyde",
+          "outputs": [
+            {
+              "output_id": "led",
+              "clip_id": "clyde",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "led",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 55.58,
+        "function": "atmosphaere",
+        "intensity": 0.83,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "black",
+          "outputs": [
+            {
+              "output_id": "adam",
+              "clip_id": "black",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "adam",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 55.58,
+        "function": "atmosphaere",
+        "intensity": 0.83,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "clyde",
+          "outputs": [
+            {
+              "output_id": "eva",
+              "clip_id": "clyde",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "eva",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 55.58,
+        "function": "atmosphaere",
+        "intensity": 0.83,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "black",
+          "outputs": [
+            {
+              "output_id": "led",
+              "clip_id": "black",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "led",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 55.58,
+        "function": "atmosphaere",
+        "intensity": 0.83,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "clyde",
+          "outputs": [
+            {
+              "output_id": "rz21",
+              "clip_id": "clyde",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "rz21",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 62.42,
+        "function": "atmosphaere",
+        "intensity": 0.89,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "black",
+          "outputs": [
+            {
+              "output_id": "adam",
+              "clip_id": "black",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "adam",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 62.42,
+        "function": "atmosphaere",
+        "intensity": 0.89,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "clyde",
+          "outputs": [
+            {
+              "output_id": "eva",
+              "clip_id": "clyde",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "eva",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 62.42,
+        "function": "atmosphaere",
+        "intensity": 0.89,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "black",
+          "outputs": [
+            {
+              "output_id": "rz21",
+              "clip_id": "black",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "rz21",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 62.42,
+        "function": "atmosphaere",
+        "intensity": 0.89,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "clyde",
+          "outputs": [
+            {
+              "output_id": "led",
+              "clip_id": "clyde",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "led",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 68.79,
+        "function": "atmosphaere",
+        "intensity": 0.95,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "black",
+          "outputs": [
+            {
+              "output_id": "adam",
+              "clip_id": "black",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "adam",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 68.79,
+        "function": "atmosphaere",
+        "intensity": 0.95,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "clyde",
+          "outputs": [
+            {
+              "output_id": "eva",
+              "clip_id": "clyde",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "eva",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 68.79,
+        "function": "atmosphaere",
+        "intensity": 0.95,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "black",
+          "outputs": [
+            {
+              "output_id": "led",
+              "clip_id": "black",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "led",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 68.79,
+        "function": "atmosphaere",
+        "intensity": 0.95,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "clyde",
+          "outputs": [
+            {
+              "output_id": "rz21",
+              "clip_id": "clyde",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "rz21",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 74.72,
+        "function": "atmosphaere",
+        "intensity": 1.0,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "black",
+          "outputs": [
+            {
+              "output_id": "adam",
+              "clip_id": "black",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "adam",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 74.72,
+        "function": "atmosphaere",
+        "intensity": 1.0,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "clyde",
+          "outputs": [
+            {
+              "output_id": "eva",
+              "clip_id": "clyde",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "eva",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 74.72,
+        "function": "atmosphaere",
+        "intensity": 1.0,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "black",
+          "outputs": [
+            {
+              "output_id": "led",
+              "clip_id": "black",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "led",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      },
+      {
+        "trigger": "time",
+        "keyword": null,
+        "sentence_index": null,
+        "time_offset_sec": 74.72,
+        "function": "atmosphaere",
+        "intensity": 1.0,
+        "visual": {
+          "action": "play_clip",
+          "clip_id": "clyde",
+          "outputs": [
+            {
+              "output_id": "rz21",
+              "clip_id": "clyde",
+              "action": null
+            }
+          ],
+          "recording_id": null,
+          "blend": "slow_fade",
+          "blend_mode": "layer",
+          "opacity": 0.8,
+          "fade_time": 4.0,
+          "video_type": "atmosphere",
+          "projector": "rz21",
+          "duration_ms": null,
+          "text_content_id": null,
+          "lock_until_finished": false,
+          "can_be_interrupted": true
+        },
+        "sound": null,
+        "light": null
+      }
+    ],
+    "cue_overview": {
+      "rows": [
+        {
+          "sentence_index": 0,
+          "text": "Ein Satz reicht.",
+          "annotations": [
+            {
+              "kind": "sound",
+              "label": "erinnerungsglitch_fade_in",
+              "projector": null,
+              "time_sec": null,
+              "sentence_index": 0,
+              "reason": "Stichwort: reicht · entfremden"
+            },
+            {
+              "kind": "light",
+              "label": "saallicht",
+              "projector": null,
+              "time_sec": null,
+              "sentence_index": 0,
+              "reason": "Stichwort: reicht · entfremden"
+            }
+          ]
+        }
+      ],
+      "atmosphere_timeline": [
+        {
+          "kind": "video",
+          "label": "black",
+          "projector": "adam",
+          "time_sec": 2.0,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "clyde",
+          "projector": "eva",
+          "time_sec": 2.0,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "black",
+          "projector": "rz21",
+          "time_sec": 2.0,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "clyde",
+          "projector": "adam",
+          "time_sec": 17.57,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "black",
+          "projector": "eva",
+          "time_sec": 17.57,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "clyde",
+          "projector": "rz21",
+          "time_sec": 17.57,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "black",
+          "projector": "adam",
+          "time_sec": 29.76,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "clyde",
+          "projector": "eva",
+          "time_sec": 29.76,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "black",
+          "projector": "led",
+          "time_sec": 29.76,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "clyde",
+          "projector": "rz21",
+          "time_sec": 29.76,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "black",
+          "projector": "adam",
+          "time_sec": 39.75,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "clyde",
+          "projector": "eva",
+          "time_sec": 39.75,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "black",
+          "projector": "led",
+          "time_sec": 39.75,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "clyde",
+          "projector": "rz21",
+          "time_sec": 39.75,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "black",
+          "projector": "adam",
+          "time_sec": 48.22,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "clyde",
+          "projector": "eva",
+          "time_sec": 48.22,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "black",
+          "projector": "rz21",
+          "time_sec": 48.22,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "clyde",
+          "projector": "led",
+          "time_sec": 48.22,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "black",
+          "projector": "adam",
+          "time_sec": 55.58,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "clyde",
+          "projector": "eva",
+          "time_sec": 55.58,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "black",
+          "projector": "led",
+          "time_sec": 55.58,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "clyde",
+          "projector": "rz21",
+          "time_sec": 55.58,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "black",
+          "projector": "adam",
+          "time_sec": 62.42,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "clyde",
+          "projector": "eva",
+          "time_sec": 62.42,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "black",
+          "projector": "rz21",
+          "time_sec": 62.42,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "clyde",
+          "projector": "led",
+          "time_sec": 62.42,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "black",
+          "projector": "adam",
+          "time_sec": 68.79,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "clyde",
+          "projector": "eva",
+          "time_sec": 68.79,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "black",
+          "projector": "led",
+          "time_sec": 68.79,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "clyde",
+          "projector": "rz21",
+          "time_sec": 68.79,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "black",
+          "projector": "adam",
+          "time_sec": 74.72,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "clyde",
+          "projector": "eva",
+          "time_sec": 74.72,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "black",
+          "projector": "led",
+          "time_sec": 74.72,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        },
+        {
+          "kind": "video",
+          "label": "clyde",
+          "projector": "rz21",
+          "time_sec": 74.72,
+          "sentence_index": null,
+          "reason": "atmosphaere"
+        }
+      ]
+    },
+    "anarchy_level_end": 1.0,
+    "alignment_warnings": [
+      "bak1_nicolaspflanzen3: Text nicht im Aufführungstext gefunden",
+      "bak2_krabbe: Text nicht im Aufführungstext gefunden",
+      "bak3_hasen: Text nicht im Aufführungstext gefunden",
+      "bak3_mavie: Text nicht im Aufführungstext gefunden",
+      "bak4_inge: Text nicht im Aufführungstext gefunden",
+      "bak5_thiemo: Text nicht im Aufführungstext gefunden",
+      "bak6_azaria: Text nicht im Aufführungstext gefunden",
+      "del1_nicolas: Text nicht im Aufführungstext gefunden",
+      "del2: Text nicht im Aufführungstext gefunden",
+      "del3: Text nicht im Aufführungstext gefunden",
+      "del4: Text nicht im Aufführungstext gefunden",
+      "bk0_waran: Text nicht im Aufführungstext gefunden",
+      "bk1_caro: Text nicht im Aufführungstext gefunden",
+      "bk1_caroline: Text nicht im Aufführungstext gefunden",
+      "bk1_thomas: Text nicht im Aufführungstext gefunden",
+      "bk2_hundswolf: Text nicht im Aufführungstext gefunden",
+      "bk2_mavie: Text nicht im Aufführungstext gefunden",
+      "bk3_thomas: Text nicht im Aufführungstext gefunden",
+      "daslammgottes: Text nicht im Aufführungstext gefunden",
+      "lg2_inge: Text nicht im Aufführungstext gefunden",
+      "lg3_seb: Text nicht im Aufführungstext gefunden",
+      "lg4_azaria: Text nicht im Aufführungstext gefunden",
+      "lg5_henrike: Text nicht im Aufführungstext gefunden",
+      "lg6_hai: Text nicht im Aufführungstext gefunden",
+      "bk5_nicolas: Text nicht im Aufführungstext gefunden",
+      "bk6_branko: Text nicht im Aufführungstext gefunden",
+      "bk7_caroline: Text nicht im Aufführungstext gefunden",
+      "bk7_nasenfisch: Text nicht im Aufführungstext gefunden",
+      "bk8_haischaedel: Text nicht im Aufführungstext gefunden",
+      "bk8_mavie1: Text nicht im Aufführungstext gefunden",
+      "bk8_mavie: Text nicht im Aufführungstext gefunden",
+      "bk9_thiemo: Text nicht im Aufführungstext gefunden",
+      "pet0_baer_thomas: Text nicht im Aufführungstext gefunden",
+      "pet1_azaria: Text nicht im Aufführungstext gefunden",
+      "pet1_thomas: Text nicht im Aufführungstext gefunden",
+      "pet2_inge: Text nicht im Aufführungstext gefunden",
+      "pet3_caroline: Text nicht im Aufführungstext gefunden",
+      "pet3_koala: Text nicht im Aufführungstext gefunden",
+      "pet4_sebastian: Text nicht im Aufführungstext gefunden",
+      "pet5_azaria: Text nicht im Aufführungstext gefunden",
+      "wo1_kaenguru: Text nicht im Aufführungstext gefunden",
+      "wo2_branko: Text nicht im Aufführungstext gefunden",
+      "wo3_seb_musik: Text nicht im Aufführungstext gefunden",
+      "wo4_nicolas: Text nicht im Aufführungstext gefunden",
+      "wo4_schimpanse: Text nicht im Aufführungstext gefunden",
+      "wo5_thiemo: Text nicht im Aufführungstext gefunden",
+      "wo6_mavie: Text nicht im Aufführungstext gefunden",
+      "wo6_schimpanse: Text nicht im Aufführungstext gefunden",
+      "wo7_sebastian: Text nicht im Aufführungstext gefunden",
+      "mo1_sebmusik: Text nicht im Aufführungstext gefunden",
+      "mo2_branko: Text nicht im Aufführungstext gefunden",
+      "mo3_dachs: Text nicht im Aufführungstext gefunden",
+      "mo3_caro: Text nicht im Aufführungstext gefunden",
+      "sch1_sebastian: Text nicht im Aufführungstext gefunden",
+      "sch2_azariawirdschaf: Text nicht im Aufführungstext gefunden",
+      "sch2_azaria_als_schaf: Text nicht im Aufführungstext gefunden",
+      "sch2_azaria: Text nicht im Aufführungstext gefunden",
+      "sch3_ingewirdschaf: Text nicht im Aufführungstext gefunden",
+      "sch4_thomas: Text nicht im Aufführungstext gefunden",
+      "sch5_schafsolo_mavie: Text nicht im Aufführungstext gefunden",
+      "sch6_schafherde: Text nicht im Aufführungstext gefunden",
+      "sch7_schaf_single_sebastian: Text nicht im Aufführungstext gefunden",
+      "sch8_viele_schafe_caro: Text nicht im Aufführungstext gefunden"
+    ]
+  }
+}

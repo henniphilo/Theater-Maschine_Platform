@@ -135,7 +135,9 @@ app/services/active_production.py
 app/services/ai_errors.py
 app/services/ai_service.py
 app/services/asset_service.py
+app/services/atmosphere_required_clips.py
 app/services/avatar_duration.py
+app/services/avatar_required_lights.py
 app/services/avatar_speech_catalog.py
 app/services/baerenklau_beat.py
 app/services/catalog_media_resolver.py
@@ -226,7 +228,9 @@ tests/test_asset_api.py
 tests/test_asset_model.py
 tests/test_asset_service.py
 tests/test_asset_upload.py
+tests/test_atmosphere_required_clips.py
 tests/test_avatar_done_gate.py
+tests/test_avatar_required_lights.py
 tests/test_avatar_speech_catalog.py
 tests/test_baerenklau_beat.py
 tests/test_burgtheater_import.py

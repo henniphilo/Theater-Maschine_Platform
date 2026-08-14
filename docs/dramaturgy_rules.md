@@ -505,6 +505,15 @@ Video darf:
 
 Video soll bevorzugt als Gegenstimme funktionieren.
 
+Pflichtregel Begleitvideo:
+
+```text
+Bonnie und Clyde (clip_id bonnie, clyde) mehrmals als Atmosphäre/OSC ohne Avatare
+über die Aufführung verteilen. Nicht nur einmal, nicht als Dauerschleife.
+Nur Videos verwenden, die auf allen vier Beamern (rz21, adam, eva, led) angelegt sind.
+Random und Avatar2 nicht verwenden.
+```
+
 OSC-Beispiele:
 
 ```text
@@ -588,6 +597,8 @@ Lichtwechsel sind gewichtiger als Video- und Soundwechsel.
 Nicht zu oft Licht ändern.
 Blackout ist ein dramaturgischer Schnitt, kein Effekt.
 Stroboskop oder schnelle Flicker nur, wenn explizit freigegeben.
+Bei den Avataren SCH4_Thomas und WO2_Branko muss klaviertasten (Ch. 26) an sein.
+klaviertasten dort mit anderen Stimmungen kombinieren (scene_ids), nicht als alleinigen Ersatz.
 ```
 
 ---

@@ -31,6 +31,7 @@ from app.director.outputs.signal_trace import (
 )
 from app.director.run_state import get_director_run_state
 from app.schemas.director import TraceContext
+from app.services.avatar_required_lights import apply_avatar_required_lights
 from app.services.teil2_dramaturgy_routing import (
     active_avatar_reserved_projectors,
     route_dramaturgy_away_from_projectors,
@@ -220,6 +221,7 @@ class DirectorPipeline:
             )
             return self._emergency_blocked_result(decision, "(script beat)")
 
+        decision = apply_avatar_required_lights(decision, self.projectors)
         decision = _filter_decision_for_safety(decision, self.safety)
         decision = enrich_decision_metadata(decision)
         decision = _route_dramaturgy_from_avatar_projectors(decision, self.projectors)
@@ -341,6 +343,7 @@ class DirectorPipeline:
             decision.visual = decision.visual.model_copy(
                 update={"blend_mode": "layer"},
             )
+        decision = apply_avatar_required_lights(decision, self.projectors)
         decision = _filter_decision_for_safety(decision, self.safety)
         decision = enrich_decision_metadata(decision)
         decision = _route_dramaturgy_from_avatar_projectors(decision, self.projectors)

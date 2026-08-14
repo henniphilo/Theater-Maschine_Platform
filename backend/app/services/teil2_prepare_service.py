@@ -25,6 +25,7 @@ from app.schemas.inszenierung import (
     Teil2PerformancePlan,
 )
 from app.services.ai_service import AIService
+from app.services.avatar_required_lights import apply_required_lights_to_plan
 from app.services.avatar_speech_catalog import get_avatar_speech_catalog_service
 from app.services.teil2_anarchy_cues import (
     apply_anarchy_to_keyword_cue_point,
@@ -121,6 +122,7 @@ class Teil2PrepareService:
             avatar_clip_ids=avatar_clip_ids,
             seed=len(sentences),
         )
+        dramaturgy = apply_required_lights_to_plan(dramaturgy, segments)
         await phase("atmosphere")
         atmosphere_cue_points = await get_teil2_atmosphere_scheduler().schedule(
             script_text=script_text,

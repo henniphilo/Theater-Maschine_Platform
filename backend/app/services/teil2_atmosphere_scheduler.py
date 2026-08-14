@@ -17,15 +17,20 @@ from app.director.cues.cue_models import (
 from app.director.dramaturgy.llm_director import LLMDirector
 from app.schemas.inszenierung import AnarchyCurve, AvatarTextSegment, Gesamtkonzept
 from app.services.ai_service import AIService
+from app.services.atmosphere_required_clips import (
+    available_recurring_clips,
+    ensure_recurring_atmosphere_clips,
+    pick_recurring_or_pool_clip,
+)
 from app.services.avatar_duration import estimate_duration_ms
-from app.services.part2_cue_density import cue_intervals_for_anarchy
+from app.services.part2_cue_density import atmosphere_intervals_for_anarchy
 from app.services.teil2_projector_assignment import (
     ALL_PROJECTORS,
     STAGE_BEAMER_ORDER,
     atmosphere_targets_for_free,
     pick_atmosphere_projectors,
 )
-from app.services.video_scope import _clip_ids_for_scope
+from app.services.video_scope import atmosphere_clip_ids
 
 
 @dataclass(frozen=True)
@@ -101,8 +106,7 @@ def free_projectors_at(windows: list[AvatarWindow], time_sec: float) -> list[str
 
 
 def _atmosphere_clip_pool(*, avatar_clip_ids: set[str]) -> list[str]:
-    allowed = _clip_ids_for_scope("part1")
-    return [clip_id for clip_id in sorted(allowed) if clip_id not in avatar_clip_ids]
+    return sorted(atmosphere_clip_ids(avatar_clip_ids=avatar_clip_ids))
 
 
 def _assign_atmosphere_visual(clip_id: str, projector: str) -> VisualCue:
@@ -206,7 +210,7 @@ def atmosphere_fill_count(free_count: int, anarchy: float) -> int:
     always = min(2, free_count)
     others = max(0, free_count - always)
     if anarchy < 0.35:
-        return always
+        return always + min(1, others)
     if anarchy < 0.55:
         return always + min(1, others)
     return free_count
@@ -243,7 +247,7 @@ def _fill_free_projectors_at(
     points: list[CuePoint] = []
     next_index = clip_index
     for projector in targets:
-        clip_id = pool[next_index % len(pool)]
+        clip_id = pick_recurring_or_pool_clip(pool, next_index)
         next_index += 1
         points.append(
             CuePoint(
@@ -280,12 +284,12 @@ def _rule_based_atmosphere_points(
     windows = build_avatar_windows(script_text, segments, total_sec)
     points: list[CuePoint] = []
     clip_index = 0
-    time_sec = 2.0  # slight lead-in so first avatar can land
+    time_sec = 0.0
 
     while time_sec < total_sec:
         anarchy = _anarchy_at_time(time_sec, total_sec, curve)
-        video_min, video_max = cue_intervals_for_anarchy(anarchy)["video"]
-        step = max(3.0, (video_min + video_max) / 2.0)
+        video_min, video_max = atmosphere_intervals_for_anarchy(anarchy)
+        step = max(2.5, (video_min + video_max) / 2.0)
         free = free_projectors_at(windows, time_sec)
         batch, clip_index = _fill_free_projectors_at(
             time_sec=time_sec,
@@ -398,9 +402,9 @@ class Teil2AtmosphereScheduler:
             return []
 
         mid_anarchy = (gesamtkonzept.anarchy_curve.start + gesamtkonzept.anarchy_curve.end) / 2
-        intervals = cue_intervals_for_anarchy(mid_anarchy)
-        video_min, video_max = intervals["video"]
+        video_min, video_max = atmosphere_intervals_for_anarchy(mid_anarchy)
 
+        points: list[CuePoint] = []
         if settings.teil2_atmosphere_use_llm and settings.director_dramaturgy_mode != "rules" and "openai" in self.ai.providers:
             try:
                 llm_points = await self._schedule_llm(
@@ -413,17 +417,24 @@ class Teil2AtmosphereScheduler:
                     openai_model=openai_model,
                 )
                 if llm_points:
-                    return llm_points
+                    points = llm_points
             except Exception:
                 pass
 
-        return _rule_based_atmosphere_points(
-            script_text=script_text,
-            sentences=sentences,
-            segments=segments,
-            curve=gesamtkonzept.anarchy_curve,
-            avatar_clip_ids=avatar_clip_ids,
-            dramaturgy=dramaturgy,
+        if not points:
+            points = _rule_based_atmosphere_points(
+                script_text=script_text,
+                sentences=sentences,
+                segments=segments,
+                curve=gesamtkonzept.anarchy_curve,
+                avatar_clip_ids=avatar_clip_ids,
+                dramaturgy=dramaturgy,
+            )
+        return ensure_recurring_atmosphere_clips(
+            points,
+            windows=windows,
+            total_sec=total_sec,
+            allowed_clips=allowed_clips,
         )
 
     async def _schedule_llm(
@@ -439,7 +450,11 @@ class Teil2AtmosphereScheduler:
     ) -> list[CuePoint]:
         digest = script_text[:8000] + ("…" if len(script_text) > 8000 else "")
         timeline = _timeline_summary(windows, total_sec)
-        clip_sample = sorted(allowed_clips)[:40]
+        clip_sample = available_recurring_clips(allowed_clips)
+        clip_sample.extend(
+            clip_id for clip_id in sorted(allowed_clips) if clip_id not in clip_sample
+        )
+        clip_sample = clip_sample[:40]
         prompt = (
             f"Anarchie-Kurve: {gesamtkonzept.anarchy_curve.start} → {gesamtkonzept.anarchy_curve.end}\n"
             f"Geschätzte Dauer: {total_sec:.0f}s\n\n"
@@ -447,9 +462,13 @@ class Teil2AtmosphereScheduler:
             f"Avatar-Belegung (reservierte Beamers):\n{timeline}\n\n"
             "Plane Atmosphären-/Begleit-Videos (OhneAvatare) auf FREIEN Beamern.\n"
             "KEIN Dialog. Stimmungsunabhängig — variiere Clips nach Zeit/Anarchie, nicht nach Text.\n"
-            f"Rhythmus: alle {video_interval[0]:.0f}–{video_interval[1]:.0f}s neue Clips.\n"
+            f"Rhythmus: erste Clips bei 0s, dann alle {video_interval[0]:.0f}–{video_interval[1]:.0f}s — "
+            "früh schon dicht, nicht erst spät in der Aufführung.\n"
             "Pflicht: Adam und Eva müssen immer etwas zeigen, sobald kein Avatar dort läuft "
             "(Atmosphäre auf jedem freien Adam/Eva).\n"
+            "Früh zusätzlich einen weiteren freien Beamer (rz21 oder led) belegen.\n"
+            "Pflicht: clip_id bonnie und clyde mehrmals über die Aufführung als Begleitvideo "
+            "(OSC ohne Avatare) verteilen — nicht nur einmal, nicht dauernd.\n"
             "Pro Zeitstempel: mehrere cue_points mit gleichem time_offset_sec, "
             "je ein anderer freier Projektor (Begleitung parallel zu Avataren).\n"
             "Je höher die Anarchie, desto mehr zusätzliche freie Flächen (rz21, led).\n"
@@ -476,6 +495,7 @@ class Teil2AtmosphereScheduler:
                         "Avatar-Beamers nie belegen. Freie Flächen parallel mit verschiedenen Clips füllen. "
                         "Plane auch bewusst Leerstellen: fade_to_black oder stop_clip, "
                         "damit die Atmosphäre atmet und nicht nur startet. "
+                        "Pflichtclips bonnie und clyde mehrmals als Begleitvideo einplanen. "
                         "Keine Avatar-Clips. Nur gültiges JSON."
                     ),
                 },

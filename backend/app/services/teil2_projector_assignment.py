@@ -134,7 +134,7 @@ def atmosphere_targets_for_free(
     always = [p for p in STAGE_ALWAYS_ATMOSPHERE if p in free_set]
     others = [p for p in STAGE_BEAMER_ORDER if p in free_set and p not in always]
     if anarchy < 0.35:
-        extra_n = 0
+        extra_n = min(1, len(others))
     elif anarchy < 0.55:
         extra_n = min(1, len(others))
     else:

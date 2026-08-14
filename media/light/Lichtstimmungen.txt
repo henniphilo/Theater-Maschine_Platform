@@ -27,3 +27,5 @@ Quelle: `media/light/Light Channels KI.txt` · Preset **Pr.91** wo nicht anders 
 | blackout | /eos/key/out | Alles aus |
 
 Kombination: mehrere `scene_ids` in einem Licht-Cue — vorherige Lampen gehen aus, dann alle gewählten Stimmungen gemeinsam.
+
+Pflichtlicht Avatare: Bei **SCH4_Thomas** und **WO2_Branko** muss `klaviertasten` (Ch. 26) an sein — zusätzlich zu anderen Stimmungen, nicht als alleiniger Ersatz.
