@@ -175,11 +175,14 @@ test-frontend: ## vitest
 avatar-catalog: ## Avatar-Textkatalog aus CSV nach data/avatar_speech.json
 	cd "$(ROOT)/backend" && .venv/bin/python -c "from app.services.avatar_speech_catalog import get_avatar_speech_catalog_service; c=get_avatar_speech_catalog_service().load(); print(f'{len(c.cues)} avatar cues cached')"
 
-avatar-import: ## Textzuordnung.numbers → CSV, Video Übersicht, Skript.txt
-	cd "$(ROOT)/backend" && .venv/bin/python scripts/import_avatar_textzuordnung.py
+avatar-import: ## Textzuordnung.numbers → CSV, OSC Avatare, video_cues (optional: NUMBERS=… MEDIA_FOLDER=…)
+	cd "$(ROOT)/backend" && .venv/bin/python scripts/import_avatar_textzuordnung.py \
+		$(if $(NUMBERS),"$(NUMBERS)",) \
+		$(if $(MEDIA_FOLDER),--media-folder "$(MEDIA_FOLDER)",)
 
-video-import: ## Videozuordnung.numbers → OSC ohne Avatare, Video Übersicht, video_cues.json
-	cd "$(ROOT)/backend" && .venv/bin/python scripts/import_video_zuordnung.py
+video-import: ## Videozuordnung.numbers → OSC ohne Avatare, Video Übersicht, video_cues.json (optional: NUMBERS=…)
+	cd "$(ROOT)/backend" && .venv/bin/python scripts/import_video_zuordnung.py \
+		$(if $(NUMBERS),"$(NUMBERS)",)
 
 burgtheater-import-dry: ## Burgtheater-Import analysieren (Dry Run, keine DB-Persistenz)
 	@if [[ ! -x "$(ROOT)/backend/.venv/bin/python" ]]; then \

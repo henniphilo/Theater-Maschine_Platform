@@ -50,6 +50,7 @@ class VideoCueCatalogService:
         clips_path, projectors_path = resolve_video_overview_paths(_data_dir())
         if clips_path is not None:
             base = load_video_cues_from_csv(clips_path, projectors_path)
+            base = self._merge_preserved_clip_fields(base)
             self._write_json_cache(base, source=str(clips_path))
 
         catalog = build_video_catalog(scope)
@@ -59,6 +60,39 @@ class VideoCueCatalogService:
     def clear_cache(self) -> None:
         self._cache.clear()
 
+    @staticmethod
+    def _merge_preserved_clip_fields(base: VideoCueCatalog) -> VideoCueCatalog:
+        """Keep duration_ms / video_type from existing JSON when rebuilding from CSV."""
+        path = catalog_json_path()
+        if not path.is_file():
+            return base
+        try:
+            previous = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return base
+        prev_by_id = {c.get("id"): c for c in previous.get("clips", []) if c.get("id")}
+        projectors = list(base.projectors)
+        if not projectors:
+            from app.schemas.video_cues import VideoProjectorEntry
+
+            projectors = [
+                VideoProjectorEntry.model_validate(p) for p in previous.get("projectors", []) if p.get("id")
+            ]
+        merged_clips = []
+        for clip in base.clips:
+            prev = prev_by_id.get(clip.id)
+            if not prev:
+                merged_clips.append(clip)
+                continue
+            updates: dict = {}
+            if clip.duration_ms is None and prev.get("duration_ms"):
+                updates["duration_ms"] = prev["duration_ms"]
+            if prev.get("video_type") and clip.video_type == "atmosphere":
+                updates["video_type"] = prev["video_type"]
+            if prev.get("can_be_interrupted") is False:
+                updates["can_be_interrupted"] = False
+            merged_clips.append(clip.model_copy(update=updates) if updates else clip)
+        return base.model_copy(update={"clips": merged_clips, "projectors": projectors})
     @staticmethod
     def _write_json_cache(catalog: VideoCueCatalog, *, source: str) -> None:
         path = catalog_json_path()

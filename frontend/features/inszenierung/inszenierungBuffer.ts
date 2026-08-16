@@ -192,7 +192,12 @@ export async function resolveSentenceSpeech(
   const key = sentenceCacheKey(corpusId, index, speaker);
   const cached = sentenceBlobCache.get(key);
   if (cached) return cached;
-  const pending = fetchSpeechBlob(text, speaker as TtsSpeaker, { profile: "inszenierung" });
+  const pending = fetchSpeechBlob(text, speaker as TtsSpeaker, { profile: "inszenierung" }).catch(
+    (err) => {
+      sentenceBlobCache.delete(key);
+      throw err;
+    }
+  );
   sentenceBlobCache.set(key, pending);
   return pending;
 }
@@ -230,6 +235,9 @@ export async function resolveMomentSpeech(
   if (cached) return cached;
   const pending = fetchSpeechBlob(moment.text_excerpt, moment.speaker as TtsSpeaker, {
     profile: "inszenierung"
+  }).catch((err) => {
+    momentBlobCache.delete(key);
+    throw err;
   });
   momentBlobCache.set(key, pending);
   return pending;

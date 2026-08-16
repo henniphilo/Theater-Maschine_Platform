@@ -17,11 +17,17 @@ from scripts.import_video_zuordnung import (
 def test_numbers_clip_to_pixera_atmosphere_names() -> None:
     assert numbers_clip_to_pixera("Bitcoinfahrt") == "Bitcoinfahrt"
     assert numbers_clip_to_pixera("Affen Slow_Odysee 2001") == "AffenSlowOdysee"
-    assert numbers_clip_to_pixera("Tier unter der Erde") == "TierUnterDerErde"
+    assert numbers_clip_to_pixera("Hier unter der Erde") == "HierUnterDerErde"
+    assert numbers_clip_to_pixera("Bitcoin_and_worm") == "Bitcoin_and_worm"
+    assert numbers_clip_to_pixera("Brennender_Wald") == "Brennender_Wald"
+    assert numbers_clip_to_pixera("Schmetterlinge_laufen") == "Schmetterlinge_laufen"
+    assert numbers_clip_to_pixera("Flut") == "Flut"
+    assert numbers_clip_to_pixera("Massenproduktion") == "Massenproduktion"
 
 
 def test_slug_id_from_pixera() -> None:
     assert slug_id("FischUndWassergewaechs") == "fischundwassergewaechs"
+    assert slug_id("Bitcoin_and_worm") == "bitcoin_and_worm"
 
 
 def test_parse_numbers_sheet_duration_mm_ss() -> None:

@@ -77,21 +77,46 @@ export async function fetchTTSStatus() {
 export type TtsSpeaker = "openai" | "anthropic" | "AI_A" | "AI_B" | "narrator";
 export type TtsProfile = "dramaturg" | "performance" | "inszenierung";
 
+/** Client cap so a stuck macOS `say` cannot freeze Teil-2 forever (backend allow up to 180s). */
+export const TTS_SPEAK_TIMEOUT_MS = 45_000;
+/** If audio never reaches onended (stall / missing ended), force-resolve after duration + grace. */
+export const PLAY_BLOB_END_GRACE_MS = 4_000;
+/** Wall-clock stall while playing with frozen currentTime. */
+export const PLAY_BLOB_STALL_MS = 8_000;
+/** Absolute ceiling when duration is unknown. */
+export const PLAY_BLOB_MAX_WALL_MS = 180_000;
+
 export async function fetchSpeechBlob(
   text: string,
   speaker: TtsSpeaker,
-  options?: { profile?: TtsProfile }
+  options?: { profile?: TtsProfile; timeoutMs?: number }
 ): Promise<Blob> {
-  const res = await apiFetch("/tts/speak", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text, speaker, profile: options?.profile ?? null })
-  });
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({ detail: "TTS failed" }));
-    throw new Error(body.detail ?? "TTS failed");
+  const timeoutMs = options?.timeoutMs ?? TTS_SPEAK_TIMEOUT_MS;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await apiFetch("/tts/speak", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text, speaker, profile: options?.profile ?? null }),
+      signal: controller.signal
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({ detail: "TTS failed" }));
+      throw new Error(body.detail ?? "TTS failed");
+    }
+    return await res.blob();
+  } catch (err) {
+    if (err instanceof DOMException && err.name === "AbortError") {
+      throw new Error(`TTS timeout after ${timeoutMs}ms`);
+    }
+    if (err instanceof Error && /aborted|AbortError/i.test(err.message)) {
+      throw new Error(`TTS timeout after ${timeoutMs}ms`);
+    }
+    throw err;
+  } finally {
+    clearTimeout(timer);
   }
-  return res.blob();
 }
 
 let currentAudio: HTMLAudioElement | null = null;
@@ -214,6 +239,8 @@ export function playBlob(
     onPlay?: () => void;
     onTimeUpdate?: (currentTime: number, duration: number) => void;
     shouldAbort?: () => boolean;
+    /** Test override for absolute wall-clock ceiling (active play time excludes pause). */
+    maxWallMs?: number;
   }
 ): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -228,6 +255,12 @@ export function playBlob(
 
     let settled = false;
     let abortPoll: ReturnType<typeof setInterval> | null = null;
+    let activePlayMs = 0;
+    let lastPollAt = Date.now();
+    let lastProgressAt = Date.now();
+    let lastCurrentTime = 0;
+    const maxWallMs = hooks?.maxWallMs ?? PLAY_BLOB_MAX_WALL_MS;
+
     const finish = (outcome: () => void) => {
       if (settled) return;
       settled = true;
@@ -249,9 +282,42 @@ export function playBlob(
     };
     activePlaySettle = onAbortSettle;
 
+    const forceEnd = (reason: string) => {
+      console.warn(`[playBlob] ${reason} — continuing playback loop`);
+      audio.pause();
+      finish(() => resolve());
+    };
+
     abortPoll = setInterval(() => {
       if (hooks?.shouldAbort?.()) {
         onAbortSettle();
+        return;
+      }
+      const now = Date.now();
+      const dt = now - lastPollAt;
+      lastPollAt = now;
+      if (playbackPaused || audio.paused) {
+        lastProgressAt = now;
+        return;
+      }
+      activePlayMs += dt;
+      const t = audio.currentTime;
+      if (Number.isFinite(t) && Math.abs(t - lastCurrentTime) > 0.01) {
+        lastCurrentTime = t;
+        lastProgressAt = now;
+      } else if (now - lastProgressAt >= PLAY_BLOB_STALL_MS) {
+        forceEnd(`audio stalled (${PLAY_BLOB_STALL_MS}ms without progress)`);
+        return;
+      }
+      const duration = audio.duration;
+      if (Number.isFinite(duration) && duration > 0) {
+        const budgetMs = (duration * 1000) / Math.max(0.5, audio.playbackRate || playbackRate) + PLAY_BLOB_END_GRACE_MS;
+        if (activePlayMs >= budgetMs) {
+          forceEnd(`past expected end (${Math.round(budgetMs)}ms)`);
+          return;
+        }
+      } else if (activePlayMs >= maxWallMs) {
+        forceEnd(`max wall time (${maxWallMs}ms)`);
       }
     }, 80);
 
@@ -281,6 +347,8 @@ export function playBlob(
         return;
       }
       try {
+        lastPollAt = Date.now();
+        lastProgressAt = lastPollAt;
         await audio.play();
       } catch (err) {
         if (settled) return;

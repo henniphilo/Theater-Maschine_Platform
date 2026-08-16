@@ -14,6 +14,7 @@ import {
   bindAvatarChainContext,
   countUnfiredAvatarSegments,
   clearPendingAvatarDoneGate,
+  resetAvatarPlaybackState,
   fireInitialAvatarSegments,
   flushPendingAvatarDoneGate,
   markAvatarSegmentsBeforeSentenceIndex,
@@ -59,8 +60,7 @@ function anarchyForSentence(
 
 /** Hard stop: clear avatar chain + emergency-stop director. */
 export function stopTextSyncPlayback(): void {
-  bindAvatarChainContext(null);
-  clearPendingAvatarDoneGate();
+  resetAvatarPlaybackState();
   void stopDirectorPerformance().catch(() => undefined);
 }
 
@@ -69,8 +69,7 @@ export function stopTextSyncPlayback(): void {
  * (avoids racing Probebetrieb re-arm).
  */
 export function softAbortTextSyncPlayback(): void {
-  bindAvatarChainContext(null);
-  clearPendingAvatarDoneGate();
+  resetAvatarPlaybackState();
 }
 
 /** Sum estimated narration seconds for sentences [0, beforeIndex). */
@@ -120,6 +119,8 @@ export async function runTextSyncPlayback(
       route: "/auffuehrung"
     });
   }
+  // Drop leftover locks/timers from a previous Stop so the second run starts clean.
+  resetAvatarPlaybackState();
   await armDirectorForPerformance({ tryout: options?.tryout });
   const sentences = plan.sentences;
   const startIndex = Math.max(0, Math.min(options?.startSentenceIndex ?? 0, sentences.length - 1));
@@ -215,18 +216,31 @@ export async function runTextSyncPlayback(
         continue;
       }
 
-      const blob = await resolveSentenceSpeech(corpus.id, index, sentence, speaker);
+      let blob: Blob;
+      try {
+        blob = await resolveSentenceSpeech(corpus.id, index, sentence, speaker);
+      } catch (err) {
+        console.warn(`[teil2] TTS failed for sentence ${index} — skipping:`, err);
+        const fallbackSec = Math.max(1.2, Math.min(12, sentence.length / 14));
+        cumulativeTime += fallbackSec;
+        if (!(await sleepWallMs(fallbackSec * 1000, shouldAbort))) break;
+        continue;
+      }
       if (shouldAbort()) break;
 
       const sentenceStart = cumulativeTime;
       let lastDuration = 0;
-      await playBlob(blob, {
-        shouldAbort,
-        onTimeUpdate: (current, duration) => {
-          if (Number.isFinite(duration)) lastDuration = duration;
-          void fireTimedCues(sentenceStart + current);
-        }
-      });
+      try {
+        await playBlob(blob, {
+          shouldAbort,
+          onTimeUpdate: (current, duration) => {
+            if (Number.isFinite(duration)) lastDuration = duration;
+            void fireTimedCues(sentenceStart + current);
+          }
+        });
+      } catch (err) {
+        console.warn(`[teil2] Audio playback failed for sentence ${index} — continuing:`, err);
+      }
 
       if (shouldAbort()) break;
       cumulativeTime += Number.isFinite(lastDuration) ? lastDuration : 0;

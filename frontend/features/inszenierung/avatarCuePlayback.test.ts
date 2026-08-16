@@ -495,4 +495,286 @@ describe("avatar done gate", () => {
 
     bindAvatarChainContext(null);
   });
+
+  it("chains the next avatar on CSV duration even if Done-gate status fetch hangs", async () => {
+    vi.useFakeTimers();
+    const { isAvatarDoneGateEnabled, postDirectorExecuteLayered } = await import("@/lib/api/director");
+    const {
+      fireAvatarSegmentIfDue,
+      bindAvatarChainContext,
+      avatarSegmentKey,
+      resetAvatarPlaybackState
+    } = await import("@/features/inszenierung/avatarCuePlayback");
+
+    // Never resolves — previously this prevented arming the duration timer.
+    vi.mocked(isAvatarDoneGateEnabled).mockImplementation(() => new Promise(() => undefined));
+    vi.mocked(postDirectorExecuteLayered)
+      .mockResolvedValueOnce({
+        executed: true,
+        osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.First"] }]
+      })
+      .mockResolvedValueOnce({
+        executed: true,
+        osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.Second"] }]
+      });
+
+    const layer = (clip: string, durationMs: number) => ({
+      avatar_speech_id: clip,
+      avatar: "delfin",
+      video_clip_id: clip,
+      visual_cue: {
+        action: "play_clip" as const,
+        clip_id: clip,
+        video_type: "avatar" as const,
+        duration_ms: durationMs
+      }
+    });
+
+    const first = {
+      csv_cue_ids: ["a"],
+      text_excerpt: "Alpha.",
+      char_offset: 0,
+      csv_sequence_index: 0,
+      start_sentence_index: 0,
+      end_sentence_index: 0,
+      avatar_layers: [layer("first", 1_000)]
+    };
+    const second = {
+      csv_cue_ids: ["b"],
+      text_excerpt: "Beta.",
+      char_offset: 500,
+      csv_sequence_index: 1,
+      start_sentence_index: 1,
+      end_sentence_index: 1,
+      avatar_layers: [layer("second", 1_000)]
+    };
+
+    const plan = {
+      performance_speaker: "narrator" as const,
+      sentences: ["Alpha.", "Beta."],
+      sentence_char_starts: [0, 7],
+      avatar_segments: [first, second],
+      dramaturgy: { reason: "t", tags: [], mood: "tension" as const, intensity: 0.5, cue_points: [] },
+      anarchy_level_end: 1,
+      alignment_warnings: []
+    };
+    const fired = new Set<string>([avatarSegmentKey(first)]);
+
+    bindAvatarChainContext({
+      plan,
+      fired,
+      sentenceCharStarts: plan.sentence_char_starts,
+      scriptText: "Alpha. Beta.",
+      anarchyLevelFor: () => 0.5,
+      onCommands: async () => undefined,
+      shouldAbort: () => false
+    });
+
+    await fireAvatarSegmentIfDue(first, 0.5, async () => undefined, () => false);
+    expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(1);
+
+    await vi.advanceTimersByTimeAsync(1_000);
+    await vi.waitFor(() => {
+      expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(2);
+    });
+    expect(fired.has(avatarSegmentKey(second))).toBe(true);
+
+    resetAvatarPlaybackState();
+    vi.useRealTimers();
+  });
+
+  it("skips a blocked segment and continues the CSV chain", async () => {
+    vi.useFakeTimers();
+    const { isAvatarDoneGateEnabled, postDirectorExecuteLayered } = await import("@/lib/api/director");
+    const {
+      fireAvatarSegmentIfDue,
+      bindAvatarChainContext,
+      avatarSegmentKey,
+      resetAvatarPlaybackState
+    } = await import("@/features/inszenierung/avatarCuePlayback");
+
+    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(false);
+    vi.mocked(postDirectorExecuteLayered)
+      .mockResolvedValueOnce({
+        executed: true,
+        osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.First"] }]
+      })
+      .mockResolvedValueOnce({
+        executed: false,
+        osc_commands: [],
+        blocked_reason: "projector_locked:adam"
+      })
+      .mockResolvedValueOnce({
+        executed: true,
+        osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.Third"] }]
+      });
+
+    const layer = (clip: string) => ({
+      avatar_speech_id: clip,
+      avatar: "delfin",
+      video_clip_id: clip,
+      visual_cue: {
+        action: "play_clip" as const,
+        clip_id: clip,
+        video_type: "avatar" as const,
+        duration_ms: 500
+      }
+    });
+
+    const first = {
+      csv_cue_ids: ["a"],
+      text_excerpt: "Alpha.",
+      char_offset: 0,
+      csv_sequence_index: 0,
+      start_sentence_index: 0,
+      end_sentence_index: 0,
+      avatar_layers: [layer("first")]
+    };
+    const second = {
+      ...first,
+      csv_cue_ids: ["b"],
+      csv_sequence_index: 1,
+      text_excerpt: "Beta.",
+      avatar_layers: [layer("second")]
+    };
+    const third = {
+      ...first,
+      csv_cue_ids: ["c"],
+      csv_sequence_index: 2,
+      text_excerpt: "Gamma.",
+      avatar_layers: [layer("third")]
+    };
+
+    const plan = {
+      performance_speaker: "narrator" as const,
+      sentences: ["Alpha.", "Beta.", "Gamma."],
+      sentence_char_starts: [0, 7, 13],
+      avatar_segments: [first, second, third],
+      dramaturgy: { reason: "t", tags: [], mood: "tension" as const, intensity: 0.5, cue_points: [] },
+      anarchy_level_end: 1,
+      alignment_warnings: []
+    };
+    const fired = new Set<string>([avatarSegmentKey(first)]);
+
+    bindAvatarChainContext({
+      plan,
+      fired,
+      sentenceCharStarts: plan.sentence_char_starts,
+      scriptText: "Alpha. Beta. Gamma.",
+      anarchyLevelFor: () => 0.5,
+      onCommands: async () => undefined,
+      shouldAbort: () => false
+    });
+
+    await fireAvatarSegmentIfDue(first, 0.5, async () => undefined, () => false);
+    await vi.advanceTimersByTimeAsync(500);
+    await vi.waitFor(() => {
+      expect(fired.has(avatarSegmentKey(third))).toBe(true);
+    });
+    expect(fired.has(avatarSegmentKey(second))).toBe(true);
+    expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(3);
+
+    resetAvatarPlaybackState();
+    vi.useRealTimers();
+  });
+
+  it("ignores delayed chain timers after resetAvatarPlaybackState (second-run safety)", async () => {
+    vi.useFakeTimers();
+    const { isAvatarDoneGateEnabled, postDirectorExecuteLayered } = await import("@/lib/api/director");
+    const {
+      fireAvatarSegmentIfDue,
+      bindAvatarChainContext,
+      resetAvatarPlaybackState,
+      avatarSegmentKey
+    } = await import("@/features/inszenierung/avatarCuePlayback");
+
+    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(false);
+    vi.mocked(postDirectorExecuteLayered).mockResolvedValue({
+      executed: true,
+      osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.First"] }]
+    });
+
+    const first = {
+      csv_cue_ids: ["a"],
+      text_excerpt: "Alpha.",
+      char_offset: 0,
+      csv_sequence_index: 0,
+      start_sentence_index: 0,
+      end_sentence_index: 0,
+      avatar_layers: [
+        {
+          avatar_speech_id: "a",
+          avatar: "delfin",
+          video_clip_id: "first",
+          visual_cue: {
+            action: "play_clip" as const,
+            clip_id: "first",
+            video_type: "avatar" as const,
+            duration_ms: 5_000
+          }
+        }
+      ]
+    };
+    const second = {
+      ...first,
+      csv_cue_ids: ["b"],
+      csv_sequence_index: 1,
+      text_excerpt: "Beta.",
+      avatar_layers: [
+        {
+          avatar_speech_id: "b",
+          avatar: "delfin",
+          video_clip_id: "second",
+          visual_cue: {
+            action: "play_clip" as const,
+            clip_id: "second",
+            video_type: "avatar" as const,
+            duration_ms: 5_000
+          }
+        }
+      ]
+    };
+
+    const fired = new Set<string>();
+    const plan = {
+      version: 1 as const,
+      sentences: ["Alpha.", "Beta."],
+      sentence_char_starts: [0, 7],
+      performance_speaker: "narrator" as const,
+      anarchy_level_end: 0.5,
+      dramaturgy: { reason: "t", tags: [], mood: "neutral", intensity: 0.5 },
+      avatar_segments: [first, second],
+      atmosphere_cue_points: []
+    };
+
+    bindAvatarChainContext({
+      plan,
+      fired,
+      sentenceCharStarts: [0, 7],
+      scriptText: "Alpha. Beta.",
+      anarchyLevelFor: () => 0.5,
+      onCommands: async () => undefined,
+      shouldAbort: () => false
+    });
+
+    await fireAvatarSegmentIfDue(first, 0.5, async () => undefined, () => false);
+    fired.add(avatarSegmentKey(first));
+    expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(1);
+
+    // Simulate Stop → second Play: epoch bump must kill the CSV-duration timer.
+    resetAvatarPlaybackState();
+    bindAvatarChainContext({
+      plan,
+      fired: new Set(),
+      sentenceCharStarts: [0, 7],
+      scriptText: "Alpha. Beta.",
+      anarchyLevelFor: () => 0.5,
+      onCommands: async () => undefined,
+      shouldAbort: () => false
+    });
+
+    await vi.advanceTimersByTimeAsync(6_000);
+    expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(1);
+    vi.useRealTimers();
+  });
 });

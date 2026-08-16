@@ -45,6 +45,12 @@ NUMBERS_TO_PIXERA: dict[str, str] = {
     "BK8_Hai Schaedel": "BK8_HaiSchaedel",
     "BK8_Mavie 1": "BK8_Mavie1",
     "LG1_Das Lamm Gottes": "DasLammGottes",
+    # Chaos 15.08.2026 — Pixera-Cue-Namen mit Underscores (Screenshot / Numbers)
+    "Bitcoin_and_worm": "Bitcoin_and_worm",
+    "Brennender_Wald": "Brennender_Wald",
+    "Flut": "Flut",
+    "Massenproduktion": "Massenproduktion",
+    "Schmetterlinge_laufen": "Schmetterlinge_laufen",
 }
 
 
@@ -60,6 +66,9 @@ def numbers_clip_to_pixera(name: str) -> str:
     stripped = name.strip()
     if stripped in NUMBERS_TO_PIXERA:
         return NUMBERS_TO_PIXERA[stripped]
+    # Already a Pixera-style id (no spaces/hyphens): keep underscores as-is.
+    if re.fullmatch(r"[A-Za-z0-9_]+", stripped):
+        return stripped
     compact = stripped.replace(" ", "").replace("-", "").replace("_", "")
     decomposed = unicodedata.normalize("NFKD", compact)
     return "".join(char for char in decomposed if not unicodedata.combining(char))
@@ -212,14 +221,67 @@ def sync_video_overview(rows: list[dict[str, str | int]]) -> None:
             writer.writerow({field: row.get(field, "") for field in fieldnames})
 
 
-def sync_video_cues_json(rows: list[dict[str, str | int]]) -> int:
-    from app.services.video_cue_catalog import catalog_json_path
+DEFAULT_PROJECTORS = [
+    {
+        "id": "rz21",
+        "pixera_prefix": "KI_RZ21",
+        "name": "RZ21",
+        "description": "Großer Frontprojektor",
+    },
+    {
+        "id": "adam",
+        "pixera_prefix": "KI_Adam",
+        "name": "Adam",
+        "description": "Kleiner Bühnenbeamer",
+    },
+    {
+        "id": "eva",
+        "pixera_prefix": "KI_Eva",
+        "name": "Eva",
+        "description": "Kleiner Bühnenbeamer",
+    },
+    {
+        "id": "led",
+        "pixera_prefix": "KI_LED",
+        "name": "LED",
+        "description": "LED-Wand auf der Bühne",
+    },
+]
 
-    path = catalog_json_path()
+
+def ensure_projector_csv() -> None:
+    """Write Projektor Übersicht.csv if missing (needed for video_cues projectors)."""
+    if PROJECTOR_CSV.is_file():
+        return
+    PROJECTOR_CSV.parent.mkdir(parents=True, exist_ok=True)
+    with PROJECTOR_CSV.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=["output_id", "pixera_prefix", "name", "beschreibung"],
+            delimiter=";",
+        )
+        writer.writeheader()
+        for projector in DEFAULT_PROJECTORS:
+            writer.writerow(
+                {
+                    "output_id": projector["id"],
+                    "pixera_prefix": projector["pixera_prefix"],
+                    "name": projector["name"],
+                    "beschreibung": projector["description"],
+                }
+            )
+
+
+def sync_video_cues_json(rows: list[dict[str, str | int]]) -> int:
+    """Merge atmosphere clips into repo-root data/video_cues.json."""
+    path = REPO_ROOT / "data" / "video_cues.json"
     if path.is_file():
         payload = json.loads(path.read_text(encoding="utf-8"))
     else:
         payload = {"version": 1, "osc_address": "/pixera/args/cue/apply", "projectors": [], "clips": []}
+
+    if not payload.get("projectors"):
+        payload["projectors"] = list(DEFAULT_PROJECTORS)
 
     clips_by_id = {c["id"]: c for c in payload.get("clips", []) if c.get("id")}
     updated = 0
@@ -274,6 +336,7 @@ def main() -> int:
         print("Keine Videoclips in Numbers-Tabelle gefunden.", file=sys.stderr)
         return 1
 
+    ensure_projector_csv()
     write_video_csv(rows)
     new_osc, total_osc = merge_osc_atmosphere_befehlliste(rows)
     sync_video_overview(rows)

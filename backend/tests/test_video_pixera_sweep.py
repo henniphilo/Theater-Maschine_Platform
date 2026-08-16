@@ -6,6 +6,7 @@ import time
 from pathlib import Path
 from unittest.mock import MagicMock
 
+import pytest
 from fastapi.testclient import TestClient
 
 from app.director.video_pixera_sweep import (
@@ -14,6 +15,7 @@ from app.director.video_pixera_sweep import (
 )
 from app.main import app
 
+REPO = Path(__file__).resolve().parents[2]
 client = TestClient(app)
 
 
@@ -33,6 +35,38 @@ def test_list_pixera_sweep_cues_groups_by_clip_across_projectors() -> None:
     clyde = next((prefixes for name, prefixes in clips if name == "Clyde"), None)
     assert clyde is not None
     assert clyde == ["KI_RZ21", "KI_Adam", "KI_Eva", "KI_LED"]
+
+
+def test_list_pixera_sweep_cues_includes_new_atmosphere_and_avatar_clips(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Technik-Sweep must cover Chaos-Begleitvideos and new avatar OSC names."""
+
+    def _real_paths(data_dir, scope="part2"):
+        atmos = REPO / "media/video/OSCBefehllisteOhneAvatare.txt"
+        avatars = REPO / "media/video/OSCBefehllisteAvatare.txt"
+        if scope == "part1":
+            return [p for p in (atmos,) if p.is_file()]
+        return [p for p in (atmos, avatars) if p.is_file()]
+
+    monkeypatch.setattr(
+        "app.director.video_pixera_sweep.resolve_osc_befehlliste_paths_for_scope",
+        _real_paths,
+    )
+
+    clips = list_pixera_sweep_cues("part2")
+    names = {name for name, _ in clips}
+    for expected in (
+        "Bitcoin_and_worm",
+        "Brennender_Wald",
+        "Flut",
+        "Massenproduktion",
+        "Schmetterlinge_laufen",
+        "BAK6_Schwein",
+        "LG3_Affe",
+        "PET2_Walross",
+    ):
+        assert expected in names, expected
 
 
 def test_video_sweep_sends_all_projectors_then_next_clip(monkeypatch, tmp_path: Path) -> None:

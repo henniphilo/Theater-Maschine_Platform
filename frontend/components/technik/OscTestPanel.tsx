@@ -42,6 +42,25 @@ function videoHostsFromTargets(targets: OutputTargets): string {
   return targets.video.effective.host;
 }
 
+/** Prefer Pixera cue name from `pixera:CueName` path for Technik dropdown labels. */
+function videoClipLabel(video: { id: string; path?: string }): string {
+  const path = video.path ?? "";
+  if (path.startsWith("pixera:")) {
+    const cue = path.slice("pixera:".length).trim();
+    if (cue && cue !== video.id) {
+      return `${cue} (${video.id})`;
+    }
+    if (cue) return cue;
+  }
+  return video.id;
+}
+
+function sortVideosByLabel<T extends { id: string; path?: string }>(videos: T[]): T[] {
+  return [...videos].sort((a, b) =>
+    videoClipLabel(a).localeCompare(videoClipLabel(b), "de", { sensitivity: "base" })
+  );
+}
+
 export function OscTestPanel() {
   const [catalog, setCatalog] = useState<MediaCatalog | null>(null);
   const [clipId, setClipId] = useState("clyde");
@@ -602,10 +621,12 @@ export function OscTestPanel() {
             </button>
           </div>
           <label className="oscTestChannel">
-            <span>Clip</span>
+            <span>Clip ({(catalog?.videos ?? []).length} in Teil‑2-Katalog)</span>
             <select value={clipId} onChange={(e) => setClipId(e.target.value)} disabled={videoLoading}>
-              {(catalog?.videos ?? []).map((v) => (
-                <option key={v.id} value={v.id}>{v.id}</option>
+              {sortVideosByLabel(catalog?.videos ?? []).map((v) => (
+                <option key={v.id} value={v.id}>
+                  {videoClipLabel(v)}
+                </option>
               ))}
             </select>
           </label>
@@ -632,9 +653,11 @@ export function OscTestPanel() {
           </div>
           <div className="oscTestSweep">
             <p className="textMuted oscTestTarget">
-              Pro Clip OSC an alle verfügbaren Projektoren (RZ21, Adam, Eva, LED), dann 100 ms Pause
-              bis zum nächsten Clip. Transportfehler werden dokumentiert; Pixera-interne fehlende
-              Timelines erkennt UDP nicht automatisch.
+              Sweep über alle Pixera-Cues aus OSC-Listen (Begleitvideos + Avatare, Scope Teil 2):
+              pro Clip OSC an alle verfügbaren Projektoren (RZ21, Adam, Eva, LED), dann 100 ms Pause
+              bis zum nächsten Clip. Neue/ersetzte Signale erscheinen nach Katalog-Import automatisch.
+              Transportfehler werden dokumentiert; Pixera-interne fehlende Timelines erkennt UDP nicht
+              automatisch.
             </p>
             <div className="row oscTestActions">
               <button

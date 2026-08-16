@@ -347,6 +347,43 @@ describe("teil2TextSyncPlayback", () => {
     expect(final?.completed).toBe(false);
     expect(final?.sentenceIndex).toBe(0);
   });
+
+  it("skips a sentence when TTS fails and continues the show", async () => {
+    const { sleepWallMs } = await import("@/lib/api/client");
+    resolveSentenceSpeech
+      .mockRejectedValueOnce(new Error("TTS timeout after 45000ms"))
+      .mockResolvedValue(new Blob(["audio"]));
+
+    const plan = basePlan({
+      sentences: ["Kaputt.", "Weiter."],
+      sentence_char_starts: [0, 8]
+    });
+    const corpus: SceneCorpus = {
+      id: "corpus-tts-skip",
+      title: "Test",
+      scenes: [],
+      status: "ready",
+      gesamtkonzept: null,
+      composition: null,
+      teil2_plan: plan,
+      script_text: plan.sentences.join(" ")
+    };
+
+    const updates: Array<Record<string, unknown>> = [];
+    await runTextSyncPlayback(
+      corpus,
+      plan,
+      "narrator",
+      true,
+      (patch) => updates.push(patch),
+      () => false
+    );
+
+    expect(sleepWallMs).toHaveBeenCalled();
+    expect(resolveSentenceSpeech).toHaveBeenCalledTimes(2);
+    expect(playBlob).toHaveBeenCalledTimes(1);
+    expect(updates.some((u) => u.completed === true)).toBe(true);
+  });
 });
 
 describe("estimateNarrationSecondsBefore", () => {

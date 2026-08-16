@@ -1,12 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { playBlob, stopPlayback } from "@/lib/api/client";
+import { playBlob, stopPlayback, PLAY_BLOB_STALL_MS } from "@/lib/api/client";
 
 class FakeAudio {
   static instances: FakeAudio[] = [];
   paused = true;
   ended = false;
   currentTime = 0;
+  duration = Number.NaN;
   playbackRate = 1;
   volume = 1;
   muted = false;
@@ -49,6 +50,7 @@ describe("playBlob abort settle", () => {
     globalThis.Audio = originalAudio;
     URL.createObjectURL = originalCreateObjectURL;
     URL.revokeObjectURL = originalRevokeObjectURL;
+    vi.useRealTimers();
   });
 
   it("resolves when stopPlayback aborts before onended", async () => {
@@ -65,5 +67,27 @@ describe("playBlob abort settle", () => {
     await expect(first).resolves.toBeUndefined();
     FakeAudio.instances[1]?.onended?.(new Event("ended"));
     await expect(second).resolves.toBeUndefined();
+  });
+
+  it("force-resolves when audio stalls without onended", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const pending = playBlob(new Blob(["stall"]), { maxWallMs: 60_000 });
+    await vi.waitFor(() => expect(FakeAudio.instances.length).toBe(1));
+    await vi.advanceTimersByTimeAsync(PLAY_BLOB_STALL_MS + 200);
+    await expect(pending).resolves.toBeUndefined();
+  });
+
+  it("force-resolves when past known duration + grace without onended", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const pending = playBlob(new Blob(["dur"]));
+    await vi.waitFor(() => expect(FakeAudio.instances.length).toBe(1));
+    const audio = FakeAudio.instances[0]!;
+    audio.duration = 1; // 1s
+    audio.currentTime = 0.5;
+    // Progress once so stall detector doesn't fire first, then freeze near end.
+    await vi.advanceTimersByTimeAsync(100);
+    audio.currentTime = 0.5;
+    await vi.advanceTimersByTimeAsync(6_000);
+    await expect(pending).resolves.toBeUndefined();
   });
 });

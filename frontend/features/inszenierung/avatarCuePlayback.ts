@@ -6,20 +6,40 @@ import { setPlaybackPaused, waitWhilePlaybackPaused } from "@/lib/api/client";
 
 let avatarFireChain: Promise<void> = Promise.resolve();
 
+/** Bumped on stop/reset so delayed Done-chain timers from a prior run cannot fire into the next. */
+let avatarPlaybackEpoch = 0;
+
 const AVATAR_POSITION_DEBOUNCE_MS = 150;
 const DEFAULT_AVATAR_DONE_TIMEOUT_MS = 120_000;
 const AVATAR_DONE_TIMEOUT_GRACE_MS = 2_000;
+/** Max segments to skip in one advance when OSC/execute fails, so one dead cue cannot freeze the show. */
+const AVATAR_CHAIN_SKIP_LIMIT = 8;
 let avatarPositionTimer: ReturnType<typeof setTimeout> | null = null;
+/** CSV-duration / Done chain timer — always armed synchronously in noteAvatarStarted. */
+let avatarChainTimer: ReturnType<typeof setTimeout> | null = null;
 
 /** In-flight avatar clip(s): TTS stays parallel; on done the next clip starts immediately. */
 type PendingAvatarDone = {
   cueNames: string[];
   timeoutMs: number;
+  /** Resolves when Done arrives or CSV duration elapses (flush / narrator pause). */
   finished: Promise<AvatarDoneWaitResult | null>;
   token: symbol;
+  /**
+   * True only while waiting for /avatar/done. When false (gate off), the next OSC
+   * must not block on `finished` — the CSV-duration timer advances the chain.
+   */
+  blocksNextOsc: boolean;
 };
 
 let pendingAvatarDone: PendingAvatarDone | null = null;
+
+function clearAvatarChainTimer(): void {
+  if (avatarChainTimer !== null) {
+    clearTimeout(avatarChainTimer);
+    avatarChainTimer = null;
+  }
+}
 
 export type AvatarChainContext = {
   plan: Teil2PerformancePlan;
@@ -133,6 +153,8 @@ async function waitForPendingAvatarDone(
   const pending = pendingAvatarDone;
   if (!pending) return;
   if (!pauseNarrator) {
+    // Gate off: duration timer owns sequencing — do not stall the next fire here.
+    if (!pending.blocksNextOsc) return;
     await pending.finished;
     return;
   }
@@ -151,7 +173,8 @@ async function waitForPendingAvatarDone(
       console.warn("[avatar] done-gate wait failed — continuing narrator:", err);
     }
   } finally {
-    if (!shouldAbort()) setPlaybackPaused(false);
+    // Always release our pause — leaving playbackPaused=true breaks the next run.
+    setPlaybackPaused(false);
   }
 }
 
@@ -161,40 +184,75 @@ function noteAvatarStarted(
   shouldAbort: () => boolean
 ): void {
   const names = cueNames.map((n) => n.trim()).filter(Boolean);
-  if (!names.length) return;
-
   const token = Symbol("avatar-done");
+  const epoch = avatarPlaybackEpoch;
   const clipDurationMs = Math.max(0, timeoutMs - AVATAR_DONE_TIMEOUT_GRACE_MS);
-  const finished = (async (): Promise<AvatarDoneWaitResult | null> => {
-    if (!(await isAvatarDoneGateEnabled())) return null;
+
+  let settled = false;
+  let resolveFinished: (value: AvatarDoneWaitResult | null) => void = () => undefined;
+  const finished = new Promise<AvatarDoneWaitResult | null>((resolve) => {
+    resolveFinished = resolve;
+  });
+
+  /**
+   * Arm the next CSV avatar exactly once — either when /avatar/done arrives or when
+   * CSV duration elapses. The duration timer is scheduled synchronously so a hung
+   * Done-gate status fetch can never freeze the rest of the sequence.
+   */
+  const settle = (result: AvatarDoneWaitResult | null) => {
+    if (settled) return;
+    settled = true;
+    clearAvatarChainTimer();
+    resolveFinished(result);
+    if (epoch !== avatarPlaybackEpoch) return;
+    if (pendingAvatarDone?.token === token) pendingAvatarDone = null;
+    if (shouldAbort()) return;
+    void advanceAvatarChainAfterDone().catch((err) => {
+      console.warn("[avatar] chain advance failed:", err);
+    });
+  };
+
+  pendingAvatarDone = {
+    cueNames: names,
+    timeoutMs,
+    finished,
+    token,
+    blocksNextOsc: false
+  };
+
+  clearAvatarChainTimer();
+  avatarChainTimer = setTimeout(() => {
+    avatarChainTimer = null;
+    settle({
+      status: "timeout",
+      received: [],
+      missing: names,
+      wait_ms: clipDurationMs
+    });
+  }, clipDurationMs);
+
+  if (!names.length) {
+    // Still chain after duration — missing Pixera names must not kill the sequence.
+    return;
+  }
+
+  void (async () => {
     try {
-      return await waitForAvatarVideosDone(names, timeoutMs, shouldAbort);
+      if (!(await isAvatarDoneGateEnabled())) return;
+      if (epoch !== avatarPlaybackEpoch || settled) return;
+      if (pendingAvatarDone?.token === token) {
+        pendingAvatarDone.blocksNextOsc = true;
+      }
+      const result = await waitForAvatarVideosDone(names, timeoutMs, shouldAbort);
+      if (epoch !== avatarPlaybackEpoch || settled) return;
+      settle(result);
     } catch (err) {
       if (!(err instanceof DOMException && err.name === "AbortError")) {
         console.warn("[avatar] done-gate wait failed:", err);
       }
-      return null;
+      // Duration timer remains armed as fallback.
     }
   })();
-
-  pendingAvatarDone = { cueNames: names, timeoutMs, finished, token };
-
-  void finished.then(async (result) => {
-    if (pendingAvatarDone?.token !== token) return;
-    pendingAvatarDone = null;
-    if (shouldAbort()) return;
-    if (result != null) {
-      // Done signal → next avatar immediately.
-      await advanceAvatarChainAfterDone();
-      return;
-    }
-    if (await isAvatarDoneGateEnabled()) return;
-    // No done gate: chain after CSV clip duration.
-    const chainDelayMs = clipDurationMs > 0 ? clipDurationMs : 0;
-    setTimeout(() => {
-      void advanceAvatarChainAfterDone();
-    }, chainDelayMs);
-  });
 }
 
 /** Bind plan/fired callbacks so Done can chain the next CSV avatar without delay. */
@@ -202,9 +260,26 @@ export function bindAvatarChainContext(ctx: AvatarChainContext | null): void {
   avatarChainContext = ctx;
 }
 
-/** Clear in-flight done-wait (tests / abort). */
-export function clearPendingAvatarDoneGate(): void {
+/**
+ * Full reset between runs: drops Done-gate, chain context, debounce timer, and the
+ * serial fire lock so a stuck first show cannot block the second.
+ */
+export function resetAvatarPlaybackState(): void {
+  avatarPlaybackEpoch += 1;
   pendingAvatarDone = null;
+  avatarChainContext = null;
+  avatarFireChain = Promise.resolve();
+  clearAvatarChainTimer();
+  if (avatarPositionTimer !== null) {
+    clearTimeout(avatarPositionTimer);
+    avatarPositionTimer = null;
+  }
+  pendingAvatarPositionFire = null;
+}
+
+/** Clear in-flight done-wait (tests / abort). Also resets fire-lock for re-entry safety. */
+export function clearPendingAvatarDoneGate(): void {
+  resetAvatarPlaybackState();
 }
 
 /** Block narrator until any in-flight avatar finishes (e.g. show end). */
@@ -217,24 +292,42 @@ async function advanceAvatarChainAfterDone(): Promise<void> {
   const ctx = avatarChainContext;
   if (!ctx || ctx.shouldAbort()) return;
   await withAvatarFireLock(async () => {
-    if (ctx.shouldAbort() || pendingAvatarDone) return;
-    const next = nextUnfiredAvatarInSequence(
-      ctx.plan,
-      ctx.fired,
-      ctx.sentenceCharStarts,
-      ctx.scriptText
-    );
-    if (!next) return;
-    const sent = await fireAvatarSegmentIfDue(
-      next,
-      ctx.anarchyLevelFor(next),
-      ctx.onCommands,
-      ctx.shouldAbort,
-      { pauseNarratorForPending: false }
-    );
-    if (!sent) return;
-    ctx.fired.add(avatarSegmentKey(next));
-    ctx.onSegmentFired?.(next);
+    if (ctx.shouldAbort()) return;
+    // pendingAvatarDone is cleared in settle() before advance; do not bail on a
+    // stale pending from a hung gate fetch — that previously froze the CSV chain.
+    for (let skipped = 0; skipped < AVATAR_CHAIN_SKIP_LIMIT; skipped++) {
+      const next = nextUnfiredAvatarInSequence(
+        ctx.plan,
+        ctx.fired,
+        ctx.sentenceCharStarts,
+        ctx.scriptText
+      );
+      if (!next) return;
+      let sent = false;
+      try {
+        sent = await fireAvatarSegmentIfDue(
+          next,
+          ctx.anarchyLevelFor(next),
+          ctx.onCommands,
+          ctx.shouldAbort,
+          { pauseNarratorForPending: false }
+        );
+      } catch (err) {
+        console.warn("[avatar] fire threw — skipping segment to keep chain alive:", err);
+        sent = false;
+      }
+      if (sent) {
+        ctx.fired.add(avatarSegmentKey(next));
+        ctx.onSegmentFired?.(next);
+        return;
+      }
+      console.warn(
+        "[avatar] segment not sent — skipping to keep CSV chain alive",
+        next.csv_cue_ids,
+        next.text_excerpt ? `«${next.text_excerpt.slice(0, 40)}»` : ""
+      );
+      ctx.fired.add(avatarSegmentKey(next));
+    }
   });
 }
 
