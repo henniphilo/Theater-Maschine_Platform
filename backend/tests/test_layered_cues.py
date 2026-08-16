@@ -13,7 +13,7 @@ def _decision() -> DramaturgyDecision:
     )
 
 
-def test_scheduler_skip_interval_check_allows_rapid_cues() -> None:
+def test_scheduler_skip_interval_check_allows_rapid_video_but_not_light() -> None:
     safety = SafetyState()
     safety.autopilot_enabled = True
     scheduler = CueScheduler(DramaturgyRules(), safety)
@@ -25,15 +25,25 @@ def test_scheduler_skip_interval_check_allows_rapid_cues() -> None:
 
     allowed_again, block_reason = scheduler.can_execute(decision)
     assert not allowed_again
-    assert block_reason == "video_cue_too_soon"
+    assert block_reason == "light_cue_too_soon"
 
+    # Layered path may skip video/sound gaps, but light still needs breathing room.
     allowed_layered, layered_reason = scheduler.can_execute(
         decision,
         anarchy_level=0.9,
         skip_interval_check=True,
     )
-    assert allowed_layered
-    assert layered_reason is None
+    assert not allowed_layered
+    assert layered_reason == "light_cue_too_soon"
+
+    without_light = decision.model_copy(update={"light": None})
+    allowed_no_light, no_light_reason = scheduler.can_execute(
+        without_light,
+        anarchy_level=0.9,
+        skip_interval_check=True,
+    )
+    assert allowed_no_light
+    assert no_light_reason is None
 
 
 def test_scheduler_active_cues_track_sound_only() -> None:

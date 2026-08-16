@@ -28,6 +28,15 @@ def is_replace_or_stop(decision: DramaturgyDecision) -> bool:
     return False
 
 
+def _is_scheduled_avatar(decision: DramaturgyDecision) -> bool:
+    """Teil-2 CSV avatars are sequenced content — never block them on opportunistic density."""
+    visual = decision.visual
+    if visual and visual.video_type == "avatar":
+        return True
+    tags = {str(t).lower() for t in (decision.tags or [])}
+    return "avatar" in tags
+
+
 def check_conflicts(
     decision: DramaturgyDecision,
     state: DramaturgyState,
@@ -45,7 +54,7 @@ def check_conflicts(
         return ConflictResult(allowed=True, warnings=["hold"])
 
     adding_layer = not is_replace_or_stop(decision)
-    if adding_layer and state.total_media_density > 0.75:
+    if adding_layer and state.total_media_density > 0.75 and not _is_scheduled_avatar(decision):
         return ConflictResult(
             allowed=False,
             reason="media_density_too_high",

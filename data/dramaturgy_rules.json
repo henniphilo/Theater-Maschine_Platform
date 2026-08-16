@@ -15,7 +15,7 @@
   },
   "intensity_boosters": ["!", "??", "!!!", "niemals", "immer", "explosion"],
   "min_cue_interval_seconds": {
-    "light": 10.0,
+    "light": 8.0,
     "video": 5.0,
     "sound": 3.0
   }

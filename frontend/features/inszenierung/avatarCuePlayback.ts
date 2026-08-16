@@ -12,11 +12,12 @@ let avatarPlaybackEpoch = 0;
 const AVATAR_POSITION_DEBOUNCE_MS = 150;
 const DEFAULT_AVATAR_DONE_TIMEOUT_MS = 120_000;
 const AVATAR_DONE_TIMEOUT_GRACE_MS = 2_000;
-/** Max segments to skip in one advance when OSC/execute fails, so one dead cue cannot freeze the show. */
-const AVATAR_CHAIN_SKIP_LIMIT = 8;
+/** Retry delay when a CSV avatar is transiently blocked (density/lock) — never burn the segment. */
+const AVATAR_CHAIN_RETRY_MS = 1_500;
 let avatarPositionTimer: ReturnType<typeof setTimeout> | null = null;
 /** CSV-duration / Done chain timer — always armed synchronously in noteAvatarStarted. */
 let avatarChainTimer: ReturnType<typeof setTimeout> | null = null;
+let avatarChainRetryTimer: ReturnType<typeof setTimeout> | null = null;
 
 /** In-flight avatar clip(s): TTS stays parallel; on done the next clip starts immediately. */
 type PendingAvatarDone = {
@@ -39,6 +40,24 @@ function clearAvatarChainTimer(): void {
     clearTimeout(avatarChainTimer);
     avatarChainTimer = null;
   }
+}
+
+function clearAvatarChainRetryTimer(): void {
+  if (avatarChainRetryTimer !== null) {
+    clearTimeout(avatarChainRetryTimer);
+    avatarChainRetryTimer = null;
+  }
+}
+
+function scheduleAvatarChainRetry(delayMs: number, epoch: number): void {
+  clearAvatarChainRetryTimer();
+  avatarChainRetryTimer = setTimeout(() => {
+    avatarChainRetryTimer = null;
+    if (epoch !== avatarPlaybackEpoch) return;
+    void advanceAvatarChainAfterDone().catch((err) => {
+      console.warn("[avatar] chain retry failed:", err);
+    });
+  }, Math.max(0, delayMs));
 }
 
 export type AvatarChainContext = {
@@ -270,6 +289,7 @@ export function resetAvatarPlaybackState(): void {
   avatarChainContext = null;
   avatarFireChain = Promise.resolve();
   clearAvatarChainTimer();
+  clearAvatarChainRetryTimer();
   if (avatarPositionTimer !== null) {
     clearTimeout(avatarPositionTimer);
     avatarPositionTimer = null;
@@ -288,47 +308,101 @@ export async function flushPendingAvatarDoneGate(shouldAbort: () => boolean): Pr
   if (pendingAvatarDone) pendingAvatarDone = null;
 }
 
+/**
+ * After TTS ends, keep the CSV avatar chain alive until every segment has fired
+ * (or abort). Previously bindAvatarChainContext(null) ran first and dropped sch7/sch8.
+ */
+export async function drainRemainingAvatarChain(
+  shouldAbort: () => boolean,
+  plan: Teil2PerformancePlan,
+  fired: Set<string>
+): Promise<void> {
+  const epoch = avatarPlaybackEpoch;
+  const deadline = Date.now() + 15 * 60_000;
+  while (!shouldAbort() && epoch === avatarPlaybackEpoch && Date.now() < deadline) {
+    if (!avatarChainContext) return;
+    const unfired = countUnfiredAvatarSegments(plan, fired);
+    if (unfired <= 0) {
+      if (pendingAvatarDone) {
+        await waitForPendingAvatarDone(shouldAbort, true);
+      }
+      return;
+    }
+    if (pendingAvatarDone) {
+      await waitForPendingAvatarDone(shouldAbort, true);
+      continue;
+    }
+    await advanceAvatarChainAfterDone();
+    if (
+      countUnfiredAvatarSegments(plan, fired) > 0 &&
+      !pendingAvatarDone &&
+      epoch === avatarPlaybackEpoch &&
+      !shouldAbort()
+    ) {
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, AVATAR_CHAIN_RETRY_MS);
+      });
+    }
+  }
+}
+
 async function advanceAvatarChainAfterDone(): Promise<void> {
   const ctx = avatarChainContext;
   if (!ctx || ctx.shouldAbort()) return;
+  const epoch = avatarPlaybackEpoch;
+  let firedSegment: AvatarTextSegment | null = null;
   await withAvatarFireLock(async () => {
     if (ctx.shouldAbort()) return;
-    // pendingAvatarDone is cleared in settle() before advance; do not bail on a
-    // stale pending from a hung gate fetch — that previously froze the CSV chain.
-    for (let skipped = 0; skipped < AVATAR_CHAIN_SKIP_LIMIT; skipped++) {
-      const next = nextUnfiredAvatarInSequence(
-        ctx.plan,
-        ctx.fired,
-        ctx.sentenceCharStarts,
-        ctx.scriptText
-      );
-      if (!next) return;
-      let sent = false;
-      try {
-        sent = await fireAvatarSegmentIfDue(
-          next,
-          ctx.anarchyLevelFor(next),
-          ctx.onCommands,
-          ctx.shouldAbort,
-          { pauseNarratorForPending: false }
-        );
-      } catch (err) {
-        console.warn("[avatar] fire threw — skipping segment to keep chain alive:", err);
-        sent = false;
-      }
-      if (sent) {
-        ctx.fired.add(avatarSegmentKey(next));
-        ctx.onSegmentFired?.(next);
-        return;
-      }
+    const next = nextUnfiredAvatarInSequence(
+      ctx.plan,
+      ctx.fired,
+      ctx.sentenceCharStarts,
+      ctx.scriptText
+    );
+    if (!next) return;
+
+    const hasVisual = next.avatar_layers.some((layer) => Boolean(layer.visual_cue));
+    if (!hasVisual) {
       console.warn(
-        "[avatar] segment not sent — skipping to keep CSV chain alive",
+        "[avatar] segment has no visual_cue — skipping",
         next.csv_cue_ids,
         next.text_excerpt ? `«${next.text_excerpt.slice(0, 40)}»` : ""
       );
       ctx.fired.add(avatarSegmentKey(next));
+      scheduleAvatarChainRetry(0, epoch);
+      return;
     }
+
+    let sent = false;
+    try {
+      sent = await fireAvatarSegmentIfDue(
+        next,
+        ctx.anarchyLevelFor(next),
+        ctx.onCommands,
+        ctx.shouldAbort,
+        { pauseNarratorForPending: false }
+      );
+    } catch (err) {
+      console.warn("[avatar] fire threw — will retry segment:", err);
+      sent = false;
+    }
+
+    if (sent) {
+      ctx.fired.add(avatarSegmentKey(next));
+      firedSegment = next;
+      return;
+    }
+
+    // Transient block (e.g. media_density) — keep segment unfired and retry.
+    console.warn(
+      "[avatar] segment not sent — retrying (not skipping)",
+      next.csv_cue_ids,
+      next.text_excerpt ? `«${next.text_excerpt.slice(0, 40)}»` : ""
+    );
+    scheduleAvatarChainRetry(AVATAR_CHAIN_RETRY_MS, epoch);
   });
+  // UI update outside the fire lock so React work cannot stall OSC sequencing.
+  if (firedSegment) ctx.onSegmentFired?.(firedSegment);
 }
 
 export function avatarVisualCuesForMoment(moment: CompositionMoment): VisualCue[] {

@@ -6,7 +6,11 @@ import { useSearchParams } from "next/navigation";
 
 import { Teil2PerformanceBar } from "@/components/show/Teil2PerformanceBar";
 import { Teil2AvatarSegmentBlock } from "@/components/show/Teil2AvatarSegmentBlock";
-import { activeAvatarSegmentIndex } from "@/features/inszenierung/teil2AvatarSections";
+import {
+  activeAvatarSegmentIndex,
+  avatarSegmentLabel,
+  indexOfAvatarSegment
+} from "@/features/inszenierung/teil2AvatarSections";
 import { readPerformanceTryout } from "@/components/show/PerformanceTryoutControl";
 import { fetchTTSStatus, setPlaybackPaused, stopPlayback } from "@/lib/api/client";
 import { fetchCorpus } from "@/lib/api/inszenierung";
@@ -220,8 +224,18 @@ function AuffuehrungContent() {
 
   const sectionCount = plan?.avatar_segments.length ?? 0;
   const progressIndex = usesTextSync ? textSyncPlayback.sentenceIndex : anarchyPlayback.momentIndex;
-  const activeSegmentIndex =
+  const chainSegmentIndex =
+    usesTextSync && plan
+      ? indexOfAvatarSegment(plan.avatar_segments, textSyncPlayback.activeAvatarSegment)
+      : -1;
+  const sentenceSegmentIndex =
     usesTextSync && plan ? activeAvatarSegmentIndex(plan.avatar_segments, progressIndex) : -1;
+  const activeSegmentIndex = chainSegmentIndex >= 0 ? chainSegmentIndex : sentenceSegmentIndex;
+  const activeSegment =
+    usesTextSync && plan
+      ? (textSyncPlayback.activeAvatarSegment ??
+        (activeSegmentIndex >= 0 ? plan.avatar_segments[activeSegmentIndex] : null))
+      : null;
   const completed = usesTextSync ? textSyncPlayback.completed : anarchyPlayback.completed;
   const anarchyLevel = usesTextSync ? textSyncPlayback.anarchyLevel : anarchyPlayback.anarchyLevel;
 
@@ -231,7 +245,9 @@ function AuffuehrungContent() {
       : running
         ? paused
           ? "Pausiert"
-          : `${planSpeechLabel(plan!)} · Anarchie ${(anarchyLevel * 100).toFixed(0)}%`
+          : activeSegment
+            ? `${avatarSegmentLabel(activeSegment)} · Anarchie ${(anarchyLevel * 100).toFixed(0)}%`
+            : `${planSpeechLabel(plan!)} · Anarchie ${(anarchyLevel * 100).toFixed(0)}%`
         : needsTts && !bufferReady && ttsAvailable
           ? bufferState
             ? bufferStatusLabel(bufferState)
@@ -282,8 +298,15 @@ function AuffuehrungContent() {
               {needsTts && !bufferReady && ttsAvailable ? (
                 <p className="textMuted">{bufferState ? bufferStatusLabel(bufferState) : "Stimme wird vorbereitet …"}</p>
               ) : null}
-              {textSyncPlayback.activeAvatarSegment ? (
-                <p className="textMuted">Avatar: {textSyncPlayback.activeAvatarSegment.csv_cue_ids.join(", ")}</p>
+              {activeSegment ? (
+                <div className="card col" style={{ gap: "0.35rem", padding: "0.75rem 1rem" }}>
+                  <p className="textMuted" style={{ margin: 0, fontSize: "0.8rem" }}>
+                    Avatar {activeSegmentIndex + 1} / {sectionCount} · {avatarSegmentLabel(activeSegment)}
+                  </p>
+                  <p style={{ margin: 0, whiteSpace: "pre-wrap" }}>
+                    {activeSegment.text_excerpt.trim() || "—"}
+                  </p>
+                </div>
               ) : null}
             </>
           ) : (

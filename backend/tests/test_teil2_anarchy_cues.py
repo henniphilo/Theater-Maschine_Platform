@@ -40,6 +40,13 @@ def test_build_keyword_cue_point_has_sound_or_light() -> None:
     assert point.sound is not None or point.light is not None
 
 
+def test_early_light_fade_is_longer_than_chaos_fade() -> None:
+    early = build_keyword_cue_point("Anfang", 0, 0.3, slot=0)
+    late = build_keyword_cue_point("Chaos", 20, 0.95, slot=20)
+    if early.light and late.light:
+        assert early.light.fade_time >= late.light.fade_time
+
+
 def test_apply_anarchy_to_keyword_strips_visual() -> None:
     script = "Die Schuld bleibt."
     sentences = ["Die Schuld bleibt."]

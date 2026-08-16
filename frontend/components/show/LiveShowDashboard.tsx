@@ -82,6 +82,10 @@ export function LiveShowDashboard({
   const showPlay = !running || paused;
   const connections = connectionLines(mediaCatalog);
   const displayIndex = currentIndex != null && currentIndex > 0 ? currentIndex : "—";
+  const progressRatio =
+    currentIndex != null && currentIndex > 0 && totalCount > 0
+      ? Math.min(1, currentIndex / totalCount)
+      : 0;
   const statusText = completed
     ? "Aufführung beendet."
     : running
@@ -116,11 +120,21 @@ export function LiveShowDashboard({
               <span> / {totalCount || "—"}</span>
             </p>
             <p className="liveCounterMeta">{currentLabel || "Abschnitt"}</p>
+            <div
+              className="liveProcessTrack"
+              role="progressbar"
+              aria-valuemin={0}
+              aria-valuemax={totalCount || 0}
+              aria-valuenow={currentIndex ?? 0}
+              aria-label="Avatar-Fortschritt"
+            >
+              <div className="liveProcessFill" style={{ width: `${progressRatio * 100}%` }} />
+            </div>
           </div>
 
-          <div className="liveAbschnittTabs" role="tablist" aria-label="Stimme">
+          <div className="liveAbschnittTabs" role="tablist" aria-label="Abschnitt">
             <span className="statusPill statusPillAccent" role="tab" aria-selected="true">
-              Erzähler
+              Avatar-Text
             </span>
           </div>
 

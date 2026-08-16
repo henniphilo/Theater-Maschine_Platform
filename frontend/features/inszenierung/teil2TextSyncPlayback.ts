@@ -14,9 +14,9 @@ import {
   bindAvatarChainContext,
   countUnfiredAvatarSegments,
   clearPendingAvatarDoneGate,
+  drainRemainingAvatarChain,
   resetAvatarPlaybackState,
   fireInitialAvatarSegments,
-  flushPendingAvatarDoneGate,
   markAvatarSegmentsBeforeSentenceIndex,
   resolveSentenceCharStarts
 } from "@/features/inszenierung/avatarCuePlayback";
@@ -206,7 +206,8 @@ export async function runTextSyncPlayback(
       lastIndex = index;
       const sentence = sentences[index];
       const anarchyLevel = anarchyForSentence(index, sentences.length, plan, corpus);
-      onUpdate({ sentenceIndex: index, anarchyLevel, activeAvatarSegment: null });
+      // Keep activeAvatarSegment from the CSV chain — clearing it here hid process/text UI.
+      onUpdate({ sentenceIndex: index, anarchyLevel });
 
       fireSentenceCues(cueCtx, index, sentence);
 
@@ -247,8 +248,10 @@ export async function runTextSyncPlayback(
     }
 
     if (!shouldAbort()) {
+      // TTS may finish while long CSV clips (e.g. sch7 ~45s) are still queued —
+      // drain the avatar chain before tearing down context or firing end Black.
+      await drainRemainingAvatarChain(shouldAbort, plan, firedSegments);
       bindAvatarChainContext(null);
-      await flushPendingAvatarDoneGate(shouldAbort);
       const unfired = countUnfiredAvatarSegments(plan, firedSegments);
       if (unfired > 0) {
         console.warn(

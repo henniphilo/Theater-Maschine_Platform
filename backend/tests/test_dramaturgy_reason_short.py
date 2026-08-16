@@ -49,6 +49,24 @@ def test_conflict_blocks_high_density_layer() -> None:
     assert result.reason == "media_density_too_high"
 
 
+def test_conflict_allows_avatar_at_high_density() -> None:
+    state = DramaturgyState(total_media_density=0.95, music_density=0.9, video_density=0.9)
+    decision = DramaturgyDecision(
+        visual=VisualCue(
+            action=VisualAction.PLAY_CLIP,
+            clip_id="bak2_krabbe",
+            video_type="avatar",
+        ),
+        mood="tension",
+        intensity=0.8,
+        tags=["teil2", "avatar"],
+        reason="Avatar-Sprache",
+    )
+    result = check_conflicts(decision, state)
+    assert result.allowed
+    assert result.reason is None
+
+
 def test_stop_actions_allowed_at_high_density() -> None:
     state = DramaturgyState(total_media_density=0.9)
     decision = DramaturgyDecision(

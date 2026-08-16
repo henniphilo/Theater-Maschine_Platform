@@ -230,6 +230,16 @@ class DirectorPipeline:
             decision,
             dramaturgy_state=self.dramaturgy_state,
         )
+        if (
+            not allowed
+            and blocked_reason == "light_cue_too_soon"
+            and (decision.visual or decision.sound)
+        ):
+            decision = decision.model_copy(deep=True, update={"light": None})
+            allowed, blocked_reason = self.scheduler.can_execute(
+                decision,
+                dramaturgy_state=self.dramaturgy_state,
+            )
         if not conflict.allowed and conflict.reason and not force:
             allowed = False
             blocked_reason = conflict.reason
@@ -361,9 +371,19 @@ class DirectorPipeline:
         if not allowed_proj:
             allowed = False
             blocked_reason = projector_blocked
-        elif skip_interval_check and allowed_proj:
-            allowed = True
-            blocked_reason = None
+        elif (
+            not allowed
+            and blocked_reason == "light_cue_too_soon"
+            and (decision.visual or decision.sound)
+        ):
+            # Hold the current look; still fire sound/video from this cue.
+            decision = decision.model_copy(deep=True, update={"light": None})
+            allowed, blocked_reason = self.scheduler.can_execute(
+                decision,
+                anarchy_level=anarchy_level,
+                skip_interval_check=skip_interval_check,
+                dramaturgy_state=self.dramaturgy_state,
+            )
 
         dry_run = _effective_dry_run(self.safety)
         planned = build_osc_commands(decision, dry_run=dry_run)

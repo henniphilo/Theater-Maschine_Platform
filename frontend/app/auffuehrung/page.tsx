@@ -6,7 +6,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import { PerformanceTransport, beatIndexFromProgress } from "@/components/show/PerformanceTransport";
 import { LiveShowDashboard } from "@/components/show/LiveShowDashboard";
-import { activeAvatarSegmentIndex, avatarSegmentLabel } from "@/features/inszenierung/teil2AvatarSections";
+import {
+  activeAvatarSegmentIndex,
+  avatarSegmentLabel,
+  indexOfAvatarSegment
+} from "@/features/inszenierung/teil2AvatarSections";
 import { readPerformanceTryout, PerformanceTryoutControl } from "@/components/show/PerformanceTryoutControl";
 import { ScriptBeatBlock } from "@/components/script/ScriptBeatBlock";
 import { fetchTTSStatus, setPlaybackPaused, stopPlayback } from "@/lib/api/client";
@@ -136,24 +140,34 @@ function AuffuehrungContent() {
   const teil2Paused = usesTextSync ? textSyncPlayback.paused : anarchyPlayback.paused;
   const teil2Completed = usesTextSync ? textSyncPlayback.completed : anarchyPlayback.completed;
   const teil2ProgressIndex = usesTextSync ? textSyncPlayback.sentenceIndex : anarchyPlayback.momentIndex;
-  const teil2ActiveSegmentIndex = usesTextSync && teil2Plan
-    ? activeAvatarSegmentIndex(teil2Plan.avatar_segments, teil2ProgressIndex)
-    : -1;
+  // Prefer CSV-chain active segment (independent of TTS sentence position).
+  const teil2ChainSegmentIndex =
+    usesTextSync && teil2Plan
+      ? indexOfAvatarSegment(teil2Plan.avatar_segments, textSyncPlayback.activeAvatarSegment)
+      : -1;
+  const teil2SentenceSegmentIndex =
+    usesTextSync && teil2Plan
+      ? activeAvatarSegmentIndex(teil2Plan.avatar_segments, teil2ProgressIndex)
+      : -1;
+  const teil2ActiveSegmentIndex =
+    teil2ChainSegmentIndex >= 0 ? teil2ChainSegmentIndex : teil2SentenceSegmentIndex;
   const teil2AnarchyLevel = usesTextSync ? textSyncPlayback.anarchyLevel : anarchyPlayback.anarchyLevel;
   const teil2Only = Boolean(corpusIdParam && !scriptId);
   const activeTeil2Moment =
     anarchyPlayback.momentIndex >= 0 ? teil2Moments[anarchyPlayback.momentIndex] : undefined;
   const activeTeil2Segment =
-    usesTextSync && teil2Plan && teil2ActiveSegmentIndex >= 0
-      ? teil2Plan.avatar_segments[teil2ActiveSegmentIndex]
+    usesTextSync && teil2Plan
+      ? (textSyncPlayback.activeAvatarSegment ??
+        (teil2ActiveSegmentIndex >= 0 ? teil2Plan.avatar_segments[teil2ActiveSegmentIndex] : null))
       : null;
+  const narratorSentence =
+    usesTextSync && teil2ProgressIndex >= 0 ? (teil2Plan?.sentences[teil2ProgressIndex] ?? "") : "";
   const liveCurrentText = usesTextSync
-    ? (activeTeil2Segment?.text_excerpt ??
-      (teil2ProgressIndex >= 0 ? teil2Plan?.sentences[teil2ProgressIndex] ?? "" : ""))
+    ? (activeTeil2Segment?.text_excerpt?.trim() || narratorSentence)
     : (activeTeil2Moment?.text_excerpt ?? "");
   const liveCurrentLabel = usesTextSync
     ? activeTeil2Segment
-      ? avatarSegmentLabel(activeTeil2Segment)
+      ? `Avatar ${teil2ActiveSegmentIndex + 1}: ${avatarSegmentLabel(activeTeil2Segment)}`
       : teil2Plan
         ? planSpeechLabel(teil2Plan)
         : "Abschnitt"

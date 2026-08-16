@@ -1,10 +1,16 @@
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 
-from app.director.cues.cue_models import DramaturgyDecision, LightAction, VisualAction
+from app.director.cues.cue_models import (
+    DramaturgyDecision,
+    LightAction,
+    VisualAction,
+    resolve_light_scene_ids,
+)
 from app.director.cues.safety import SafetyState
 from app.director.dramaturgy.state import DramaturgyState
 from app.director.media.database import DramaturgyRules
+from app.services.part2_cue_density import light_min_interval_seconds
 
 
 @dataclass
@@ -49,6 +55,25 @@ class CueScheduler:
         if not conflict.allowed and conflict.reason:
             return False, conflict.reason
 
+        # Light is weightier than video/sound — always enforce gaps (even layered skip).
+        if decision.light:
+            light_blocked = self._check_interval(
+                self._last_light_change,
+                light_min_interval_seconds(
+                    anarchy_level,
+                    base_min=self.rules.min_cue_interval_seconds.get("light", 10.0),
+                ),
+                now,
+            )
+            if light_blocked:
+                return False, "light_cue_too_soon"
+
+            if (
+                decision.light.action == LightAction.FADE_BLACKOUT
+                and self.safety.blackout_locked
+            ):
+                return False, "blackout_locked"
+
         if skip_interval_check:
             return True, None
 
@@ -65,21 +90,6 @@ class CueScheduler:
 
             if (
                 decision.visual.action == VisualAction.FADE_TO_BLACK
-                and self.safety.blackout_locked
-            ):
-                return False, "blackout_locked"
-
-        if decision.light:
-            blocked = self._check_interval(
-                self._last_light_change,
-                self.rules.min_cue_interval_seconds.get("light", 10.0) * scale,
-                now,
-            )
-            if blocked:
-                return False, "light_cue_too_soon"
-
-            if (
-                decision.light.action == LightAction.FADE_BLACKOUT
                 and self.safety.blackout_locked
             ):
                 return False, "blackout_locked"
@@ -102,7 +112,7 @@ class CueScheduler:
         if decision.sound and decision.sound.cue_id:
             self._last_sound_change = now
             self._register_active(decision.sound.cue_id)
-        if decision.light and decision.light.scene_id:
+        if decision.light and resolve_light_scene_ids(decision.light):
             self._last_light_change = now
 
     def clear_active(self) -> None:

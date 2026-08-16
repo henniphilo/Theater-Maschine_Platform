@@ -14,6 +14,51 @@ from app.director.cues.cue_models import (
 )
 from app.director.media.database import MediaDatabase
 from app.schemas.inszenierung import AnarchyCurve
+from app.services.part2_cue_density import light_fade_seconds
+
+# Soft base looks for the opening; harsh/cut looks only once chaos rises.
+_LIGHT_EARLY_IDS = frozenset(
+    {
+        "gegenlicht_weich",
+        "warme_buehnenflaeche",
+        "luster_treppen",
+        "saallicht",
+        "wolkenprospekt_boden",
+        "teppich_rot",
+        "gegenlicht_lichteinfall",
+    }
+)
+_LIGHT_HARSH_IDS = frozenset(
+    {
+        "seitenlicht_hart",
+        "buehne_kalt_hart",
+        "blendung_magenta",
+        "blendung_zuschauerraum",
+        "vorbuehnenzug",
+    }
+)
+_LIGHT_FAMILY: dict[str, str] = {
+    "warme_buehnenflaeche": "warm",
+    "teppich_rot": "warm",
+    "luster_treppen": "warm",
+    "saallicht": "warm",
+    "gegenlicht_weich": "soft",
+    "gegenlicht_lichteinfall": "soft",
+    "wolkenprospekt_boden": "soft",
+    "klavier": "focus",
+    "klaviertasten": "focus",
+    "fluegel": "focus",
+    "musiker": "focus",
+    "spot_tisch": "focus",
+    "zwei_spots": "focus",
+    "seitenlicht_hart": "harsh",
+    "buehne_kalt_hart": "harsh",
+    "blendung_magenta": "harsh",
+    "blendung_zuschauerraum": "harsh",
+    "vorbuehnenzug": "harsh",
+    "palmen": "accent",
+    "lautsprecher_buehne": "accent",
+}
 
 
 def _normalize(text: str) -> str:
@@ -106,6 +151,26 @@ def pick_sound_id(
     return sounds[seed % len(sounds)].id
 
 
+def _light_pool_for_anarchy(scenes: list, anarchy: float) -> list:
+    playable = [scene for scene in scenes if scene.id != "blackout"]
+    if not playable:
+        return []
+    in_range = [
+        scene
+        for scene in playable
+        if scene.intensity_min <= anarchy <= scene.intensity_max
+    ]
+    pool = in_range or playable
+
+    if anarchy < 0.45:
+        early = [scene for scene in pool if scene.id in _LIGHT_EARLY_IDS]
+        return early or [scene for scene in pool if scene.id not in _LIGHT_HARSH_IDS] or pool
+    if anarchy < 0.7:
+        mid = [scene for scene in pool if scene.id not in _LIGHT_HARSH_IDS]
+        return mid or pool
+    return pool
+
+
 def pick_light_scene(
     slot: int,
     anarchy: float,
@@ -113,18 +178,26 @@ def pick_light_scene(
     *,
     recent: list[str] | None = None,
 ):
-    if not scenes:
-        return None
-    pool = [
-        scene
-        for scene in scenes
-        if scene.id != "blackout" and scene.intensity_min <= anarchy <= scene.intensity_max
-    ]
-    if not pool:
-        pool = [scene for scene in scenes if scene.id != "blackout"]
+    """Prefer coherent looks early; allow harsh jumps only when anarchy is high."""
+    pool = _light_pool_for_anarchy(scenes, anarchy)
     if not pool:
         return None
-    recent_set = set(recent or [])
+
+    recent_list = list(recent or [])
+    recent_set = set(recent_list)
+    last_id = recent_list[-1] if recent_list else None
+    last_family = _LIGHT_FAMILY.get(last_id or "", "")
+
+    # Early/mid: evolve within the same lighting family when possible.
+    if anarchy < 0.75 and last_family:
+        family_pool = [
+            scene
+            for scene in pool
+            if _LIGHT_FAMILY.get(scene.id) == last_family and scene.id not in recent_set
+        ]
+        if family_pool:
+            pool = family_pool
+
     seed = slot * 3 + int(anarchy * 7)
     for offset in range(len(pool)):
         candidate = pool[(seed + offset) % len(pool)]
@@ -239,7 +312,7 @@ def build_keyword_cue_point(
         light=(
             LightCue(
                 scene_id=light_scene.id,
-                fade_time=max(1.0, light_scene.fade_time * (0.6 + anarchy * 0.4)),
+                fade_time=light_fade_seconds(light_scene.fade_time, anarchy),
                 intensity=round(0.25 + anarchy * 0.75, 2),
             )
             if light_scene
@@ -270,8 +343,10 @@ def apply_anarchy_to_keyword_cue_point(
         point.visual = None
     if point.sound:
         point.sound.volume = round(0.3 + anarchy * 0.7, 2)
-    if point.light and point.light.intensity is None:
-        point.light.intensity = round(0.25 + anarchy * 0.75, 2)
+    if point.light:
+        if point.light.intensity is None:
+            point.light.intensity = round(0.25 + anarchy * 0.75, 2)
+        point.light.fade_time = light_fade_seconds(point.light.fade_time or 4.0, anarchy)
     return point
 
 

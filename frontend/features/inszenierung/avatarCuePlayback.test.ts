@@ -583,7 +583,7 @@ describe("avatar done gate", () => {
     vi.useRealTimers();
   });
 
-  it("skips a blocked segment and continues the CSV chain", async () => {
+  it("retries a blocked segment instead of burning later CSV avatars", async () => {
     vi.useFakeTimers();
     const { isAvatarDoneGateEnabled, postDirectorExecuteLayered } = await import("@/lib/api/director");
     const {
@@ -602,11 +602,11 @@ describe("avatar done gate", () => {
       .mockResolvedValueOnce({
         executed: false,
         osc_commands: [],
-        blocked_reason: "projector_locked:adam"
+        blocked_reason: "media_density_too_high"
       })
       .mockResolvedValueOnce({
         executed: true,
-        osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.Third"] }]
+        osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.Second"] }]
       });
 
     const layer = (clip: string) => ({
@@ -668,10 +668,112 @@ describe("avatar done gate", () => {
 
     await fireAvatarSegmentIfDue(first, 0.5, async () => undefined, () => false);
     await vi.advanceTimersByTimeAsync(500);
+    // First retry attempt still blocked — second must stay unfired (not burned).
+    await Promise.resolve();
+    expect(fired.has(avatarSegmentKey(second))).toBe(false);
+    expect(fired.has(avatarSegmentKey(third))).toBe(false);
+
+    await vi.advanceTimersByTimeAsync(1_500);
     await vi.waitFor(() => {
-      expect(fired.has(avatarSegmentKey(third))).toBe(true);
+      expect(fired.has(avatarSegmentKey(second))).toBe(true);
     });
+    expect(fired.has(avatarSegmentKey(third))).toBe(false);
+    expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(3);
+
+    resetAvatarPlaybackState();
+    vi.useRealTimers();
+  });
+
+  it("drainRemainingAvatarChain finishes CSV after narrator would have stopped", async () => {
+    vi.useFakeTimers();
+    const { isAvatarDoneGateEnabled, postDirectorExecuteLayered } = await import("@/lib/api/director");
+    const {
+      fireAvatarSegmentIfDue,
+      bindAvatarChainContext,
+      drainRemainingAvatarChain,
+      avatarSegmentKey,
+      resetAvatarPlaybackState
+    } = await import("@/features/inszenierung/avatarCuePlayback");
+
+    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(false);
+    vi.mocked(postDirectorExecuteLayered).mockImplementation(async (decision) => ({
+      executed: true,
+      osc_commands: [
+        {
+          bridge: "pixera",
+          args: [`KI_RZ21.${String(decision.visual?.clip_id ?? "x")}`]
+        }
+      ]
+    }));
+
+    const layer = (clip: string, durationMs: number) => ({
+      avatar_speech_id: clip,
+      avatar: "delfin",
+      video_clip_id: clip,
+      visual_cue: {
+        action: "play_clip" as const,
+        clip_id: clip,
+        video_type: "avatar" as const,
+        duration_ms: durationMs
+      }
+    });
+
+    const first = {
+      csv_cue_ids: ["sch6"],
+      text_excerpt: "Gestirne.",
+      char_offset: 0,
+      csv_sequence_index: 0,
+      start_sentence_index: 0,
+      end_sentence_index: 0,
+      avatar_layers: [layer("sch6", 500)]
+    };
+    const second = {
+      ...first,
+      csv_cue_ids: ["sch7"],
+      csv_sequence_index: 1,
+      text_excerpt: "dramatischer.",
+      avatar_layers: [layer("sch7", 800)]
+    };
+    const third = {
+      ...first,
+      csv_cue_ids: ["sch8"],
+      csv_sequence_index: 2,
+      text_excerpt: "Erde erben.",
+      avatar_layers: [layer("sch8", 400)]
+    };
+
+    const plan = {
+      performance_speaker: "narrator" as const,
+      sentences: ["Gestirne.", "dramatischer.", "Erde erben."],
+      sentence_char_starts: [0, 10, 24],
+      avatar_segments: [first, second, third],
+      dramaturgy: { reason: "t", tags: [], mood: "tension" as const, intensity: 0.5, cue_points: [] },
+      anarchy_level_end: 1,
+      alignment_warnings: []
+    };
+    const fired = new Set<string>();
+
+    bindAvatarChainContext({
+      plan,
+      fired,
+      sentenceCharStarts: plan.sentence_char_starts,
+      scriptText: "Gestirne. dramatischer. Erde erben.",
+      anarchyLevelFor: () => 0.5,
+      onCommands: async () => undefined,
+      shouldAbort: () => false
+    });
+
+    await fireAvatarSegmentIfDue(first, 0.5, async () => undefined, () => false);
+    fired.add(avatarSegmentKey(first));
+
+    const drain = drainRemainingAvatarChain(() => false, plan, fired);
+    await vi.advanceTimersByTimeAsync(500);
+    await vi.advanceTimersByTimeAsync(800);
+    await vi.advanceTimersByTimeAsync(400);
+    await drain;
+
     expect(fired.has(avatarSegmentKey(second))).toBe(true);
+    expect(fired.has(avatarSegmentKey(third))).toBe(true);
     expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(3);
 
     resetAvatarPlaybackState();

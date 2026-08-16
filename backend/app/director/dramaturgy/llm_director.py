@@ -130,6 +130,10 @@ class LLMDirector:
                 "Licht kombinieren: light.scene_ids mit mehreren IDs (z. B. [\"musiker\", \"warme_buehnenflaeche\"]).",
                 "Pflichtlicht Avatare: Bei SCH4_Thomas und WO2_Branko muss klaviertasten in light.scene_ids enthalten sein (zusätzlich zu anderen Stimmungen).",
                 "Jeder neue Licht-Cue ersetzt den vorherigen (Key Out, dann neue Kanäle/Gruppen).",
+                "Lichtdesign: Viele Lichtwechsel sind gut — aber nie Rapid-Fire (mindestens ~8s Abstand früh, kürzer erst im Chaos).",
+                "Licht früh/niedrige Intensität: lange Fades (5–8s), weiche Basis (gegenlicht_weich, warme_buehnenflaeche, luster_treppen).",
+                "Licht Chaos/hohe Intensität: kurze Fades/Cuts, harte Kontraste (seitenlicht_hart, blendung_*) erlaubt.",
+                "Lichtwechsel begründen; Look-Familie weiterentwickeln statt wildes Blinken.",
                 "Licht-Intensität: light.intensity 0.0–1.0 (0.35 = dezent, 1.0 = voll); fehlt → cue_point.intensity.",
                 "Sound: nur cue_id aus sounds[] (play / fade_in / fade_out / out) — MIDI an Ableton.",
                 "Sound sofort aus (ein Layer): cue_id mit _out (z. B. kaefigecho_out).",
@@ -198,6 +202,8 @@ class LLMDirector:
             "Der Live-Zustand (DramaturgyState) ist verbindlich: bei hoher Dichte eher space/release/"
             "fade_to_black/stop_clip wählen statt neue Starts. "
             "Bevorzuge präzise Entscheidungen gegenüber vielen. "
+            "Licht: viele Wechsel ok, aber mit Abstand — keine Rapid-Fire-Signale; "
+            "lange Fades am Anfang, schnelle Schnitte erst bei Chaos. "
             "Überraschung durch Kontrast, Timing, Wiederaufnahme oder Reduktion — nicht durch Zufall. "
             "Gib für jede Entscheidung reason_short: höchstens ein kurzer deutscher Satz mit dramaturgischer Funktion. "
             "dramaturgical_function: support|contrast|intensification|release|transition|recall|disruption|"
