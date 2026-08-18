@@ -780,6 +780,103 @@ describe("avatar done gate", () => {
     vi.useRealTimers();
   });
 
+  it("drain does not start the next CSV clip while the previous duration is still running", async () => {
+    vi.useFakeTimers();
+    const { isAvatarDoneGateEnabled, postDirectorExecuteLayered } = await import("@/lib/api/director");
+    const {
+      fireAvatarSegmentIfDue,
+      bindAvatarChainContext,
+      drainRemainingAvatarChain,
+      avatarSegmentKey,
+      resetAvatarPlaybackState
+    } = await import("@/features/inszenierung/avatarCuePlayback");
+
+    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(false);
+    const calls: string[] = [];
+    vi.mocked(postDirectorExecuteLayered).mockImplementation(async (decision) => {
+      const clip = String(decision.visual?.clip_id ?? "");
+      calls.push(clip);
+      return {
+        executed: true,
+        osc_commands: [{ bridge: "pixera", args: [`KI_RZ21.${clip}`] }]
+      };
+    });
+
+    const layer = (clip: string, durationMs: number) => ({
+      avatar_speech_id: clip,
+      avatar: "delfin",
+      video_clip_id: clip,
+      visual_cue: {
+        action: "play_clip" as const,
+        clip_id: clip,
+        video_type: "avatar" as const,
+        duration_ms: durationMs
+      }
+    });
+
+    const sch7 = {
+      csv_cue_ids: ["sch7"],
+      text_excerpt: "dramatischer.",
+      char_offset: 0,
+      csv_sequence_index: 0,
+      start_sentence_index: 0,
+      end_sentence_index: 0,
+      avatar_layers: [layer("sch7", 5_000)]
+    };
+    const sch8 = {
+      ...sch7,
+      csv_cue_ids: ["sch8"],
+      csv_sequence_index: 1,
+      text_excerpt: "Erde erben.",
+      avatar_layers: [layer("sch8", 1_000)]
+    };
+
+    const plan = {
+      performance_speaker: "narrator" as const,
+      sentences: ["dramatischer.", "Erde erben."],
+      sentence_char_starts: [0, 14],
+      avatar_segments: [sch7, sch8],
+      dramaturgy: { reason: "t", tags: [], mood: "tension" as const, intensity: 0.5, cue_points: [] },
+      anarchy_level_end: 1,
+      alignment_warnings: []
+    };
+    const fired = new Set<string>();
+
+    bindAvatarChainContext({
+      plan,
+      fired,
+      sentenceCharStarts: plan.sentence_char_starts,
+      scriptText: "dramatischer. Erde erben.",
+      anarchyLevelFor: () => 0.5,
+      onCommands: async () => undefined,
+      shouldAbort: () => false
+    });
+
+    await fireAvatarSegmentIfDue(sch7, 0.5, async () => undefined, () => false);
+    fired.add(avatarSegmentKey(sch7));
+    expect(calls).toEqual(["sch7"]);
+
+    const drainPromise = drainRemainingAvatarChain(() => false, plan, fired);
+
+    // Mid-sch7: drain must not fire sch8 yet.
+    await vi.advanceTimersByTimeAsync(2_000);
+    expect(calls).toEqual(["sch7"]);
+    expect(fired.has(avatarSegmentKey(sch8))).toBe(false);
+
+    // Finish sch7 duration, let advance arm sch8, then finish sch8.
+    await vi.advanceTimersByTimeAsync(3_000);
+    await vi.advanceTimersByTimeAsync(100);
+    await vi.advanceTimersByTimeAsync(1_000);
+    await vi.advanceTimersByTimeAsync(2_000);
+    await drainPromise;
+
+    expect(calls).toEqual(["sch7", "sch8"]);
+    expect(fired.has(avatarSegmentKey(sch8))).toBe(true);
+
+    resetAvatarPlaybackState();
+    vi.useRealTimers();
+  }, 10_000);
+
   it("ignores delayed chain timers after resetAvatarPlaybackState (second-run safety)", async () => {
     vi.useFakeTimers();
     const { isAvatarDoneGateEnabled, postDirectorExecuteLayered } = await import("@/lib/api/director");

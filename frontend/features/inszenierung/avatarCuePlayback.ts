@@ -18,6 +18,11 @@ let avatarPositionTimer: ReturnType<typeof setTimeout> | null = null;
 /** CSV-duration / Done chain timer — always armed synchronously in noteAvatarStarted. */
 let avatarChainTimer: ReturnType<typeof setTimeout> | null = null;
 let avatarChainRetryTimer: ReturnType<typeof setTimeout> | null = null;
+/**
+ * True while settle() is advancing to the next CSV clip. Prevents drain from
+ * seeing a brief pending=null gap and starting sch8 in parallel with sch7.
+ */
+let avatarChainAdvancing = false;
 
 /** In-flight avatar clip(s): TTS stays parallel; on done the next clip starts immediately. */
 type PendingAvatarDone = {
@@ -224,11 +229,21 @@ function noteAvatarStarted(
     clearAvatarChainTimer();
     resolveFinished(result);
     if (epoch !== avatarPlaybackEpoch) return;
-    if (pendingAvatarDone?.token === token) pendingAvatarDone = null;
-    if (shouldAbort()) return;
-    void advanceAvatarChainAfterDone().catch((err) => {
-      console.warn("[avatar] chain advance failed:", err);
-    });
+    if (shouldAbort()) {
+      if (pendingAvatarDone?.token === token) pendingAvatarDone = null;
+      return;
+    }
+    // Keep pending until advance arms the next clip — otherwise drain sees
+    // pending=null and fires the next segment in parallel with this one.
+    avatarChainAdvancing = true;
+    void advanceAvatarChainAfterDone()
+      .catch((err) => {
+        console.warn("[avatar] chain advance failed:", err);
+      })
+      .finally(() => {
+        if (pendingAvatarDone?.token === token) pendingAvatarDone = null;
+        avatarChainAdvancing = false;
+      });
   };
 
   pendingAvatarDone = {
@@ -286,6 +301,7 @@ export function bindAvatarChainContext(ctx: AvatarChainContext | null): void {
 export function resetAvatarPlaybackState(): void {
   avatarPlaybackEpoch += 1;
   pendingAvatarDone = null;
+  avatarChainAdvancing = false;
   avatarChainContext = null;
   avatarFireChain = Promise.resolve();
   clearAvatarChainTimer();
@@ -311,6 +327,8 @@ export async function flushPendingAvatarDoneGate(shouldAbort: () => boolean): Pr
 /**
  * After TTS ends, keep the CSV avatar chain alive until every segment has fired
  * (or abort). Previously bindAvatarChainContext(null) ran first and dropped sch7/sch8.
+ *
+ * Must not call advance while settle is already advancing — that raced sch8 onto sch7.
  */
 export async function drainRemainingAvatarChain(
   shouldAbort: () => boolean,
@@ -328,21 +346,21 @@ export async function drainRemainingAvatarChain(
       }
       return;
     }
+
+    // Prefer advancing flag — pending.finished may already be resolved while
+    // advance is still starting the next clip (would busy-loop otherwise).
+    if (avatarChainAdvancing) {
+      await new Promise<void>((resolve) => setTimeout(resolve, 50));
+      continue;
+    }
     if (pendingAvatarDone) {
       await waitForPendingAvatarDone(shouldAbort, true);
       continue;
     }
+
+    // Truly idle with unfired left (e.g. after a failed fire). One kick, then wait.
     await advanceAvatarChainAfterDone();
-    if (
-      countUnfiredAvatarSegments(plan, fired) > 0 &&
-      !pendingAvatarDone &&
-      epoch === avatarPlaybackEpoch &&
-      !shouldAbort()
-    ) {
-      await new Promise<void>((resolve) => {
-        setTimeout(resolve, AVATAR_CHAIN_RETRY_MS);
-      });
-    }
+    await new Promise<void>((resolve) => setTimeout(resolve, AVATAR_CHAIN_RETRY_MS));
   }
 }
 
