@@ -27,6 +27,7 @@ from app.services.part2_cue_density import atmosphere_intervals_for_anarchy
 from app.services.teil2_projector_assignment import (
     ALL_PROJECTORS,
     STAGE_BEAMER_ORDER,
+    STAGE_ALWAYS_ATMOSPHERE,
     atmosphere_targets_for_free,
     pick_atmosphere_projectors,
 )
@@ -239,11 +240,26 @@ def _fill_free_projectors_at(
     """
     if not free or not pool:
         return [], clip_index
-    targets = atmosphere_targets_for_free(
-        free, anarchy=anarchy, seed=int(time_sec * 10) + clip_index
-    )
+
+    tick_seed = int(time_sec * 10) + clip_index
+    targets = atmosphere_targets_for_free(free, anarchy=anarchy, seed=tick_seed)
     if not targets:
         return [], clip_index
+
+    # At high anarchy we previously filled *all* additional free beamers in the same tick.
+    # To make durations feel less "synchronized", keep Adam/Eva always and only rotate *one*
+    # of the other free surfaces when chaos gets high.
+    #
+    # This creates parallel "longer" vs "shorter" atmosphere clips across rz21 vs led
+    # (or whatever other free surfaces are available).
+    if anarchy >= 0.8:
+        always = set(STAGE_ALWAYS_ATMOSPHERE)
+        other_targets = [p for p in targets if p not in always]
+        if len(other_targets) > 1:
+            ordered_others = [p for p in STAGE_BEAMER_ORDER if p in other_targets]
+            keep_other = ordered_others[tick_seed % len(ordered_others)]
+            targets = [p for p in targets if p in always or p == keep_other]
+
     points: list[CuePoint] = []
     next_index = clip_index
     for projector in targets:
@@ -289,7 +305,14 @@ def _rule_based_atmosphere_points(
     while time_sec < total_sec:
         anarchy = _anarchy_at_time(time_sec, total_sec, curve)
         video_min, video_max = atmosphere_intervals_for_anarchy(anarchy)
-        step = max(2.5, (video_min + video_max) / 2.0)
+
+        base_step = max(2.5, (video_min + video_max) / 2.0)
+        # Give the beginning a slightly more "breathing" duration, so the first atmosphere
+        # clips stand a bit longer before the first overwrite tick.
+        early_phase_end = min(25.0, total_sec * 0.25)
+        early_multiplier = 1.35 if time_sec < early_phase_end else 1.0
+        step = base_step * early_multiplier
+
         free = free_projectors_at(windows, time_sec)
         batch, clip_index = _fill_free_projectors_at(
             time_sec=time_sec,

@@ -137,7 +137,42 @@ def test_rule_fallback_produces_time_cues(monkeypatch) -> None:
     assert points
     assert all(p.trigger == CuePointTrigger.TIME for p in points)
     assert all(p.visual and p.visual.clip_id for p in points)
-    assert all(p.visual.clip_id not in {"random", "avatar2"} for p in points)
+    excluded = {
+        "random",
+        "avatar2",
+        "ipad",
+        "macbook",
+        "inge",
+        "thiemo",
+        "thomas",
+        "sebastian",
+        "branko",
+    }
+    assert all(p.visual.clip_id not in excluded for p in points)
+
+
+def test_high_anarchy_skips_one_other_free_beamer() -> None:
+    """
+    At very high anarchy we keep Adam/Eva always but rotate only *one* of the other
+    free beamers (rz21 vs led), instead of filling both in the same tick.
+    """
+    from app.services.teil2_atmosphere_scheduler import _fill_free_projectors_at
+
+    free = ["rz21", "adam", "eva", "led"]
+    pool = ["bonnie", "clyde", "strand"]
+
+    points, _ = _fill_free_projectors_at(
+        time_sec=10.0,
+        free=free,
+        anarchy=0.9,
+        pool=pool,
+        clip_index=0,
+    )
+
+    projectors = {p.visual.projector for p in points if p.visual and p.visual.projector}
+    assert "adam" in projectors
+    assert "eva" in projectors
+    assert not ("rz21" in projectors and "led" in projectors)
 
 
 def test_atmosphere_starts_immediately_and_is_dense_early(monkeypatch) -> None:
@@ -164,6 +199,44 @@ def test_atmosphere_starts_immediately_and_is_dense_early(monkeypatch) -> None:
     assert times[0] <= 0.5
     early = [t for t in times if t <= 30.0]
     assert len(early) >= 4
+
+
+def test_early_rule_based_step_multiplier(monkeypatch) -> None:
+    """
+    Isoliert testen, dass wir am Anfang einen größeren Scheduler-Schritt nutzen
+    (Atmosphäre steht länger, bevor sie überschrieben wird).
+    """
+    from app.services.teil2_atmosphere_scheduler import _rule_based_atmosphere_points
+
+    def fake_atmo_clip_ids(*, avatar_clip_ids: set[str] | None = None) -> set[str]:
+        return {"clyde"}
+
+    monkeypatch.setattr(
+        "app.services.teil2_atmosphere_scheduler.atmosphere_clip_ids",
+        fake_atmo_clip_ids,
+    )
+
+    script = "A" * 2000
+    curve = AnarchyCurve(start=0.2, end=0.2)  # low anarchy → base_step ~6.5s
+    dramaturgy = DramaturgyDecision(
+        reason="test",
+        tags=[],
+        mood="calm",
+        intensity=0.3,
+        cue_points=[],
+    )
+    points = _rule_based_atmosphere_points(
+        script_text=script,
+        sentences=["Satz."],
+        segments=[],
+        curve=curve,
+        avatar_clip_ids=set(),
+        dramaturgy=dramaturgy,
+    )
+    times = sorted({p.time_offset_sec for p in points})
+    assert len(times) >= 2
+    # With early_multiplier=1.35: 6.5s * 1.35 = 8.775s → rounded >= 8.7s.
+    assert times[1] >= 8.7
 
 
 def test_rule_fills_multiple_free_projectors_beside_avatar(monkeypatch) -> None:

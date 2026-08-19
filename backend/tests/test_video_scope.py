@@ -53,6 +53,13 @@ def test_atmosphere_clip_ids_require_all_beamers(monkeypatch) -> None:
         "osc_availability_by_clip",
         lambda scope: {
             "clyde": {"rz21", "adam", "eva", "led"},
+            "ipad": {"rz21", "adam", "eva", "led"},
+            "macbook": {"rz21", "adam", "eva", "led"},
+            "inge": {"rz21", "adam", "eva", "led"},
+            "thiemo": {"rz21", "adam", "eva", "led"},
+            "thomas": {"rz21", "adam", "eva", "led"},
+            "sebastian": {"rz21", "adam", "eva", "led"},
+            "branko": {"rz21", "adam", "eva", "led"},
             "partial": {"rz21"},
             "random": {"rz21", "adam", "eva", "led"},
             "avatar2": {"rz21", "adam", "eva", "led"},
@@ -60,6 +67,13 @@ def test_atmosphere_clip_ids_require_all_beamers(monkeypatch) -> None:
     )
     pool = atmosphere_clip_ids(avatar_clip_ids=set())
     assert "clyde" in pool
+    assert "ipad" not in pool
+    assert "macbook" not in pool
+    assert "inge" not in pool
+    assert "thiemo" not in pool
+    assert "thomas" not in pool
+    assert "sebastian" not in pool
+    assert "branko" not in pool
     assert "partial" not in pool
     assert "random" not in pool
     assert "avatar2" not in pool

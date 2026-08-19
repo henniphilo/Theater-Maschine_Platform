@@ -22,13 +22,26 @@ _AVATAR_PIXERA_NAMES = frozenset(
 )
 # Begleitvideo: Pixera-Cues ohne volle Beamer-Anlage bzw. nicht spielbar.
 _EXCLUDED_ATMOSPHERE_PIXERA = frozenset({"Random", "Avatar2"})
-_EXCLUDED_ATMOSPHERE_CLIP_IDS = frozenset({"random", "avatar2"})
+_EXCLUDED_ATMOSPHERE_CLIP_IDS_OSC = frozenset({"random", "avatar2"})
+
+# Explicitly removed from Begleitvideo/Atmosphäre (POOL only, not avatar catalog).
+_EXCLUDED_ATMOSPHERE_CLIP_IDS_POOL = frozenset(
+    {
+        "ipad",
+        "macbook",
+        "inge",
+        "thiemo",
+        "thomas",
+        "sebastian",
+        "branko",
+    }
+)
 
 
 def _is_excluded_atmosphere(pixera_name: str | None = None, clip_id: str | None = None) -> bool:
     if pixera_name and pixera_name.strip() in _EXCLUDED_ATMOSPHERE_PIXERA:
         return True
-    if clip_id and clip_id.strip().lower() in _EXCLUDED_ATMOSPHERE_CLIP_IDS:
+    if clip_id and clip_id.strip().lower() in _EXCLUDED_ATMOSPHERE_CLIP_IDS_OSC:
         return True
     return False
 
@@ -193,7 +206,11 @@ def clip_ids_on_all_projectors(scope: VideoScope = "part1") -> set[str]:
 
 def atmosphere_clip_ids(*, avatar_clip_ids: set[str] | None = None) -> set[str]:
     """Begleitvideo pool: Ohne-Avatare OSC, only clips laid out on all beamers."""
-    excluded = set(avatar_clip_ids or ()) | _EXCLUDED_ATMOSPHERE_CLIP_IDS
+    excluded = (
+        set(avatar_clip_ids or ())
+        | _EXCLUDED_ATMOSPHERE_CLIP_IDS_OSC
+        | _EXCLUDED_ATMOSPHERE_CLIP_IDS_POOL
+    )
     return {clip_id for clip_id in clip_ids_on_all_projectors("part1") if clip_id not in excluded}
 
 
