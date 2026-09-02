@@ -19,7 +19,6 @@ import {
   INITIAL_TEXT_SYNC_STATE,
   runTextSyncPlayback,
   softAbortTextSyncPlayback,
-  stopTextSyncPlayback,
   type TextSyncPlaybackState
 } from "@/features/inszenierung/teil2TextSyncPlayback";
 import {
@@ -164,7 +163,8 @@ function AuffuehrungContent() {
     abortRef.current = true;
     genRef.current += 1;
     stopPlayback();
-    if (usesTextSync) stopTextSyncPlayback();
+    // Soft abort — emergency_stop races with re-arm and can block atmosphere cues.
+    if (usesTextSync) softAbortTextSyncPlayback();
     else stopAnarchyPlayback();
     // Keep position for Stop→Play resume (Teil-1 parity).
     setTextSyncPlayback({

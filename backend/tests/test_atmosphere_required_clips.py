@@ -17,9 +17,28 @@ from app.services.teil2_atmosphere_scheduler import (
 
 def test_pick_recurring_alternates_bonnie_clyde() -> None:
     pool = ["strand", "bonnie", "clyde", "black"]
-    assert pick_recurring_or_pool_clip(pool, 0) == "bonnie"
-    assert pick_recurring_or_pool_clip(pool, 3) == "clyde"
+    assert pick_recurring_or_pool_clip(pool, 0) == "clyde"
+    assert pick_recurring_or_pool_clip(pool, 3) == "bonnie"
     assert pick_recurring_or_pool_clip(pool, 4) == "strand"
+
+
+def test_min_recurring_scales_with_show_length() -> None:
+    assert min_recurring_appearances(60.0) >= 4
+    assert min_recurring_appearances(300.0) >= 8
+    assert min_recurring_appearances(900.0) == 10
+
+
+def test_scheduler_pool_prioritizes_clyde_bonnie(monkeypatch) -> None:
+    from app.services import teil2_atmosphere_scheduler as sched
+
+    monkeypatch.setattr(
+        sched,
+        "atmosphere_clip_ids",
+        lambda *, avatar_clip_ids=None: {"strand", "black", "clyde", "bonnie", "affenslowodysee2001"},
+    )
+    pool = sched._atmosphere_clip_pool(avatar_clip_ids=set())
+    assert pool[:2] == ["clyde", "bonnie"]
+    assert pool[2:] == ["affenslowodysee2001", "black", "strand"]
 
 
 def test_ensure_injects_bonnie_and_clyde_several_times() -> None:
@@ -69,6 +88,10 @@ def test_ensure_does_not_occupy_avatar_beamer() -> None:
 
 def test_rule_atmosphere_includes_bonnie_and_clyde(monkeypatch) -> None:
     monkeypatch.setattr("app.core.config.settings.director_dramaturgy_mode", "rules")
+    monkeypatch.setattr(
+        "app.services.teil2_atmosphere_scheduler.atmosphere_clip_ids",
+        lambda *, avatar_clip_ids=None: {"clyde", "bonnie", "strand", "black"},
+    )
     script = "A" * 2000
     segments = [
         AvatarTextSegment(

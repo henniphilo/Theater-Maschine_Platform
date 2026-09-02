@@ -35,7 +35,6 @@ import {
   INITIAL_TEXT_SYNC_STATE,
   runTextSyncPlayback,
   softAbortTextSyncPlayback,
-  stopTextSyncPlayback,
   type TextSyncPlaybackState
 } from "@/features/inszenierung/teil2TextSyncPlayback";
 import type { PerformanceSpeaker } from "@/lib/types/director";
@@ -542,7 +541,7 @@ function AuffuehrungContent() {
     stopPlayback();
     stopScriptPlayback();
     stopAnarchyPlayback();
-    stopTextSyncPlayback();
+    if (usesTextSync) softAbortTextSyncPlayback();
     setPlayback((prev) => ({
       ...prev,
       running: false,
@@ -562,6 +561,7 @@ function AuffuehrungContent() {
       running: false,
       paused: true,
       completed: false,
+      sentenceIndex: 0,
       activeOscBridge: null
     }));
   }

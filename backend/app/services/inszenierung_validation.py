@@ -103,5 +103,5 @@ def dramaturgy_with_anarchy(decision: DramaturgyDecision, anarchy_level: float) 
     if decision.visual:
         decision.visual.opacity = min(1.0, round(0.55 + anarchy_level * 0.45, 2))
     if decision.sound:
-        decision.sound.volume = min(1.0, round(0.35 + anarchy_level * 0.55, 2))
+        decision.sound.volume = min(1.0, round(0.58 + anarchy_level * 0.42, 2))
     return decision

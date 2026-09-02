@@ -30,6 +30,7 @@ from app.services.avatar_speech_catalog import get_avatar_speech_catalog_service
 from app.services.teil2_anarchy_cues import (
     apply_anarchy_to_keyword_cue_point,
     build_keyword_cue_point,
+    densify_keyword_sound_cues,
     extract_text_fallback_keywords,
     find_sentence_index_for_keyword,
     keyword_in_script,
@@ -303,6 +304,8 @@ class Teil2PrepareService:
                 "Wiederholung, rhetorische Spitze — was im Text wirklich auffällt.\n"
                 "Keine vorgegebene Themenliste, keine Schlagwort-Vorgabe von außen.\n"
                 "Jedes keyword muss wörtlich im Textabschnitt vorkommen.\n"
+                "Jeder cue_point MUSS einen sound.cue_id aus sounds[] haben (nur play, keine _out/cut).\n"
+                "Sound oft und hörbar: lieber zu viele Sound-Cues als Lücken.\n"
                 "Mehrere Cues pro Abschnitt; Anarchie steigt über den Verlauf (früh dezent, spät überlagert).\n\n"
                 f"Textabschnitt:\n{chunk_text}\n\n"
                 f"Medien-Allowlist:\n{allowlist}\n\n"
@@ -319,7 +322,8 @@ class Teil2PrepareService:
                         "role": "system",
                         "content": (
                             "Teil-2-Cue-Planner: Entdecke Stichworte im Textabschnitt "
-                            "und weise Licht/Sound zu. Keine externe Wortliste. "
+                            "und weise Licht/Sound zu. Jeder Cue braucht einen play-Sound. "
+                            "Keine _out/cut_all. Keine externe Wortliste. "
                             "keyword muss wörtlich im Text stehen. Kein Dialog. Nur JSON."
                         ),
                     },
@@ -339,7 +343,12 @@ class Teil2PrepareService:
                 if not keyword:
                     continue
                 fixed = apply_anarchy_to_keyword_cue_point(
-                    point, keyword, script_text, sentences, curve
+                    point,
+                    keyword,
+                    script_text,
+                    sentences,
+                    curve,
+                    self.llm.media_db,
                 )
                 if fixed is not None:
                     validated.append(fixed)
@@ -398,6 +407,13 @@ class Teil2PrepareService:
             )
             for index, (keyword, sentence_index, anarchy) in enumerate(keywords)
         ]
+        merged_points = densify_keyword_sound_cues(
+            merged_points,
+            script_text,
+            sentences,
+            curve,
+            self.llm.media_db,
+        )
         return DramaturgyDecision(
             reason="Teil-2 Stichwort-Cues (Regel-Fallback ohne LLM)",
             tags=["teil2", "text_sync", "keyword", "anarchy", "fallback"],
@@ -415,7 +431,8 @@ class Teil2PrepareService:
     ) -> DramaturgyDecision:
         validated: list[CuePoint] = []
         seen_keywords: set[str] = set()
-        for point in decision.cue_points:
+        recent_sounds: list[str] = []
+        for index, point in enumerate(decision.cue_points):
             keyword = (point.keyword or "").strip()
             if not keyword or not keyword_in_script(keyword, script_text):
                 continue
@@ -423,14 +440,27 @@ class Teil2PrepareService:
             if norm in seen_keywords:
                 continue
             fixed = apply_anarchy_to_keyword_cue_point(
-                point, keyword, script_text, sentences, curve
+                point,
+                keyword,
+                script_text,
+                sentences,
+                curve,
+                self.llm.media_db,
+                slot=index,
+                recent_sound_ids=recent_sounds,
             )
             if fixed is None:
                 continue
             seen_keywords.add(norm)
             validated.append(fixed)
 
-        decision.cue_points = validated
+        decision.cue_points = densify_keyword_sound_cues(
+            validated,
+            script_text,
+            sentences,
+            curve,
+            self.llm.media_db,
+        )
         return decision
 
 

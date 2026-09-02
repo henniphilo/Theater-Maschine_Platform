@@ -52,6 +52,7 @@ def test_atmosphere_clip_ids_require_all_beamers(monkeypatch) -> None:
         scope_mod,
         "osc_availability_by_clip",
         lambda scope: {
+            "bitcoinfahrt": {"rz21", "adam", "eva", "led"},
             "clyde": {"rz21", "adam", "eva", "led"},
             "ipad": {"rz21", "adam", "eva", "led"},
             "macbook": {"rz21", "adam", "eva", "led"},
@@ -66,7 +67,8 @@ def test_atmosphere_clip_ids_require_all_beamers(monkeypatch) -> None:
         },
     )
     pool = atmosphere_clip_ids(avatar_clip_ids=set())
-    assert "clyde" in pool
+    assert "bitcoinfahrt" in pool
+    assert "clyde" in pool  # recurring stage rule
     assert "ipad" not in pool
     assert "macbook" not in pool
     assert "inge" not in pool
@@ -79,10 +81,65 @@ def test_atmosphere_clip_ids_require_all_beamers(monkeypatch) -> None:
     assert "avatar2" not in pool
 
 
+def test_atmosphere_clip_ids_match_staging_allowlist() -> None:
+    from app.services.video_scope import ACTIVE_ATMOSPHERE_CLIP_IDS
+
+    pool = atmosphere_clip_ids(avatar_clip_ids=set())
+    assert pool
+    assert pool <= ACTIVE_ATMOSPHERE_CLIP_IDS
+    assert "bitcoinfahrt" in pool
+    assert "clyde" in pool
+    assert "bonnie" in pool
+    assert "black" not in pool
+
+
+def test_merge_video_catalog_does_not_strip_avatar_osc_clips(monkeypatch, tmp_path) -> None:
+    """removed=True on Begleitvideo cleanup must not drop CSV avatar clips."""
+    from app.schemas.extra_media import CueOverrideFlags, ExtraMediaOverrides, VideoKindOverlay
+    from app.schemas.video_cues import VideoClipEntry, VideoCueCatalog
+    from app.services import extra_media_overrides as emo
+
+    overrides = ExtraMediaOverrides(
+        videos=VideoKindOverlay(
+            overrides={
+                "bak1_nicolaspflanzen3": CueOverrideFlags(dramaturgy_active=False, removed=True),
+                "black": CueOverrideFlags(dramaturgy_active=False, removed=True),
+            }
+        )
+    )
+    monkeypatch.setattr(emo, "load_overrides", lambda force=False: overrides)
+    monkeypatch.setattr(
+        "app.services.video_scope._avatar_clip_ids",
+        lambda: {"bak1_nicolaspflanzen3"},
+    )
+
+    catalog = VideoCueCatalog(
+        clips=[
+            VideoClipEntry(
+                id="bak1_nicolaspflanzen3",
+                pixera_name="BAK1_NicolasPflanzen3",
+                label="BAK1",
+                video_type="avatar",
+            ),
+            VideoClipEntry(
+                id="black",
+                pixera_name="Black",
+                label="Black",
+                video_type="atmosphere",
+            ),
+        ]
+    )
+    merged = emo.merge_video_catalog(catalog)
+    ids = {clip.id for clip in merged.clips}
+    assert "bak1_nicolaspflanzen3" in ids
+    assert "black" not in ids
+
+
 def test_usable_dramaturgy_keeps_partial_avatar_clips() -> None:
     usable = usable_dramaturgy_video_ids("part2")
     assert "inge" in usable
     assert "sebastian" in usable
+    assert "bitcoinfahrt" in usable
     assert "clyde" in usable
     assert "random" not in usable
     assert "avatar2" not in usable

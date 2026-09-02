@@ -227,6 +227,19 @@ export function OscTestPanel() {
     }
   }, [refreshStatus]);
 
+  const startAtmosphereVideoSweep = useCallback(async () => {
+    setError("");
+    setSweepLoading(true);
+    try {
+      setSweepStatus(await postVideoSweepStart({ scope: "atmosphere", gap_ms: 2000 }));
+      refreshStatus();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Begleitvideo-Sweep fehlgeschlagen");
+    } finally {
+      setSweepLoading(false);
+    }
+  }, [refreshStatus]);
+
   const stopVideoSweep = useCallback(async () => {
     setError("");
     setSweepLoading(true);
@@ -670,6 +683,14 @@ export function OscTestPanel() {
               </button>
               <button
                 type="button"
+                className="machineStartBtn"
+                disabled={sweepLoading || sweepActive || !videoUsesPixera}
+                onClick={() => void startAtmosphereVideoSweep()}
+              >
+                Begleitvideos 2 s
+              </button>
+              <button
+                type="button"
                 className="oscTestStopBtn"
                 disabled={sweepLoading || !sweepActive}
                 onClick={() => void stopVideoSweep()}
@@ -677,6 +698,10 @@ export function OscTestPanel() {
                 Sweep stoppen
               </button>
             </div>
+            <p className="textMuted oscTestTarget">
+              „Begleitvideos 2 s“: nur die aktiven Atmosphäre-Clips (Staging-Liste), je Clip 2 s
+              Anspielzeit auf allen Beamern.
+            </p>
             {sweepStatus && (sweepStatus.active || sweepStatus.finished) ? (
               <div className="oscTestLog" aria-live="polite">
                 <div className="machineProgressRow">

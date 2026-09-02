@@ -37,6 +37,41 @@ _EXCLUDED_ATMOSPHERE_CLIP_IDS_POOL = frozenset(
     }
 )
 
+# Operator sheet Begleitclips — Technik-Sweep order (ohne Bonnie/Clyde).
+STAGING_ATMOSPHERE_CLIP_IDS_ORDERED: tuple[str, ...] = (
+    "tierunterdererde",
+    "kuscheltierschlachtung",
+    "derhaseverlaesstdiebuehne",
+    "affenslowodysee",
+    "kaeferimmuseum",
+    "konzeptionuntertieren",
+    "bitcoinfahrt",
+    "fischundwassergewasch",
+    "sturmfischskellet",
+    "wasserfahrt",
+    "sebastianblurry",
+    "mehlwuermerlangsam",
+    "esellaeuft",
+    "gehirntest",
+    "hundethielalspipita",
+    "avatar_iv_video2",
+    "avatar_iv_video",
+    "bitcoin_and_worm",
+    "brennender_wald",
+    "flut",
+    "massenproduktion",
+    "schmetterlinge_laufen",
+)
+# Staging-Pflicht: Bonnie/Clyde müssen häufig in der Aufführung vorkommen.
+RECURRING_ATMOSPHERE_CLIP_IDS: tuple[str, ...] = ("clyde", "bonnie")
+
+# Full atmosphere pool = recurring + sheet. Sweep uses sheet order only.
+ACTIVE_ATMOSPHERE_CLIP_IDS_ORDERED: tuple[str, ...] = (
+    *RECURRING_ATMOSPHERE_CLIP_IDS,
+    *STAGING_ATMOSPHERE_CLIP_IDS_ORDERED,
+)
+ACTIVE_ATMOSPHERE_CLIP_IDS = frozenset(ACTIVE_ATMOSPHERE_CLIP_IDS_ORDERED)
+
 
 def _is_excluded_atmosphere(pixera_name: str | None = None, clip_id: str | None = None) -> bool:
     if pixera_name and pixera_name.strip() in _EXCLUDED_ATMOSPHERE_PIXERA:
@@ -205,13 +240,17 @@ def clip_ids_on_all_projectors(scope: VideoScope = "part1") -> set[str]:
 
 
 def atmosphere_clip_ids(*, avatar_clip_ids: set[str] | None = None) -> set[str]:
-    """Begleitvideo pool: Ohne-Avatare OSC, only clips laid out on all beamers."""
+    """Begleitvideo pool: allowlisted Ohne-Avatare OSC clips on all beamers."""
     excluded = (
         set(avatar_clip_ids or ())
         | _EXCLUDED_ATMOSPHERE_CLIP_IDS_OSC
         | _EXCLUDED_ATMOSPHERE_CLIP_IDS_POOL
     )
-    return {clip_id for clip_id in clip_ids_on_all_projectors("part1") if clip_id not in excluded}
+    return {
+        clip_id
+        for clip_id in clip_ids_on_all_projectors("part1")
+        if clip_id not in excluded and clip_id in ACTIVE_ATMOSPHERE_CLIP_IDS
+    }
 
 
 def usable_dramaturgy_video_ids(scope: VideoScope = "part2") -> set[str]:
@@ -219,7 +258,7 @@ def usable_dramaturgy_video_ids(scope: VideoScope = "part2") -> set[str]:
     from app.services.extra_media_overrides import is_dramaturgy_active
 
     catalog = build_video_catalog(scope)
-    atmosphere_ok = clip_ids_on_all_projectors("part1")
+    atmosphere_ok = atmosphere_clip_ids()
     avatar_ids = _avatar_clip_ids() if scope == "part2" else set()
     usable: set[str] = set()
     for clip in catalog.clips:

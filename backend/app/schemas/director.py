@@ -193,8 +193,8 @@ class TechnikHoldStatusResponse(BaseModel):
 
 
 class VideoSweepStartRequest(BaseModel):
-    scope: Literal["part1", "part2"] = "part2"
-    gap_ms: int = Field(default=100, ge=50, le=5000)
+    scope: Literal["part1", "part2", "atmosphere"] = "part2"
+    gap_ms: int | None = Field(default=None, ge=50, le=10000)
 
 
 class VideoSweepItemResult(BaseModel):

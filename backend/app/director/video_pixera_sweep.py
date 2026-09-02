@@ -19,14 +19,21 @@ from app.director.media.video_inventory import (
 from app.director.outputs.signal_trace import emit_signal_trace_event
 from app.director.pipeline import DirectorPipeline
 from app.services.video_cue_catalog import _data_dir
-from app.services.video_scope import VideoScope
+from app.services.video_scope import (
+    STAGING_ATMOSPHERE_CLIP_IDS_ORDERED,
+    VideoScope,
+    atmosphere_clip_ids,
+)
 
 _logger = logging.getLogger(__name__)
 
 SweepItemStatus = Literal["ok", "failed", "dry_run", "blocked"]
+SweepScope = Literal["part1", "part2", "atmosphere"]
 
 # Stable projector order for “one cue = all beamers”.
 _PROJECTOR_PREFIX_ORDER = ("KI_RZ21", "KI_Adam", "KI_Eva", "KI_LED")
+# Default pause between Begleitvideo previews (operator sheet sweep).
+ATMOSPHERE_SWEEP_GAP_MS = 2000
 
 
 @dataclass
@@ -45,7 +52,7 @@ class VideoSweepState:
     active: bool = False
     finished: bool = False
     cancelled: bool = False
-    scope: VideoScope = "part2"
+    scope: SweepScope = "part2"
     gap_ms: int = 100
     total: int = 0
     completed: int = 0
@@ -58,10 +65,16 @@ class VideoSweepState:
     finished_at: str | None = None
 
 
-def list_pixera_sweep_cues(scope: VideoScope = "part2") -> list[tuple[str, list[str]]]:
-    """Unique clips with projector prefixes: (clip_name, [KI_RZ21, KI_Adam, ...])."""
-    paths = resolve_osc_befehlliste_paths_for_scope(_data_dir(), scope)
-    pairs = parse_osc_befehlliste_files(paths)
+def _prefix_sort_key(prefix: str) -> tuple[int, str]:
+    try:
+        return (_PROJECTOR_PREFIX_ORDER.index(prefix), prefix)
+    except ValueError:
+        return (len(_PROJECTOR_PREFIX_ORDER), prefix)
+
+
+def _group_osc_pairs_by_clip(
+    pairs: list[tuple[str, str]],
+) -> list[tuple[str, list[str]]]:
     by_clip: dict[str, list[str]] = {}
     order: list[str] = []
     for prefix, clip_name in pairs:
@@ -70,17 +83,57 @@ def list_pixera_sweep_cues(scope: VideoScope = "part2") -> list[tuple[str, list[
             order.append(clip_name)
         if prefix not in by_clip[clip_name]:
             by_clip[clip_name].append(prefix)
-
-    def _prefix_key(prefix: str) -> tuple[int, str]:
-        try:
-            return (_PROJECTOR_PREFIX_ORDER.index(prefix), prefix)
-        except ValueError:
-            return (len(_PROJECTOR_PREFIX_ORDER), prefix)
-
     return [
-        (clip_name, sorted(by_clip[clip_name], key=_prefix_key))
+        (clip_name, sorted(by_clip[clip_name], key=_prefix_sort_key))
         for clip_name in order
     ]
+
+
+def list_active_atmosphere_sweep_cues() -> list[tuple[str, list[str]]]:
+    """Active Begleitvideos only, in staging allowlist order, all beamers."""
+    from app.services.video_scope import _load_base_catalog, _name_to_id_map
+
+    paths = resolve_osc_befehlliste_paths_for_scope(_data_dir(), "part1")
+    pairs = parse_osc_befehlliste_files(paths)
+    grouped = {name: prefixes for name, prefixes in _group_osc_pairs_by_clip(pairs)}
+    catalog = _load_base_catalog()
+    name_to_id = _name_to_id_map(catalog.clips)
+    allowed = atmosphere_clip_ids()
+    id_to_pixera = {
+        clip.id: clip.pixera_name
+        for clip in catalog.clips
+        if clip.id in allowed
+    }
+    # Prefer OSC spellings from the befehlliste when present.
+    osc_name_by_id: dict[str, str] = {}
+    for clip_name in grouped:
+        clip_id = name_to_id.get(clip_name)
+        if clip_id and clip_id in allowed:
+            osc_name_by_id[clip_id] = clip_name
+
+    result: list[tuple[str, list[str]]] = []
+    for clip_id in STAGING_ATMOSPHERE_CLIP_IDS_ORDERED:
+        if clip_id not in allowed:
+            continue
+        clip_name = osc_name_by_id.get(clip_id) or id_to_pixera.get(clip_id)
+        if not clip_name:
+            continue
+        prefixes = grouped.get(clip_name)
+        if not prefixes:
+            continue
+        result.append((clip_name, prefixes))
+    return result
+
+
+def list_pixera_sweep_cues(scope: SweepScope = "part2") -> list[tuple[str, list[str]]]:
+    """Unique clips with projector prefixes: (clip_name, [KI_RZ21, KI_Adam, ...])."""
+    if scope == "atmosphere":
+        return list_active_atmosphere_sweep_cues()
+
+    osc_scope: VideoScope = "part1" if scope == "part1" else "part2"
+    paths = resolve_osc_befehlliste_paths_for_scope(_data_dir(), osc_scope)
+    pairs = parse_osc_befehlliste_files(paths)
+    return _group_osc_pairs_by_clip(pairs)
 
 
 def _report_path() -> Path:
@@ -122,10 +175,12 @@ class VideoPixeraSweepManager:
                 finished_at=self._state.finished_at,
             )
 
-    def start(self, *, scope: VideoScope = "part2", gap_ms: int = 100) -> VideoSweepState:
+    def start(self, *, scope: SweepScope = "part2", gap_ms: int | None = None) -> VideoSweepState:
         clips = list_pixera_sweep_cues(scope)
         if not clips:
             raise ValueError(f"Keine Pixera-Video-Cues für Scope {scope!r} gefunden")
+        if gap_ms is None:
+            gap_ms = ATMOSPHERE_SWEEP_GAP_MS if scope == "atmosphere" else 100
 
         with self._lock:
             if self._thread is not None and self._thread.is_alive():

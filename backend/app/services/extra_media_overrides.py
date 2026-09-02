@@ -196,11 +196,15 @@ def extra_video_clips(data: ExtraMediaOverrides | None = None) -> list[VideoClip
 
 def merge_video_catalog(catalog: VideoCueCatalog, *, data: ExtraMediaOverrides | None = None) -> VideoCueCatalog:
     data = data or load_overrides()
+    from app.services.video_scope import _avatar_clip_ids
+
+    avatar_ids = _avatar_clip_ids()
     existing_ids = {clip.id for clip in catalog.clips}
     merged: list[VideoClipEntry] = []
     for clip in catalog.clips:
         _, removed = effective_flags("video", clip.id, data=data)
-        if removed:
+        # Begleitvideo cleanup must never strip CSV avatar OSC clips from the Pixera catalog.
+        if removed and clip.id not in avatar_ids and clip.video_type != "avatar":
             continue
         merged.append(clip)
     for clip in extra_video_clips(data):

@@ -6,24 +6,10 @@ from app.director.cues.cue_models import DramaturgyDecision, VisualCue, VisualOu
 from app.schemas.inszenierung import AnarchyCurve, AvatarTextSegment
 from app.services.teil2_projector_assignment import pick_atmosphere_projectors
 from app.services.video_scope import atmosphere_clip_ids
+from app.services.video_scope import ACTIVE_ATMOSPHERE_CLIP_IDS_ORDERED
 
-# Prefer clips that read clearly as B-roll on side beamers.
-_PREFERRED_ATMOSPHERE_CLIPS: tuple[str, ...] = (
-    "clyde",
-    "bonnie",
-    "strand",
-    "affenslowodysee2001",
-    "bitcoinfahrt",
-    "derhaseverlaesstdiebuehne",
-    "esellaeuft2705",
-    "fischundwassergewaechs",
-    "gehirn",
-    "hierunterdererde",
-    "kuscheltierschlachtung",
-    "mehlwuermerlangsam",
-    "wasserfahrt",
-    "black",
-)
+# Prefer staging allowlist order (Video-Übersicht Begleitclips).
+_PREFERRED_ATMOSPHERE_CLIPS: tuple[str, ...] = ACTIVE_ATMOSPHERE_CLIP_IDS_ORDERED
 
 
 def _atmosphere_clip_pool(*, avatar_clip_ids: set[str]) -> list[str]:

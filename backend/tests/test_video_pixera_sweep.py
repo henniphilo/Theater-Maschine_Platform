@@ -191,3 +191,66 @@ def test_video_sweep_default_gap_is_100ms(monkeypatch, tmp_path: Path) -> None:
         if status["finished"]:
             break
         time.sleep(0.05)
+
+
+def test_list_active_atmosphere_sweep_cues_matches_allowlist(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from app.director.video_pixera_sweep import list_active_atmosphere_sweep_cues
+    from app.services.video_scope import STAGING_ATMOSPHERE_CLIP_IDS_ORDERED
+
+    def _real_paths(data_dir, scope="part1"):
+        atmos = REPO / "media/video/OSCBefehllisteOhneAvatare.txt"
+        return [p for p in (atmos,) if p.is_file()]
+
+    monkeypatch.setattr(
+        "app.director.video_pixera_sweep.resolve_osc_befehlliste_paths_for_scope",
+        _real_paths,
+    )
+    monkeypatch.setattr(
+        "app.director.media.video_inventory.resolve_osc_befehlliste_paths_for_scope",
+        _real_paths,
+    )
+
+    clips = list_active_atmosphere_sweep_cues()
+    names = [name for name, _ in clips]
+    assert len(names) == len(STAGING_ATMOSPHERE_CLIP_IDS_ORDERED)
+    assert "Clyde" not in names
+    assert "Bonnie" not in names
+    assert "Black" not in names
+    assert names[0] == "TierUnterDerErde"
+    assert "Bitcoinfahrt" in names
+    assert names[-1] == "Schmetterlinge_laufen"
+    for _name, prefixes in clips:
+        assert prefixes == ["KI_RZ21", "KI_Adam", "KI_Eva", "KI_LED"]
+
+
+def test_atmosphere_sweep_defaults_to_2s_gap(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setattr(
+        "app.director.video_pixera_sweep.list_pixera_sweep_cues",
+        lambda scope="part2": [
+            ("Bitcoinfahrt", ["KI_RZ21", "KI_Adam"]),
+            ("Flut", ["KI_RZ21", "KI_Adam"]),
+        ],
+    )
+    monkeypatch.setattr(
+        "app.director.video_pixera_sweep._report_path",
+        lambda: tmp_path / "pixera_video_sweep_report.json",
+    )
+    from app.api.routes import director as director_routes
+
+    monkeypatch.setattr(director_routes._pipeline.pixera, "apply_cue", MagicMock())
+
+    started = client.post(
+        "/api/v1/director/technik/video-sweep/start",
+        json={"scope": "atmosphere"},
+    )
+    assert started.status_code == 200
+    body = started.json()
+    assert body["scope"] == "atmosphere"
+    assert body["gap_ms"] == 2000
+    assert body["total"] == 2
+
+    # Stop early — full 2s gap would make the test slow.
+    stopped = client.post("/api/v1/director/technik/video-sweep/stop")
+    assert stopped.status_code == 200

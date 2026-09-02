@@ -12,6 +12,9 @@ def test_anarchy_curve_tightens_intervals() -> None:
     assert end["video"][0] < start["video"][0]
     assert end["sound"][1] < start["sound"][1]
     assert end["light"][0] < start["light"][0]
+    assert start["sound"][0] <= 8.0
+    assert end["sound"][0] < start["sound"][0]
+    assert end["sound"][0] <= 3.5
 
 
 def test_atmosphere_is_denser_than_keyword_video_early() -> None:

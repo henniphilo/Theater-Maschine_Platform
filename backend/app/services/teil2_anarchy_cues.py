@@ -37,6 +37,28 @@ _LIGHT_HARSH_IDS = frozenset(
         "vorbuehnenzug",
     }
 )
+_PLAY_SOUND_ACTIONS = frozenset({"play"})
+_STOP_SOUND_SUFFIXES = ("_out", "_fade_out")
+
+
+def playable_dramaturgy_sounds(sounds: list) -> list:
+    """Start cues only — fade_out / out / cut_all make Teil 2 feel silent."""
+    return [sound for sound in sounds if getattr(sound, "action", "play") in _PLAY_SOUND_ACTIONS]
+
+
+def is_playable_sound_id(cue_id: str | None) -> bool:
+    if not cue_id:
+        return False
+    if cue_id == "alle_sounds_cut":
+        return False
+    return not cue_id.endswith(_STOP_SOUND_SUFFIXES)
+
+
+def sound_volume_for_anarchy(anarchy: float) -> float:
+    level = max(0.0, min(1.0, anarchy))
+    return round(min(1.0, 0.58 + level * 0.42), 2)
+
+
 _LIGHT_FAMILY: dict[str, str] = {
     "warme_buehnenflaeche": "warm",
     "teppich_rot": "warm",
@@ -122,7 +144,7 @@ def teil2_cue_allowlist(media_db: MediaDatabase | None = None) -> dict[str, list
                 "soundname": s.soundname or s.label,
                 "action": s.action,
             }
-            for s in db.dramaturgy_sounds
+            for s in playable_dramaturgy_sounds(db.dramaturgy_sounds)
         ],
         "lights": [
             {"id": scene.id, "channels": scene.channels[:6]}
@@ -139,16 +161,23 @@ def pick_sound_id(
     *,
     recent: list[str] | None = None,
 ) -> str | None:
-    if not sounds:
+    pool = playable_dramaturgy_sounds(sounds) or list(sounds)
+    if not pool:
         return None
     recent_set = set(recent or [])
     seed = slot + int(anarchy * 13)
-    for offset in range(len(sounds)):
-        candidate = sounds[(seed + offset) % len(sounds)]
+    for offset in range(len(pool)):
+        candidate = pool[(seed + offset) % len(pool)]
         cue_id = candidate.id
-        if cue_id not in recent_set:
+        if cue_id not in recent_set and is_playable_sound_id(cue_id):
             return cue_id
-    return sounds[seed % len(sounds)].id
+    fallback = pool[seed % len(pool)].id
+    if is_playable_sound_id(fallback):
+        return fallback
+    for item in pool:
+        if is_playable_sound_id(item.id):
+            return item.id
+    return None
 
 
 def _light_pool_for_anarchy(scenes: list, anarchy: float) -> list:
@@ -211,8 +240,8 @@ def extract_text_fallback_keywords(
     sentences: list[str],
     curve: AnarchyCurve,
     *,
-    min_keywords: int = 12,
-    max_keywords: int = 80,
+    min_keywords: int = 20,
+    max_keywords: int = 140,
 ) -> list[tuple[str, int, float]]:
     """Structural fallback when LLM is unavailable — no predefined theme lists."""
     script_len = max(1, len(script_text))
@@ -304,7 +333,7 @@ def build_keyword_cue_point(
             SoundCue(
                 action=SoundAction.TRIGGER_CUE,
                 cue_id=sound_id,
-                volume=round(0.3 + anarchy * 0.7, 2),
+                volume=sound_volume_for_anarchy(anarchy),
             )
             if sound_id
             else None
@@ -327,6 +356,10 @@ def apply_anarchy_to_keyword_cue_point(
     script_text: str,
     sentences: list[str],
     curve: AnarchyCurve,
+    media_db: MediaDatabase | None = None,
+    *,
+    slot: int = 0,
+    recent_sound_ids: list[str] | None = None,
 ) -> CuePoint | None:
     if not keyword_in_script(keyword, script_text):
         return None
@@ -341,8 +374,24 @@ def apply_anarchy_to_keyword_cue_point(
     point.function = anarchy_function(anarchy)
     if point.visual:
         point.visual = None
-    if point.sound:
-        point.sound.volume = round(0.3 + anarchy * 0.7, 2)
+    current_id = point.sound.cue_id if point.sound else None
+    if not is_playable_sound_id(current_id):
+        db = media_db or MediaDatabase()
+        sound_id = pick_sound_id(slot, anarchy, db.dramaturgy_sounds, recent=recent_sound_ids)
+        if sound_id:
+            point.sound = SoundCue(
+                action=SoundAction.TRIGGER_CUE,
+                cue_id=sound_id,
+                volume=sound_volume_for_anarchy(anarchy),
+            )
+            if recent_sound_ids is not None:
+                recent_sound_ids.append(sound_id)
+        else:
+            point.sound = None
+    elif point.sound:
+        point.sound.volume = sound_volume_for_anarchy(anarchy)
+        if recent_sound_ids is not None and current_id and current_id not in recent_sound_ids:
+            recent_sound_ids.append(current_id)
     if point.light:
         if point.light.intensity is None:
             point.light.intensity = round(0.25 + anarchy * 0.75, 2)
@@ -351,12 +400,79 @@ def apply_anarchy_to_keyword_cue_point(
 
 
 def min_keyword_cues_for_script(script_text: str) -> int:
-    return max(12, min(80, len(script_text) // 350))
+    return max(20, min(120, len(script_text) // 180))
 
 
 def max_keywords_per_chunk(chunk_text: str) -> int:
-    return max(6, min(20, len(chunk_text) // 300))
+    return max(10, min(28, len(chunk_text) // 140))
 
 
 def min_keywords_per_chunk(chunk_text: str) -> int:
-    return max(3, min(12, len(chunk_text) // 600))
+    return max(6, min(18, len(chunk_text) // 250))
+
+
+def _unused_token_from_sentence(sentence: str, used_normalized: set[str]) -> str | None:
+    tokens = re.findall(r"[A-Za-zÄÖÜäöüß]{4,}", sentence)
+    for token in tokens:
+        norm = _normalize(token)
+        if len(norm) >= 4 and norm not in used_normalized:
+            return token
+    return None
+
+
+def densify_keyword_sound_cues(
+    points: list[CuePoint],
+    script_text: str,
+    sentences: list[str],
+    curve: AnarchyCurve,
+    media_db: MediaDatabase | None = None,
+    *,
+    max_gap_sentences: int = 2,
+) -> list[CuePoint]:
+    """Insert sound-only keyword cues so playable starts are never far apart."""
+    if not sentences:
+        return points
+    db = media_db or MediaDatabase()
+    if not playable_dramaturgy_sounds(db.dramaturgy_sounds):
+        return points
+
+    used = {_normalize(point.keyword or "") for point in points if point.keyword}
+    recent_sounds = [
+        point.sound.cue_id
+        for point in points
+        if point.sound and is_playable_sound_id(point.sound.cue_id)
+    ]
+    covered = sorted(
+        {
+            point.sentence_index
+            for point in points
+            if point.sentence_index is not None
+            and point.sound
+            and is_playable_sound_id(point.sound.cue_id)
+        }
+    )
+    extras: list[CuePoint] = []
+    markers = [-1, *covered, len(sentences)]
+    slot = len(points)
+    for left, right in zip(markers, markers[1:]):
+        idx = left + max_gap_sentences
+        while idx < right:
+            keyword = _unused_token_from_sentence(sentences[idx], used)
+            if keyword and keyword_in_script(keyword, script_text):
+                used.add(_normalize(keyword))
+                extra = build_keyword_cue_point(
+                    keyword,
+                    idx,
+                    anarchy_at(idx, len(sentences), curve),
+                    db,
+                    slot=slot,
+                    recent_sound_ids=recent_sounds,
+                )
+                extra.light = None
+                extras.append(extra)
+                slot += 1
+            idx += max_gap_sentences
+
+    merged = [*points, *extras]
+    merged.sort(key=lambda point: (point.sentence_index or 0, point.keyword or ""))
+    return merged

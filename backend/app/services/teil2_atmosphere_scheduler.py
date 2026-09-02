@@ -18,6 +18,7 @@ from app.director.dramaturgy.llm_director import LLMDirector
 from app.schemas.inszenierung import AnarchyCurve, AvatarTextSegment, Gesamtkonzept
 from app.services.ai_service import AIService
 from app.services.atmosphere_required_clips import (
+    REQUIRED_RECURRING_ATMOSPHERE_CLIPS,
     available_recurring_clips,
     ensure_recurring_atmosphere_clips,
     pick_recurring_or_pool_clip,
@@ -107,7 +108,11 @@ def free_projectors_at(windows: list[AvatarWindow], time_sec: float) -> list[str
 
 
 def _atmosphere_clip_pool(*, avatar_clip_ids: set[str]) -> list[str]:
-    return sorted(atmosphere_clip_ids(avatar_clip_ids=avatar_clip_ids))
+    """Clyde/Bonnie first, then remaining Ohne-Avatare clips alphabetically."""
+    allowed = atmosphere_clip_ids(avatar_clip_ids=avatar_clip_ids)
+    preferred = [clip_id for clip_id in REQUIRED_RECURRING_ATMOSPHERE_CLIPS if clip_id in allowed]
+    rest = sorted(clip_id for clip_id in allowed if clip_id not in preferred)
+    return preferred + rest
 
 
 def _assign_atmosphere_visual(clip_id: str, projector: str) -> VisualCue:
@@ -337,7 +342,8 @@ def _expand_points_onto_free_projectors(
     allowed_clips: set[str],
 ) -> list[CuePoint]:
     """Ensure each atmosphere tick also covers other free beamers (LLM densify)."""
-    pool = sorted(allowed_clips)
+    preferred = [clip_id for clip_id in REQUIRED_RECURRING_ATMOSPHERE_CLIPS if clip_id in allowed_clips]
+    pool = preferred + sorted(clip_id for clip_id in allowed_clips if clip_id not in preferred)
     if not pool:
         return points
 

@@ -36,26 +36,23 @@ vi.mock("@/lib/api/client", () => ({
 vi.mock("@/lib/api/director", () => ({
   armDirectorForPerformance: vi.fn(),
   stopDirectorPerformance: vi.fn(),
+  postDirectorExecute: vi.fn().mockResolvedValue({
+    executed: true,
+    blocked_reason: null,
+    osc_commands: []
+  }),
   isDirectorPerformanceAborted: () => false,
   isAvatarDoneGateEnabled: vi.fn().mockResolvedValue(false),
   waitForAvatarVideosDone: vi.fn().mockResolvedValue(null)
 }));
 
-vi.mock("@/features/show/cuePlayback", () => ({
-  createCuePlaybackContext: vi.fn(() => ({
-    dramaturgy: {},
-    beatText: "",
-    fired: new Set(),
-    onCommands: vi.fn(),
-    shouldAbort: () => false
-  })),
-  fireSentenceCues: vi.fn(),
-  fireStartCues: vi.fn(),
-  fireTimeCues: vi.fn(),
-  markTimeCuesBefore: vi.fn(),
-  markTimeCuesAsFired: vi.fn(),
-  firePerformanceEndCues: vi.fn().mockResolvedValue(undefined)
-}));
+vi.mock("@/features/show/cuePlayback", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/features/show/cuePlayback")>();
+  return {
+    ...actual,
+    firePerformanceEndCues: vi.fn().mockResolvedValue(undefined)
+  };
+});
 
 function basePlan(overrides: Partial<Teil2PerformancePlan>): Teil2PerformancePlan {
   return {
@@ -158,12 +155,12 @@ describe("teil2TextSyncPlayback", () => {
   });
 
   it("fires atmosphere time cues during playback", async () => {
-    const { fireTimeCues } = await import("@/features/show/cuePlayback");
+    const { postDirectorExecute } = await import("@/lib/api/director");
     const plan = basePlan({
       atmosphere_cue_points: [
         {
           trigger: "time",
-          time_offset_sec: 5,
+          time_offset_sec: 0.3,
           function: "atmosphaere",
           intensity: 0.5,
           visual: { clip_id: "clyde", projector: "adam", video_type: "atmosphere" }
@@ -183,8 +180,52 @@ describe("teil2TextSyncPlayback", () => {
 
     await runTextSyncPlayback(corpus, plan, "narrator", true, () => undefined, () => false);
 
-    expect(fireTimeCues).toHaveBeenCalled();
-    expect(vi.mocked(fireTimeCues).mock.calls.length).toBeGreaterThanOrEqual(2);
+    const atmosphereCalls = vi
+      .mocked(postDirectorExecute)
+      .mock.calls.filter((call) => call[0]?.visual?.clip_id === "clyde");
+    expect(atmosphereCalls.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("fires atmosphere cues again after abort and restart from start", async () => {
+    const { postDirectorExecute } = await import("@/lib/api/director");
+    const plan = basePlan({
+      atmosphere_cue_points: [
+        {
+          trigger: "time",
+          time_offset_sec: 0.3,
+          function: "atmosphaere",
+          intensity: 0.5,
+          visual: { clip_id: "clyde", projector: "adam", video_type: "atmosphere" }
+        }
+      ]
+    });
+    const corpus: SceneCorpus = {
+      id: "corpus-restart-atmo",
+      title: "Test",
+      scenes: [],
+      status: "ready",
+      gesamtkonzept: null,
+      composition: null,
+      teil2_plan: plan,
+      script_text: plan.sentences.join(" ")
+    };
+
+    let generation = 0;
+    const shouldAbort = () => generation > 0;
+    const first = runTextSyncPlayback(corpus, plan, "narrator", true, () => undefined, shouldAbort);
+    await vi.waitFor(() => {
+      expect(postDirectorExecute).toHaveBeenCalled();
+    });
+    generation = 1;
+    await first;
+
+    vi.mocked(postDirectorExecute).mockClear();
+    await runTextSyncPlayback(corpus, plan, "narrator", true, () => undefined, () => false);
+
+    const atmosphereCalls = vi
+      .mocked(postDirectorExecute)
+      .mock.calls.filter((call) => call[0]?.visual?.clip_id === "clyde");
+    expect(atmosphereCalls.length).toBeGreaterThanOrEqual(1);
   });
 
   it("starts from a given sentence index", async () => {
@@ -276,7 +317,8 @@ describe("teil2TextSyncPlayback", () => {
   });
 
   it("marks only past time cues when seeking mid-show", async () => {
-    const { markTimeCuesBefore } = await import("@/features/show/cuePlayback");
+    const cuePlayback = await import("@/features/show/cuePlayback");
+    const markSpy = vi.spyOn(cuePlayback, "markTimeCuesBefore");
     const plan = basePlan({
       sentences: ["Eins.", "Zwei langer Satz hier.", "Drei."],
       sentence_char_starts: [0, 5, 28]
@@ -296,13 +338,13 @@ describe("teil2TextSyncPlayback", () => {
       startSentenceIndex: 1
     });
 
-    expect(markTimeCuesBefore).toHaveBeenCalled();
-    const seekClock = vi.mocked(markTimeCuesBefore).mock.calls[0]?.[1] as number;
+    expect(markSpy).toHaveBeenCalled();
+    const seekClock = markSpy.mock.calls[0]?.[1] as number;
     expect(seekClock).toBeGreaterThan(0);
-    // Future cues stay open: seek clock is finite, not Infinity.
-    for (const call of vi.mocked(markTimeCuesBefore).mock.calls) {
+    for (const call of markSpy.mock.calls) {
       expect(call[1]).toBeLessThan(Number.POSITIVE_INFINITY);
     }
+    markSpy.mockRestore();
   });
 
   it("keeps the live sentence index when aborted mid-run", async () => {

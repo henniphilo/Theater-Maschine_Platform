@@ -14,14 +14,22 @@ from app.director.cues.cue_models import (
 from app.services.teil2_projector_assignment import STAGE_BEAMER_ORDER
 
 # OSC ohne Avatare — Begleitvideo, mehrmals über die Aufführung.
-REQUIRED_RECURRING_ATMOSPHERE_CLIPS: tuple[str, ...] = ("bonnie", "clyde")
+# Keep in sync with video_scope.RECURRING_ATMOSPHERE_CLIP_IDS.
+REQUIRED_RECURRING_ATMOSPHERE_CLIPS: tuple[str, ...] = ("clyde", "bonnie")
 MIN_RECURRING_APPEARANCES = 4
+# Every 3rd atmosphere fill prefers Clyde/Bonnie (cadence that worked in rehearsal).
 _RECURRING_EVERY_N = 3
 _NEAR_SEC = 8.0
+# Cap so long shows stay dense without turning into a Bonnie/Clyde loop.
+_MAX_RECURRING_APPEARANCES = 10
 
 
 def min_recurring_appearances(total_sec: float) -> int:
-    return max(MIN_RECURRING_APPEARANCES, min(5, round(total_sec / 40.0)))
+    """Guarantee enough Clyde/Bonnie hits over the show (was capped at 5 → felt sparse)."""
+    return max(
+        MIN_RECURRING_APPEARANCES,
+        min(_MAX_RECURRING_APPEARANCES, round(total_sec / 30.0)),
+    )
 
 
 def available_recurring_clips(allowed_clips: Sequence[str] | set[str]) -> list[str]:
@@ -30,7 +38,7 @@ def available_recurring_clips(allowed_clips: Sequence[str] | set[str]) -> list[s
 
 
 def pick_recurring_or_pool_clip(pool: Sequence[str], clip_index: int) -> str:
-    """Every Nth atmosphere fill uses Bonnie/Clyde so they recur without dominating."""
+    """Every 3rd atmosphere fill uses Clyde/Bonnie; pool order still prefers them first."""
     if not pool:
         return ""
     recurring = available_recurring_clips(pool)

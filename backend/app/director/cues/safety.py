@@ -49,6 +49,10 @@ class SafetyState:
     def clear_emergency_stop(self) -> None:
         with self._lock:
             self.emergency_stop_active = False
+            # emergency_stop() disables outputs; re-arm expects them back after clear.
+            self.autopilot_enabled = True
+            self.visuals_enabled = True
+            self.sound_enabled = True
 
 
 _safety_state = SafetyState.from_settings()

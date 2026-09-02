@@ -8,9 +8,14 @@ from app.services.teil2_anarchy_cues import (
     anarchy_function,
     apply_anarchy_to_keyword_cue_point,
     build_keyword_cue_point,
+    densify_keyword_sound_cues,
     extract_text_fallback_keywords,
+    is_playable_sound_id,
     keyword_in_script,
     min_keyword_cues_for_script,
+    playable_dramaturgy_sounds,
+    sound_volume_for_anarchy,
+    teil2_cue_allowlist,
 )
 
 
@@ -32,12 +37,14 @@ def test_anarchy_function_escalates() -> None:
     assert anarchy_function(0.9) == "desorientieren"
 
 
-def test_build_keyword_cue_point_has_sound_or_light() -> None:
+def test_build_keyword_cue_point_has_playable_sound() -> None:
     point = build_keyword_cue_point("Schuld", 2, 0.6, slot=1)
     assert point.trigger == CuePointTrigger.KEYWORD
     assert point.keyword == "Schuld"
     assert point.sentence_index == 2
-    assert point.sound is not None or point.light is not None
+    assert point.sound is not None
+    assert is_playable_sound_id(point.sound.cue_id)
+    assert point.sound.volume == sound_volume_for_anarchy(0.6)
 
 
 def test_early_light_fade_is_longer_than_chaos_fade() -> None:
@@ -89,5 +96,59 @@ def test_keyword_in_script_is_case_insensitive() -> None:
 
 
 def test_min_keyword_cues_scales_with_script_length() -> None:
-    assert min_keyword_cues_for_script("x" * 100) == 12
-    assert min_keyword_cues_for_script("x" * 5000) >= 14
+    assert min_keyword_cues_for_script("x" * 100) == 20
+    assert min_keyword_cues_for_script("x" * 5000) >= 27
+
+
+def test_allowlist_and_picks_use_play_cues_only() -> None:
+    allowlist = teil2_cue_allowlist()
+    assert allowlist["sounds"]
+    assert all(item["action"] == "play" for item in allowlist["sounds"])
+    from app.director.media.database import MediaDatabase
+
+    db = MediaDatabase()
+    playable = playable_dramaturgy_sounds(db.dramaturgy_sounds)
+    assert playable
+    assert all(sound.action == "play" for sound in playable)
+
+
+def test_apply_anarchy_replaces_stop_sound_with_play() -> None:
+    script = "Die Schuld bleibt."
+    sentences = ["Die Schuld bleibt."]
+    point = CuePoint(
+        trigger=CuePointTrigger.KEYWORD,
+        keyword="Schuld",
+        sound=SoundCue(cue_id="kaefigecho_out"),
+    )
+    updated = apply_anarchy_to_keyword_cue_point(
+        point, "Schuld", script, sentences, AnarchyCurve()
+    )
+    assert updated is not None
+    assert updated.sound is not None
+    assert is_playable_sound_id(updated.sound.cue_id)
+    assert updated.sound.volume >= 0.58
+
+
+def test_densify_fills_sound_gaps_between_sentences() -> None:
+    sentences = [
+        "Der Delphin spricht zuerst.",
+        "Dann kommt der Bärenklauer.",
+        "Das Lamm bleibt stumm.",
+        "Die Maschine räumt die Schuld.",
+        "Niemand hört den Puls.",
+        "Am Ende bleibt nur Tausch.",
+    ]
+    script = " ".join(sentences)
+    curve = AnarchyCurve(start=0.35, end=1.0)
+    sparse = [
+        build_keyword_cue_point("Delphin", 0, 0.35, slot=0),
+    ]
+    dense = densify_keyword_sound_cues(sparse, script, sentences, curve)
+    sound_points = [
+        point for point in dense if point.sound and is_playable_sound_id(point.sound.cue_id)
+    ]
+    assert len(sound_points) > 1
+    indexes = sorted(point.sentence_index or 0 for point in sound_points)
+    gaps = [right - left for left, right in zip(indexes, indexes[1:])]
+    assert gaps
+    assert max(gaps) <= 2

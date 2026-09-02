@@ -49,7 +49,7 @@
       "intensity_max": 1.0,
       "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 1120000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
       "can_be_interrupted": true
@@ -96,7 +96,7 @@
       "intensity_max": 1.0,
       "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 58000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
       "can_be_interrupted": true
@@ -121,7 +121,7 @@
       "intensity_max": 1.0,
       "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 53000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
       "can_be_interrupted": true
@@ -140,12 +140,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 24160,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "bak2_krabbe",
@@ -161,12 +161,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 6000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "bak3_hasen",
@@ -182,12 +182,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 20480,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "bak3_mavie",
@@ -203,12 +203,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 20480,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "bak4_inge",
@@ -224,12 +224,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 8440,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "bak5_thiemo",
@@ -245,12 +245,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 15480,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "bak6_azaria",
@@ -266,12 +266,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 13280,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "bak6_schwein",
@@ -287,12 +287,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 13280,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "bitcoin_and_worm",
@@ -312,7 +312,7 @@
       "intensity_max": 1.0,
       "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 22000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
       "can_be_interrupted": true
@@ -337,7 +337,7 @@
       "intensity_max": 1.0,
       "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 136000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
       "can_be_interrupted": true
@@ -356,12 +356,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 3360,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "bk1_caro",
@@ -377,12 +377,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 12080,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "bk1_caroline",
@@ -398,12 +398,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 12080,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "bk1_thomas",
@@ -419,12 +419,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 12080,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "bk2_hundswolf",
@@ -440,12 +440,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 20680,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "bk2_mavie",
@@ -461,12 +461,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 20680,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "bk3_thomas",
@@ -482,12 +482,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 20760,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "bk5_nicolas",
@@ -503,12 +503,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 3120,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "bk6_branko",
@@ -524,12 +524,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 3160,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "bk7_caroline",
@@ -545,12 +545,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 32960,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "bk7_nasenfisch",
@@ -566,12 +566,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 32960,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "bk8_haischaedel",
@@ -587,12 +587,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 20840,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "bk8_mavie",
@@ -608,12 +608,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 20840,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "bk8_mavie1",
@@ -629,12 +629,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 20875,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "bk9_muppetschwein",
@@ -650,12 +650,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 9280,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "bk9_thiemo",
@@ -671,12 +671,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 9280,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "black",
@@ -759,7 +759,7 @@
       "intensity_max": 1.0,
       "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 20000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
       "can_be_interrupted": true
@@ -799,12 +799,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 3720,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "del1_nicolas",
@@ -820,12 +820,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 3160,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "del2",
@@ -841,12 +841,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 8720,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "del3",
@@ -862,12 +862,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 7240,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "del4",
@@ -883,12 +883,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 12880,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "derhaseverlaesstdiebuehne",
@@ -912,7 +912,7 @@
       "intensity_max": 1.0,
       "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 33000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
       "can_be_interrupted": true
@@ -960,7 +960,7 @@
       "intensity_max": 1.0,
       "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 114000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
       "can_be_interrupted": true
@@ -987,7 +987,7 @@
       "intensity_max": 1.0,
       "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 56000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
       "can_be_interrupted": true
@@ -1009,7 +1009,7 @@
       "intensity_max": 1.0,
       "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 28000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
       "can_be_interrupted": true
@@ -1057,7 +1057,7 @@
       "intensity_max": 1.0,
       "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 27000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
       "can_be_interrupted": true
@@ -1123,7 +1123,7 @@
       "intensity_max": 1.0,
       "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 154000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
       "can_be_interrupted": true
@@ -1212,7 +1212,7 @@
       "intensity_max": 1.0,
       "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 20000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
       "can_be_interrupted": true
@@ -1239,7 +1239,7 @@
       "intensity_max": 1.0,
       "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 93000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
       "can_be_interrupted": true
@@ -1265,7 +1265,7 @@
       "intensity_max": 1.0,
       "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 196000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
       "can_be_interrupted": true
@@ -1284,12 +1284,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 7040,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "lg3_affe",
@@ -1305,12 +1305,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 4360,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "lg3_seb",
@@ -1326,12 +1326,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 4360,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "lg4_azaria",
@@ -1347,12 +1347,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 9440,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "lg4_maeuse",
@@ -1368,12 +1368,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 9440,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "lg5_henrike",
@@ -1389,12 +1389,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 2680,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "lg6_hai",
@@ -1410,12 +1410,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 3160,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "macbook",
@@ -1455,7 +1455,7 @@
       "intensity_max": 1.0,
       "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 1004000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
       "can_be_interrupted": true
@@ -1480,7 +1480,7 @@
       "intensity_max": 1.0,
       "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 20000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
       "can_be_interrupted": true
@@ -1520,12 +1520,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 4565,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "mo2_branko",
@@ -1541,12 +1541,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 31360,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "mo3_caro",
@@ -1562,12 +1562,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 14280,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "mo3_dachs",
@@ -1583,12 +1583,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 14280,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "musiker",
@@ -1667,12 +1667,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 5400,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "pet1_azaria",
@@ -1688,12 +1688,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 4840,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "pet1_thomas",
@@ -1709,12 +1709,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 9520,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "pet2_inge",
@@ -1730,12 +1730,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 16920,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "pet2_walross",
@@ -1751,12 +1751,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 16920,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "pet3_caroline",
@@ -1772,12 +1772,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 4137,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "pet3_koala",
@@ -1793,12 +1793,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 12480,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "pet4_sebastian",
@@ -1814,12 +1814,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 26000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "pet5_azaria",
@@ -1835,12 +1835,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 17480,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "sch1_sebastian",
@@ -1856,12 +1856,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 4080,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "sch2_azaria",
@@ -1877,12 +1877,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 37360,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "sch2_azaria_als_schaf",
@@ -1898,12 +1898,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 37360,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "sch2_azariawirdschaf",
@@ -1919,12 +1919,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 37360,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "sch3_ingewirdschaf",
@@ -1940,12 +1940,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 25840,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "sch4_thomas",
@@ -1961,12 +1961,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 8000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "sch5_schafsolo_mavie",
@@ -1982,12 +1982,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 12600,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "sch6_schafherde",
@@ -2003,12 +2003,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 12640,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "sch7_schaf_single_sebastian",
@@ -2024,12 +2024,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 45200,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "sch8_viele_schafe_caro",
@@ -2045,12 +2045,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 10480,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "schmetterlinge_laufen",
@@ -2070,7 +2070,7 @@
       "intensity_max": 1.0,
       "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 10000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
       "can_be_interrupted": true
@@ -2118,7 +2118,7 @@
       "intensity_max": 1.0,
       "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 12000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
       "can_be_interrupted": true
@@ -2145,7 +2145,7 @@
       "intensity_max": 1.0,
       "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 47000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
       "can_be_interrupted": true
@@ -2214,7 +2214,7 @@
       "intensity_max": 1.0,
       "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 22000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
       "can_be_interrupted": true
@@ -2241,7 +2241,7 @@
       "intensity_max": 1.0,
       "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 34000,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
       "can_be_interrupted": true
@@ -2260,12 +2260,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 4280,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "wo2_branko",
@@ -2281,12 +2281,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 7920,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "wo3_seb_musik",
@@ -2302,12 +2302,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 9880,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "wo4_nicolas",
@@ -2323,12 +2323,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 2480,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "wo4_schimpanse",
@@ -2344,12 +2344,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 2960,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "wo5_thiemo",
@@ -2365,12 +2365,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 8360,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "wo6_mavie",
@@ -2386,12 +2386,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 20265,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "wo6_schimpanse",
@@ -2407,12 +2407,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 20280,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     },
     {
       "id": "wo7_sebastian",
@@ -2428,12 +2428,12 @@
       ],
       "intensity_min": 0.0,
       "intensity_max": 1.0,
-      "video_type": "avatar",
+      "video_type": "atmosphere",
       "projector_preference": null,
-      "duration_ms": 12400,
+      "duration_ms": null,
       "text_content_id": null,
       "animal": null,
-      "can_be_interrupted": false
+      "can_be_interrupted": true
     }
   ]
 }

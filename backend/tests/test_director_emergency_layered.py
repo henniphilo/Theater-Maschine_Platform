@@ -36,3 +36,18 @@ def test_execute_layered_blocked_during_emergency_stop() -> None:
     assert result.blocked_reason == "emergency_stop_active"
     assert result.osc_commands == []
     sound.execute.assert_not_called()
+
+
+def test_clear_emergency_stop_restores_output_toggles() -> None:
+    safety = SafetyState()
+    safety.emergency_stop()
+    assert safety.visuals_enabled is False
+    assert safety.sound_enabled is False
+    assert safety.autopilot_enabled is False
+
+    safety.clear_emergency_stop()
+
+    assert safety.emergency_stop_active is False
+    assert safety.visuals_enabled is True
+    assert safety.sound_enabled is True
+    assert safety.autopilot_enabled is True

@@ -58,7 +58,7 @@ function anarchyForSentence(
   return start + (end - start) * t;
 }
 
-/** Hard stop: clear avatar chain + emergency-stop director. */
+/** Hard stop: emergency-stop director (blackout). Prefer softAbortTextSyncPlayback during Teil-2 show control. */
 export function stopTextSyncPlayback(): void {
   resetAvatarPlaybackState();
   void stopDirectorPerformance().catch(() => undefined);

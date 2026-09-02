@@ -517,7 +517,7 @@ export type VideoSweepStatus = {
 };
 
 export type VideoSweepStartRequest = {
-  scope?: "part1" | "part2";
+  scope?: "part1" | "part2" | "atmosphere";
   gap_ms?: number;
 };
 
