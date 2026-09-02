@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import importlib.util
+from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "backend" / "scripts" / "export_qlab_cue_list.py"
+PROJECTORS = frozenset({"adam", "eva", "led", "rz21"})
 
 
 def _load_module():
@@ -25,7 +27,10 @@ def test_collect_rows_includes_all_osc_sources() -> None:
     assert any(s == "database" or s.startswith("database") for s in sources)
     assert "avatar" in sources
     assert any("atmosphere" in s for s in sources)
-    assert len(rows) == 404
+    by_projector = Counter(row["projector"] for row in rows)
+    assert set(by_projector) == PROJECTORS
+    assert len(set(by_projector.values())) == 1
+    assert len(rows) == next(iter(by_projector.values())) * len(PROJECTORS)
 
 
 def test_bak1_qlab_number_matches_osc_list() -> None:
@@ -37,7 +42,10 @@ def test_bak1_qlab_number_matches_osc_list() -> None:
     assert match["source"] == "avatar"
 
 
-def test_rz21_subset_has_101_entries() -> None:
+def test_rz21_subset_matches_other_projectors() -> None:
     module = _load_module()
     rows = [row for row in module.collect_rows() if row["projector"] == "rz21"]
-    assert len(rows) == 101
+    all_rows = module.collect_rows()
+    by_projector = Counter(row["projector"] for row in all_rows)
+    assert len(rows) == by_projector["adam"]
+    assert by_projector["rz21"] == by_projector["eva"] == by_projector["led"]
