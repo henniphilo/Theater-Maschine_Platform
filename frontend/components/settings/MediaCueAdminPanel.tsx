@@ -40,6 +40,7 @@ export function MediaCueAdminPanel() {
   const [lightId, setLightId] = useState("");
   const [lightDesc, setLightDesc] = useState("");
   const [lightChannels, setLightChannels] = useState("");
+  const [lightGroups, setLightGroups] = useState("");
 
   const reload = useCallback(async () => {
     const next = await fetchCueAdmin();
@@ -94,15 +95,23 @@ export function MediaCueAdminPanel() {
       .split(/[,;\s]+/)
       .map((c) => c.trim())
       .filter(Boolean);
-    if (!channels.length) throw new Error("Mindestens einen EOS-Channel angeben");
+    const groups = lightGroups
+      .split(/[,;\s]+/)
+      .map((c) => c.trim())
+      .filter(Boolean);
+    if (!channels.length && !groups.length) {
+      throw new Error("Mindestens einen EOS-Channel oder eine EOS-Gruppe angeben");
+    }
     await createExtraLight({
       id: lightId.trim() || undefined,
       description: lightDesc.trim() || lightId.trim(),
-      channels
+      channels,
+      groups
     });
     setLightId("");
     setLightDesc("");
     setLightChannels("");
+    setLightGroups("");
   }
 
   function rowActions(kind: CueKind, row: { id: string; source: string; dramaturgy_active: boolean; removed: boolean }) {
@@ -352,7 +361,11 @@ export function MediaCueAdminPanel() {
               void run(onAddLight);
             }}
           >
-            <h3>Licht hinzufügen</h3>
+            <h3>Licht-Cue hinzufügen</h3>
+            <p className="textMuted">
+              Licht-Szenen mit EOS-Channels und/oder EOS-Gruppen — die Maschine greift beim Verteilen
+              auf aktive (nicht entfernte) Cues zu.
+            </p>
             <label className="col">
               ID (optional)
               <input
@@ -380,6 +393,15 @@ export function MediaCueAdminPanel() {
                 disabled={busy}
               />
             </label>
+            <label className="col">
+              EOS-Gruppen (Komma getrennt)
+              <input
+                value={lightGroups}
+                onChange={(e) => setLightGroups(e.target.value)}
+                placeholder="z. B. 2, 13"
+                disabled={busy}
+              />
+            </label>
             <button type="submit" className="btn" disabled={busy}>
               Licht-Cue anlegen
             </button>
@@ -390,7 +412,8 @@ export function MediaCueAdminPanel() {
               <thead>
                 <tr>
                   <th>Szene</th>
-                  <th>Channels</th>
+                  <th>Kanäle</th>
+                  <th>Gruppen</th>
                   <th>Quelle</th>
                   <th>Status</th>
                   <th>Aktionen</th>
@@ -403,7 +426,8 @@ export function MediaCueAdminPanel() {
                       <strong>{row.id}</strong>
                       <div className="textMuted">{row.description}</div>
                     </td>
-                    <td>{row.channels.join(", ") || row.groups.join(", ") || "—"}</td>
+                    <td>{row.channels.join(", ") || "—"}</td>
+                    <td>{row.groups.length ? `Gr. ${row.groups.join(", ")}` : "—"}</td>
                     <td>{row.source}</td>
                     <td>
                       <StatusBadge active={row.dramaturgy_active} removed={row.removed} />

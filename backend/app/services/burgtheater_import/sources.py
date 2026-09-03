@@ -12,6 +12,7 @@ CATALOG_FILES = (
     "sound_cues.json",
     "light_scenes.json",
     "light_inventory.json",
+    "light_channel_policy.json",
     "dramaturgy_rules.json",
     "avatar_speech.json",
     "sound_inventory.json",

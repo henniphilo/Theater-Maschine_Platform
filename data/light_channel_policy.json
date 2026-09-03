@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "venue": "burgtheater",
+  "blocked_channels": [11, 19, 22],
+  "disabled_inventory_group_ids": [],
+  "extra_inventory_groups": [],
+  "notes": "EOS-Kanäle 11, 19 und 22 am Burgtheater nicht ansteuern. Zusätzliche Gruppen-Sperren und Extra-Gruppen über Einstellungen."
+}

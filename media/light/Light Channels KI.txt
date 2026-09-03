@@ -8,7 +8,7 @@ Ch. 91-94					Pr.91		Seitenlicht hartes Licht
 
 			Gr.2					Saallicht Zuschauerraum
 
-Ch.22-26					Pr.91		Lichtstimmung Teppich Rot
+Ch.23-26					Pr.91		Lichtstimmung Teppich Rot (ohne Ch.22 Burgtheater)
 
 Ch.7-9						Pr.91		Fläche Bühne hartes kaltes Licht
 
@@ -24,4 +24,4 @@ Ch.52/54					Pr.91		2 Lichtspots nebeneinander
 
 Ch.51						Pr.91		Spot am Tisch, Schauspielergruppe
 
-Ch.11-19					Pr.91		Zuschauerraum Blendung
+Ch.12-18					Pr.91		Zuschauerraum Blendung (ohne Ch.11/19 Burgtheater)

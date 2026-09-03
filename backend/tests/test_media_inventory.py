@@ -60,10 +60,18 @@ def test_light_scenes_reference_channel_inventory() -> None:
     assert gegenlicht.channels == ["71-74"]
     assert "Sola Wash" in gegenlicht.fixtures
     scene = next(s for s in db.light_scenes if s.id == "blendung_zuschauerraum")
-    assert scene.channels == ["11-19"]
+    assert scene.channels == ["12-18"]
     assert "JB P12" in scene.fixtures
     vorbuehne = next(s for s in db.light_scenes if s.id == "vorbuehnenzug")
-    assert vorbuehne.channels == ["11-19"]
+    assert vorbuehne.channels == ["12-18"]
+    teppich = next(s for s in db.light_scenes if s.id == "teppich_rot")
+    assert teppich.channels == ["23-26"]
     saal = next(s for s in db.light_scenes if s.id == "saallicht")
     assert saal.groups == ["2"]
     assert db.light_inventory.get("venue") == "Unter Tieren"
+    vorbuehne_inv = next(
+        g for g in db.light_inventory["groups"] if g["id"] == "vorbuehnenzug"
+    )
+    assert vorbuehne_inv["channels"] == ["12-18"]
+    ol2 = next(g for g in db.light_inventory["groups"] if g["id"] == "ol_2er_sola")
+    assert ol2["channels"] == ["21", "23-28"]

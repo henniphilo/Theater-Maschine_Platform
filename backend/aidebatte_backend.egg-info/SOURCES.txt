@@ -160,6 +160,7 @@ app/services/inszenierung_import.py
 app/services/inszenierung_komposition_service.py
 app/services/inszenierung_store.py
 app/services/inszenierung_validation.py
+app/services/light_inventory_admin.py
 app/services/media_mentions.py
 app/services/output_slots.py
 app/services/part1_selection_builder.py
@@ -271,6 +272,7 @@ tests/test_inszenierung_komposition.py
 tests/test_inszenierung_validation.py
 tests/test_layered_cues.py
 tests/test_light_desk_intensity.py
+tests/test_light_inventory_admin.py
 tests/test_light_mirror_mode.py
 tests/test_light_replace.py
 tests/test_light_tcp.py

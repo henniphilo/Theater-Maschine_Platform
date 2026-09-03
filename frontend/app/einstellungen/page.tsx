@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { LightInventoryPanel } from "@/components/settings/LightInventoryPanel";
 import { MediaCueAdminPanel } from "@/components/settings/MediaCueAdminPanel";
 import { RuntimeSettingsPanel } from "@/components/settings/RuntimeSettingsPanel";
 import { VenueProfilePanel } from "@/components/settings/VenueProfilePanel";
@@ -16,6 +17,7 @@ export default function EinstellungenPage() {
       </p>
       <VenueProfilePanel />
       <RuntimeSettingsPanel />
+      <LightInventoryPanel />
       <MediaCueAdminPanel />
     </main>
   );

@@ -19,6 +19,13 @@ from app.schemas.extra_media import (
 from app.schemas.sound_cues import SoundCueCatalog
 from app.schemas.video_cues import VideoCueCatalog
 from app.services import extra_media_overrides as extra_media
+from app.services import light_inventory_admin as light_inventory
+from app.services.light_inventory_admin import (
+    LightChannelPolicyPatchRequest,
+    LightInventoryAdminResponse,
+    LightInventoryGroupCreateRequest,
+    LightInventoryGroupEnabledPatch,
+)
 from app.services.sound_cue_catalog import get_sound_cue_catalog_service
 from app.services.video_cue_catalog import get_video_cue_catalog_service
 from app.services.avatar_speech_catalog import get_avatar_speech_catalog_service
@@ -93,6 +100,47 @@ def delete_cue_admin(kind: CueKind, cue_id: str) -> dict:
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return {"ok": True, "id": cue_id, "kind": kind}
+
+
+@router.get("/light-inventory", response_model=LightInventoryAdminResponse)
+def get_light_inventory_admin() -> LightInventoryAdminResponse:
+    return light_inventory.build_admin_response()
+
+
+@router.patch("/light-inventory/policy")
+def patch_light_channel_policy(body: LightChannelPolicyPatchRequest) -> dict:
+    try:
+        policy = light_inventory.patch_policy(body)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return policy.model_dump()
+
+
+@router.patch("/light-inventory/groups/{group_id}")
+def patch_light_inventory_group(group_id: str, body: LightInventoryGroupEnabledPatch) -> dict:
+    try:
+        group = light_inventory.set_inventory_group_enabled(group_id, body.enabled)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return group.model_dump()
+
+
+@router.post("/light-inventory/groups")
+def create_light_inventory_group(body: LightInventoryGroupCreateRequest) -> dict:
+    try:
+        group = light_inventory.add_inventory_group(body)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return group.model_dump()
+
+
+@router.delete("/light-inventory/groups/{group_id}")
+def delete_light_inventory_group(group_id: str) -> dict:
+    try:
+        light_inventory.delete_inventory_group(group_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"ok": True, "id": group_id}
 
 
 @router.get("/catalog")

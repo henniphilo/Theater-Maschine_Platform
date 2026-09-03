@@ -136,3 +136,90 @@ export async function deleteExtraCue(kind: CueKind, cueId: string): Promise<void
     throw new Error(detail?.detail ?? "Löschen fehlgeschlagen");
   }
 }
+
+export type LightInventoryGroup = {
+  id: string;
+  channels: string[];
+  fixtures: string[];
+  location: string;
+  enabled: boolean;
+  source: string;
+};
+
+export type LightInventoryAdminResponse = {
+  venue: string;
+  source: string;
+  blocked_channels: number[];
+  notes: string;
+  groups: LightInventoryGroup[];
+  scenes: {
+    id: string;
+    description: string;
+    channels: string[];
+    groups: string[];
+  }[];
+};
+
+export async function fetchLightInventoryAdmin(): Promise<LightInventoryAdminResponse> {
+  const res = await apiFetch("/media/light-inventory");
+  if (!res.ok) throw new Error("Licht-Inventar nicht verfügbar");
+  return res.json();
+}
+
+export async function patchLightChannelPolicy(body: {
+  blocked_channels?: number[];
+  disabled_inventory_group_ids?: string[];
+  notes?: string;
+}): Promise<void> {
+  const res = await apiFetch("/media/light-inventory/policy", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    const detail = await res.json().catch(() => null);
+    throw new Error(detail?.detail ?? "Policy speichern fehlgeschlagen");
+  }
+}
+
+export async function patchLightInventoryGroup(
+  groupId: string,
+  enabled: boolean
+): Promise<void> {
+  const res = await apiFetch(`/media/light-inventory/groups/${encodeURIComponent(groupId)}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ enabled })
+  });
+  if (!res.ok) {
+    const detail = await res.json().catch(() => null);
+    throw new Error(detail?.detail ?? "Gruppe ändern fehlgeschlagen");
+  }
+}
+
+export async function createLightInventoryGroup(body: {
+  id?: string;
+  channels: string[];
+  fixtures?: string[];
+  location?: string;
+}): Promise<void> {
+  const res = await apiFetch("/media/light-inventory/groups", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    const detail = await res.json().catch(() => null);
+    throw new Error(detail?.detail ?? "Gruppe anlegen fehlgeschlagen");
+  }
+}
+
+export async function deleteLightInventoryGroup(groupId: string): Promise<void> {
+  const res = await apiFetch(`/media/light-inventory/groups/${encodeURIComponent(groupId)}`, {
+    method: "DELETE"
+  });
+  if (!res.ok) {
+    const detail = await res.json().catch(() => null);
+    throw new Error(detail?.detail ?? "Gruppe löschen fehlgeschlagen");
+  }
+}

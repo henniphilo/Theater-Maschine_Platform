@@ -10,7 +10,6 @@ from app.director.media.database import MediaDatabase
 from app.director.outputs.eos_light import (
     eos_chan_level,
     eos_group_level,
-    expand_channels,
     parse_eos_chan_command,
     parse_eos_group_command,
 )
@@ -19,6 +18,7 @@ from app.director.outputs.light_scene_tracker import (
     fade_out_scene,
     replace_active_light_scenes,
 )
+from app.services.light_inventory_admin import expand_channels_respecting_policy
 from app.services.video_cue_catalog import get_video_cue_catalog_service
 from app.services.video_scope import VideoScope
 
@@ -82,7 +82,7 @@ def _eos_commands_for_scene(
                 dry_run=is_dry_run,
             )
         )
-    for channel in expand_channels(scene.channels):
+    for channel in expand_channels_respecting_policy(scene.channels):
         address, args = eos_chan_level(channel, intensity)
         commands.append(
             OscCommand(

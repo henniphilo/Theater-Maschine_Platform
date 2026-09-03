@@ -104,6 +104,16 @@ def director_test_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
 
     reset_extra_media_for_tests(persist_path=tmp_path / "extra_media_overrides.json")
 
+    from app.services.light_inventory_admin import (
+        LightChannelPolicy,
+        reset_light_policy_for_tests,
+        save_policy,
+    )
+
+    reset_light_policy_for_tests(persist_path=tmp_path / "light_channel_policy.json")
+    # Tests start with no channel blocks unless they opt in.
+    save_policy(LightChannelPolicy(blocked_channels=[], disabled_inventory_group_ids=[]))
+
     technik_hold_mod._manager = None
     technik_hold_mod.get_technik_hold_manager(director_routes._pipeline).stop()
     light_desk_mod._manager = None

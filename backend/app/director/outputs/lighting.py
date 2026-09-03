@@ -6,7 +6,7 @@ from app.core.config import settings
 from app.director.output_targets import effective_light_target
 from app.director.cues.cue_models import LightCue, resolve_light_scene_ids
 from app.director.media.database import MediaDatabase
-from app.director.outputs.eos_light import eos_chan_level, eos_group_level, expand_channels
+from app.director.outputs.eos_light import eos_chan_level, eos_group_level
 from app.director.outputs.light_scene_tracker import (
     clear_active_light_scenes,
     fade_out_scene,
@@ -186,7 +186,9 @@ class LightingBridge:
         for group in groups or []:
             address, args = eos_group_level(int(group), intensity)
             self._send_desk_osc(address, *args, dry_run=dry_run)
-        for channel in expand_channels(channel_specs):
+        from app.services.light_inventory_admin import expand_channels_respecting_policy
+
+        for channel in expand_channels_respecting_policy(channel_specs):
             address, args = eos_chan_level(channel, intensity)
             self._send_desk_osc(address, *args, dry_run=dry_run)
 
