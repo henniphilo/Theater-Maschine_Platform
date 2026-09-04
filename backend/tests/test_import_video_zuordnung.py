@@ -23,6 +23,10 @@ def test_numbers_clip_to_pixera_atmosphere_names() -> None:
     assert numbers_clip_to_pixera("Schmetterlinge_laufen") == "Schmetterlinge_laufen"
     assert numbers_clip_to_pixera("Flut") == "Flut"
     assert numbers_clip_to_pixera("Massenproduktion") == "Massenproduktion"
+    assert numbers_clip_to_pixera("Konzeptionsprobe_2 Test_030926") == "Konzeptionsprobe_2_Test_030926"
+    assert numbers_clip_to_pixera("Konzeptionsprobe_3 Test_030926") == "Konzeptionsprobe_3_Test_030926"
+    assert numbers_clip_to_pixera("Haut und Ameisen") == "HautUndAmeisen"
+    assert numbers_clip_to_pixera("Skorpione_rennen_nach_Geld") == "Skorpione_rennen_nach_Geld"
 
 
 def test_slug_id_from_pixera() -> None:

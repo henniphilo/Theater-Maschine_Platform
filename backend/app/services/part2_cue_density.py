@@ -43,16 +43,16 @@ def cue_intervals_for_anarchy(anarchy_level: float) -> dict[str, tuple[float, fl
 
 
 def atmosphere_intervals_for_anarchy(anarchy_level: float) -> tuple[float, float]:
-    """Begleitvideo ticks — denser than keyword video, from the start of the show."""
+    """Begleitvideo ticks — longer holds early, denser toward chaos (end stays tight)."""
     level = max(0.0, min(1.0, anarchy_level))
     if level <= 0.35:
-        return (5.0, 8.0)
+        return (8.0, 12.0)
     if level <= 0.55:
         t = (level - 0.35) / 0.2
-        return (_lerp(5.0, 4.0, t), _lerp(8.0, 6.0, t))
+        return (_lerp(8.0, 5.0, t), _lerp(12.0, 7.0, t))
     if level <= 0.75:
         t = (level - 0.55) / 0.2
-        return (_lerp(4.0, 3.0, t), _lerp(6.0, 5.0, t))
+        return (_lerp(5.0, 3.0, t), _lerp(7.0, 5.0, t))
     t = (level - 0.75) / 0.25
     return (_lerp(3.0, 2.5, t), _lerp(5.0, 4.0, t))
 

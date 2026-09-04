@@ -206,19 +206,14 @@ def _anarchy_at_time(time_sec: float, total_sec: float, curve: AnarchyCurve) -> 
 
 
 def atmosphere_fill_count(free_count: int, anarchy: float) -> int:
-    """Legacy helper: how many free beamers get Begleitvideo (anarchy escalation).
+    """Legacy helper: how many free beamers get Begleitvideo.
 
-    Prefer ``atmosphere_targets_for_free`` — Adam/Eva are always filled when free.
+    Prefer ``atmosphere_targets_for_free`` — all free beamers are filled from the start
+    (Adam/Eva mandatory; rz21/led when free). High-anarchy trim is in the scheduler.
     """
+    _ = anarchy
     if free_count <= 0:
         return 0
-    # Approximate: always prefer at least the two stage beamers when available.
-    always = min(2, free_count)
-    others = max(0, free_count - always)
-    if anarchy < 0.35:
-        return always + min(1, others)
-    if anarchy < 0.55:
-        return always + min(1, others)
     return free_count
 
 
@@ -312,10 +307,10 @@ def _rule_based_atmosphere_points(
         video_min, video_max = atmosphere_intervals_for_anarchy(anarchy)
 
         base_step = max(2.5, (video_min + video_max) / 2.0)
-        # Give the beginning a slightly more "breathing" duration, so the first atmosphere
-        # clips stand a bit longer before the first overwrite tick.
-        early_phase_end = min(25.0, total_sec * 0.25)
-        early_multiplier = 1.35 if time_sec < early_phase_end else 1.0
+        # Beginning: longer holds so Begleitclips breathe on free beamers before overwrite.
+        # End of show keeps the denser anarchy intervals unchanged.
+        early_phase_end = min(50.0, total_sec * 0.4)
+        early_multiplier = 1.55 if time_sec < early_phase_end else 1.0
         step = base_step * early_multiplier
 
         free = free_projectors_at(windows, time_sec)
@@ -492,15 +487,15 @@ class Teil2AtmosphereScheduler:
             "Plane Atmosphären-/Begleit-Videos (OhneAvatare) auf FREIEN Beamern.\n"
             "KEIN Dialog. Stimmungsunabhängig — variiere Clips nach Zeit/Anarchie, nicht nach Text.\n"
             f"Rhythmus: erste Clips bei 0s, dann alle {video_interval[0]:.0f}–{video_interval[1]:.0f}s — "
-            "früh schon dicht, nicht erst spät in der Aufführung.\n"
+            "früh länger stehen lassen (weniger Überschreiben), Ende darf dichter werden.\n"
             "Pflicht: Adam und Eva müssen immer etwas zeigen, sobald kein Avatar dort läuft "
             "(Atmosphäre auf jedem freien Adam/Eva).\n"
-            "Früh zusätzlich einen weiteren freien Beamer (rz21 oder led) belegen.\n"
+            "Früh alle freien Beamer belegen (auch rz21 und led), solange kein Avatar dort läuft.\n"
             "Pflicht: clip_id bonnie und clyde mehrmals über die Aufführung als Begleitvideo "
             "(OSC ohne Avatare) verteilen — nicht nur einmal, nicht dauernd.\n"
             "Pro Zeitstempel: mehrere cue_points mit gleichem time_offset_sec, "
             "je ein anderer freier Projektor (Begleitung parallel zu Avataren).\n"
-            "Je höher die Anarchie, desto mehr zusätzliche freie Flächen (rz21, led).\n"
+            "Je höher die Anarchie gegen Ende, desto kürzere Intervalle — Flächen bleiben belegt.\n"
             f"Nur clip_id aus: {clip_sample}\n"
             f"Projektoren: rz21, adam, eva, led — nur freie zum jeweiligen time_offset_sec.\n"
             f"Gesamtdauer: {total_sec:.0f}s\n\n"

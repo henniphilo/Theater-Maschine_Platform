@@ -50,10 +50,11 @@ def test_atmosphere_targets_always_include_adam_eva_when_free():
 
     low = atmosphere_targets_for_free(["adam", "eva", "rz21", "led"], anarchy=0.1, seed=0)
     assert "adam" in low and "eva" in low
-    assert len(low) >= 3
+    # Early: all free surfaces get Begleitvideo, not only Adam/Eva + one.
+    assert set(low) == {"adam", "eva", "rz21", "led"}
     high = atmosphere_targets_for_free(["adam", "eva", "led"], anarchy=0.8, seed=0)
     assert set(high) == {"adam", "eva", "led"}
-    # Avatar owns adam — free stage beamer stays mandatory, plus one extra if free.
+    # Avatar owns adam — free stage beamer stays mandatory, plus other free surfaces.
     only_eva = atmosphere_targets_for_free(["eva", "led"], anarchy=0.1, seed=0)
     assert only_eva[0] == "eva"
     assert "led" in only_eva

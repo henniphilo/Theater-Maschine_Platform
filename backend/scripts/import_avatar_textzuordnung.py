@@ -39,7 +39,19 @@ MEDIA_FILE_ALIASES: dict[str, tuple[str, ...]] = {
     "mo3_caro": ("mo3dachscaro", "mo3_dachs_caro"),
     "sch2azariawirdschaf": ("sch2azariawirdschaf",),
     "sch3ingewirdschaf": ("sch3ingewirdschaf",),
+    # Exporte 04.09.2026 — new filenames under existing Pixera scene_refs
+    "bk8mavie": ("bk8maviepflanze",),
+    "pet5azaria": ("pet5azariarobo",),
 }
+
+# Numbers sometimes keeps the old Pixera name; override when the clip is a new cue.
+SCENE_REF_OVERRIDES: dict[str, str] = {
+    "bk3_thomas_stroh": "BK3_Thomas_Stroh",
+    "bk7_caroline_geldstrudel": "BK7_Caroline_Geldstrudel",
+    "sch3_inge_wird_schaf_wolle_rot": "Sch3_Inge_wird_Schaf_Wolle_rot",
+}
+
+_NOTE_SKIP_RE = re.compile(r"\b(gestrichen|gel[oö]scht)\b", re.IGNORECASE)
 
 _VALID_AVATARS = frozenset({"delphin", "baerenklau", "lamm", "petya", "wolf"})
 
@@ -103,6 +115,22 @@ def _is_catalog_header(headers: list[str]) -> bool:
     )
 
 
+def note_marks_removed(note: object) -> bool:
+    """True when Numbers note marks the row as removed (gestrichen / gelöscht)."""
+    text = _cell_str(note)
+    return bool(text and _NOTE_SKIP_RE.search(text))
+
+
+def _note_column_index(headers: list[str]) -> int | None:
+    for name in ("note", "notiz", "notes", "bemerkung"):
+        if name in headers:
+            return headers.index(name)
+    for idx in range(len(headers) - 1, -1, -1):
+        if headers[idx] == "" and idx >= 6:
+            return idx
+    return None
+
+
 def _cell_str(value: object) -> str:
     if value is None:
         return ""
@@ -129,19 +157,23 @@ def _parse_duration_cell(value: object) -> int | None:
 
 def complete_row(row: dict[str, str | int]) -> dict[str, str | int]:
     """Fill missing avatar / video_clip_id from scene_ref or id."""
-    cue_id = _cell_str(row.get("id"))
+    cue_id_raw = _cell_str(row.get("id"))
     scene_ref = _cell_str(row.get("scene_ref"))
     text = _cell_str(row.get("text"))
+    cue_id = slug_id(cue_id_raw) if cue_id_raw else ""
     if not cue_id and scene_ref:
         cue_id = slug_id(scene_ref)
-    if not scene_ref and cue_id:
-        scene_ref = numbers_clip_to_pixera(cue_id)
+    if cue_id in SCENE_REF_OVERRIDES:
+        scene_ref = SCENE_REF_OVERRIDES[cue_id]
+    elif not scene_ref and cue_id:
+        scene_ref = numbers_clip_to_pixera(cue_id_raw or cue_id)
 
     avatar_raw = _cell_str(row.get("avatar")).lower()
     if avatar_raw not in _VALID_AVATARS:
         avatar_raw = infer_avatar(scene_ref or cue_id)
 
-    clip_id = _cell_str(row.get("video_clip_id")).lower() or cue_id
+    clip_raw = _cell_str(row.get("video_clip_id"))
+    clip_id = slug_id(clip_raw) if clip_raw else cue_id
 
     out: dict[str, str | int] = {
         "id": cue_id,
@@ -164,8 +196,10 @@ def export_from_catalog_numbers(table) -> list[dict[str, str | int]]:
     """Numbers saved from Avatar Textzuordnung.csv (id/text/avatar/…)."""
     headers = _header_names(table)
     col = {name: idx for idx, name in enumerate(headers) if name}
+    note_idx = _note_column_index(headers)
 
     rows: list[dict[str, str | int]] = []
+    skipped = 0
     for r in range(1, table.num_rows):
         def cell(name: str) -> object:
             idx = col.get(name)
@@ -178,6 +212,10 @@ def export_from_catalog_numbers(table) -> list[dict[str, str | int]]:
         if not cue_id and not text:
             continue
         if not text:
+            continue
+        note = table.cell(r, note_idx).value if note_idx is not None else None
+        if note_marks_removed(note):
+            skipped += 1
             continue
         scene_ref = _cell_str(cell("scene_ref"))
         row = complete_row(
@@ -192,6 +230,8 @@ def export_from_catalog_numbers(table) -> list[dict[str, str | int]]:
         )
         if row.get("id") and row.get("text") and row.get("scene_ref"):
             rows.append(row)
+    if skipped:
+        print(f"Skipped {skipped} Numbers rows marked gestrichen/gelöscht")
     return rows
 
 
@@ -315,14 +355,16 @@ def apply_media_durations(
     rows: list[dict[str, str | int]],
     media_folder: Path,
 ) -> tuple[int, list[str]]:
-    """Overwrite duration_ms from media files. Returns (updated, missing_ids)."""
+    """Overwrite duration_ms from media files. Returns (updated, probe_failures).
+
+    Cues without a matching file in the folder are skipped (partial export OK).
+    """
     media_index = index_media_folder(media_folder)
     updated = 0
     missing: list[str] = []
     for row in rows:
         path = resolve_media_file(row, media_index)
         if path is None:
-            missing.append(str(row.get("id") or row.get("scene_ref") or "?"))
             continue
         duration = probe_duration_ms(path)
         if duration is None:
@@ -331,6 +373,35 @@ def apply_media_durations(
         row["duration_ms"] = duration
         updated += 1
     return updated, missing
+
+
+def fill_missing_durations_from_csv(
+    rows: list[dict[str, str | int]],
+    csv_path: Path | None = None,
+) -> int:
+    """Keep previous CSV duration when Numbers left duration_ms empty."""
+    path = csv_path or CSV_OUT
+    if not path.is_file():
+        return 0
+    existing: dict[str, int] = {}
+    with path.open(encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle, delimiter=";"):
+            cue_id = (row.get("id") or "").strip()
+            raw = (row.get("duration_ms") or "").strip()
+            if not cue_id or not raw.isdigit():
+                continue
+            ms = int(raw)
+            if ms > 0:
+                existing[cue_id] = ms
+    filled = 0
+    for row in rows:
+        if row.get("duration_ms"):
+            continue
+        prev = existing.get(str(row.get("id") or ""))
+        if prev:
+            row["duration_ms"] = prev
+            filled += 1
+    return filled
 
 
 def write_avatar_csv(rows: list[dict[str, str | int]]) -> None:
@@ -463,6 +534,11 @@ def sync_video_cue_durations(rows: list[dict[str, str | int]]) -> int:
         payload = {"version": 1, "osc_address": "/pixera/args/cue/apply", "projectors": [], "clips": []}
 
     clips_by_id = {c["id"]: c for c in payload.get("clips", []) if c.get("id")}
+    active_avatar_ids = {
+        str(row.get("video_clip_id") or "").strip()
+        for row in rows
+        if str(row.get("video_clip_id") or "").strip()
+    }
     updated = 0
     for row in rows:
         clip_id = str(row.get("video_clip_id") or "").strip()
@@ -492,7 +568,12 @@ def sync_video_cue_durations(rows: list[dict[str, str | int]]) -> int:
         clips_by_id[clip_id] = clip
         updated += 1
 
-    payload["clips"] = sorted(clips_by_id.values(), key=lambda c: c["id"])
+    kept: list[dict] = []
+    for clip in clips_by_id.values():
+        if clip.get("video_type") == "avatar" and clip.get("id") not in active_avatar_ids:
+            continue
+        kept.append(clip)
+    payload["clips"] = sorted(kept, key=lambda c: c["id"])
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     return updated
@@ -542,6 +623,8 @@ def main(argv: list[str] | None = None) -> int:
         print("Keine Avatar-Zeilen in Numbers gefunden.", file=sys.stderr)
         return 1
 
+    csv_filled = fill_missing_durations_from_csv(rows)
+
     media_updated = 0
     media_missing: list[str] = []
     if args.media_folder is not None:
@@ -564,6 +647,8 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Updated {SCRIPT_TXT.name}")
     print(f"Set duration_ms on {duration_count} avatar clips in video_cues.json")
     print(f"Cached {cache_count} cues in avatar_speech.json")
+    if csv_filled:
+        print(f"Filled {csv_filled} missing durations from previous CSV")
     if args.media_folder is not None:
         print(f"Applied MP4 durations to {media_updated}/{len(rows)} cues from {args.media_folder}")
         if media_missing:

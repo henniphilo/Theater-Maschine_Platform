@@ -47,7 +47,7 @@ Legacy-Routen `/inszenierung/analyse` und `/inszenierung/komposition` leiten auf
 ### Zwei Cue-Spuren
 
 1. **Textgebunden** (`dramaturgy.cue_points`): Chunkweise LLM-Zuweisung — das LLM **findet selbst** dramaturgisch auffällige Stichworte im Text (keine vorgegebene Wortliste), mehrere Cues pro Abschnitt, stimmungsunabhängig, Anarchie steigt mit Textposition.
-2. **Atmosphäre parallel** (`atmosphere_cue_points`): zeitbasierte B-Roll-/Begleit-Clips. **Adam und Eva** bekommen Atmosphäre, sobald dort kein Avatar läuft; weitere freie Beamer je nach Anarchie.
+2. **Atmosphäre parallel** (`atmosphere_cue_points`): zeitbasierte B-Roll-/Begleit-Clips. **Adam und Eva** bekommen Atmosphäre, sobald dort kein Avatar läuft; weitere freie Beamer (rz21, led) ebenfalls von Anfang an.
 
 Teil 2 nutzt **keine** Multi-LLM-Diskussion wie Teil 1. Chunkweise Stichwort-Entdeckung + Cue-Zuweisung durch das LLM; Regel-Fallback (`extract_text_fallback_keywords`) nur ohne API.
 
@@ -80,7 +80,7 @@ Quelle: `media/video/Avatar Textzuordnung.csv` (export aus `Textzuordnung Del-Wo
    - `< 0.35`: ein Performer (rotiert über Segmente)
    - `< 0.65`: bis zu zwei parallel
    - `≥ 0.65`: voller Chorus (alle Clips, verschiedene Projektoren)
-5. Atmosphäre parallel: **ab Aufführungsbeginn dicht** (ca. alle 5–8 s), Adam und Eva stets belegt sobald frei, früh ein weiterer Beamer. **Bonnie und Clyde** mehrmals als Begleitvideo-OSC. Weitere Flächen (rz21, led) mit steigender Anarchie.
+5. Atmosphäre parallel: **früh länger** (ca. alle 8–12 s, Anfang noch etwas länger halten), **alle freien Beamer** (Adam/Eva plus rz21/led ohne Avatar). Gegen Ende dichter. **Bonnie und Clyde** mehrmals als Begleitvideo-OSC.
 6. Nicht gefundene Zeilen → `alignment_warnings`
 
 **Playback:** Avatar-OSC nur **eins nach dem anderen** in CSV-Reihenfolge, wenn die TTS-Stimme den Textanker (`char_offset`) erreicht — kein Nachladen aller offenen Clips am Ende. Chorus-Layer eines Segments feuern gleichzeitig.

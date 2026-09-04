@@ -8,7 +8,7 @@
       "text": "21 Der Bärenklau: – wir werden alle von Pflanzen ersetzt werden, weil die billiger in der Anschaffung und im Betrieb sind und keine Widerworte geben –, Da der Mensch, ja, sagen wir so, also dermaßen leicht verderblich geworden ist, da wir also gar kein Geld haben, müssen wir uns leider wieder dem Produzenten der Waren zuwenden,",
       "video_clip_id": "bak1_nicolaspflanzen3",
       "scene_ref": "BAK1_NicolasPflanzen3",
-      "duration_ms": 24160
+      "duration_ms": 35400
     },
     {
       "id": "bak2_krabbe",
@@ -155,6 +155,14 @@
       "duration_ms": 20760
     },
     {
+      "id": "bk3_thomas_stroh",
+      "avatar": "baerenklau",
+      "text": "und Sie gründen immer neue Firmen, hohle Männer, wie Tote, Männer aus Stroh, diesmal werde ich endlich kein Opfer, das ist nicht meine Rolle, ich werde Opfer bringen, aber keins sein, nie mehr!",
+      "video_clip_id": "bk3_thomas_stroh",
+      "scene_ref": "BK3_Thomas_Stroh",
+      "duration_ms": 20760
+    },
+    {
       "id": "daslammgottes",
       "avatar": "lamm",
       "text": "24 Das Lamm Gottes",
@@ -235,20 +243,20 @@
       "duration_ms": 3160
     },
     {
-      "id": "bk7_caroline",
-      "avatar": "baerenklau",
-      "text": "Der Kredit ist endlos. Es zahlt sich aus, es wird ausgezahlt, Da fließen schon die Millionen, alle für mich, alle her zu mir, ich will sie herzlich begrüßen, und auch andre haben sich in diesen Kreislauf eingespeist, doch essen werde ich, am Ende werde ich endlich was zu essen kriegen, man hat es mir versprochen! Ich brauch doch eh nur Wasser! Mineralstoffe und Spurenelemente erzeuge ich selbst, die Ökologie hat gesiegt, ich bin ein beinahe selbsterhaltendes System.",
-      "video_clip_id": "bk7_caroline",
-      "scene_ref": "BK7_Caroline",
-      "duration_ms": 32960
-    },
-    {
       "id": "bk7_nasenfisch",
       "avatar": "baerenklau",
       "text": "Der Kredit ist endlos. Es zahlt sich aus, es wird ausgezahlt, Da fließen schon die Millionen, alle für mich, alle her zu mir, ich will sie herzlich begrüßen, und auch andre haben sich in diesen Kreislauf eingespeist, doch essen werde ich, am Ende werde ich endlich was zu essen kriegen, man hat es mir versprochen! Ich brauch doch eh nur Wasser! Mineralstoffe und Spurenelemente erzeuge ich selbst, die Ökologie hat gesiegt, ich bin ein beinahe selbsterhaltendes System.",
       "video_clip_id": "bk7_nasenfisch",
       "scene_ref": "BK7_Nasenfisch",
       "duration_ms": 32960
+    },
+    {
+      "id": "bk7_caroline_geldstrudel",
+      "avatar": "baerenklau",
+      "text": "Der Kredit ist endlos. Es zahlt sich aus, es wird ausgezahlt, Da fließen schon die Millionen, alle für mich, alle her zu mir, ich will sie herzlich begrüßen, und auch andre haben sich in diesen Kreislauf eingespeist, doch essen werde ich, am Ende werde ich endlich was zu essen kriegen, man hat es mir versprochen! Ich brauch doch eh nur Wasser! Mineralstoffe und Spurenelemente erzeuge ich selbst, die Ökologie hat gesiegt, ich bin ein beinahe selbsterhaltendes System.",
+      "video_clip_id": "bk7_caroline_geldstrudel",
+      "scene_ref": "BK7_Caroline_Geldstrudel",
+      "duration_ms": 33000
     },
     {
       "id": "bk8_haischaedel",
@@ -272,7 +280,7 @@
       "text": "Der Gewinner nimmt alles. Wird ein andrer aus meinem alten Haus ein neues machen? Die Bank schafft das mit links, sie schafft das mit nichts, sie schafft Geld aus Dreck und aus dem Nichts. Geld aus dem Nichts. Die Pflanze, die nichts will und nichts braucht, überzieht die Erde.",
       "video_clip_id": "bk8_mavie",
       "scene_ref": "BK8_Mavie",
-      "duration_ms": 20840
+      "duration_ms": 20880
     },
     {
       "id": "bk9_thiemo",
@@ -331,14 +339,6 @@
       "duration_ms": 16920
     },
     {
-      "id": "pet3_caroline",
-      "avatar": "petya",
-      "text": "Der Krieg ist nichts gegen das, was ich auch nicht kriege.",
-      "video_clip_id": "pet3_caroline",
-      "scene_ref": "PET3_Caroline",
-      "duration_ms": 4137
-    },
-    {
       "id": "pet3_koala",
       "avatar": "petya",
       "text": "Der Krieg ist nichts gegen das, was ich auch nicht kriege.",
@@ -360,7 +360,7 @@
       "text": "Ich bin als einziger frei von Unglück, denn das größte habe ich schon erlebt. Ich bin zwar tot, aber dieser Tod hat mich immerhin von jämmerlichen Schmerzen befreit. Als Skelett hat man kein Gewicht auf der Welt, nicht einmal, wenn es von Fell und Haaren überzogen ist.",
       "video_clip_id": "pet5_azaria",
       "scene_ref": "PET5_Azaria",
-      "duration_ms": 17480
+      "duration_ms": 17520
     },
     {
       "id": "wo1_kaenguru",
@@ -505,6 +505,14 @@
       "video_clip_id": "sch3_ingewirdschaf",
       "scene_ref": "SCH3_IngewirdSchaf",
       "duration_ms": 25840
+    },
+    {
+      "id": "sch3_inge_wird_schaf_wolle_rot",
+      "avatar": "delphin",
+      "text": "Der Boden ist mit Blut getränkt, meines fällt da gar nicht auf. Zuerst schmückt man mich, dann sticht man mir in den Hals und läßt mich langsam verwelken und meine Wolle zu Kleidung werden, Ich wünsche mir, daß alles zahm sei wie Kotelett und die Menschen und den Menschen freundlich gesinnt, ja, auch Tiere und Vögel!",
+      "video_clip_id": "sch3_inge_wird_schaf_wolle_rot",
+      "scene_ref": "Sch3_Inge_wird_Schaf_Wolle_rot",
+      "duration_ms": 25880
     },
     {
       "id": "sch4_thomas",

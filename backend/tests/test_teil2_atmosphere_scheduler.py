@@ -42,7 +42,7 @@ def test_free_projectors_excludes_avatar_beamer() -> None:
 
 
 def test_atmosphere_fill_count_escalates_with_anarchy() -> None:
-    # Adam/Eva always, plus one extra free beamer even early.
+    # All free beamers get Begleitvideo from the start (legacy helper).
     assert atmosphere_fill_count(3, 0.1) == 3
     assert atmosphere_fill_count(3, 0.4) == 3
     assert atmosphere_fill_count(3, 0.7) == 3
@@ -175,7 +175,7 @@ def test_high_anarchy_skips_one_other_free_beamer() -> None:
     assert not ("rz21" in projectors and "led" in projectors)
 
 
-def test_atmosphere_starts_immediately_and_is_dense_early(monkeypatch) -> None:
+def test_atmosphere_starts_immediately_and_holds_longer_early(monkeypatch) -> None:
     monkeypatch.setattr("app.core.config.settings.director_dramaturgy_mode", "rules")
     from app.services.teil2_atmosphere_scheduler import Teil2AtmosphereScheduler
 
@@ -197,8 +197,13 @@ def test_atmosphere_starts_immediately_and_is_dense_early(monkeypatch) -> None:
     times = sorted({p.time_offset_sec for p in points})
     assert times
     assert times[0] <= 0.5
+    # Early holds are longer: fewer overwrite ticks in the first half-minute.
     early = [t for t in times if t <= 30.0]
-    assert len(early) >= 4
+    assert len(early) >= 2
+    assert times[1] >= 12.0
+    # More free surfaces filled per tick from the start.
+    first_tick = [p for p in points if p.time_offset_sec == times[0]]
+    assert len(first_tick) >= 3
 
 
 def test_early_rule_based_step_multiplier(monkeypatch) -> None:
@@ -217,7 +222,7 @@ def test_early_rule_based_step_multiplier(monkeypatch) -> None:
     )
 
     script = "A" * 2000
-    curve = AnarchyCurve(start=0.2, end=0.2)  # low anarchy → base_step ~6.5s
+    curve = AnarchyCurve(start=0.2, end=0.2)  # low anarchy → base_step ~10s
     dramaturgy = DramaturgyDecision(
         reason="test",
         tags=[],
@@ -235,8 +240,8 @@ def test_early_rule_based_step_multiplier(monkeypatch) -> None:
     )
     times = sorted({p.time_offset_sec for p in points})
     assert len(times) >= 2
-    # With early_multiplier=1.35: 6.5s * 1.35 = 8.775s → rounded >= 8.7s.
-    assert times[1] >= 8.7
+    # With early_multiplier=1.55: 10s * 1.55 = 15.5s.
+    assert times[1] >= 15.0
 
 
 def test_rule_fills_multiple_free_projectors_beside_avatar(monkeypatch) -> None:

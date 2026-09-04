@@ -127,23 +127,19 @@ def atmosphere_targets_for_free(
 ) -> list[str]:
     """Beamers that get atmosphere at this tick.
 
-    Adam and Eva are always filled when free (no avatar). Additional free surfaces
-    (rz21, led) escalate with anarchy.
+    Adam and Eva are always filled when free (no avatar). Other free surfaces
+    (rz21, led) are also filled from the start so Begleitvideo covers every
+    non-avatar beamer early; very high anarchy may trim extras in the scheduler.
     """
+    _ = anarchy
     free_set = set(free)
     always = [p for p in STAGE_ALWAYS_ATMOSPHERE if p in free_set]
     others = [p for p in STAGE_BEAMER_ORDER if p in free_set and p not in always]
-    if anarchy < 0.35:
-        extra_n = min(1, len(others))
-    elif anarchy < 0.55:
-        extra_n = min(1, len(others))
-    else:
-        extra_n = len(others)
-    if not others or extra_n <= 0:
+    if not others:
         return always
     start = seed % len(others)
     ordered = others[start:] + others[:start]
-    return always + ordered[:extra_n]
+    return always + ordered
 
 
 def mirror_outputs_for_clip(

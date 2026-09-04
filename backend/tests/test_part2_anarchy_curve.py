@@ -24,6 +24,13 @@ def test_atmosphere_is_denser_than_keyword_video_early() -> None:
     assert atmosphere[1] < keyword[1]
 
 
+def test_atmosphere_holds_longer_early_than_late() -> None:
+    early = atmosphere_intervals_for_anarchy(0.2)
+    late = atmosphere_intervals_for_anarchy(0.9)
+    assert early[0] > late[0]
+    assert early[1] > late[1]
+
+
 def test_light_min_interval_blocks_rapid_fire_but_allows_frequent_changes() -> None:
     early = light_min_interval_seconds(0.3, base_min=8.0)
     late = light_min_interval_seconds(0.9, base_min=8.0)

@@ -51,6 +51,11 @@ NUMBERS_TO_PIXERA: dict[str, str] = {
     "Flut": "Flut",
     "Massenproduktion": "Massenproduktion",
     "Schmetterlinge_laufen": "Schmetterlinge_laufen",
+    # Exporte / Chaos 04.09.2026 Begleitvideos
+    "Konzeptionsprobe_2 Test_030926": "Konzeptionsprobe_2_Test_030926",
+    "Konzeptionsprobe_3 Test_030926": "Konzeptionsprobe_3_Test_030926",
+    "Haut und Ameisen": "HautUndAmeisen",
+    "Skorpione_rennen_nach_Geld": "Skorpione_rennen_nach_Geld",
 }
 
 
