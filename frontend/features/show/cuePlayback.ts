@@ -91,16 +91,27 @@ export function decisionFromCuePoint(
   };
 }
 
+/** Max show-clock jump (sec) that still fires overdue time cues; larger gaps are skipped. */
+export const TIME_CUE_MAX_CATCH_UP_SEC = 2.5;
+
 export type CuePlaybackContext = {
   dramaturgy: DramaturgyDecision;
   beatText: string;
   fired: Set<string>;
   onCommands: (commands: OscCommand[]) => Promise<void>;
   shouldAbort: () => boolean;
+  /** Last show-clock passed to fireTimeCues / markTimeCuesBefore (for catch-up detection). */
+  lastClockSec: number | null;
 };
 
 function cueKey(point: CuePoint, suffix = ""): string {
   return `${point.trigger}:${point.keyword ?? ""}:${point.sentence_index ?? ""}:${point.time_offset_sec}${suffix}`;
+}
+
+function advanceClock(ctx: CuePlaybackContext, currentTime: number): void {
+  if (!Number.isFinite(currentTime)) return;
+  ctx.lastClockSec =
+    ctx.lastClockSec == null ? currentTime : Math.max(ctx.lastClockSec, currentTime);
 }
 
 export function fireCuePoint(ctx: CuePlaybackContext, point: CuePoint): void {
@@ -121,14 +132,24 @@ export function fireStartCues(ctx: CuePlaybackContext): void {
 /**
  * When seeking mid-show, skip time cues at or before the seek clock so they do not
  * catch up from t=0. Future time cues (offset > beforeSec) stay eligible.
+ * Also used after pause/visibility resume and after a sentence clock jump.
+ *
+ * `exclusive: true` marks only offsets strictly before `beforeSec` (catch-up window edge).
  */
-export function markTimeCuesBefore(ctx: CuePlaybackContext, beforeSec: number): void {
+export function markTimeCuesBefore(
+  ctx: CuePlaybackContext,
+  beforeSec: number,
+  options?: { exclusive?: boolean }
+): void {
+  const exclusive = options?.exclusive === true;
   for (const point of normalizeCuePoints(ctx.dramaturgy)) {
     if (point.trigger !== "time") continue;
-    if ((point.time_offset_sec ?? 0) <= beforeSec) {
+    const offset = point.time_offset_sec ?? 0;
+    if (exclusive ? offset < beforeSec : offset <= beforeSec) {
       ctx.fired.add(cueKey(point));
     }
   }
+  advanceClock(ctx, beforeSec);
 }
 
 /** @deprecated Prefer markTimeCuesBefore with the seek clock; marks all time cues. */
@@ -136,13 +157,27 @@ export function markTimeCuesAsFired(ctx: CuePlaybackContext): void {
   markTimeCuesBefore(ctx, Number.POSITIVE_INFINITY);
 }
 
+/**
+ * Fire due time cues. If the show clock jumped by more than TIME_CUE_MAX_CATCH_UP_SEC
+ * (tab background, incomplete TTS attribution, etc.), mark the gap as skipped and only
+ * fire cues inside the recent window — avoids pause/resume catch-up storms.
+ */
 export function fireTimeCues(ctx: CuePlaybackContext, currentTime: number): void {
+  if (!Number.isFinite(currentTime)) return;
+
+  const prev = ctx.lastClockSec;
+  if (prev != null && currentTime - prev > TIME_CUE_MAX_CATCH_UP_SEC) {
+    const skipThrough = currentTime - TIME_CUE_MAX_CATCH_UP_SEC;
+    markTimeCuesBefore(ctx, skipThrough, { exclusive: true });
+  }
+
   const timed = normalizeCuePoints(ctx.dramaturgy).filter(
     (p) => p.trigger === "time" && (p.time_offset_sec ?? 0) <= currentTime
   );
   for (const point of timed) {
     fireCuePoint(ctx, point);
   }
+  advanceClock(ctx, currentTime);
 }
 
 export function fireSentenceCues(
@@ -179,7 +214,8 @@ export function createCuePlaybackContext(
     beatText,
     fired: new Set(),
     onCommands,
-    shouldAbort
+    shouldAbort,
+    lastClockSec: null
   };
 }
 

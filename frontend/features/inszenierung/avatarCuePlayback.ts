@@ -2,7 +2,7 @@ import type { AvatarTextSegment, CompositionMoment, CompositionPlan, Teil2Perfor
 import type { DramaturgyDecision, OscCommand } from "@/lib/types/director";
 import type { VisualCue } from "@/lib/types/visual";
 import { isDirectorPerformanceAborted, isAvatarDoneGateEnabled, postDirectorExecuteLayered, waitForAvatarVideosDone, type AvatarDoneWaitResult } from "@/lib/api/director";
-import { setPlaybackPaused, waitWhilePlaybackPaused } from "@/lib/api/client";
+import { setPlaybackPaused } from "@/lib/api/client";
 
 let avatarFireChain: Promise<void> = Promise.resolve();
 
@@ -453,11 +453,11 @@ export async function fireAvatarSegmentIfDue(
   options?: { pauseNarratorForPending?: boolean }
 ): Promise<boolean> {
   if (shouldAbort()) return false;
-  // Avatars run sequentially on clip duration / Done — never pause Erzähler-TTS.
+  // Avatars run on clip duration / Done only — never gate on playbackPaused.
+  // Pause may hold TTS (timing clock) but must not stall the Pixera CSV sequence.
   const pauseNarrator = options?.pauseNarratorForPending === true;
   await waitForPendingAvatarDone(shouldAbort, pauseNarrator);
   if (shouldAbort()) return false;
-  if (!(await waitWhilePlaybackPaused(shouldAbort))) return false;
   let anySent = false;
   const cueNames: string[] = [];
   for (const layer of segment.avatar_layers) {

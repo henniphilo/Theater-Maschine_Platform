@@ -30,7 +30,8 @@ vi.mock("@/lib/api/client", () => ({
   playBlob: (...args: unknown[]) => playBlob(...args),
   waitWhilePlaybackPaused: vi.fn().mockResolvedValue(true),
   sleepWallMs: vi.fn().mockResolvedValue(true),
-  getPlaybackRate: vi.fn().mockReturnValue(1)
+  getPlaybackRate: vi.fn().mockReturnValue(1),
+  onPlaybackPauseChange: vi.fn(() => () => undefined)
 }));
 
 vi.mock("@/lib/api/director", () => ({

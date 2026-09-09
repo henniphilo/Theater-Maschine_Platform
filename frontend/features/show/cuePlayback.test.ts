@@ -3,8 +3,10 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import {
   createCuePlaybackContext,
   executeCueSafely,
+  fireTimeCues,
   markTimeCuesAsFired,
-  markTimeCuesBefore
+  markTimeCuesBefore,
+  TIME_CUE_MAX_CATCH_UP_SEC
 } from "@/features/show/cuePlayback";
 import type { DramaturgyDecision } from "@/lib/types/director";
 
@@ -121,11 +123,70 @@ describe("markTimeCuesBefore", () => {
     markTimeCuesBefore(ctx, 5);
     expect(ctx.fired.size).toBe(1);
     expect([...ctx.fired][0]).toContain("2");
+    expect(ctx.lastClockSec).toBe(5);
   });
 
   it("markTimeCuesAsFired still marks all time cues", () => {
     const ctx = createCuePlaybackContext(dramaturgy, "text", async () => undefined, () => false);
     markTimeCuesAsFired(ctx);
     expect(ctx.fired.size).toBe(2);
+  });
+});
+
+describe("fireTimeCues catch-up window", () => {
+  const dramaturgy: DramaturgyDecision = {
+    reason: "time-cues",
+    tags: [],
+    mood: "neutral",
+    intensity: 0.5,
+    timestamp: 0,
+    cue_points: [
+      { trigger: "time", time_offset_sec: 5, function: "a", sound: { action: "trigger_cue", cue_id: "a" } },
+      { trigger: "time", time_offset_sec: 20, function: "b", sound: { action: "trigger_cue", cue_id: "b" } },
+      { trigger: "time", time_offset_sec: 40, function: "c", sound: { action: "trigger_cue", cue_id: "c" } },
+      {
+        trigger: "time",
+        time_offset_sec: 41,
+        function: "recent",
+        sound: { action: "trigger_cue", cue_id: "recent" }
+      }
+    ]
+  };
+
+  beforeEach(() => {
+    vi.mocked(postDirectorExecute).mockReset();
+    vi.mocked(postDirectorExecute).mockResolvedValue({
+      executed: true,
+      blocked_reason: null,
+      osc_commands: []
+    });
+  });
+
+  it("fires gradual advances without skipping", async () => {
+    const ctx = createCuePlaybackContext(dramaturgy, "text", async () => undefined, () => false);
+    fireTimeCues(ctx, 5);
+    fireTimeCues(ctx, 20);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(postDirectorExecute).toHaveBeenCalledTimes(2);
+  });
+
+  it("skips mid-gap cues when show clock jumps past max catch-up", async () => {
+    const ctx = createCuePlaybackContext(dramaturgy, "text", async () => undefined, () => false);
+    fireTimeCues(ctx, 5);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(postDirectorExecute).toHaveBeenCalledTimes(1);
+
+    vi.mocked(postDirectorExecute).mockClear();
+    // Jump ~36s — larger than TIME_CUE_MAX_CATCH_UP_SEC
+    fireTimeCues(ctx, 5 + TIME_CUE_MAX_CATCH_UP_SEC + 36);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    // Only the recent window near t≈41 should execute (offset 41); 20 and 40 are skipped.
+    const reasons = vi.mocked(postDirectorExecute).mock.calls.map(
+      (call) => (call[0] as DramaturgyDecision).reason
+    );
+    expect(reasons.some((r) => r?.includes("recent"))).toBe(true);
+    expect(reasons.some((r) => r?.includes("[b]"))).toBe(false);
+    expect(reasons.some((r) => r?.includes("[c]"))).toBe(false);
   });
 });

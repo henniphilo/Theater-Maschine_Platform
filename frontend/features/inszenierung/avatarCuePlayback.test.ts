@@ -244,6 +244,41 @@ describe("avatar done gate", () => {
     });
   });
 
+  it("keeps CSV avatar chain firing while playback is paused", async () => {
+    const { postDirectorExecuteLayered } = await import("@/lib/api/director");
+    const { waitWhilePlaybackPaused } = await import("@/lib/api/client");
+
+    // If the chain still awaited pause, this would block forever / return false.
+    vi.mocked(waitWhilePlaybackPaused).mockImplementation(async () => false);
+
+    const segment = {
+      csv_cue_ids: ["paused-chain"],
+      text_excerpt: "Alpha.",
+      char_offset: 0,
+      csv_sequence_index: 0,
+      start_sentence_index: 0,
+      end_sentence_index: 0,
+      avatar_layers: [
+        {
+          avatar_speech_id: "a",
+          avatar: "delfin",
+          video_clip_id: "test",
+          visual_cue: {
+            action: "play_clip",
+            clip_id: "test",
+            video_type: "avatar" as const,
+            duration_ms: 1000
+          }
+        }
+      ]
+    };
+
+    const ok = await fireAvatarSegmentIfDue(segment, 0.5, async () => undefined, () => false);
+    expect(ok).toBe(true);
+    expect(postDirectorExecuteLayered).toHaveBeenCalled();
+    expect(waitWhilePlaybackPaused).not.toHaveBeenCalled();
+  });
+
   it("serializes avatars without pausing narrator when previous still pending", async () => {
     const { isAvatarDoneGateEnabled, waitForAvatarVideosDone, postDirectorExecuteLayered } =
       await import("@/lib/api/director");

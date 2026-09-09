@@ -1,5 +1,11 @@
 import { armDirectorForPerformance, startFrontendPlaybackTrace, stopDirectorPerformance } from "@/lib/api/director";
-import { getPlaybackRate, playBlob, sleepWallMs, waitWhilePlaybackPaused } from "@/lib/api/client";
+import {
+  getPlaybackRate,
+  onPlaybackPauseChange,
+  playBlob,
+  sleepWallMs,
+  waitWhilePlaybackPaused
+} from "@/lib/api/client";
 import type { DramaturgyDecision, PerformanceSpeaker } from "@/lib/types/director";
 import type { AvatarTextSegment, SceneCorpus, Teil2PerformancePlan } from "@/lib/types/inszenierung";
 import {
@@ -161,10 +167,30 @@ export async function runTextSyncPlayback(
     markTimeCuesBefore(atmosphereCtx, cumulativeTime);
   }
 
+  let showClockSec = cumulativeTime;
+  const skipTimeCueCatchUp = () => {
+    markTimeCuesBefore(cueCtx, showClockSec);
+    markTimeCuesBefore(atmosphereCtx, showClockSec);
+  };
+
   const fireTimedCues = (elapsedSec: number) => {
+    showClockSec = elapsedSec;
     fireTimeCues(cueCtx, elapsedSec);
     fireTimeCues(atmosphereCtx, elapsedSec);
   };
+
+  // Pause/resume and tab focus: skip overdue time-cue catch-up (same as seek).
+  const unsubPause = onPlaybackPauseChange((paused) => {
+    if (!paused) skipTimeCueCatchUp();
+  });
+  const onVisibility = () => {
+    if (typeof document !== "undefined" && document.visibilityState === "visible") {
+      skipTimeCueCatchUp();
+    }
+  };
+  if (typeof document !== "undefined") {
+    document.addEventListener("visibilitychange", onVisibility);
+  }
 
   const onSegmentFired = (segment: AvatarTextSegment) => {
     onUpdate({ activeAvatarSegment: segment });
@@ -202,6 +228,8 @@ export async function runTextSyncPlayback(
     for (let index = startIndex; index <= endIndex; index++) {
       if (shouldAbort()) break;
       if (!(await waitWhilePlaybackPaused(shouldAbort))) break;
+      // After a long pause between sentences, do not dump overdue atmospheres.
+      skipTimeCueCatchUp();
 
       lastIndex = index;
       const sentence = sentences[index];
@@ -213,6 +241,8 @@ export async function runTextSyncPlayback(
 
       if (!ttsAvailable) {
         cumulativeTime += 1.2;
+        showClockSec = cumulativeTime;
+        fireTimedCues(cumulativeTime);
         if (!(await sleepWallMs(1200, shouldAbort))) break;
         continue;
       }
@@ -224,6 +254,9 @@ export async function runTextSyncPlayback(
         console.warn(`[teil2] TTS failed for sentence ${index} — skipping:`, err);
         const fallbackSec = Math.max(1.2, Math.min(12, sentence.length / 14));
         cumulativeTime += fallbackSec;
+        showClockSec = cumulativeTime;
+        markTimeCuesBefore(cueCtx, cumulativeTime);
+        markTimeCuesBefore(atmosphereCtx, cumulativeTime);
         if (!(await sleepWallMs(fallbackSec * 1000, shouldAbort))) break;
         continue;
       }
@@ -245,6 +278,10 @@ export async function runTextSyncPlayback(
 
       if (shouldAbort()) break;
       cumulativeTime += Number.isFinite(lastDuration) ? lastDuration : 0;
+      showClockSec = cumulativeTime;
+      // Incomplete onTimeUpdate + full duration attribution must not catch up next sentence.
+      markTimeCuesBefore(cueCtx, cumulativeTime);
+      markTimeCuesBefore(atmosphereCtx, cumulativeTime);
     }
 
     if (!shouldAbort()) {
@@ -264,6 +301,10 @@ export async function runTextSyncPlayback(
     }
   } finally {
     bindAvatarChainContext(null);
+    unsubPause();
+    if (typeof document !== "undefined") {
+      document.removeEventListener("visibilitychange", onVisibility);
+    }
   }
 
   onUpdate({
