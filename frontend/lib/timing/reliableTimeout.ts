@@ -4,7 +4,7 @@
  * Chrome/Safari throttle main-thread setTimeout to ~1/min in background tabs,
  * which stalls the Teil-2 avatar CSV chain. Worker timers are not throttled.
  *
- * In Vitest (`import.meta.env.MODE === "test"`) we stay on the main thread so
+ * In Vitest (`process.env.VITEST`) we stay on the main thread so
  * `vi.useFakeTimers()` keeps working.
  */
 
@@ -21,7 +21,8 @@ let workerUnavailable = false;
 
 function preferMainThreadTimers(): boolean {
   try {
-    if (typeof import.meta !== "undefined" && import.meta.env?.MODE === "test") return true;
+    // Vitest sets VITEST; Next.js has no import.meta.env types.
+    if (typeof process !== "undefined" && Boolean(process.env?.VITEST)) return true;
   } catch {
     /* ignore */
   }
