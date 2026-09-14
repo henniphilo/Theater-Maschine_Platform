@@ -3,6 +3,11 @@ import type { DramaturgyDecision, OscCommand } from "@/lib/types/director";
 import type { VisualCue } from "@/lib/types/visual";
 import { isDirectorPerformanceAborted, isAvatarDoneGateEnabled, postDirectorExecuteLayered, waitForAvatarVideosDone, type AvatarDoneWaitResult } from "@/lib/api/director";
 import { setPlaybackPaused } from "@/lib/api/client";
+import {
+  clearReliableTimeout,
+  scheduleReliableTimeout,
+  type ReliableTimeoutHandle
+} from "@/lib/timing/reliableTimeout";
 
 let avatarFireChain: Promise<void> = Promise.resolve();
 
@@ -15,9 +20,12 @@ const AVATAR_DONE_TIMEOUT_GRACE_MS = 2_000;
 /** Retry delay when a CSV avatar is transiently blocked (density/lock) — never burn the segment. */
 const AVATAR_CHAIN_RETRY_MS = 1_500;
 let avatarPositionTimer: ReturnType<typeof setTimeout> | null = null;
-/** CSV-duration / Done chain timer — always armed synchronously in noteAvatarStarted. */
-let avatarChainTimer: ReturnType<typeof setTimeout> | null = null;
-let avatarChainRetryTimer: ReturnType<typeof setTimeout> | null = null;
+/** CSV-duration / Done chain timer — Worker-backed so background tabs do not stall. */
+let avatarChainTimer: ReliableTimeoutHandle | null = null;
+let avatarChainRetryTimer: ReliableTimeoutHandle | null = null;
+/** Wall-clock due time for the armed CSV-duration timer (visibility flush backup). */
+let avatarChainDueAtMs: number | null = null;
+let avatarChainDueSettle: (() => void) | null = null;
 /**
  * True while settle() is advancing to the next CSV clip. Prevents drain from
  * seeing a brief pending=null gap and starting sch8 in parallel with sch7.
@@ -41,28 +49,41 @@ type PendingAvatarDone = {
 let pendingAvatarDone: PendingAvatarDone | null = null;
 
 function clearAvatarChainTimer(): void {
-  if (avatarChainTimer !== null) {
-    clearTimeout(avatarChainTimer);
-    avatarChainTimer = null;
-  }
+  clearReliableTimeout(avatarChainTimer);
+  avatarChainTimer = null;
+  avatarChainDueAtMs = null;
+  avatarChainDueSettle = null;
 }
 
 function clearAvatarChainRetryTimer(): void {
-  if (avatarChainRetryTimer !== null) {
-    clearTimeout(avatarChainRetryTimer);
-    avatarChainRetryTimer = null;
-  }
+  clearReliableTimeout(avatarChainRetryTimer);
+  avatarChainRetryTimer = null;
+}
+
+/** Wall-clock backup when main-thread timers were throttled (also used on tab focus). */
+export function flushOverdueAvatarChainTimer(): void {
+  if (avatarChainDueAtMs == null || avatarChainDueSettle == null) return;
+  if (Date.now() < avatarChainDueAtMs) return;
+  const settle = avatarChainDueSettle;
+  clearAvatarChainTimer();
+  settle();
 }
 
 function scheduleAvatarChainRetry(delayMs: number, epoch: number): void {
   clearAvatarChainRetryTimer();
-  avatarChainRetryTimer = setTimeout(() => {
+  avatarChainRetryTimer = scheduleReliableTimeout(() => {
     avatarChainRetryTimer = null;
     if (epoch !== avatarPlaybackEpoch) return;
     void advanceAvatarChainAfterDone().catch((err) => {
       console.warn("[avatar] chain retry failed:", err);
     });
   }, Math.max(0, delayMs));
+}
+
+if (typeof document !== "undefined") {
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") flushOverdueAvatarChainTimer();
+  });
 }
 
 export type AvatarChainContext = {
@@ -255,15 +276,21 @@ function noteAvatarStarted(
   };
 
   clearAvatarChainTimer();
-  avatarChainTimer = setTimeout(() => {
+  const onDurationElapsed = () => {
     avatarChainTimer = null;
+    avatarChainDueAtMs = null;
+    avatarChainDueSettle = null;
     settle({
       status: "timeout",
       received: [],
       missing: names,
       wait_ms: clipDurationMs
     });
-  }, clipDurationMs);
+  };
+  avatarChainDueAtMs = Date.now() + clipDurationMs;
+  avatarChainDueSettle = onDurationElapsed;
+  // Worker timer: survives background-tab throttling that breaks main-thread setTimeout.
+  avatarChainTimer = scheduleReliableTimeout(onDurationElapsed, clipDurationMs);
 
   if (!names.length) {
     // Still chain after duration — missing Pixera names must not kill the sequence.
