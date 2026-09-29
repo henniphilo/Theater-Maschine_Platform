@@ -21,6 +21,7 @@ import {
   countUnfiredAvatarSegments,
   clearPendingAvatarDoneGate,
   drainRemainingAvatarChain,
+  recoverStalledAvatarChain,
   resetAvatarPlaybackState,
   fireInitialAvatarSegments,
   markAvatarSegmentsBeforeSentenceIndex,
@@ -227,9 +228,14 @@ export async function runTextSyncPlayback(
   try {
     for (let index = startIndex; index <= endIndex; index++) {
       if (shouldAbort()) break;
-      if (!(await waitWhilePlaybackPaused(shouldAbort))) break;
+      // While paused, keep recovering the CSV chain — otherwise a lost duration
+      // timer (and a watchdog that shares the same timer infra) can sit idle for
+      // ~60s until Chrome's background throttle fires (mo1→mo2-class gaps).
+      if (!(await waitWhilePlaybackPaused(shouldAbort, recoverStalledAvatarChain))) break;
       // After a long pause between sentences, do not dump overdue atmospheres.
       skipTimeCueCatchUp();
+      // Avatar CSV chain is independent of TTS — recover lost duration timers here.
+      recoverStalledAvatarChain();
 
       lastIndex = index;
       const sentence = sentences[index];
@@ -269,6 +275,7 @@ export async function runTextSyncPlayback(
           shouldAbort,
           onTimeUpdate: (current, duration) => {
             if (Number.isFinite(duration)) lastDuration = duration;
+            recoverStalledAvatarChain();
             void fireTimedCues(sentenceStart + current);
           }
         });

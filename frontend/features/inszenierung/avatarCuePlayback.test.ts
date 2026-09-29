@@ -608,7 +608,12 @@ describe("avatar done gate", () => {
     await fireAvatarSegmentIfDue(first, 0.5, async () => undefined, () => false);
     expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(1);
 
+    const { AVATAR_CHAIN_TAIL_MS } = await import("@/features/inszenierung/avatarCuePlayback");
+    // Exact CSV duration must NOT advance yet — short Pixera tail still running.
     await vi.advanceTimersByTimeAsync(1_000);
+    expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(1);
+
+    await vi.advanceTimersByTimeAsync(AVATAR_CHAIN_TAIL_MS);
     await vi.waitFor(() => {
       expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(2);
     });
@@ -702,7 +707,8 @@ describe("avatar done gate", () => {
     });
 
     await fireAvatarSegmentIfDue(first, 0.5, async () => undefined, () => false);
-    await vi.advanceTimersByTimeAsync(500);
+    const { AVATAR_CHAIN_TAIL_MS } = await import("@/features/inszenierung/avatarCuePlayback");
+    await vi.advanceTimersByTimeAsync(500 + AVATAR_CHAIN_TAIL_MS);
     // First retry attempt still blocked — second must stay unfired (not burned).
     await Promise.resolve();
     expect(fired.has(avatarSegmentKey(second))).toBe(false);
@@ -809,6 +815,96 @@ describe("avatar done gate", () => {
     vi.useRealTimers();
   });
 
+  it("recoverStalledAvatarChain resumes when duration timer is overdue", async () => {
+    vi.useFakeTimers();
+    const { isAvatarDoneGateEnabled, postDirectorExecuteLayered } = await import("@/lib/api/director");
+    const {
+      fireAvatarSegmentIfDue,
+      bindAvatarChainContext,
+      avatarSegmentKey,
+      resetAvatarPlaybackState,
+      recoverStalledAvatarChain
+    } = await import("@/features/inszenierung/avatarCuePlayback");
+
+    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(false);
+    vi.mocked(postDirectorExecuteLayered)
+      .mockResolvedValueOnce({
+        executed: true,
+        osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.First"] }]
+      })
+      .mockResolvedValueOnce({
+        executed: true,
+        osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.Second"] }]
+      });
+
+    const layer = (clip: string, durationMs: number) => ({
+      avatar_speech_id: clip,
+      avatar: "delfin",
+      video_clip_id: clip,
+      visual_cue: {
+        action: "play_clip" as const,
+        clip_id: clip,
+        video_type: "avatar" as const,
+        duration_ms: durationMs
+      }
+    });
+
+    const first = {
+      csv_cue_ids: ["a"],
+      text_excerpt: "Alpha.",
+      char_offset: 0,
+      csv_sequence_index: 0,
+      start_sentence_index: 0,
+      end_sentence_index: 0,
+      avatar_layers: [layer("first", 800)]
+    };
+    const second = {
+      csv_cue_ids: ["b"],
+      text_excerpt: "Beta.",
+      char_offset: 500,
+      csv_sequence_index: 1,
+      start_sentence_index: 1,
+      end_sentence_index: 1,
+      avatar_layers: [layer("second", 800)]
+    };
+
+    const plan = {
+      performance_speaker: "narrator" as const,
+      sentences: ["Alpha.", "Beta."],
+      sentence_char_starts: [0, 7],
+      avatar_segments: [first, second],
+      dramaturgy: { reason: "t", tags: [], mood: "tension" as const, intensity: 0.5, cue_points: [] },
+      anarchy_level_end: 1,
+      alignment_warnings: []
+    };
+    const fired = new Set<string>([avatarSegmentKey(first)]);
+
+    bindAvatarChainContext({
+      plan,
+      fired,
+      sentenceCharStarts: plan.sentence_char_starts,
+      scriptText: "Alpha. Beta.",
+      anarchyLevelFor: () => 0.5,
+      onCommands: async () => undefined,
+      shouldAbort: () => false
+    });
+
+    await fireAvatarSegmentIfDue(first, 0.5, async () => undefined, () => false);
+    expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(1);
+
+    // Simulate lost Worker timer: wall clock past due, timer callback never ran.
+    vi.setSystemTime(Date.now() + 10_000);
+    recoverStalledAvatarChain();
+
+    await vi.waitFor(() => {
+      expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(2);
+    });
+    expect(fired.has(avatarSegmentKey(second))).toBe(true);
+
+    resetAvatarPlaybackState();
+    vi.useRealTimers();
+  });
+
   it("drainRemainingAvatarChain finishes CSV after narrator would have stopped", async () => {
     vi.useFakeTimers();
     const { isAvatarDoneGateEnabled, postDirectorExecuteLayered } = await import("@/lib/api/director");
@@ -892,9 +988,10 @@ describe("avatar done gate", () => {
     fired.add(avatarSegmentKey(first));
 
     const drain = drainRemainingAvatarChain(() => false, plan, fired);
-    await vi.advanceTimersByTimeAsync(500);
-    await vi.advanceTimersByTimeAsync(800);
-    await vi.advanceTimersByTimeAsync(400);
+    const { AVATAR_CHAIN_TAIL_MS } = await import("@/features/inszenierung/avatarCuePlayback");
+    await vi.advanceTimersByTimeAsync(500 + AVATAR_CHAIN_TAIL_MS);
+    await vi.advanceTimersByTimeAsync(800 + AVATAR_CHAIN_TAIL_MS);
+    await vi.advanceTimersByTimeAsync(400 + AVATAR_CHAIN_TAIL_MS);
     await drain;
 
     expect(fired.has(avatarSegmentKey(second))).toBe(true);
@@ -988,10 +1085,10 @@ describe("avatar done gate", () => {
     expect(calls).toEqual(["sch7"]);
     expect(fired.has(avatarSegmentKey(sch8))).toBe(false);
 
-    // Finish sch7 duration, let advance arm sch8, then finish sch8.
-    await vi.advanceTimersByTimeAsync(3_000);
+    // Finish sch7 duration + tail, let advance arm sch8, then finish sch8.
+    await vi.advanceTimersByTimeAsync(3_200);
     await vi.advanceTimersByTimeAsync(100);
-    await vi.advanceTimersByTimeAsync(1_000);
+    await vi.advanceTimersByTimeAsync(1_200);
     await vi.advanceTimersByTimeAsync(2_000);
     await drainPromise;
 
@@ -1001,6 +1098,80 @@ describe("avatar done gate", () => {
     resetAvatarPlaybackState();
     vi.useRealTimers();
   }, 10_000);
+
+  it("recoverStalledAvatarChain clears stuck pending when dueAt is already gone", async () => {
+    vi.useFakeTimers();
+    const { isAvatarDoneGateEnabled, postDirectorExecuteLayered } = await import("@/lib/api/director");
+    const {
+      bindAvatarChainContext,
+      avatarSegmentKey,
+      resetAvatarPlaybackState,
+      recoverStalledAvatarChain,
+      injectStuckPendingAvatarForTests
+    } = await import("@/features/inszenierung/avatarCuePlayback");
+
+    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(false);
+    vi.mocked(postDirectorExecuteLayered).mockResolvedValue({
+      executed: true,
+      osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.Next"] }]
+    });
+
+    const next = {
+      csv_cue_ids: ["next"],
+      text_excerpt: "Next.",
+      char_offset: 0,
+      csv_sequence_index: 0,
+      start_sentence_index: 0,
+      end_sentence_index: 0,
+      avatar_layers: [
+        {
+          avatar_speech_id: "next",
+          avatar: "delfin",
+          video_clip_id: "next",
+          visual_cue: {
+            action: "play_clip" as const,
+            clip_id: "next",
+            video_type: "avatar" as const,
+            duration_ms: 500
+          }
+        }
+      ]
+    };
+
+    const plan = {
+      version: 1 as const,
+      sentences: ["Next."],
+      sentence_char_starts: [0],
+      performance_speaker: "narrator" as const,
+      anarchy_level_end: 0.5,
+      dramaturgy: { reason: "t", tags: [], mood: "neutral", intensity: 0.5 },
+      avatar_segments: [next],
+      atmosphere_cue_points: []
+    };
+    const fired = new Set<string>();
+
+    bindAvatarChainContext({
+      plan,
+      fired,
+      sentenceCharStarts: [0],
+      scriptText: "Next.",
+      anarchyLevelFor: () => 0.5,
+      onCommands: async () => undefined,
+      shouldAbort: () => false
+    });
+
+    // Simulate mo1-class stall: pending blocks kick, due timer already cleared.
+    injectStuckPendingAvatarForTests(["KI_RZ21.Stuck"]);
+    recoverStalledAvatarChain();
+
+    await vi.waitFor(() => {
+      expect(postDirectorExecuteLayered).toHaveBeenCalled();
+    });
+    expect(fired.has(avatarSegmentKey(next))).toBe(true);
+
+    resetAvatarPlaybackState();
+    vi.useRealTimers();
+  });
 
   it("ignores delayed chain timers after resetAvatarPlaybackState (second-run safety)", async () => {
     vi.useFakeTimers();

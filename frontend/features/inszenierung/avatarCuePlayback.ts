@@ -17,12 +17,30 @@ let avatarPlaybackEpoch = 0;
 const AVATAR_POSITION_DEBOUNCE_MS = 150;
 const DEFAULT_AVATAR_DONE_TIMEOUT_MS = 120_000;
 const AVATAR_DONE_TIMEOUT_GRACE_MS = 2_000;
+/**
+ * Extra wait after CSV `duration_ms` before the next avatar OSC.
+ * Absorbs Pixera start latency so the next clip does not overlap the previous
+ * visually (no /avatar/done from Pixera). Keep short — chain feels sluggish if large.
+ */
+export const AVATAR_CHAIN_TAIL_MS = 200;
 /** Retry delay when a CSV avatar is transiently blocked (density/lock) — never burn the segment. */
 const AVATAR_CHAIN_RETRY_MS = 1_500;
+/**
+ * Periodic wall-clock check: if the CSV-duration timer was lost (Worker death,
+ * missed postMessage) the chain stalls with a black beamer until something else
+ * kicks it. Watchdog flushes overdue timers and re-kicks an idle unfired chain.
+ *
+ * Note: the watchdog uses the same reliableTimeout as the CSV timer. When the
+ * Aufführung tab is backgrounded and both Worker + main-thread arms stall,
+ * recovery still depends on a live JS tick (TTS onTimeUpdate, pause-wait poll,
+ * or visibilitychange).
+ */
+const AVATAR_CHAIN_WATCHDOG_MS = 500;
 let avatarPositionTimer: ReturnType<typeof setTimeout> | null = null;
 /** CSV-duration / Done chain timer — Worker-backed so background tabs do not stall. */
 let avatarChainTimer: ReliableTimeoutHandle | null = null;
 let avatarChainRetryTimer: ReliableTimeoutHandle | null = null;
+let avatarChainWatchdogTimer: ReliableTimeoutHandle | null = null;
 /** Wall-clock due time for the armed CSV-duration timer (visibility flush backup). */
 let avatarChainDueAtMs: number | null = null;
 let avatarChainDueSettle: (() => void) | null = null;
@@ -31,6 +49,8 @@ let avatarChainDueSettle: (() => void) | null = null;
  * seeing a brief pending=null gap and starting sch8 in parallel with sch7.
  */
 let avatarChainAdvancing = false;
+/** Set when the first CSV clip arms a duration timer — blocks idle-kick before fireInitial. */
+let avatarChainEverArmed = false;
 
 /** In-flight avatar clip(s): TTS stays parallel; on done the next clip starts immediately. */
 type PendingAvatarDone = {
@@ -60,6 +80,11 @@ function clearAvatarChainRetryTimer(): void {
   avatarChainRetryTimer = null;
 }
 
+function clearAvatarChainWatchdog(): void {
+  clearReliableTimeout(avatarChainWatchdogTimer);
+  avatarChainWatchdogTimer = null;
+}
+
 /** Wall-clock backup when main-thread timers were throttled (also used on tab focus). */
 export function flushOverdueAvatarChainTimer(): void {
   if (avatarChainDueAtMs == null || avatarChainDueSettle == null) return;
@@ -67,6 +92,56 @@ export function flushOverdueAvatarChainTimer(): void {
   const settle = avatarChainDueSettle;
   clearAvatarChainTimer();
   settle();
+}
+
+/**
+ * Recover a stalled CSV chain: flush a lost duration timer, or kick advance when
+ * idle with unfired segments (no pending Done / no retry armed).
+ */
+export function recoverStalledAvatarChain(): void {
+  flushOverdueAvatarChainTimer();
+  const ctx = avatarChainContext;
+  if (!ctx || ctx.shouldAbort()) return;
+  // Before the first clip, fireInitial owns startup — do not race it.
+  if (!avatarChainEverArmed) return;
+
+  // Stuck state seen in long mo1→mo2 gaps: pending still set, dueAt already
+  // cleared, settle never advanced (epoch abort / lost callback). pending then
+  // blocks the idle-kick forever while the watchdog "runs" but no-ops.
+  if (
+    pendingAvatarDone &&
+    avatarChainDueAtMs == null &&
+    !avatarChainAdvancing &&
+    !avatarChainRetryTimer
+  ) {
+    console.warn(
+      "[avatar] clearing stuck pending (no due timer) — re-kicking CSV chain",
+      pendingAvatarDone.cueNames
+    );
+    pendingAvatarDone = null;
+  }
+
+  if (avatarChainAdvancing || pendingAvatarDone || avatarChainRetryTimer) return;
+  if (countUnfiredAvatarSegments(ctx.plan, ctx.fired) <= 0) return;
+  const epoch = avatarPlaybackEpoch;
+  void advanceAvatarChainAfterDone().catch((err) => {
+    console.warn("[avatar] stalled-chain recover failed:", err);
+    if (epoch === avatarPlaybackEpoch) {
+      scheduleAvatarChainRetry(AVATAR_CHAIN_RETRY_MS, epoch);
+    }
+  });
+}
+
+function armAvatarChainWatchdog(): void {
+  clearAvatarChainWatchdog();
+  if (!avatarChainContext) return;
+  const epoch = avatarPlaybackEpoch;
+  avatarChainWatchdogTimer = scheduleReliableTimeout(() => {
+    avatarChainWatchdogTimer = null;
+    if (epoch !== avatarPlaybackEpoch || !avatarChainContext) return;
+    recoverStalledAvatarChain();
+    armAvatarChainWatchdog();
+  }, AVATAR_CHAIN_WATCHDOG_MS);
 }
 
 function scheduleAvatarChainRetry(delayMs: number, epoch: number): void {
@@ -82,7 +157,7 @@ function scheduleAvatarChainRetry(delayMs: number, epoch: number): void {
 
 if (typeof document !== "undefined") {
   document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") flushOverdueAvatarChainTimer();
+    if (document.visibilityState === "visible") recoverStalledAvatarChain();
   });
 }
 
@@ -249,7 +324,11 @@ function noteAvatarStarted(
     settled = true;
     clearAvatarChainTimer();
     resolveFinished(result);
-    if (epoch !== avatarPlaybackEpoch) return;
+    if (epoch !== avatarPlaybackEpoch) {
+      // Do not leave pending set — recoverStalled would no-op forever.
+      if (pendingAvatarDone?.token === token) pendingAvatarDone = null;
+      return;
+    }
     if (shouldAbort()) {
       if (pendingAvatarDone?.token === token) pendingAvatarDone = null;
       return;
@@ -274,8 +353,11 @@ function noteAvatarStarted(
     token,
     blocksNextOsc: false
   };
+  avatarChainEverArmed = true;
 
   clearAvatarChainTimer();
+  // CSV duration + short tail (Pixera start latency; no Done signal available).
+  const chainDelayMs = clipDurationMs + AVATAR_CHAIN_TAIL_MS;
   const onDurationElapsed = () => {
     avatarChainTimer = null;
     avatarChainDueAtMs = null;
@@ -284,13 +366,13 @@ function noteAvatarStarted(
       status: "timeout",
       received: [],
       missing: names,
-      wait_ms: clipDurationMs
+      wait_ms: chainDelayMs
     });
   };
-  avatarChainDueAtMs = Date.now() + clipDurationMs;
+  avatarChainDueAtMs = Date.now() + chainDelayMs;
   avatarChainDueSettle = onDurationElapsed;
   // Worker timer: survives background-tab throttling that breaks main-thread setTimeout.
-  avatarChainTimer = scheduleReliableTimeout(onDurationElapsed, clipDurationMs);
+  avatarChainTimer = scheduleReliableTimeout(onDurationElapsed, chainDelayMs);
 
   if (!names.length) {
     // Still chain after duration — missing Pixera names must not kill the sequence.
@@ -319,6 +401,11 @@ function noteAvatarStarted(
 /** Bind plan/fired callbacks so Done can chain the next CSV avatar without delay. */
 export function bindAvatarChainContext(ctx: AvatarChainContext | null): void {
   avatarChainContext = ctx;
+  if (ctx) {
+    armAvatarChainWatchdog();
+  } else {
+    clearAvatarChainWatchdog();
+  }
 }
 
 /**
@@ -329,10 +416,12 @@ export function resetAvatarPlaybackState(): void {
   avatarPlaybackEpoch += 1;
   pendingAvatarDone = null;
   avatarChainAdvancing = false;
+  avatarChainEverArmed = false;
   avatarChainContext = null;
   avatarFireChain = Promise.resolve();
   clearAvatarChainTimer();
   clearAvatarChainRetryTimer();
+  clearAvatarChainWatchdog();
   if (avatarPositionTimer !== null) {
     clearTimeout(avatarPositionTimer);
     avatarPositionTimer = null;
@@ -343,6 +432,21 @@ export function resetAvatarPlaybackState(): void {
 /** Clear in-flight done-wait (tests / abort). Also resets fire-lock for re-entry safety. */
 export function clearPendingAvatarDoneGate(): void {
   resetAvatarPlaybackState();
+}
+
+/** Test helper — lost duration callback left pending set with no dueAt (watchdog no-op hole). */
+export function injectStuckPendingAvatarForTests(cueNames: string[] = ["stuck"]): void {
+  avatarChainEverArmed = true;
+  avatarChainAdvancing = false;
+  clearAvatarChainTimer();
+  clearAvatarChainRetryTimer();
+  pendingAvatarDone = {
+    cueNames,
+    timeoutMs: 1_000,
+    finished: Promise.resolve(null),
+    token: Symbol("stuck-pending"),
+    blocksNextOsc: false
+  };
 }
 
 /** Block narrator until any in-flight avatar finishes (e.g. show end). */

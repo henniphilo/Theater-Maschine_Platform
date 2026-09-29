@@ -367,8 +367,12 @@ async function sleep(ms: number) {
 }
 
 /** Block until pause is cleared or playback stops. */
-export async function waitWhilePlaybackPaused(shouldAbort: () => boolean): Promise<boolean> {
+export async function waitWhilePlaybackPaused(
+  shouldAbort: () => boolean,
+  onWaitTick?: () => void
+): Promise<boolean> {
   while (playbackPaused && !shouldAbort()) {
+    onWaitTick?.();
     await sleep(80);
   }
   return !shouldAbort();

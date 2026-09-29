@@ -1,0 +1,70 @@
+reihenfolge;id;avatar;scene_ref;video_clip_id;duration_ms;duration_s;dateiname;ordner;dateipfad
+1;bak1_nicolaspflanzen3;baerenklau;BAK1_NicolasPflanzen3;bak1_nicolaspflanzen3;35400;35.4;BAK1_Nicolas Pflanzen 3.mp4;Exporte 04.09.2026;/Users/multimediapc146/Documents/KI Test/Exporte 04.09.2026/BAK1_Nicolas Pflanzen 3.mp4
+2;bak2_krabbe;baerenklau;BAK2_Krabbe;bak2_krabbe;6000;6.0;BAK2_Krabbe.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/BAK2_Krabbe.mp4
+3;bak3_hasen;baerenklau;BAK3_Hasen;bak3_hasen;20480;20.48;BAK3_Hasen.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/BAK3_Hasen.mp4
+4;bak3_mavie;baerenklau;BAK3_Mavie;bak3_mavie;20480;20.48;BAK3_Mavie.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/BAK3_Mavie.mp4
+5;bak4_inge;baerenklau;BAK4_Inge;bak4_inge;8440;8.44;BAK4_Inge.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/BAK4_Inge.mp4
+6;bak5_thiemo;baerenklau;BAK5_Thiemo;bak5_thiemo;15480;15.48;BAK5_Thiemo.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/BAK5_Thiemo.mp4
+7;bak6_azaria;baerenklau;BAK6_Azaria;bak6_azaria;13280;13.28;BAK6_Azaria.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/BAK6_Azaria.mp4
+8;bak6_schwein;baerenklau;BAK6_Schwein;bak6_schwein;13280;13.28;BAK6_Schwein.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/BAK6_Schwein.mp4
+9;del1_nicolas;delphin;DEL1_Nicolas;del1_nicolas;3160;3.16;DEL1_Nicolas.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/DEL1_Nicolas.mp4
+10;del2;delphin;DEL2;del2;8720;8.72;DEL2.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/DEL2.mp4
+11;del3;delphin;DEL3;del3;7240;7.24;DEL3.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/DEL3.mp4
+12;del4;delphin;DEL4;del4;12880;12.88;DEL4.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/DEL4.mp4
+13;bk0_waran;baerenklau;BK0_Waran;bk0_waran;3360;3.36;BK0_Waran.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/BK0_Waran.mp4
+14;bk1_caro;baerenklau;BK1_Caro;bk1_caro;12080;12.08;BK1_Caro.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/BK1_Caro.mp4
+15;bk1_caroline;baerenklau;BK1_Caroline;bk1_caroline;12080;12.08;BK1_Caroline.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/BK1_Caroline.mp4
+16;bk1_thomas;baerenklau;BK1_Thomas;bk1_thomas;12080;12.08;BK1_Thomas.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/BK1_Thomas.mp4
+17;bk2_hundswolf;baerenklau;BK2_Hundswolf;bk2_hundswolf;20680;20.68;BK2_Hundswolf.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/BK2_Hundswolf.mp4
+18;bk2_mavie;baerenklau;BK2_Mavie;bk2_mavie;20680;20.68;BK2_Mavie.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/BK2_Mavie.mp4
+19;bk3_thomas;baerenklau;BK3_Thomas;bk3_thomas;20760;20.76;BK3_Thomas.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/BK3_Thomas.mp4
+20;bk3_thomas_stroh;baerenklau;BK3_Thomas_Stroh;bk3_thomas_stroh;20760;20.76;BK3_Thomas_Stroh.mp4;Exporte 04.09.2026;/Users/multimediapc146/Documents/KI Test/Exporte 04.09.2026/BK3_Thomas_Stroh.mp4
+21;daslammgottes;lamm;DasLammGottes;daslammgottes;3720;3.72;LG1_Das Lamm Gottes.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/LG1_Das Lamm Gottes.mp4
+22;lg2_inge;lamm;LG2_Inge;lg2_inge;7040;7.04;LG2_Inge.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/LG2_Inge.mp4
+23;lg3_seb;lamm;LG3_Seb;lg3_seb;4360;4.36;LG3_Seb.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/LG3_Seb.mp4
+24;lg3_affe;lamm;LG3_Affe;lg3_affe;4360;4.36;LG3_Affe.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/LG3_Affe.mp4
+25;lg4_azaria;lamm;LG4_Azaria;lg4_azaria;9440;9.44;LG4_Azaria.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/LG4_Azaria.mp4
+26;lg4_maeuse;lamm;LG4_Maeuse;lg4_maeuse;9440;9.44;LG4_Maeuse.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/LG4_Maeuse.mp4
+27;lg5_henrike;lamm;LG5_Henrike;lg5_henrike;2680;2.68;LG5_Henrike.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/LG5_Henrike.mp4
+28;lg6_hai;lamm;LG6_Hai;lg6_hai;3160;3.16;LG6_Hai.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/LG6_Hai.mp4
+29;bk5_nicolas;baerenklau;BK5_Nicolas;bk5_nicolas;3120;3.12;BK5_Nicolas.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/BK5_Nicolas.mp4
+30;bk6_branko;baerenklau;BK6_Branko;bk6_branko;3160;3.16;BK6_Branko.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/BK6_Branko.mp4
+31;bk7_nasenfisch;baerenklau;BK7_Nasenfisch;bk7_nasenfisch;32960;32.96;BK7_Nasenfisch.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/BK7_Nasenfisch.mp4
+32;bk7_caroline_geldstrudel;baerenklau;BK7_Caroline_Geldstrudel;bk7_caroline_geldstrudel;33000;33.0;BK7_Caroline_Geldstrudel.mp4;Exporte 04.09.2026;/Users/multimediapc146/Documents/KI Test/Exporte 04.09.2026/BK7_Caroline_Geldstrudel.mp4
+33;bk8_haischaedel;baerenklau;BK8_HaiSchaedel;bk8_haischaedel;20840;20.84;BK8_Hai Schaedel.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/BK8_Hai Schaedel.mp4
+34;bk8_mavie1;baerenklau;BK8_Mavie1;bk8_mavie1;20875;20.875;BK8_Mavie 1.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/BK8_Mavie 1.mp4
+35;bk8_mavie;baerenklau;BK8_Mavie;bk8_mavie;20880;20.88;BK8_Mavie.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/BK8_Mavie.mp4
+36;bk9_thiemo;baerenklau;BK9_Thiemo;bk9_thiemo;9280;9.28;BK9_Thiemo.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/BK9_Thiemo.mp4
+37;bk9_muppetschwein;baerenklau;BK9_Muppetschwein;bk9_muppetschwein;9280;9.28;BK9_Muppetschwein.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/BK9_Muppetschwein.mp4
+38;pet0_baer_thomas;petya;PET0_Baer_Thomas;pet0_baer_thomas;5400;5.4;PET0_Baer_Thomas.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/PET0_Baer_Thomas.mp4
+39;pet1_azaria;petya;PET1_Azaria;pet1_azaria;4840;4.84;PET1_Azaria.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/PET1_Azaria.mp4
+40;pet1_thomas;petya;PET1_Thomas;pet1_thomas;9520;9.52;PET1_Thomas.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/PET1_Thomas.mp4
+41;pet2_inge;petya;PET2_Inge;pet2_inge;16920;16.92;PET2_Inge.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/PET2_Inge.mp4
+42;pet2_walross;petya;PET2_Walross;pet2_walross;16920;16.92;PET2_Walross.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/PET2_Walross.mp4
+43;pet3_koala;petya;PET3_Koala;pet3_koala;12480;12.48;PET3_Koala.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/PET3_Koala.mp4
+44;pet4_sebastian;petya;PET4_Sebastian;pet4_sebastian;26000;26.0;PET4_Sebastian.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/PET4_Sebastian.mp4
+45;pet5_azaria;petya;PET5_Azaria;pet5_azaria;17520;17.52;PET5_Azaria.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/PET5_Azaria.mp4
+46;wo1_kaenguru;wolf;WO1_Kaenguru;wo1_kaenguru;4280;4.28;WO1_Kaenguru.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/WO1_Kaenguru.mp4
+47;wo2_branko;wolf;WO2_Branko;wo2_branko;7920;7.92;WO2_Branko.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/WO2_Branko.mp4
+48;wo3_seb_musik;wolf;WO3_Seb_Musik;wo3_seb_musik;9880;9.88;WO3_Seb_Musik.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/WO3_Seb_Musik.mp4
+49;wo4_nicolas;wolf;WO4_Nicolas;wo4_nicolas;2480;2.48;WO4_Nicolas.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/WO4_Nicolas.mp4
+50;wo4_schimpanse;wolf;WO4_Schimpanse;wo4_schimpanse;2960;2.96;WO4_Schimpanse.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/WO4_Schimpanse.mp4
+51;wo5_thiemo;wolf;WO5_Thiemo;wo5_thiemo;8360;8.36;WO5_Thiemo.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/WO5_Thiemo.mp4
+52;wo6_mavie;wolf;WO6_Mavie;wo6_mavie;20265;20.265;WO6_Mavie.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/WO6_Mavie.mp4
+53;wo6_schimpanse;wolf;WO6_Schimpanse;wo6_schimpanse;20280;20.28;WO6_Schimpanse.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/WO6_Schimpanse.mp4
+54;wo7_sebastian;wolf;WO7_Sebastian;wo7_sebastian;12400;12.4;WO7_Sebastian.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/WO7_Sebastian.mp4
+55;mo1_sebmusik;delphin;MO1_SebMusik;mo1_sebmusik;4565;4.565;MO1_Seb_Musik.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/MO1_Seb_Musik.mp4
+56;mo2_branko;delphin;MO2_Branko;mo2_branko;31360;31.36;MO2_Branko.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/MO2_Branko.mp4
+57;mo3_dachs;delphin;MO3_Dachs;mo3_dachs;14280;14.28;MO3_Dachs.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/MO3_Dachs.mp4
+58;mo3_caro;delphin;MO3_Caro;mo3_caro;14280;14.28;MO3_Dachs_Caro.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/MO3_Dachs_Caro.mp4
+59;sch1_sebastian;delphin;SCH1_Sebastian;sch1_sebastian;4080;4.08;SCH1_Sebastian.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/SCH1_Sebastian.mp4
+60;sch2_azariawirdschaf;delphin;SCH2_AzariawirdSchaf;sch2_azariawirdschaf;37360;37.36;SCH2_Azaria wird Schaf..mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/SCH2_Azaria wird Schaf..mp4
+61;sch2_azaria_als_schaf;delphin;SCH2_Azaria_als_Schaf;sch2_azaria_als_schaf;37360;37.36;SCH2_Azaria_als_Schaf.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/SCH2_Azaria_als_Schaf.mp4
+62;sch2_azaria;delphin;SCH2_Azaria;sch2_azaria;37360;37.36;SCH2_Azaria.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/SCH2_Azaria.mp4
+63;sch3_ingewirdschaf;delphin;SCH3_IngewirdSchaf;sch3_ingewirdschaf;25840;25.84;SCH3_Inge wird Schaf..mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/SCH3_Inge wird Schaf..mp4
+64;sch3_inge_wird_schaf_wolle_rot;delphin;Sch3_Inge_wird_Schaf_Wolle_rot;sch3_inge_wird_schaf_wolle_rot;25880;25.88;Sch3_Inge_wird_Schaf_Wolle_rot.mp4;Exporte 04.09.2026;/Users/multimediapc146/Documents/KI Test/Exporte 04.09.2026/Sch3_Inge_wird_Schaf_Wolle_rot.mp4
+65;sch4_thomas;delphin;SCH4_Thomas;sch4_thomas;8000;8.0;SCH4_Thomas.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/SCH4_Thomas.mp4
+66;sch5_schafsolo_mavie;delphin;SCH5_SchafSolo_Mavie;sch5_schafsolo_mavie;12600;12.6;SCH5_Schaf Solo_Mavie.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/SCH5_Schaf Solo_Mavie.mp4
+67;sch6_schafherde;delphin;SCH6_Schafherde;sch6_schafherde;12640;12.64;SCH6_Schafherde.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/SCH6_Schafherde.mp4
+68;sch7_schaf_single_sebastian;delphin;SCH7_Schaf_Single_Sebastian;sch7_schaf_single_sebastian;45200;45.2;SCH7_Schaf_Single_Sebastian.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/SCH7_Schaf_Single_Sebastian.mp4
+69;sch8_viele_schafe_caro;delphin;SCH8_Viele_Schafe_Caro;sch8_viele_schafe_caro;10480;10.48;SCH8_Viele_Schafe_Caro.mp4;Avatare;/Users/multimediapc146/Documents/KI Test/Avatare/SCH8_Viele_Schafe_Caro.mp4

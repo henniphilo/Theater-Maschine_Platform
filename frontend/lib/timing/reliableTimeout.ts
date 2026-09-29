@@ -4,6 +4,10 @@
  * Chrome/Safari throttle main-thread setTimeout to ~1/min in background tabs,
  * which stalls the Teil-2 avatar CSV chain. Worker timers are not throttled.
  *
+ * Production schedules **both** a Worker timer and a main-thread timer; the first
+ * callback wins. That way a dead/lost Worker still advances when the tab is
+ * visible, and a throttled main thread still advances via the Worker.
+ *
  * In Vitest (`process.env.VITEST`) we stay on the main thread so
  * `vi.useFakeTimers()` keeps working.
  */
@@ -14,6 +18,8 @@ type WorkerMsg = { type: "set"; id: number; delayMs: number } | { type: "clear";
 
 const callbacks = new Map<number, () => void>();
 const mainThreadHandles = new Map<number, ReturnType<typeof setTimeout>>();
+/** Ids that still have an armed Worker timer (may also have a main-thread arm). */
+const workerArmed = new Set<number>();
 
 let nextId = 1;
 let worker: Worker | null = null;
@@ -61,13 +67,21 @@ function ensureWorker(): Worker | null {
     w.onmessage = (event: MessageEvent<{ id?: number }>) => {
       const id = event.data?.id;
       if (typeof id !== "number") return;
+      workerArmed.delete(id);
       const cb = callbacks.get(id);
+      // Main-thread arm may still be pending — clear it so we only fire once.
+      const main = mainThreadHandles.get(id);
+      if (main != null) {
+        clearTimeout(main);
+        mainThreadHandles.delete(id);
+      }
       callbacks.delete(id);
       cb?.();
     };
     w.onerror = () => {
       workerUnavailable = true;
       worker = null;
+      workerArmed.clear();
     };
     worker = w;
     return w;
@@ -75,6 +89,22 @@ function ensureWorker(): Worker | null {
     workerUnavailable = true;
     return null;
   }
+}
+
+function armMainThread(id: number, delay: number): void {
+  const handle = setTimeout(() => {
+    mainThreadHandles.delete(id);
+    const cb = callbacks.get(id);
+    callbacks.delete(id);
+    // Cancel Worker arm if it has not fired yet.
+    if (workerArmed.has(id) && worker && !workerUnavailable) {
+      const msg: WorkerMsg = { type: "clear", id };
+      worker.postMessage(msg);
+      workerArmed.delete(id);
+    }
+    cb?.();
+  }, delay);
+  mainThreadHandles.set(id, handle);
 }
 
 /** Schedule `fn` after `delayMs` without background-tab throttling when possible. */
@@ -86,13 +116,11 @@ export function scheduleReliableTimeout(fn: () => void, delayMs: number): Reliab
   if (w) {
     const msg: WorkerMsg = { type: "set", id, delayMs: delay };
     w.postMessage(msg);
+    workerArmed.add(id);
+    // Parallel main-thread backup: first arm to fire wins (see handlers above).
+    armMainThread(id, delay);
   } else {
-    const handle = setTimeout(() => {
-      mainThreadHandles.delete(id);
-      callbacks.delete(id);
-      fn();
-    }, delay);
-    mainThreadHandles.set(id, handle);
+    armMainThread(id, delay);
   }
   return { id };
 }
@@ -100,10 +128,10 @@ export function scheduleReliableTimeout(fn: () => void, delayMs: number): Reliab
 export function clearReliableTimeout(handle: ReliableTimeoutHandle | null | undefined): void {
   if (!handle) return;
   callbacks.delete(handle.id);
-  const w = worker;
-  if (w && !workerUnavailable) {
+  if (workerArmed.has(handle.id) && worker && !workerUnavailable) {
     const msg: WorkerMsg = { type: "clear", id: handle.id };
-    w.postMessage(msg);
+    worker.postMessage(msg);
+    workerArmed.delete(handle.id);
   }
   const main = mainThreadHandles.get(handle.id);
   if (main != null) {
@@ -117,6 +145,7 @@ export function resetReliableTimeoutForTests(): void {
   for (const handle of mainThreadHandles.values()) clearTimeout(handle);
   mainThreadHandles.clear();
   callbacks.clear();
+  workerArmed.clear();
   if (worker) {
     worker.terminate();
     worker = null;
