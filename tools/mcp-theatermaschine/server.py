@@ -58,6 +58,32 @@ def analyze_signal_trace(run_id: str | None = None) -> str:
 
 
 @mcp.tool()
+def analyze_show_run(run_id: str | None = None) -> str:
+    """Post-run flow analysis: pauses, drops, avatar cascades, companion storms.
+
+    Defaults to the latest run in logs/signal_trace.jsonl when run_id is omitted.
+    """
+    from app.director.show_run_analysis import (
+        analyze_show_run as _analyze,
+        filter_run_events,
+        format_show_run_report,
+        latest_run_id,
+    )
+
+    trace = _trace_path()
+    events = _load_jsonl(trace)
+    if not events:
+        return f"No trace events found at {trace}"
+    rid = run_id or latest_run_id(events)
+    if not rid:
+        return "No run_id found in trace"
+    run_events = filter_run_events(events, rid)
+    if not run_events:
+        return f"No events for run_id={rid}"
+    return format_show_run_report(_analyze(run_events))
+
+
+@mcp.tool()
 def read_inszenierung(inszenierung_id: str) -> str:
     """Summarize a Teil 2 inszenierung JSON by UUID."""
     path = ROOT / "data" / "inszenierungen" / f"{inszenierung_id}.json"

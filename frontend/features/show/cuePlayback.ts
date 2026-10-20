@@ -94,6 +94,9 @@ export function decisionFromCuePoint(
 /** Max show-clock jump (sec) that still fires overdue time cues; larger gaps are skipped. */
 export const TIME_CUE_MAX_CATCH_UP_SEC = 2.5;
 
+/** Max keyword cue points fired at one sentence start (avoids execute storms). */
+export const KEYWORD_CUES_PER_SENTENCE_CAP = 2;
+
 export type CuePlaybackContext = {
   dramaturgy: DramaturgyDecision;
   beatText: string;
@@ -195,11 +198,16 @@ export function fireSentenceCues(
     fireCuePoint(ctx, point);
   }
 
-  const keywordPoints = points.filter((p) => p.trigger === "keyword" && p.keyword);
-  for (const point of keywordPoints) {
-    if (point.keyword && sentenceText.toLowerCase().includes(point.keyword.toLowerCase())) {
-      fireCuePoint(ctx, point);
-    }
+  // Only keywords assigned to this sentence (prepare sets sentence_index). Cap
+  // fires so a long sentence cannot dump every substring match at once.
+  const sentenceLower = sentenceText.toLowerCase();
+  const keywordPoints = points.filter((p) => {
+    if (p.trigger !== "keyword" || !p.keyword) return false;
+    if (p.sentence_index != null && p.sentence_index !== sentenceIndex) return false;
+    return sentenceLower.includes(p.keyword.toLowerCase());
+  });
+  for (const point of keywordPoints.slice(0, KEYWORD_CUES_PER_SENTENCE_CAP)) {
+    fireCuePoint(ctx, point);
   }
 }
 

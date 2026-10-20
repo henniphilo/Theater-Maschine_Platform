@@ -13,6 +13,7 @@ Read-only MCP tools for signal trace analysis, inszenierung summaries, and cue c
 | Tool | Description |
 |------|-------------|
 | `analyze_signal_trace` | Drop report from `logs/signal_trace.jsonl` |
+| `analyze_show_run` | Post-run: pauses, drops, avatar cascades, companion storms |
 | `read_inszenierung` | Summary of `data/inszenierungen/{id}.json` |
 | `list_recent_traces` | Recent trace events, filter by bridge/cue_id |
 | `cue_catalog_lookup` | Search `video_cues.json` or `sound_cues.json` |

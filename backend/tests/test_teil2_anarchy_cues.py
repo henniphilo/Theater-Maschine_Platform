@@ -16,6 +16,7 @@ from app.services.teil2_anarchy_cues import (
     playable_dramaturgy_sounds,
     sound_volume_for_anarchy,
     teil2_cue_allowlist,
+    thin_keyword_sound_cues,
 )
 
 
@@ -129,7 +130,7 @@ def test_apply_anarchy_replaces_stop_sound_with_play() -> None:
     assert updated.sound.volume >= 0.58
 
 
-def test_densify_fills_sound_gaps_between_sentences() -> None:
+def test_densify_fills_wide_sound_gaps_between_sentences() -> None:
     sentences = [
         "Der Delphin spricht zuerst.",
         "Dann kommt der Bärenklauer.",
@@ -137,6 +138,10 @@ def test_densify_fills_sound_gaps_between_sentences() -> None:
         "Die Maschine räumt die Schuld.",
         "Niemand hört den Puls.",
         "Am Ende bleibt nur Tausch.",
+        "Noch ein Satz ohne Klang.",
+        "Und noch einer danach.",
+        "Dann endlich der Bruch.",
+        "Zum Schluss der Nachhall.",
     ]
     script = " ".join(sentences)
     curve = AnarchyCurve(start=0.35, end=1.0)
@@ -151,4 +156,42 @@ def test_densify_fills_sound_gaps_between_sentences() -> None:
     indexes = sorted(point.sentence_index or 0 for point in sound_points)
     gaps = [right - left for left, right in zip(indexes, indexes[1:])]
     assert gaps
-    assert max(gaps) <= 2
+    assert max(gaps) <= 8
+
+
+def test_thin_keyword_sound_cues_keeps_light_and_widens_gaps() -> None:
+    points = [
+        CuePoint(
+            trigger=CuePointTrigger.KEYWORD,
+            keyword="eins",
+            sentence_index=0,
+            sound=SoundCue(cue_id="maschinen_grundader"),
+            light=LightCue(scene_id="warme_buehnenflaeche"),
+        ),
+        CuePoint(
+            trigger=CuePointTrigger.KEYWORD,
+            keyword="zwei",
+            sentence_index=2,
+            sound=SoundCue(cue_id="kaefigecho"),
+            light=LightCue(scene_id="gegenlicht_weich"),
+        ),
+        CuePoint(
+            trigger=CuePointTrigger.KEYWORD,
+            keyword="drei",
+            sentence_index=8,
+            sound=SoundCue(cue_id="drone"),
+            light=LightCue(scene_id="saallicht"),
+        ),
+    ]
+    thinned = thin_keyword_sound_cues(points, min_gap_sentences=6)
+    assert thinned[0].sound is not None
+    assert thinned[0].light is not None
+    assert thinned[1].sound is None
+    assert thinned[1].light is not None
+    assert thinned[2].sound is not None
+    sound_indexes = [
+        point.sentence_index or 0
+        for point in thinned
+        if point.sound and is_playable_sound_id(point.sound.cue_id)
+    ]
+    assert sound_indexes == [0, 8]

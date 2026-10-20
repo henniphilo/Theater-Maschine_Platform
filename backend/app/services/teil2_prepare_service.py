@@ -38,6 +38,7 @@ from app.services.teil2_anarchy_cues import (
     min_keyword_cues_for_script,
     min_keywords_per_chunk,
     teil2_cue_allowlist,
+    thin_keyword_sound_cues,
 )
 from app.services.teil2_atmosphere_scheduler import get_teil2_atmosphere_scheduler
 from app.services.teil2_cue_overview import build_cue_overview
@@ -304,8 +305,9 @@ class Teil2PrepareService:
                 "Wiederholung, rhetorische Spitze — was im Text wirklich auffällt.\n"
                 "Keine vorgegebene Themenliste, keine Schlagwort-Vorgabe von außen.\n"
                 "Jedes keyword muss wörtlich im Textabschnitt vorkommen.\n"
-                "Jeder cue_point MUSS einen sound.cue_id aus sounds[] haben (nur play, keine _out/cut).\n"
-                "Sound oft und hörbar: lieber zu viele Sound-Cues als Lücken.\n"
+                "Licht oft; Sound sparsam: nur bei starken Brüchen/Kontrasten, "
+                "cue_id aus sounds[] (nur play, keine _out/cut). Nicht jeder Cue braucht Sound.\n"
+                "Sounds sollen über mehrere Sätze wirken — lieber zu wenige Sound-Starts als Dauerfeuer.\n"
                 "Mehrere Cues pro Abschnitt; Anarchie steigt über den Verlauf (früh dezent, spät überlagert).\n\n"
                 f"Textabschnitt:\n{chunk_text}\n\n"
                 f"Medien-Allowlist:\n{allowlist}\n\n"
@@ -322,9 +324,10 @@ class Teil2PrepareService:
                         "role": "system",
                         "content": (
                             "Teil-2-Cue-Planner: Entdecke Stichworte im Textabschnitt "
-                            "und weise Licht/Sound zu. Jeder Cue braucht einen play-Sound. "
-                            "Keine _out/cut_all. Keine externe Wortliste. "
-                            "keyword muss wörtlich im Text stehen. Kein Dialog. Nur JSON."
+                            "und weise Licht/Sound zu. Sound optional und sparsam — "
+                            "Betten länger halten lassen. Keine _out/cut_all. "
+                            "Keine externe Wortliste. keyword muss wörtlich im Text stehen. "
+                            "Kein Dialog. Nur JSON."
                         ),
                     },
                     {"role": "user", "content": prompt},
@@ -414,6 +417,7 @@ class Teil2PrepareService:
             curve,
             self.llm.media_db,
         )
+        merged_points = thin_keyword_sound_cues(merged_points)
         return DramaturgyDecision(
             reason="Teil-2 Stichwort-Cues (Regel-Fallback ohne LLM)",
             tags=["teil2", "text_sync", "keyword", "anarchy", "fallback"],
@@ -454,12 +458,14 @@ class Teil2PrepareService:
             seen_keywords.add(norm)
             validated.append(fixed)
 
-        decision.cue_points = densify_keyword_sound_cues(
-            validated,
-            script_text,
-            sentences,
-            curve,
-            self.llm.media_db,
+        decision.cue_points = thin_keyword_sound_cues(
+            densify_keyword_sound_cues(
+                validated,
+                script_text,
+                sentences,
+                curve,
+                self.llm.media_db,
+            )
         )
         return decision
 

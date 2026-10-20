@@ -37,7 +37,10 @@ export default function DramaturgyAnalysisPage() {
     <main className="container col">
       <div className="pageHeader">
         <h1>Dramaturgie-Analyse</h1>
-        <Link href={"/director" as Route}>← Operator</Link>
+        <div className="row" style={{ gap: "1rem" }}>
+          <Link href={"/director/show-run" as Route}>Durchlauf-Analyse</Link>
+          <Link href={"/director" as Route}>← Operator</Link>
+        </div>
       </div>
       <p className="textMuted">
         Nach der Probe: Dichte, Stille und Begründungen — als Ausgangspunkt für den nächsten Prepare.

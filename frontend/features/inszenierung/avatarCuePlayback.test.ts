@@ -130,7 +130,19 @@ describe("avatarCuePlayback position helpers", () => {
           csv_sequence_index: 0,
           start_sentence_index: 0,
           end_sentence_index: 0,
-          avatar_layers: [{ avatar_speech_id: "a", avatar: "x", video_clip_id: "clip_a", visual_cue: { clip_id: "clip_a", video_type: "avatar", projector: "adam" } }]
+          avatar_layers: [
+            {
+              avatar_speech_id: "a",
+              avatar: "x",
+              video_clip_id: "clip_a",
+              visual_cue: {
+                clip_id: "clip_a",
+                video_type: "avatar",
+                projector: "adam",
+                duration_ms: 50
+              }
+            }
+          ]
         },
         {
           csv_cue_ids: ["b"],
@@ -139,7 +151,19 @@ describe("avatarCuePlayback position helpers", () => {
           csv_sequence_index: 1,
           start_sentence_index: 0,
           end_sentence_index: 0,
-          avatar_layers: [{ avatar_speech_id: "b", avatar: "x", video_clip_id: "clip_b", visual_cue: { clip_id: "clip_b", video_type: "avatar", projector: "eva" } }]
+          avatar_layers: [
+            {
+              avatar_speech_id: "b",
+              avatar: "x",
+              video_clip_id: "clip_b",
+              visual_cue: {
+                clip_id: "clip_b",
+                video_type: "avatar",
+                projector: "eva",
+                duration_ms: 50
+              }
+            }
+          ]
         }
       ]
     };
@@ -1162,6 +1186,177 @@ describe("avatar done gate", () => {
 
     // Simulate mo1-class stall: pending blocks kick, due timer already cleared.
     injectStuckPendingAvatarForTests(["KI_RZ21.Stuck"]);
+    recoverStalledAvatarChain();
+
+    await vi.waitFor(() => {
+      expect(postDirectorExecuteLayered).toHaveBeenCalled();
+    });
+    expect(fired.has(avatarSegmentKey(next))).toBe(true);
+
+    resetAvatarPlaybackState();
+    vi.useRealTimers();
+  });
+
+  it("recover idle-kick fires one clip then respects CSV duration (no cascade)", async () => {
+    // Run-20261017: stuck pending + rapid recover (TTS onTimeUpdate) emptied wo3→sch8
+    // in ~355ms. One recovery must re-arm duration — not dump the rest of the queue.
+    vi.useFakeTimers();
+    const { isAvatarDoneGateEnabled, postDirectorExecuteLayered } = await import("@/lib/api/director");
+    const {
+      bindAvatarChainContext,
+      avatarSegmentKey,
+      resetAvatarPlaybackState,
+      recoverStalledAvatarChain,
+      injectStuckPendingAvatarForTests,
+      AVATAR_CHAIN_TAIL_MS
+    } = await import("@/features/inszenierung/avatarCuePlayback");
+
+    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(false);
+
+    const layer = (clip: string, durationMs: number) => ({
+      avatar_speech_id: clip,
+      avatar: "delfin",
+      video_clip_id: clip,
+      visual_cue: {
+        action: "play_clip" as const,
+        clip_id: clip,
+        video_type: "avatar" as const,
+        duration_ms: durationMs
+      }
+    });
+
+    const segments = ["wo3", "wo4", "wo5"].map((id, i) => ({
+      csv_cue_ids: [id],
+      text_excerpt: id,
+      char_offset: i * 10,
+      csv_sequence_index: i,
+      start_sentence_index: i,
+      end_sentence_index: i,
+      avatar_layers: [layer(id, 5_000)]
+    }));
+
+    const plan = {
+      version: 1 as const,
+      sentences: ["a.", "b.", "c."],
+      sentence_char_starts: [0, 3, 6],
+      performance_speaker: "narrator" as const,
+      anarchy_level_end: 0.5,
+      dramaturgy: { reason: "t", tags: [], mood: "neutral", intensity: 0.5 },
+      avatar_segments: segments,
+      atmosphere_cue_points: []
+    };
+    const fired = new Set<string>();
+
+    vi.mocked(postDirectorExecuteLayered).mockImplementation(async (_decision, _opts) => {
+      const clip =
+        segments.find((s) => !fired.has(avatarSegmentKey(s)))?.avatar_layers[0]?.video_clip_id ??
+        "x";
+      return {
+        executed: true,
+        osc_commands: [{ bridge: "pixera", args: [`KI_RZ21.${clip}`] }]
+      };
+    });
+
+    bindAvatarChainContext({
+      plan,
+      fired,
+      sentenceCharStarts: plan.sentence_char_starts,
+      scriptText: "a. b. c.",
+      anarchyLevelFor: () => 0.5,
+      onCommands: async () => undefined,
+      shouldAbort: () => false
+    });
+
+    injectStuckPendingAvatarForTests(["KI_RZ21.Stuck"]);
+
+    // Burst of recovers like TTS onTimeUpdate / watchdog while first advance is in flight.
+    for (let i = 0; i < 20; i++) recoverStalledAvatarChain();
+
+    await vi.waitFor(() => {
+      expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(1);
+    });
+    expect(fired.has(avatarSegmentKey(segments[0]!))).toBe(true);
+    expect(fired.has(avatarSegmentKey(segments[1]!))).toBe(false);
+
+    // More recovers during the armed CSV wait must not cascade.
+    for (let i = 0; i < 20; i++) recoverStalledAvatarChain();
+    expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(1);
+
+    // After CSV duration (+ tail), exactly the next clip — still not the whole queue.
+    await vi.advanceTimersByTimeAsync(5_000 + AVATAR_CHAIN_TAIL_MS + 50);
+    await vi.waitFor(() => {
+      expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(2);
+    });
+    expect(fired.has(avatarSegmentKey(segments[1]!))).toBe(true);
+    expect(fired.has(avatarSegmentKey(segments[2]!))).toBe(false);
+
+    resetAvatarPlaybackState();
+    vi.useRealTimers();
+  });
+
+  it("recoverStalledAvatarChain clears pending when wall clock exceeds duration (lost timers)", async () => {
+    vi.useFakeTimers();
+    const { isAvatarDoneGateEnabled, postDirectorExecuteLayered } = await import("@/lib/api/director");
+    const {
+      bindAvatarChainContext,
+      avatarSegmentKey,
+      resetAvatarPlaybackState,
+      recoverStalledAvatarChain,
+      injectOverduePendingAvatarForTests
+    } = await import("@/features/inszenierung/avatarCuePlayback");
+
+    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(false);
+    vi.mocked(postDirectorExecuteLayered).mockResolvedValue({
+      executed: true,
+      osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.Next"] }]
+    });
+
+    const next = {
+      csv_cue_ids: ["next"],
+      text_excerpt: "Next.",
+      char_offset: 0,
+      csv_sequence_index: 0,
+      start_sentence_index: 0,
+      end_sentence_index: 0,
+      avatar_layers: [
+        {
+          avatar_speech_id: "next",
+          avatar: "delfin",
+          video_clip_id: "next",
+          visual_cue: {
+            action: "play_clip" as const,
+            clip_id: "next",
+            video_type: "avatar" as const,
+            duration_ms: 500
+          }
+        }
+      ]
+    };
+
+    const plan = {
+      version: 1 as const,
+      sentences: ["Next."],
+      sentence_char_starts: [0],
+      performance_speaker: "narrator" as const,
+      anarchy_level_end: 0.5,
+      dramaturgy: { reason: "t", tags: [], mood: "neutral", intensity: 0.5 },
+      avatar_segments: [next],
+      atmosphere_cue_points: []
+    };
+    const fired = new Set<string>();
+
+    bindAvatarChainContext({
+      plan,
+      fired,
+      sentenceCharStarts: [0],
+      scriptText: "Next.",
+      anarchyLevelFor: () => 0.5,
+      onCommands: async () => undefined,
+      shouldAbort: () => false
+    });
+
+    // Timer callback lost; dueAt still in the future so flushOverdue alone no-ops.
+    injectOverduePendingAvatarForTests(["KI_RZ21.Overdue"], 1_000);
     recoverStalledAvatarChain();
 
     await vi.waitFor(() => {

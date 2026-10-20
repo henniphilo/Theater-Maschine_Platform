@@ -427,9 +427,13 @@ def densify_keyword_sound_cues(
     curve: AnarchyCurve,
     media_db: MediaDatabase | None = None,
     *,
-    max_gap_sentences: int = 2,
+    max_gap_sentences: int = 8,
 ) -> list[CuePoint]:
-    """Insert sound-only keyword cues so playable starts are never far apart."""
+    """Insert sound-only keyword cues so playable starts are never far apart.
+
+    Default gap is wide so beds can hold; use thin_keyword_sound_cues after densify
+    when LLM/fallback still packed sounds too tightly.
+    """
     if not sentences:
         return points
     db = media_db or MediaDatabase()
@@ -476,3 +480,41 @@ def densify_keyword_sound_cues(
     merged = [*points, *extras]
     merged.sort(key=lambda point: (point.sentence_index or 0, point.keyword or ""))
     return merged
+
+
+def thin_keyword_sound_cues(
+    points: list[CuePoint],
+    *,
+    min_gap_sentences: int = 6,
+) -> list[CuePoint]:
+    """Drop playable sound from cues that sit too close; keep light/keyword intact."""
+    if min_gap_sentences <= 0 or not points:
+        return points
+
+    ordered = sorted(
+        enumerate(points),
+        key=lambda item: (item[1].sentence_index or 0, item[0]),
+    )
+    last_sound_sentence: int | None = None
+    cleared: set[int] = set()
+    for original_index, point in ordered:
+        if not point.sound or not is_playable_sound_id(point.sound.cue_id):
+            continue
+        sentence_index = point.sentence_index if point.sentence_index is not None else 0
+        if last_sound_sentence is not None and sentence_index - last_sound_sentence < min_gap_sentences:
+            cleared.add(original_index)
+            continue
+        last_sound_sentence = sentence_index
+
+    if not cleared:
+        return points
+
+    result: list[CuePoint] = []
+    for index, point in enumerate(points):
+        if index in cleared:
+            stripped = point.model_copy(deep=True)
+            stripped.sound = None
+            result.append(stripped)
+        else:
+            result.append(point)
+    return result

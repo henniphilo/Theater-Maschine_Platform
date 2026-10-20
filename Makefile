@@ -19,8 +19,8 @@ COMPOSE_NATIVE := $(COMPOSE_BASE) -f docker-compose.native.yml
         qlab-sync-durations \
         qlab-light-cue-list qlab-light-import qlab-light-setup qlab-light-patch \
         burgtheater-import-dry burgtheater-import \
-        test test-backend test-frontend test-smoke visualize-logs analyze-signal-trace prepare-tryout \
-        desktop-install
+        test test-backend test-frontend test-smoke visualize-logs analyze-signal-trace analyze-show-run \
+        prepare-tryout desktop-install
 
 help: ## Ziele anzeigen
 	@echo "Theatermaschine — make targets"
@@ -155,6 +155,18 @@ analyze-signal-trace: ## Drop-Analyse aus logs/signal_trace.jsonl
 		TRACE="$(ROOT)/logs/signal_trace.jsonl"; \
 	fi; \
 	cd "$(ROOT)/backend" && .venv/bin/python scripts/analyze_signal_trace.py --trace "$$TRACE"
+
+analyze-show-run: ## Post-Run: Pausen, Drops, Avatar-Cascades, Begleit-Bursts
+	@if [[ -s "$(ROOT)/logs/signal_trace.jsonl" ]]; then \
+		TRACE="$(ROOT)/logs/signal_trace.jsonl"; \
+	elif [[ -s "$(ROOT)/backend/logs/signal_trace.jsonl" ]]; then \
+		TRACE="$(ROOT)/backend/logs/signal_trace.jsonl"; \
+	else \
+		TRACE="$(ROOT)/logs/signal_trace.jsonl"; \
+	fi; \
+	cd "$(ROOT)/backend" && .venv/bin/python scripts/analyze_show_run.py \
+		--trace "$$TRACE" \
+		--json "$(ROOT)/logs/show_run_report.json"
 
 prepare-tryout: ## Logs archivieren, Director auf Probebetrieb, Trace leeren
 	cd "$(ROOT)/backend" && .venv/bin/python scripts/prepare_tryout_run.py

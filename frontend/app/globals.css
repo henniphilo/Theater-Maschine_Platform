@@ -904,6 +904,10 @@ code {
   color: var(--color-danger);
 }
 
+.textWarn {
+  color: var(--color-warning, #c47d1a);
+}
+
 /* ——— Status ——— */
 
 .workshopStatusBar {

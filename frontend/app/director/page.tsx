@@ -181,7 +181,10 @@ export default function DirectorPage() {
     <main className="container col">
       <div className="pageHeader">
         <h1>Live-Regie Operator</h1>
-        <Link href="/director/analysis">Probe-Analyse →</Link>
+        <div className="row" style={{ gap: "1rem" }}>
+          <Link href={"/director/show-run" as Route}>Durchlauf-Analyse →</Link>
+          <Link href={"/director/analysis" as Route}>Probe-Analyse →</Link>
+        </div>
       </div>
       <p className="textMuted">Safety zuerst, dann Regievorschläge — Debug nur bei Bedarf.</p>
 

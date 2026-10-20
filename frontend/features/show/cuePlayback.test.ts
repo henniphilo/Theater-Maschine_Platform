@@ -3,7 +3,9 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import {
   createCuePlaybackContext,
   executeCueSafely,
+  fireSentenceCues,
   fireTimeCues,
+  KEYWORD_CUES_PER_SENTENCE_CAP,
   markTimeCuesAsFired,
   markTimeCuesBefore,
   TIME_CUE_MAX_CATCH_UP_SEC
@@ -188,5 +190,83 @@ describe("fireTimeCues catch-up window", () => {
     expect(reasons.some((r) => r?.includes("recent"))).toBe(true);
     expect(reasons.some((r) => r?.includes("[b]"))).toBe(false);
     expect(reasons.some((r) => r?.includes("[c]"))).toBe(false);
+  });
+});
+
+describe("fireSentenceCues keywords", () => {
+  beforeEach(() => {
+    vi.mocked(postDirectorExecute).mockReset();
+    vi.mocked(postDirectorExecute).mockResolvedValue({
+      executed: true,
+      blocked_reason: null,
+      osc_commands: []
+    });
+  });
+
+  it("does not fire keywords assigned to another sentence_index", async () => {
+    const dramaturgy: DramaturgyDecision = {
+      reason: "kw",
+      tags: [],
+      mood: "neutral",
+      intensity: 0.5,
+      timestamp: 0,
+      cue_points: [
+        {
+          trigger: "keyword",
+          keyword: "Pflanzen",
+          sentence_index: 0,
+          time_offset_sec: 0,
+          function: "mine",
+          sound: { action: "trigger_cue", cue_id: "mine" }
+        },
+        {
+          trigger: "keyword",
+          keyword: "Pflanzen",
+          sentence_index: 4,
+          time_offset_sec: 0,
+          function: "other",
+          sound: { action: "trigger_cue", cue_id: "other" }
+        }
+      ]
+    };
+    const ctx = createCuePlaybackContext(dramaturgy, "text", async () => undefined, () => false);
+    fireSentenceCues(ctx, 0, "21 Der Bärenklau: wir werden alle von Pflanzen ersetzt.");
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    const reasons = vi.mocked(postDirectorExecute).mock.calls.map(
+      (call) => (call[0] as DramaturgyDecision).reason
+    );
+    expect(reasons).toHaveLength(1);
+    expect(reasons[0]).toContain("mine");
+    expect(reasons.some((r) => r?.includes("other"))).toBe(false);
+  });
+
+  it("caps keyword fires per sentence", async () => {
+    const cue_points = ["alpha", "beta", "gamma", "delta"].map((keyword, i) => ({
+      trigger: "keyword" as const,
+      keyword,
+      sentence_index: 2,
+      time_offset_sec: 0,
+      function: keyword,
+      sound: { action: "trigger_cue" as const, cue_id: keyword }
+    }));
+    const dramaturgy: DramaturgyDecision = {
+      reason: "kw-cap",
+      tags: [],
+      mood: "neutral",
+      intensity: 0.5,
+      timestamp: 0,
+      cue_points
+    };
+    const ctx = createCuePlaybackContext(dramaturgy, "text", async () => undefined, () => false);
+    fireSentenceCues(ctx, 2, "alpha beta gamma delta in one long sentence");
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(postDirectorExecute).toHaveBeenCalledTimes(KEYWORD_CUES_PER_SENTENCE_CAP);
+    const reasons = vi.mocked(postDirectorExecute).mock.calls.map(
+      (call) => (call[0] as DramaturgyDecision).reason
+    );
+    expect(reasons[0]).toContain("alpha");
+    expect(reasons[1]).toContain("beta");
   });
 });

@@ -17,6 +17,6 @@
   "min_cue_interval_seconds": {
     "light": 8.0,
     "video": 5.0,
-    "sound": 3.0
+    "sound": 8.0
   }
 }

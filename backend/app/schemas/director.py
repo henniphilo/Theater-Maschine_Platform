@@ -120,6 +120,53 @@ class DramaturgyAnalysisResponse(BaseModel):
     summary: DramaturgyAnalysisSummary = Field(default_factory=DramaturgyAnalysisSummary)
 
 
+class ShowRunFindingView(BaseModel):
+    severity: str
+    kind: str
+    title: str
+    interpretation: str
+    action_steps: list[str] = Field(default_factory=list)
+    detail: str = ""
+    ts_wall: str | None = None
+    count: int | None = None
+    duration_ms: float | None = None
+    cues: list[str] = Field(default_factory=list)
+
+
+class ShowRunInterpretationView(BaseModel):
+    verdict: str = "ok"
+    headline: str = ""
+    summary: str = ""
+    priority_actions: list[str] = Field(default_factory=list)
+    findings: list[ShowRunFindingView] = Field(default_factory=list)
+
+
+class ShowRunAnalysisResponse(BaseModel):
+    run_id: str = ""
+    frontend_run_id: str | None = None
+    ts_start: str | None = None
+    ts_end: str | None = None
+    duration_sec: float = 0.0
+    executes: int = 0
+    commands_built: int = 0
+    send_completed: int = 0
+    send_failed: int = 0
+    category_counts: dict[str, int] = Field(default_factory=dict)
+    drop_report_count: int = 0
+    interpretation: ShowRunInterpretationView = Field(default_factory=ShowRunInterpretationView)
+
+
+class ShowRunListItem(BaseModel):
+    run_id: str
+    ts_start: str | None = None
+    event_count: int = 0
+
+
+class ShowRunListResponse(BaseModel):
+    runs: list[ShowRunListItem] = Field(default_factory=list)
+    trace_path: str = ""
+
+
 class DirectorStatusResponse(BaseModel):
     safety: dict[str, bool]
     active_cues: list[str]

@@ -22,6 +22,8 @@ from app.schemas.director import (
     DirectorProcessResponse,
     DirectorStatusResponse,
     DramaturgyAnalysisResponse,
+    ShowRunAnalysisResponse,
+    ShowRunListResponse,
     ExecuteRequest,
     ExecuteLayeredRequest,
     ExecuteResponse,
@@ -1002,6 +1004,24 @@ def dramaturgy_analysis(limit: int = 100) -> DramaturgyAnalysisResponse:
     from app.services.dramaturgy_analysis_service import load_dramaturgy_analysis
 
     return load_dramaturgy_analysis(limit=limit, dramaturgy_state=_pipeline.dramaturgy_state.snapshot())
+
+
+@router.get("/show-run-analysis", response_model=ShowRunAnalysisResponse)
+def show_run_analysis(run_id: str | None = None) -> ShowRunAnalysisResponse:
+    """Post-run flow analysis: pauses, cascades, storms — with action steps."""
+    _ensure_enabled()
+    from app.services.show_run_analysis_service import load_show_run_analysis
+
+    return load_show_run_analysis(run_id=run_id)
+
+
+@router.get("/show-runs", response_model=ShowRunListResponse)
+def show_runs(limit: int = 20) -> ShowRunListResponse:
+    """List recent run.started ids from signal_trace.jsonl."""
+    _ensure_enabled()
+    from app.services.show_run_analysis_service import list_show_runs
+
+    return list_show_runs(limit=max(1, min(limit, 100)))
 
 
 @router.post("/remote-transport", response_model=RemoteTransportPostResponse)

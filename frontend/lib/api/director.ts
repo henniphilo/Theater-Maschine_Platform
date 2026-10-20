@@ -227,6 +227,23 @@ export async function fetchDramaturgyAnalysis(limit = 100): Promise<DramaturgyAn
   return res.json();
 }
 
+export async function fetchShowRunAnalysis(runId?: string | null): Promise<
+  import("@/lib/types/showRunAnalysis").ShowRunAnalysisResponse
+> {
+  const q = runId ? `?run_id=${encodeURIComponent(runId)}` : "";
+  const res = await apiFetch(`/director/show-run-analysis${q}`);
+  if (!res.ok) throw new Error("Show-run analysis unavailable");
+  return res.json();
+}
+
+export async function fetchShowRuns(limit = 20): Promise<
+  import("@/lib/types/showRunAnalysis").ShowRunListResponse
+> {
+  const res = await apiFetch(`/director/show-runs?limit=${limit}`);
+  if (!res.ok) throw new Error("Show-run list unavailable");
+  return res.json();
+}
+
 export async function patchDirectorSafety(update: SafetyUpdate): Promise<DirectorStatus> {
   const res = await apiFetch("/director/safety", {
     method: "PATCH",

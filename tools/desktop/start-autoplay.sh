@@ -6,8 +6,11 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 FRONTEND_URL="${AUTOPLAY_URL:-http://localhost:3004}"
-SCRIPT_READY_URL="${AUTOPLAY_READY_URL:-http://localhost:3004/api/v1/productions}"
+# Wait for the real UI page — /api/v1/* can succeed via proxy while Next.js is still cold-compiling
+# (Safari then opens a near-black empty shell). Require HTML that contains the app shell marker.
+SCRIPT_READY_URL="${AUTOPLAY_READY_URL:-http://localhost:3004/productions}"
 OPEN_URL="${AUTOPLAY_OPEN_URL:-http://localhost:3004/productions}"
+READY_MARKER="${AUTOPLAY_READY_MARKER:-appShell}"
 
 cd "$ROOT"
 
@@ -33,11 +36,19 @@ ensure_docker() {
   echo "Docker ist bereit."
 }
 
+frontend_ui_ready() {
+  local body
+  body="$(curl -sf --max-time 5 "$SCRIPT_READY_URL" 2>/dev/null)" || return 1
+  [[ "$body" == *"$READY_MARKER"* ]]
+}
+
 wait_and_open_browser() {
   local i=0
-  echo "Warte auf Frontend…"
+  echo "Warte auf Frontend-UI…"
   while true; do
-    if curl -sf "$SCRIPT_READY_URL" >/dev/null 2>&1; then
+    if frontend_ui_ready; then
+      # Brief settle so first Next.js compile finishes before Safari paints
+      sleep 1
       open "$OPEN_URL"
       echo "AutoPlay geöffnet: $OPEN_URL"
       return 0

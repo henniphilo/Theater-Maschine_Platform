@@ -47,6 +47,7 @@ app/director/recording.py
 app/director/remote_transport.py
 app/director/run_state.py
 app/director/runtime_settings.py
+app/director/show_run_analysis.py
 app/director/signal_trace_analysis.py
 app/director/technik_hold.py
 app/director/video_pixera_sweep.py
@@ -180,6 +181,7 @@ app/services/rule_schema.py
 app/services/rule_service.py
 app/services/script_splitter.py
 app/services/script_store.py
+app/services/show_run_analysis_service.py
 app/services/sound_cue_catalog.py
 app/services/sound_designer.py
 app/services/spoken_text.py
@@ -320,6 +322,8 @@ tests/test_run_epoch_queue.py
 tests/test_runtime_settings.py
 tests/test_script_api.py
 tests/test_script_splitter.py
+tests/test_show_run_analysis.py
+tests/test_show_run_analysis_service.py
 tests/test_signal_trace.py
 tests/test_sound_cue_catalog.py
 tests/test_sound_designer.py

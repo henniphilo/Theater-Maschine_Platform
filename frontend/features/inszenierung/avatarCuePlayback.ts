@@ -49,8 +49,15 @@ let avatarChainDueSettle: (() => void) | null = null;
  * seeing a brief pending=null gap and starting sch8 in parallel with sch7.
  */
 let avatarChainAdvancing = false;
+/** Wall clock when advancing became true — used to clear hung advance. */
+let avatarChainAdvancingSinceMs: number | null = null;
 /** Set when the first CSV clip arms a duration timer — blocks idle-kick before fireInitial. */
 let avatarChainEverArmed = false;
+
+/** Extra grace beyond CSV timeout before recover force-clears a stuck pending. */
+const AVATAR_PENDING_STALL_GRACE_MS = 2_000;
+/** Max wall time for settle→advance before treating advancing as stuck. */
+const AVATAR_ADVANCING_STALL_MS = 15_000;
 
 /** In-flight avatar clip(s): TTS stays parallel; on done the next clip starts immediately. */
 type PendingAvatarDone = {
@@ -64,6 +71,8 @@ type PendingAvatarDone = {
    * must not block on `finished` — the CSV-duration timer advances the chain.
    */
   blocksNextOsc: boolean;
+  /** Wall clock when this pending was armed (stall recovery). */
+  armedAtMs: number;
 };
 
 let pendingAvatarDone: PendingAvatarDone | null = null;
@@ -105,6 +114,37 @@ export function recoverStalledAvatarChain(): void {
   // Before the first clip, fireInitial owns startup — do not race it.
   if (!avatarChainEverArmed) return;
 
+  const now = Date.now();
+
+  // settle() hung mid-advance (e.g. director HTTP stall) — free the chain.
+  if (
+    avatarChainAdvancing &&
+    avatarChainAdvancingSinceMs != null &&
+    now - avatarChainAdvancingSinceMs > AVATAR_ADVANCING_STALL_MS
+  ) {
+    console.warn("[avatar] clearing stuck advancing — re-kicking CSV chain");
+    avatarChainAdvancing = false;
+    avatarChainAdvancingSinceMs = null;
+  }
+
+  // Wall-clock expiry: duration timer/Worker lost and dueAt never flushed.
+  // Gaps >> CSV duration (seen ~60s Chrome-throttle class) land here.
+  if (pendingAvatarDone) {
+    const limit =
+      pendingAvatarDone.timeoutMs + AVATAR_CHAIN_TAIL_MS + AVATAR_PENDING_STALL_GRACE_MS;
+    if (now - pendingAvatarDone.armedAtMs > limit) {
+      console.warn(
+        "[avatar] clearing pending past wall-clock timeout — re-kicking CSV chain",
+        pendingAvatarDone.cueNames,
+        `ageMs=${now - pendingAvatarDone.armedAtMs}`
+      );
+      pendingAvatarDone = null;
+      clearAvatarChainTimer();
+      avatarChainAdvancing = false;
+      avatarChainAdvancingSinceMs = null;
+    }
+  }
+
   // Stuck state seen in long mo1→mo2 gaps: pending still set, dueAt already
   // cleared, settle never advanced (epoch abort / lost callback). pending then
   // blocks the idle-kick forever while the watchdog "runs" but no-ops.
@@ -123,13 +163,7 @@ export function recoverStalledAvatarChain(): void {
 
   if (avatarChainAdvancing || pendingAvatarDone || avatarChainRetryTimer) return;
   if (countUnfiredAvatarSegments(ctx.plan, ctx.fired) <= 0) return;
-  const epoch = avatarPlaybackEpoch;
-  void advanceAvatarChainAfterDone().catch((err) => {
-    console.warn("[avatar] stalled-chain recover failed:", err);
-    if (epoch === avatarPlaybackEpoch) {
-      scheduleAvatarChainRetry(AVATAR_CHAIN_RETRY_MS, epoch);
-    }
-  });
+  kickAvatarChainAdvance(avatarPlaybackEpoch);
 }
 
 function armAvatarChainWatchdog(): void {
@@ -149,9 +183,7 @@ function scheduleAvatarChainRetry(delayMs: number, epoch: number): void {
   avatarChainRetryTimer = scheduleReliableTimeout(() => {
     avatarChainRetryTimer = null;
     if (epoch !== avatarPlaybackEpoch) return;
-    void advanceAvatarChainAfterDone().catch((err) => {
-      console.warn("[avatar] chain retry failed:", err);
-    });
+    kickAvatarChainAdvance(epoch);
   }, Math.max(0, delayMs));
 }
 
@@ -263,8 +295,12 @@ function avatarDoneTimeoutMs(segment: AvatarTextSegment): number {
 }
 
 /**
- * Await the in-flight clip. When pauseNarrator is true (text already at next
- * anchor), TTS holds until Done — otherwise used only to serialize the next OSC.
+ * Await the in-flight clip before starting another avatar OSC.
+ * Always wait on `pending.finished` (CSV duration or /avatar/done) — even when the
+ * Done gate is off (`blocksNextOsc=false`). Skipping that wait let recover/retry
+ * idle-kicks cascade the rest of the CSV chain in one HTTP burst.
+ *
+ * When pauseNarrator is true (text already at next anchor), TTS holds until Done.
  */
 async function waitForPendingAvatarDone(
   shouldAbort: () => boolean,
@@ -273,8 +309,6 @@ async function waitForPendingAvatarDone(
   const pending = pendingAvatarDone;
   if (!pending) return;
   if (!pauseNarrator) {
-    // Gate off: duration timer owns sequencing — do not stall the next fire here.
-    if (!pending.blocksNextOsc) return;
     await pending.finished;
     return;
   }
@@ -296,6 +330,29 @@ async function waitForPendingAvatarDone(
     // Always release our pause — leaving playbackPaused=true breaks the next run.
     setPlaybackPaused(false);
   }
+}
+
+/**
+ * Single chain advance with re-entry guard. Recover/retry must use this — a bare
+ * `void advanceAvatarChainAfterDone()` allowed overlapping kicks while the first
+ * fire was still in flight (advancing stayed false), which emptied the queue.
+ */
+function kickAvatarChainAdvance(epoch: number): void {
+  if (epoch !== avatarPlaybackEpoch) return;
+  if (avatarChainAdvancing || pendingAvatarDone || avatarChainRetryTimer) return;
+  avatarChainAdvancing = true;
+  avatarChainAdvancingSinceMs = Date.now();
+  void advanceAvatarChainAfterDone()
+    .catch((err) => {
+      console.warn("[avatar] chain advance failed:", err);
+      if (epoch === avatarPlaybackEpoch) {
+        scheduleAvatarChainRetry(AVATAR_CHAIN_RETRY_MS, epoch);
+      }
+    })
+    .finally(() => {
+      avatarChainAdvancing = false;
+      avatarChainAdvancingSinceMs = null;
+    });
 }
 
 function noteAvatarStarted(
@@ -336,6 +393,7 @@ function noteAvatarStarted(
     // Keep pending until advance arms the next clip — otherwise drain sees
     // pending=null and fires the next segment in parallel with this one.
     avatarChainAdvancing = true;
+    avatarChainAdvancingSinceMs = Date.now();
     void advanceAvatarChainAfterDone()
       .catch((err) => {
         console.warn("[avatar] chain advance failed:", err);
@@ -343,6 +401,7 @@ function noteAvatarStarted(
       .finally(() => {
         if (pendingAvatarDone?.token === token) pendingAvatarDone = null;
         avatarChainAdvancing = false;
+        avatarChainAdvancingSinceMs = null;
       });
   };
 
@@ -351,7 +410,8 @@ function noteAvatarStarted(
     timeoutMs,
     finished,
     token,
-    blocksNextOsc: false
+    blocksNextOsc: false,
+    armedAtMs: Date.now()
   };
   avatarChainEverArmed = true;
 
@@ -416,6 +476,7 @@ export function resetAvatarPlaybackState(): void {
   avatarPlaybackEpoch += 1;
   pendingAvatarDone = null;
   avatarChainAdvancing = false;
+  avatarChainAdvancingSinceMs = null;
   avatarChainEverArmed = false;
   avatarChainContext = null;
   avatarFireChain = Promise.resolve();
@@ -438,6 +499,7 @@ export function clearPendingAvatarDoneGate(): void {
 export function injectStuckPendingAvatarForTests(cueNames: string[] = ["stuck"]): void {
   avatarChainEverArmed = true;
   avatarChainAdvancing = false;
+  avatarChainAdvancingSinceMs = null;
   clearAvatarChainTimer();
   clearAvatarChainRetryTimer();
   pendingAvatarDone = {
@@ -445,8 +507,36 @@ export function injectStuckPendingAvatarForTests(cueNames: string[] = ["stuck"])
     timeoutMs: 1_000,
     finished: Promise.resolve(null),
     token: Symbol("stuck-pending"),
-    blocksNextOsc: false
+    blocksNextOsc: false,
+    armedAtMs: Date.now()
   };
+}
+
+/**
+ * Test helper — pending + dueAt still armed but wall clock already past timeout
+ * (lost Worker/main timers, settle never ran).
+ */
+export function injectOverduePendingAvatarForTests(
+  cueNames: string[] = ["overdue"],
+  timeoutMs = 1_000
+): void {
+  avatarChainEverArmed = true;
+  avatarChainAdvancing = false;
+  avatarChainAdvancingSinceMs = null;
+  clearAvatarChainRetryTimer();
+  const armedAtMs = Date.now() - (timeoutMs + AVATAR_CHAIN_TAIL_MS + AVATAR_PENDING_STALL_GRACE_MS + 500);
+  pendingAvatarDone = {
+    cueNames,
+    timeoutMs,
+    finished: new Promise(() => undefined),
+    token: Symbol("overdue-pending"),
+    blocksNextOsc: false,
+    armedAtMs
+  };
+  // dueAt still in the future so flushOverdue alone would no-op — wall-clock path must clear.
+  avatarChainDueAtMs = Date.now() + 60_000;
+  avatarChainDueSettle = () => undefined;
+  avatarChainTimer = null;
 }
 
 /** Block narrator until any in-flight avatar finishes (e.g. show end). */
