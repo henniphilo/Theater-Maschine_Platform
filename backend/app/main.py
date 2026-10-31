@@ -25,10 +25,6 @@ from app.api.routes.rules import router as rules_router
 from app.api.routes.admin_import import router as admin_import_router
 from app.core.config import settings
 from app.core.logging import configure_logging
-from app.director.outputs.avatar_done_listener import (
-    start_avatar_done_listener,
-    stop_avatar_done_listener,
-)
 
 configure_logging()
 limiter = Limiter(key_func=get_remote_address)
@@ -41,15 +37,7 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
 
     load_persisted_overrides()
     apply_active_profile_on_startup()
-    if settings.avatar_done_gate_enabled:
-        start_avatar_done_listener(
-            host=settings.avatar_done_osc_host,
-            port=settings.avatar_done_osc_port,
-        )
-    try:
-        yield
-    finally:
-        stop_avatar_done_listener()
+    yield
 
 
 app = FastAPI(title=settings.app_name, debug=settings.app_debug, lifespan=lifespan)

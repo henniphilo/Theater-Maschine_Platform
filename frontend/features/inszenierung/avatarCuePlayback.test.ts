@@ -19,8 +19,6 @@ import type { Teil2PerformancePlan } from "@/lib/types/inszenierung";
 
 vi.mock("@/lib/api/director", () => ({
   isDirectorPerformanceAborted: () => false,
-  isAvatarDoneGateEnabled: vi.fn().mockResolvedValue(false),
-  waitForAvatarVideosDone: vi.fn().mockResolvedValue(null),
   postDirectorExecuteLayered: vi.fn().mockResolvedValue({
     executed: true,
     osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.Test"] }]
@@ -224,184 +222,12 @@ describe("avatarCuePlayback position helpers", () => {
   });
 });
 
-describe("avatar done gate", () => {
-  it("keeps narrator running after avatar start (parallel)", async () => {
-    const { isAvatarDoneGateEnabled, waitForAvatarVideosDone } = await import("@/lib/api/director");
+describe("avatar CSV chain", () => {
+
+  it("flushPendingAvatarDoneGate waits for CSV duration at show end", async () => {
+    vi.useFakeTimers();
     const { setPlaybackPaused } = await import("@/lib/api/client");
-
-    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(true);
-    vi.mocked(waitForAvatarVideosDone).mockResolvedValue({
-      status: "done",
-      received: ["KI_RZ21.Test"],
-      missing: [],
-      wait_ms: 10
-    });
-
-    const segment = {
-      csv_cue_ids: ["a"],
-      text_excerpt: "Alpha.",
-      char_offset: 0,
-      csv_sequence_index: 0,
-      start_sentence_index: 0,
-      end_sentence_index: 0,
-      avatar_layers: [
-        {
-          avatar_speech_id: "a",
-          avatar: "delfin",
-          video_clip_id: "test",
-          visual_cue: {
-            action: "play_clip",
-            clip_id: "test",
-            video_type: "avatar" as const,
-            duration_ms: 1000
-          }
-        }
-      ]
-    };
-
-    const ok = await fireAvatarSegmentIfDue(segment, 0.5, async () => undefined, () => false);
-    expect(ok).toBe(true);
-    // Done-wait arms in background without pausing TTS.
-    expect(setPlaybackPaused).not.toHaveBeenCalled();
-    await vi.waitFor(() => {
-      expect(waitForAvatarVideosDone).toHaveBeenCalled();
-    });
-  });
-
-  it("keeps CSV avatar chain firing while playback is paused", async () => {
-    const { postDirectorExecuteLayered } = await import("@/lib/api/director");
-    const { waitWhilePlaybackPaused } = await import("@/lib/api/client");
-
-    // If the chain still awaited pause, this would block forever / return false.
-    vi.mocked(waitWhilePlaybackPaused).mockImplementation(async () => false);
-
-    const segment = {
-      csv_cue_ids: ["paused-chain"],
-      text_excerpt: "Alpha.",
-      char_offset: 0,
-      csv_sequence_index: 0,
-      start_sentence_index: 0,
-      end_sentence_index: 0,
-      avatar_layers: [
-        {
-          avatar_speech_id: "a",
-          avatar: "delfin",
-          video_clip_id: "test",
-          visual_cue: {
-            action: "play_clip",
-            clip_id: "test",
-            video_type: "avatar" as const,
-            duration_ms: 1000
-          }
-        }
-      ]
-    };
-
-    const ok = await fireAvatarSegmentIfDue(segment, 0.5, async () => undefined, () => false);
-    expect(ok).toBe(true);
-    expect(postDirectorExecuteLayered).toHaveBeenCalled();
-    expect(waitWhilePlaybackPaused).not.toHaveBeenCalled();
-  });
-
-  it("serializes avatars without pausing narrator when previous still pending", async () => {
-    const { isAvatarDoneGateEnabled, waitForAvatarVideosDone, postDirectorExecuteLayered } =
-      await import("@/lib/api/director");
-    const { setPlaybackPaused } = await import("@/lib/api/client");
-
-    let resolveDone: (value: {
-      status: "done";
-      received: string[];
-      missing: string[];
-      wait_ms: number;
-    }) => void = () => undefined;
-    const donePromise = new Promise<{
-      status: "done";
-      received: string[];
-      missing: string[];
-      wait_ms: number;
-    }>((resolve) => {
-      resolveDone = resolve;
-    });
-
-    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(true);
-    vi.mocked(waitForAvatarVideosDone)
-      .mockImplementationOnce(() => donePromise)
-      .mockResolvedValue({
-        status: "done",
-        received: ["KI_RZ21.Second"],
-        missing: [],
-        wait_ms: 1
-      });
-    vi.mocked(postDirectorExecuteLayered)
-      .mockResolvedValueOnce({
-        executed: true,
-        osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.First"] }]
-      })
-      .mockResolvedValueOnce({
-        executed: true,
-        osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.Second"] }]
-      });
-
-    const layer = (clip: string) => ({
-      avatar_speech_id: clip,
-      avatar: "delfin",
-      video_clip_id: clip,
-      visual_cue: {
-        action: "play_clip" as const,
-        clip_id: clip,
-        video_type: "avatar" as const,
-        duration_ms: 1000
-      }
-    });
-
-    const first = {
-      csv_cue_ids: ["a"],
-      text_excerpt: "Alpha.",
-      char_offset: 0,
-      csv_sequence_index: 0,
-      start_sentence_index: 0,
-      end_sentence_index: 0,
-      avatar_layers: [layer("first")]
-    };
-    const second = {
-      csv_cue_ids: ["b"],
-      text_excerpt: "Beta.",
-      char_offset: 10,
-      csv_sequence_index: 1,
-      start_sentence_index: 1,
-      end_sentence_index: 1,
-      avatar_layers: [layer("second")]
-    };
-
-    await fireAvatarSegmentIfDue(first, 0.5, async () => undefined, () => false);
-    expect(setPlaybackPaused).not.toHaveBeenCalled();
-
-    const secondFire = fireAvatarSegmentIfDue(second, 0.5, async () => undefined, () => false);
-    await vi.waitFor(() => {
-      expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(1);
-    });
-    resolveDone({
-      status: "done",
-      received: ["KI_RZ21.First"],
-      missing: [],
-      wait_ms: 10
-    });
-    await secondFire;
-    expect(waitForAvatarVideosDone).toHaveBeenCalled();
-    expect(setPlaybackPaused).not.toHaveBeenCalled();
-  });
-
-  it("flushPendingAvatarDoneGate waits for in-flight clip at show end", async () => {
-    const { isAvatarDoneGateEnabled, waitForAvatarVideosDone } = await import("@/lib/api/director");
-    const { setPlaybackPaused } = await import("@/lib/api/client");
-
-    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(true);
-    vi.mocked(waitForAvatarVideosDone).mockResolvedValue({
-      status: "done",
-      received: ["KI_RZ21.Test"],
-      missing: [],
-      wait_ms: 5
-    });
+    const { AVATAR_CHAIN_TAIL_MS } = await import("@/features/inszenierung/avatarCuePlayback");
 
     await fireAvatarSegmentIfDue(
       {
@@ -429,56 +255,49 @@ describe("avatar done gate", () => {
       async () => undefined,
       () => false
     );
-    // Background wait starts immediately (parallel); flush also awaits it.
-    await flushPendingAvatarDoneGate(() => false);
-    expect(waitForAvatarVideosDone).toHaveBeenCalled();
+
+    const flushPromise = flushPendingAvatarDoneGate(() => false);
     expect(setPlaybackPaused).toHaveBeenCalledWith(true);
+    await vi.advanceTimersByTimeAsync(1000 + AVATAR_CHAIN_TAIL_MS);
+    await flushPromise;
     expect(setPlaybackPaused).toHaveBeenCalledWith(false);
+    vi.useRealTimers();
   });
 
-  it("chains the next avatar immediately when previous Done arrives", async () => {
-    const { isAvatarDoneGateEnabled, waitForAvatarVideosDone, postDirectorExecuteLayered } =
-      await import("@/lib/api/director");
-    const { setPlaybackPaused } = await import("@/lib/api/client");
-    const { bindAvatarChainContext, avatarSegmentKey } = await import(
-      "@/features/inszenierung/avatarCuePlayback"
-    );
+  it("fires multi-layer segment in parallel and arms CSV timer on first success", async () => {
+    vi.useFakeTimers();
+    const { postDirectorExecuteLayered } = await import("@/lib/api/director");
+    const {
+      fireAvatarSegmentIfDue,
+      bindAvatarChainContext,
+      avatarSegmentKey,
+      resetAvatarPlaybackState,
+      AVATAR_CHAIN_TAIL_MS
+    } = await import("@/features/inszenierung/avatarCuePlayback");
 
-    let resolveDone: (value: {
-      status: "done";
-      received: string[];
-      missing: string[];
-      wait_ms: number;
+    let releaseSlow: (value: {
+      executed: boolean;
+      osc_commands: { bridge: string; args: string[] }[];
     }) => void = () => undefined;
-    const donePromise = new Promise<{
-      status: "done";
-      received: string[];
-      missing: string[];
-      wait_ms: number;
+    const slow = new Promise<{
+      executed: boolean;
+      osc_commands: { bridge: string; args: string[] }[];
     }>((resolve) => {
-      resolveDone = resolve;
+      releaseSlow = resolve;
     });
 
-    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(true);
-    vi.mocked(waitForAvatarVideosDone)
-      .mockImplementationOnce(() => donePromise)
-      .mockResolvedValue({
-        status: "done",
-        received: ["KI_RZ21.Second"],
-        missing: [],
-        wait_ms: 1
-      });
     vi.mocked(postDirectorExecuteLayered)
       .mockResolvedValueOnce({
         executed: true,
-        osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.First"] }]
+        osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.Fast"] }]
       })
+      .mockImplementationOnce(() => slow)
       .mockResolvedValueOnce({
         executed: true,
-        osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.Second"] }]
+        osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.Next"] }]
       });
 
-    const layer = (clip: string) => ({
+    const layer = (clip: string, durationMs: number) => ({
       avatar_speech_id: clip,
       avatar: "delfin",
       video_clip_id: clip,
@@ -486,41 +305,40 @@ describe("avatar done gate", () => {
         action: "play_clip" as const,
         clip_id: clip,
         video_type: "avatar" as const,
-        duration_ms: 1000
+        duration_ms: durationMs
       }
     });
 
-    const first = {
-      csv_cue_ids: ["a"],
+    const multi = {
+      csv_cue_ids: ["fast", "slow"],
       text_excerpt: "Alpha.",
       char_offset: 0,
       csv_sequence_index: 0,
       start_sentence_index: 0,
       end_sentence_index: 0,
-      avatar_layers: [layer("first")]
+      avatar_layers: [layer("fast", 500), layer("slow", 500)]
     };
-    const second = {
-      csv_cue_ids: ["b"],
+    const next = {
+      csv_cue_ids: ["next"],
       text_excerpt: "Beta.",
-      char_offset: 500,
+      char_offset: 10,
       csv_sequence_index: 1,
       start_sentence_index: 1,
       end_sentence_index: 1,
-      avatar_layers: [layer("second")]
+      avatar_layers: [layer("next", 500)]
     };
-
     const plan = {
       performance_speaker: "narrator" as const,
       sentences: ["Alpha.", "Beta."],
       sentence_char_starts: [0, 7],
-      avatar_segments: [first, second],
+      avatar_segments: [multi, next],
       dramaturgy: { reason: "t", tags: [], mood: "tension" as const, intensity: 0.5, cue_points: [] },
       anarchy_level_end: 1,
       alignment_warnings: []
     };
-    const fired = new Set<string>();
-    const firedOrder: string[] = [];
-
+    // Segment is marked fired by the chain advance path; mirror that so the
+    // duration timer kicks `next` instead of re-firing `multi`.
+    const fired = new Set<string>([avatarSegmentKey(multi)]);
     bindAvatarChainContext({
       plan,
       fired,
@@ -528,45 +346,40 @@ describe("avatar done gate", () => {
       scriptText: "Alpha. Beta.",
       anarchyLevelFor: () => 0.5,
       onCommands: async () => undefined,
-      shouldAbort: () => false,
-      onSegmentFired: (segment) => {
-        firedOrder.push(avatarSegmentKey(segment));
-      }
+      shouldAbort: () => false
     });
 
-    await fireAvatarSegmentIfDue(first, 0.5, async () => undefined, () => false);
-    fired.add(avatarSegmentKey(first));
-    expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(1);
-    expect(setPlaybackPaused).not.toHaveBeenCalled();
-
-    // Done arrives while narrator is still far from second char_offset (500).
-    resolveDone({
-      status: "done",
-      received: ["KI_RZ21.First"],
-      missing: [],
-      wait_ms: 1
-    });
+    const firePromise = fireAvatarSegmentIfDue(multi, 0.5, async () => undefined, () => false);
     await vi.waitFor(() => {
       expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(2);
     });
-    expect(fired.has(avatarSegmentKey(second))).toBe(true);
-    expect(setPlaybackPaused).not.toHaveBeenCalled();
+    // Fast layer already succeeded — CSV timer must advance even while slow HTTP hangs.
+    await vi.advanceTimersByTimeAsync(500 + AVATAR_CHAIN_TAIL_MS);
+    await vi.waitFor(() => {
+      expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(3);
+    });
+    expect(fired.has(avatarSegmentKey(next))).toBe(true);
 
-    bindAvatarChainContext(null);
+    releaseSlow({
+      executed: true,
+      osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.Slow"] }]
+    });
+    await firePromise;
+    resetAvatarPlaybackState();
+    vi.useRealTimers();
   });
 
-  it("chains the next avatar on CSV duration even if Done-gate status fetch hangs", async () => {
+  it("chains the next avatar on CSV duration", async () => {
     vi.useFakeTimers();
-    const { isAvatarDoneGateEnabled, postDirectorExecuteLayered } = await import("@/lib/api/director");
+    const { postDirectorExecuteLayered } = await import("@/lib/api/director");
     const {
       fireAvatarSegmentIfDue,
       bindAvatarChainContext,
       avatarSegmentKey,
-      resetAvatarPlaybackState
+      resetAvatarPlaybackState,
+      AVATAR_CHAIN_TAIL_MS
     } = await import("@/features/inszenierung/avatarCuePlayback");
 
-    // Never resolves — previously this prevented arming the duration timer.
-    vi.mocked(isAvatarDoneGateEnabled).mockImplementation(() => new Promise(() => undefined));
     vi.mocked(postDirectorExecuteLayered)
       .mockResolvedValueOnce({
         executed: true,
@@ -632,8 +445,6 @@ describe("avatar done gate", () => {
     await fireAvatarSegmentIfDue(first, 0.5, async () => undefined, () => false);
     expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(1);
 
-    const { AVATAR_CHAIN_TAIL_MS } = await import("@/features/inszenierung/avatarCuePlayback");
-    // Exact CSV duration must NOT advance yet — short Pixera tail still running.
     await vi.advanceTimersByTimeAsync(1_000);
     expect(postDirectorExecuteLayered).toHaveBeenCalledTimes(1);
 
@@ -647,17 +458,55 @@ describe("avatar done gate", () => {
     vi.useRealTimers();
   });
 
+
+  it("keeps CSV avatar chain firing while playback is paused", async () => {
+    const { postDirectorExecuteLayered } = await import("@/lib/api/director");
+    const { waitWhilePlaybackPaused } = await import("@/lib/api/client");
+
+    // If the chain still awaited pause, this would block forever / return false.
+    vi.mocked(waitWhilePlaybackPaused).mockImplementation(async () => false);
+
+    const segment = {
+      csv_cue_ids: ["paused-chain"],
+      text_excerpt: "Alpha.",
+      char_offset: 0,
+      csv_sequence_index: 0,
+      start_sentence_index: 0,
+      end_sentence_index: 0,
+      avatar_layers: [
+        {
+          avatar_speech_id: "a",
+          avatar: "delfin",
+          video_clip_id: "test",
+          visual_cue: {
+            action: "play_clip",
+            clip_id: "test",
+            video_type: "avatar" as const,
+            duration_ms: 1000
+          }
+        }
+      ]
+    };
+
+    const ok = await fireAvatarSegmentIfDue(segment, 0.5, async () => undefined, () => false);
+    expect(ok).toBe(true);
+    expect(postDirectorExecuteLayered).toHaveBeenCalled();
+    expect(waitWhilePlaybackPaused).not.toHaveBeenCalled();
+  });
+
+
+
+
+
   it("retries a blocked segment instead of burning later CSV avatars", async () => {
     vi.useFakeTimers();
-    const { isAvatarDoneGateEnabled, postDirectorExecuteLayered } = await import("@/lib/api/director");
+    const { postDirectorExecuteLayered } = await import("@/lib/api/director");
     const {
       fireAvatarSegmentIfDue,
       bindAvatarChainContext,
       avatarSegmentKey,
       resetAvatarPlaybackState
     } = await import("@/features/inszenierung/avatarCuePlayback");
-
-    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(false);
     vi.mocked(postDirectorExecuteLayered)
       .mockResolvedValueOnce({
         executed: true,
@@ -751,7 +600,7 @@ describe("avatar done gate", () => {
 
   it("flushes overdue CSV-duration chain on wall-clock catch-up", async () => {
     vi.useFakeTimers();
-    const { isAvatarDoneGateEnabled, postDirectorExecuteLayered } = await import("@/lib/api/director");
+    const { postDirectorExecuteLayered } = await import("@/lib/api/director");
     const {
       fireAvatarSegmentIfDue,
       bindAvatarChainContext,
@@ -759,8 +608,6 @@ describe("avatar done gate", () => {
       resetAvatarPlaybackState,
       flushOverdueAvatarChainTimer
     } = await import("@/features/inszenierung/avatarCuePlayback");
-
-    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(false);
     vi.mocked(postDirectorExecuteLayered)
       .mockResolvedValueOnce({
         executed: true,
@@ -841,7 +688,7 @@ describe("avatar done gate", () => {
 
   it("recoverStalledAvatarChain resumes when duration timer is overdue", async () => {
     vi.useFakeTimers();
-    const { isAvatarDoneGateEnabled, postDirectorExecuteLayered } = await import("@/lib/api/director");
+    const { postDirectorExecuteLayered } = await import("@/lib/api/director");
     const {
       fireAvatarSegmentIfDue,
       bindAvatarChainContext,
@@ -849,8 +696,6 @@ describe("avatar done gate", () => {
       resetAvatarPlaybackState,
       recoverStalledAvatarChain
     } = await import("@/features/inszenierung/avatarCuePlayback");
-
-    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(false);
     vi.mocked(postDirectorExecuteLayered)
       .mockResolvedValueOnce({
         executed: true,
@@ -931,7 +776,7 @@ describe("avatar done gate", () => {
 
   it("drainRemainingAvatarChain finishes CSV after narrator would have stopped", async () => {
     vi.useFakeTimers();
-    const { isAvatarDoneGateEnabled, postDirectorExecuteLayered } = await import("@/lib/api/director");
+    const { postDirectorExecuteLayered } = await import("@/lib/api/director");
     const {
       fireAvatarSegmentIfDue,
       bindAvatarChainContext,
@@ -939,8 +784,6 @@ describe("avatar done gate", () => {
       avatarSegmentKey,
       resetAvatarPlaybackState
     } = await import("@/features/inszenierung/avatarCuePlayback");
-
-    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(false);
     vi.mocked(postDirectorExecuteLayered).mockImplementation(async (decision) => ({
       executed: true,
       osc_commands: [
@@ -1028,7 +871,7 @@ describe("avatar done gate", () => {
 
   it("drain does not start the next CSV clip while the previous duration is still running", async () => {
     vi.useFakeTimers();
-    const { isAvatarDoneGateEnabled, postDirectorExecuteLayered } = await import("@/lib/api/director");
+    const { postDirectorExecuteLayered } = await import("@/lib/api/director");
     const {
       fireAvatarSegmentIfDue,
       bindAvatarChainContext,
@@ -1036,8 +879,6 @@ describe("avatar done gate", () => {
       avatarSegmentKey,
       resetAvatarPlaybackState
     } = await import("@/features/inszenierung/avatarCuePlayback");
-
-    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(false);
     const calls: string[] = [];
     vi.mocked(postDirectorExecuteLayered).mockImplementation(async (decision) => {
       const clip = String(decision.visual?.clip_id ?? "");
@@ -1125,7 +966,7 @@ describe("avatar done gate", () => {
 
   it("recoverStalledAvatarChain clears stuck pending when dueAt is already gone", async () => {
     vi.useFakeTimers();
-    const { isAvatarDoneGateEnabled, postDirectorExecuteLayered } = await import("@/lib/api/director");
+    const { postDirectorExecuteLayered } = await import("@/lib/api/director");
     const {
       bindAvatarChainContext,
       avatarSegmentKey,
@@ -1133,8 +974,6 @@ describe("avatar done gate", () => {
       recoverStalledAvatarChain,
       injectStuckPendingAvatarForTests
     } = await import("@/features/inszenierung/avatarCuePlayback");
-
-    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(false);
     vi.mocked(postDirectorExecuteLayered).mockResolvedValue({
       executed: true,
       osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.Next"] }]
@@ -1201,7 +1040,7 @@ describe("avatar done gate", () => {
     // Run-20261017: stuck pending + rapid recover (TTS onTimeUpdate) emptied wo3→sch8
     // in ~355ms. One recovery must re-arm duration — not dump the rest of the queue.
     vi.useFakeTimers();
-    const { isAvatarDoneGateEnabled, postDirectorExecuteLayered } = await import("@/lib/api/director");
+    const { postDirectorExecuteLayered } = await import("@/lib/api/director");
     const {
       bindAvatarChainContext,
       avatarSegmentKey,
@@ -1210,8 +1049,6 @@ describe("avatar done gate", () => {
       injectStuckPendingAvatarForTests,
       AVATAR_CHAIN_TAIL_MS
     } = await import("@/features/inszenierung/avatarCuePlayback");
-
-    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(false);
 
     const layer = (clip: string, durationMs: number) => ({
       avatar_speech_id: clip,
@@ -1296,7 +1133,7 @@ describe("avatar done gate", () => {
 
   it("recoverStalledAvatarChain clears pending when wall clock exceeds duration (lost timers)", async () => {
     vi.useFakeTimers();
-    const { isAvatarDoneGateEnabled, postDirectorExecuteLayered } = await import("@/lib/api/director");
+    const { postDirectorExecuteLayered } = await import("@/lib/api/director");
     const {
       bindAvatarChainContext,
       avatarSegmentKey,
@@ -1304,8 +1141,6 @@ describe("avatar done gate", () => {
       recoverStalledAvatarChain,
       injectOverduePendingAvatarForTests
     } = await import("@/features/inszenierung/avatarCuePlayback");
-
-    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(false);
     vi.mocked(postDirectorExecuteLayered).mockResolvedValue({
       executed: true,
       osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.Next"] }]
@@ -1370,15 +1205,13 @@ describe("avatar done gate", () => {
 
   it("ignores delayed chain timers after resetAvatarPlaybackState (second-run safety)", async () => {
     vi.useFakeTimers();
-    const { isAvatarDoneGateEnabled, postDirectorExecuteLayered } = await import("@/lib/api/director");
+    const { postDirectorExecuteLayered } = await import("@/lib/api/director");
     const {
       fireAvatarSegmentIfDue,
       bindAvatarChainContext,
       resetAvatarPlaybackState,
       avatarSegmentKey
     } = await import("@/features/inszenierung/avatarCuePlayback");
-
-    vi.mocked(isAvatarDoneGateEnabled).mockResolvedValue(false);
     vi.mocked(postDirectorExecuteLayered).mockResolvedValue({
       executed: true,
       osc_commands: [{ bridge: "pixera", args: ["KI_RZ21.First"] }]

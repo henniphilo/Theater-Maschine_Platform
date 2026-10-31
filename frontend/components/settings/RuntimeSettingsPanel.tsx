@@ -103,25 +103,6 @@ const FIELDS: FieldDef[] = [
     kind: "bool"
   },
   {
-    key: "avatar_done_gate_enabled",
-    label: "Avatar-Done-Gate",
-    info:
-      "Wartet nach Avatar-Start auf /avatar/done (QLab/Pixera), bevor der nächste Clip kommt. Verhindert Überlappungen, wenn die Timing-Quelle ungenau ist. Braucht laufenden Listener.",
-    kind: "bool"
-  },
-  {
-    key: "avatar_done_source",
-    label: "Avatar-Done-Quelle",
-    info:
-      "Wer /avatar/done sendet: QLab (Test-Relay), Pixera (Bühne) oder manuell. Wirkt nur, wenn das Gate aktiv ist.",
-    kind: "select",
-    options: [
-      { value: "qlab", label: "QLab" },
-      { value: "pixera", label: "Pixera" },
-      { value: "manual", label: "Manuell" }
-    ]
-  },
-  {
     key: "director_execute_mode",
     label: "Execute-Modus",
     info:

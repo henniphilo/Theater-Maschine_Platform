@@ -135,6 +135,12 @@ def keyword_in_script(keyword: str, script_text: str) -> bool:
     return find_char_offset_for_keyword(keyword, script_text) is not None
 
 
+def playable_sound_pool(media_db: MediaDatabase | None = None) -> list:
+    """All playable start cues from the catalog (not only dramaturgy_active)."""
+    db = media_db or MediaDatabase()
+    return playable_dramaturgy_sounds(db.sounds)
+
+
 def teil2_cue_allowlist(media_db: MediaDatabase | None = None) -> dict[str, list[dict[str, str]]]:
     db = media_db or MediaDatabase()
     return {
@@ -144,7 +150,7 @@ def teil2_cue_allowlist(media_db: MediaDatabase | None = None) -> dict[str, list
                 "soundname": s.soundname or s.label,
                 "action": s.action,
             }
-            for s in playable_dramaturgy_sounds(db.dramaturgy_sounds)
+            for s in playable_sound_pool(db)
         ],
         "lights": [
             {"id": scene.id, "channels": scene.channels[:6]}
@@ -152,6 +158,14 @@ def teil2_cue_allowlist(media_db: MediaDatabase | None = None) -> dict[str, list
             if scene.id != "blackout"
         ],
     }
+
+
+def _recent_sound_window(recent: list[str] | None, pool_size: int) -> set[str]:
+    """Avoid immediate repeats while still cycling the full pool."""
+    if not recent or pool_size <= 1:
+        return set()
+    window = max(1, min(len(recent), pool_size - 1, max(3, pool_size // 2)))
+    return set(recent[-window:])
 
 
 def pick_sound_id(
@@ -164,7 +178,7 @@ def pick_sound_id(
     pool = playable_dramaturgy_sounds(sounds) or list(sounds)
     if not pool:
         return None
-    recent_set = set(recent or [])
+    recent_set = _recent_sound_window(recent, len(pool))
     seed = slot + int(anarchy * 13)
     for offset in range(len(pool)):
         candidate = pool[(seed + offset) % len(pool)]
@@ -235,6 +249,68 @@ def pick_light_scene(
     return pool[seed % len(pool)]
 
 
+# Align with frontend KEYWORD_CUES_PER_SENTENCE_CAP — prepare must not stack more.
+KEYWORD_CUES_PER_SENTENCE = 2
+
+
+def _spread_fallback_candidates(
+    candidates: list[tuple[int, str, int, float]],
+    *,
+    max_keywords: int,
+    max_per_sentence: int = KEYWORD_CUES_PER_SENTENCE,
+) -> list[tuple[int, str, int, float]]:
+    """Round-robin across sentences so long lines do not monopolize the cue list."""
+    if not candidates:
+        return []
+    by_sentence: dict[int, list[tuple[int, str, int, float]]] = {}
+    for item in candidates:
+        by_sentence.setdefault(item[2], []).append(item)
+    for bucket in by_sentence.values():
+        bucket.sort(key=lambda item: item[0])
+
+    spread: list[tuple[int, str, int, float]] = []
+    for pass_index in range(max(1, max_per_sentence)):
+        for sentence_index in sorted(by_sentence):
+            if len(spread) >= max_keywords:
+                break
+            bucket = by_sentence[sentence_index]
+            if pass_index < len(bucket):
+                spread.append(bucket[pass_index])
+        if len(spread) >= max_keywords:
+            break
+    spread.sort(key=lambda item: item[0])
+    return spread[:max_keywords]
+
+
+def balance_keyword_cue_points(
+    points: list[CuePoint],
+    *,
+    max_per_sentence: int = KEYWORD_CUES_PER_SENTENCE,
+) -> list[CuePoint]:
+    """Keep at most N cue points per sentence — prefer playable sound, then light."""
+    if max_per_sentence <= 0 or not points:
+        return points
+
+    by_sentence: dict[int, list[tuple[int, CuePoint]]] = {}
+    for index, point in enumerate(points):
+        sentence_index = point.sentence_index if point.sentence_index is not None else 0
+        by_sentence.setdefault(sentence_index, []).append((index, point))
+
+    keep: set[int] = set()
+    for items in by_sentence.values():
+        ranked = sorted(
+            items,
+            key=lambda item: (
+                0 if item[1].sound and is_playable_sound_id(item[1].sound.cue_id) else 1,
+                0 if item[1].light else 1,
+                item[0],
+            ),
+        )
+        for index, _point in ranked[:max_per_sentence]:
+            keep.add(index)
+    return [point for index, point in enumerate(points) if index in keep]
+
+
 def extract_text_fallback_keywords(
     script_text: str,
     sentences: list[str],
@@ -277,13 +353,7 @@ def extract_text_fallback_keywords(
             add(words[-1])
 
     candidates.sort(key=lambda item: item[0])
-
-    if len(candidates) > max_keywords:
-        step = len(candidates) / max_keywords
-        thinned: list[tuple[int, str, int, float]] = []
-        for index in range(max_keywords):
-            thinned.append(candidates[int(index * step)])
-        candidates = thinned
+    candidates = _spread_fallback_candidates(candidates, max_keywords=max_keywords)
 
     result = [(key, sent_idx, anarchy) for _, key, sent_idx, anarchy in candidates]
 
@@ -298,6 +368,9 @@ def extract_text_fallback_keywords(
             add(token)
             if len(candidates) > before:
                 candidates.sort(key=lambda item: item[0])
+                candidates = _spread_fallback_candidates(
+                    candidates, max_keywords=max_keywords
+                )
                 result = [(key, sent_idx, anarchy) for _, key, sent_idx, anarchy in candidates]
                 break
         slot += 1
@@ -317,7 +390,7 @@ def build_keyword_cue_point(
 ) -> CuePoint:
     db = media_db or MediaDatabase()
     fn = anarchy_function(anarchy)
-    sound_id = pick_sound_id(slot, anarchy, db.dramaturgy_sounds, recent=recent_sound_ids)
+    sound_id = pick_sound_id(slot, anarchy, playable_sound_pool(db), recent=recent_sound_ids)
     light_scene = pick_light_scene(slot, anarchy, db.light_scenes, recent=recent_light_ids)
     if sound_id and recent_sound_ids is not None:
         recent_sound_ids.append(sound_id)
@@ -375,9 +448,14 @@ def apply_anarchy_to_keyword_cue_point(
     if point.visual:
         point.visual = None
     current_id = point.sound.cue_id if point.sound else None
-    if not is_playable_sound_id(current_id):
-        db = media_db or MediaDatabase()
-        sound_id = pick_sound_id(slot, anarchy, db.dramaturgy_sounds, recent=recent_sound_ids)
+    db = media_db or MediaDatabase()
+    pool = playable_sound_pool(db)
+    recent_blocked = _recent_sound_window(recent_sound_ids, len(pool))
+    needs_pick = not is_playable_sound_id(current_id) or (
+        current_id is not None and current_id in recent_blocked
+    )
+    if needs_pick:
+        sound_id = pick_sound_id(slot, anarchy, pool, recent=recent_sound_ids)
         if sound_id:
             point.sound = SoundCue(
                 action=SoundAction.TRIGGER_CUE,
@@ -427,17 +505,17 @@ def densify_keyword_sound_cues(
     curve: AnarchyCurve,
     media_db: MediaDatabase | None = None,
     *,
-    max_gap_sentences: int = 8,
+    max_gap_sentences: int = 5,
 ) -> list[CuePoint]:
     """Insert sound-only keyword cues so playable starts are never far apart.
 
-    Default gap is wide so beds can hold; use thin_keyword_sound_cues after densify
+    Default gap leaves room for beds to hold; use thin_keyword_sound_cues after densify
     when LLM/fallback still packed sounds too tightly.
     """
     if not sentences:
         return points
     db = media_db or MediaDatabase()
-    if not playable_dramaturgy_sounds(db.dramaturgy_sounds):
+    if not playable_sound_pool(db):
         return points
 
     used = {_normalize(point.keyword or "") for point in points if point.keyword}
@@ -485,7 +563,7 @@ def densify_keyword_sound_cues(
 def thin_keyword_sound_cues(
     points: list[CuePoint],
     *,
-    min_gap_sentences: int = 6,
+    min_gap_sentences: int = 4,
 ) -> list[CuePoint]:
     """Drop playable sound from cues that sit too close; keep light/keyword intact."""
     if min_gap_sentences <= 0 or not points:
@@ -515,6 +593,53 @@ def thin_keyword_sound_cues(
             stripped = point.model_copy(deep=True)
             stripped.sound = None
             result.append(stripped)
+        else:
+            result.append(point)
+    return result
+
+
+def diversify_keyword_sound_cues(
+    points: list[CuePoint],
+    media_db: MediaDatabase | None = None,
+) -> list[CuePoint]:
+    """Reassign playable sounds so consecutive starts avoid the same cue_id."""
+    if not points:
+        return points
+    db = media_db or MediaDatabase()
+    pool = playable_sound_pool(db)
+    if len(pool) < 2:
+        return points
+
+    ordered = sorted(
+        enumerate(points),
+        key=lambda item: (item[1].sentence_index or 0, item[0]),
+    )
+    recent: list[str] = []
+    replacements: dict[int, str] = {}
+    for slot, (original_index, point) in enumerate(ordered):
+        if not point.sound or not is_playable_sound_id(point.sound.cue_id):
+            continue
+        current_id = point.sound.cue_id
+        blocked = _recent_sound_window(recent, len(pool))
+        if current_id in blocked or (recent and recent[-1] == current_id):
+            anarchy = float(point.intensity or 0.5)
+            new_id = pick_sound_id(slot, anarchy, pool, recent=recent)
+            if new_id and new_id != current_id:
+                replacements[original_index] = new_id
+                recent.append(new_id)
+                continue
+        recent.append(current_id)
+
+    if not replacements:
+        return points
+
+    result: list[CuePoint] = []
+    for index, point in enumerate(points):
+        if index in replacements:
+            updated = point.model_copy(deep=True)
+            assert updated.sound is not None
+            updated.sound.cue_id = replacements[index]
+            result.append(updated)
         else:
             result.append(point)
     return result

@@ -200,10 +200,11 @@ export function fireSentenceCues(
 
   // Only keywords assigned to this sentence (prepare sets sentence_index). Cap
   // fires so a long sentence cannot dump every substring match at once.
+  // Require sentence_index — orphan keywords must not hitchhike via includes().
   const sentenceLower = sentenceText.toLowerCase();
   const keywordPoints = points.filter((p) => {
     if (p.trigger !== "keyword" || !p.keyword) return false;
-    if (p.sentence_index != null && p.sentence_index !== sentenceIndex) return false;
+    if (p.sentence_index == null || p.sentence_index !== sentenceIndex) return false;
     return sentenceLower.includes(p.keyword.toLowerCase());
   });
   for (const point of keywordPoints.slice(0, KEYWORD_CUES_PER_SENTENCE_CAP)) {

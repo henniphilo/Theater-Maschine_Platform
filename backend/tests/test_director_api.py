@@ -168,7 +168,6 @@ def test_relay_status_endpoint(mock_get_manager: MagicMock) -> None:
         light_listener_enabled=True,
         qlab_host="127.0.0.1",
         qlab_port=53000,
-        feedback_enabled=False,
     )
     res = client.get("/api/v1/director/relay/status")
     assert res.status_code == 200
@@ -190,7 +189,6 @@ def test_relay_start_conflict_returns_409(mock_get_manager: MagicMock) -> None:
         light_listener_enabled=True,
         qlab_host="127.0.0.1",
         qlab_port=53000,
-        feedback_enabled=False,
         error="Port bereits belegt",
     )
     res = client.post("/api/v1/director/relay/start")

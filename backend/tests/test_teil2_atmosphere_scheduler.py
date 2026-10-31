@@ -197,13 +197,27 @@ def test_atmosphere_starts_immediately_and_holds_longer_early(monkeypatch) -> No
     times = sorted({p.time_offset_sec for p in points})
     assert times
     assert times[0] <= 0.5
-    # Early holds are longer: fewer overwrite ticks in the first half-minute.
-    early = [t for t in times if t <= 30.0]
-    assert len(early) >= 2
-    assert times[1] >= 12.0
-    # More free surfaces filled per tick from the start.
-    first_tick = [p for p in points if p.time_offset_sec == times[0]]
-    assert len(first_tick) >= 3
+    # Early: Adam/Eva (and usually more) appear within the first staggered wave.
+    early = [p for p in points if p.time_offset_sec <= 6.0]
+    early_projectors = {
+        p.visual.projector for p in early if p.visual and p.visual.projector
+    }
+    assert "adam" in early_projectors
+    assert "eva" in early_projectors
+    assert len(early_projectors) >= 3
+    # Stagger: one timestamp should not dump every free beamer at once.
+    from collections import Counter
+
+    per_instant = Counter(p.time_offset_sec for p in points)
+    assert max(per_instant.values()) <= 2
+    # Adam overwrite gap still breathes in the calm early phase.
+    adam_times = sorted(
+        p.time_offset_sec
+        for p in points
+        if p.visual and p.visual.projector == "adam"
+    )
+    assert len(adam_times) >= 2
+    assert adam_times[1] - adam_times[0] >= 10.0
 
 
 def test_early_rule_based_step_multiplier(monkeypatch) -> None:
@@ -238,10 +252,14 @@ def test_early_rule_based_step_multiplier(monkeypatch) -> None:
         avatar_clip_ids=set(),
         dramaturgy=dramaturgy,
     )
-    times = sorted({p.time_offset_sec for p in points})
-    assert len(times) >= 2
-    # With early_multiplier=1.55: 10s * 1.55 = 15.5s.
-    assert times[1] >= 15.0
+    adam_times = sorted(
+        p.time_offset_sec
+        for p in points
+        if p.visual and p.visual.projector == "adam"
+    )
+    assert len(adam_times) >= 2
+    # early_multiplier=1.2 on ~10s base step → Adam holds ≥12s before overwrite.
+    assert adam_times[1] - adam_times[0] >= 12.0
 
 
 def test_rule_fills_multiple_free_projectors_beside_avatar(monkeypatch) -> None:
@@ -298,12 +316,20 @@ def test_rule_fills_multiple_free_projectors_beside_avatar(monkeypatch) -> None:
         if windows[0].start_sec <= point.time_offset_sec < windows[0].end_sec:
             assert projector != "rz21"
 
-    assert max(len(projs) for projs in by_time.values()) >= 2
-    # Prefer at least one multi-beamer tick near the avatar window.
+    # Staggered fills: within any short window several free beamers should light up.
+    window_hits = [
+        sum(1 for t, projs in by_time.items() if abs(t - center) <= 4.0 for _ in projs)
+        for center in list(by_time)[:8]
+    ]
+    assert max(window_hits) >= 2
+    # Prefer at least one multi-beamer presence near the avatar window.
     near_avatar = [
         projs
         for t, projs in by_time.items()
         if abs(t - avatar_mid) < 30.0
     ]
     assert near_avatar
-    assert max(len(projs) for projs in near_avatar) >= 2
+    near_union: set[str] = set()
+    for projs in near_avatar:
+        near_union |= projs
+    assert len(near_union) >= 2

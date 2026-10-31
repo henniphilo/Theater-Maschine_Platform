@@ -8,7 +8,6 @@ from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.db.session import get_db
-from app.director.avatar_done_gate import get_avatar_done_gate
 from app.director.outputs.osc_queue import get_osc_command_queue
 from app.director.outputs.signal_trace import begin_request_trace, emit_signal_trace_event
 from app.director.pipeline import get_director_pipeline
@@ -16,8 +15,6 @@ from app.director.recording import RecordingManager
 from app.director.remote_transport import get_remote_transport_mailbox
 from app.director.cues.cue_models import CueProposal
 from app.schemas.director import (
-    AvatarDoneWaitRequest,
-    AvatarDoneWaitResponse,
     DialogueEventRequest,
     DirectorProcessResponse,
     DirectorStatusResponse,
@@ -106,9 +103,6 @@ def _status_response(db: Session | None = None) -> DirectorStatusResponse:
         last_osc_commands=state.last_osc_commands,
         dramaturgy_state=_pipeline.dramaturgy_state.snapshot(),
         open_proposals=_pipeline.proposals.list_open(),
-        avatar_done_gate_enabled=settings.avatar_done_gate_enabled,
-        avatar_done_gate=get_avatar_done_gate().status_snapshot(),
-        avatar_done_source=settings.avatar_done_source,
         active_production_id=active.get("active_production_id"),
         active_production_name=active.get("active_production_name"),
         active_production_slug=active.get("active_production_slug"),
@@ -457,7 +451,6 @@ def _qlab_relay_status_response() -> QlabRelayStatusResponse:
         light_listener_enabled=status.light_listener_enabled,
         qlab_host=status.qlab_host,
         qlab_port=status.qlab_port,
-        feedback_enabled=status.feedback_enabled,
         error=status.error,
         notice=status.notice,
     )
@@ -799,37 +792,6 @@ def get_status(db: Session = Depends(get_db)) -> DirectorStatusResponse:
     return _status_response(db)
 
 
-@router.post("/avatar-done/wait", response_model=AvatarDoneWaitResponse)
-def post_avatar_done_wait(payload: AvatarDoneWaitRequest) -> AvatarDoneWaitResponse:
-    """Block until expected avatar cue completion OSC arrives (or timeout).
-
-    Used by Teil-2 playback to pause narrator TTS until QLab reports video end.
-    See docs/avatar_done_gate.md.
-    """
-    _ensure_enabled()
-    if not settings.avatar_done_gate_enabled:
-        return AvatarDoneWaitResponse(status="disabled")
-    result = get_avatar_done_gate().wait_for(
-        payload.cue_names,
-        timeout_ms=payload.timeout_ms,
-    )
-    emit_signal_trace_event(
-        "avatar.done_wait",
-        status=result.status,
-        cue_names=payload.cue_names,
-        received=result.received,
-        missing=result.missing,
-        wait_ms=result.wait_ms,
-        timeout_ms=payload.timeout_ms,
-    )
-    return AvatarDoneWaitResponse(
-        status=result.status,  # type: ignore[arg-type]
-        received=result.received,
-        missing=result.missing,
-        wait_ms=result.wait_ms,
-    )
-
-
 @router.patch("/safety", response_model=DirectorStatusResponse)
 def patch_safety(
     payload: SafetyUpdateRequest,
@@ -845,7 +807,6 @@ def patch_safety(
 @router.post("/emergency-stop", response_model=DirectorStatusResponse)
 def emergency_stop(db: Session = Depends(get_db)) -> DirectorStatusResponse:
     _ensure_enabled()
-    get_avatar_done_gate().reset()
     _pipeline.emergency_stop()
     return _status_response(db)
 
@@ -853,7 +814,6 @@ def emergency_stop(db: Session = Depends(get_db)) -> DirectorStatusResponse:
 @router.post("/emergency-clear", response_model=DirectorStatusResponse)
 def emergency_clear(db: Session = Depends(get_db)) -> DirectorStatusResponse:
     _ensure_enabled()
-    get_avatar_done_gate().reset()
     _pipeline.clear_for_performance()
     return _status_response(db)
 

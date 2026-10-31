@@ -1,46 +1,42 @@
 import type { AvatarTextSegment, CompositionMoment, CompositionPlan, Teil2PerformancePlan } from "@/lib/types/inszenierung";
 import type { DramaturgyDecision, OscCommand } from "@/lib/types/director";
 import type { VisualCue } from "@/lib/types/visual";
-import { isDirectorPerformanceAborted, isAvatarDoneGateEnabled, postDirectorExecuteLayered, waitForAvatarVideosDone, type AvatarDoneWaitResult } from "@/lib/api/director";
+import { isDirectorPerformanceAborted, postDirectorExecuteLayered } from "@/lib/api/director";
 import { setPlaybackPaused } from "@/lib/api/client";
-import {
-  clearReliableTimeout,
-  scheduleReliableTimeout,
-  type ReliableTimeoutHandle
-} from "@/lib/timing/reliableTimeout";
 
 let avatarFireChain: Promise<void> = Promise.resolve();
 
-/** Bumped on stop/reset so delayed Done-chain timers from a prior run cannot fire into the next. */
+/** Bumped on stop/reset so delayed chain timers from a prior run cannot fire into the next. */
 let avatarPlaybackEpoch = 0;
 
 const AVATAR_POSITION_DEBOUNCE_MS = 150;
-const DEFAULT_AVATAR_DONE_TIMEOUT_MS = 120_000;
-const AVATAR_DONE_TIMEOUT_GRACE_MS = 2_000;
+/** Fallback when a segment has no CSV duration_ms. */
+const DEFAULT_AVATAR_CLIP_MS = 120_000;
 /**
  * Extra wait after CSV `duration_ms` before the next avatar OSC.
- * Absorbs Pixera start latency so the next clip does not overlap the previous
- * visually (no /avatar/done from Pixera). Keep short — chain feels sluggish if large.
+ * Absorbs Pixera start latency so the next clip does not overlap the previous.
+ * Keep short — chain feels sluggish if large.
  */
 export const AVATAR_CHAIN_TAIL_MS = 200;
 /** Retry delay when a CSV avatar is transiently blocked (density/lock) — never burn the segment. */
 const AVATAR_CHAIN_RETRY_MS = 1_500;
 /**
- * Periodic wall-clock check: if the CSV-duration timer was lost (Worker death,
- * missed postMessage) the chain stalls with a black beamer until something else
- * kicks it. Watchdog flushes overdue timers and re-kicks an idle unfired chain.
- *
- * Note: the watchdog uses the same reliableTimeout as the CSV timer. When the
- * Aufführung tab is backgrounded and both Worker + main-thread arms stall,
- * recovery still depends on a live JS tick (TTS onTimeUpdate, pause-wait poll,
- * or visibilitychange).
+ * Hard cap per layer HTTP. A hung /director/execute-layered used to serialize the
+ * rest of a multi-layer segment (wo4_nicolas→wo4_schimpanse ~68s splits).
+ */
+const AVATAR_EXECUTE_TIMEOUT_MS = 8_000;
+/**
+ * Periodic wall-clock check: flush overdue duration timers and re-kick an idle
+ * unfired chain (stuck pending / hung advance). Uses main-thread setTimeout —
+ * show control assumes the Aufführung tab stays foreground (Hallein-style).
+ * Backup ticks also come from TTS onTimeUpdate, pause-wait poll, visibilitychange.
  */
 const AVATAR_CHAIN_WATCHDOG_MS = 500;
 let avatarPositionTimer: ReturnType<typeof setTimeout> | null = null;
-/** CSV-duration / Done chain timer — Worker-backed so background tabs do not stall. */
-let avatarChainTimer: ReliableTimeoutHandle | null = null;
-let avatarChainRetryTimer: ReliableTimeoutHandle | null = null;
-let avatarChainWatchdogTimer: ReliableTimeoutHandle | null = null;
+/** CSV-duration chain timer — main-thread setTimeout (tab stays visible during show). */
+let avatarChainTimer: ReturnType<typeof setTimeout> | null = null;
+let avatarChainRetryTimer: ReturnType<typeof setTimeout> | null = null;
+let avatarChainWatchdogTimer: ReturnType<typeof setTimeout> | null = null;
 /** Wall-clock due time for the armed CSV-duration timer (visibility flush backup). */
 let avatarChainDueAtMs: number | null = null;
 let avatarChainDueSettle: (() => void) | null = null;
@@ -59,42 +55,44 @@ const AVATAR_PENDING_STALL_GRACE_MS = 2_000;
 /** Max wall time for settle→advance before treating advancing as stuck. */
 const AVATAR_ADVANCING_STALL_MS = 15_000;
 
-/** In-flight avatar clip(s): TTS stays parallel; on done the next clip starts immediately. */
-type PendingAvatarDone = {
+/** In-flight avatar clip(s): TTS stays parallel; CSV duration advances the next clip. */
+type PendingAvatarClip = {
   cueNames: string[];
+  /** CSV duration + chain tail — used for stall recovery wall-clock limit. */
   timeoutMs: number;
-  /** Resolves when Done arrives or CSV duration elapses (flush / narrator pause). */
-  finished: Promise<AvatarDoneWaitResult | null>;
+  /** Resolves when CSV duration elapses (flush / narrator pause). */
+  finished: Promise<void>;
   token: symbol;
-  /**
-   * True only while waiting for /avatar/done. When false (gate off), the next OSC
-   * must not block on `finished` — the CSV-duration timer advances the chain.
-   */
-  blocksNextOsc: boolean;
   /** Wall clock when this pending was armed (stall recovery). */
   armedAtMs: number;
 };
 
-let pendingAvatarDone: PendingAvatarDone | null = null;
+let pendingAvatarDone: PendingAvatarClip | null = null;
 
 function clearAvatarChainTimer(): void {
-  clearReliableTimeout(avatarChainTimer);
-  avatarChainTimer = null;
+  if (avatarChainTimer !== null) {
+    clearTimeout(avatarChainTimer);
+    avatarChainTimer = null;
+  }
   avatarChainDueAtMs = null;
   avatarChainDueSettle = null;
 }
 
 function clearAvatarChainRetryTimer(): void {
-  clearReliableTimeout(avatarChainRetryTimer);
-  avatarChainRetryTimer = null;
+  if (avatarChainRetryTimer !== null) {
+    clearTimeout(avatarChainRetryTimer);
+    avatarChainRetryTimer = null;
+  }
 }
 
 function clearAvatarChainWatchdog(): void {
-  clearReliableTimeout(avatarChainWatchdogTimer);
-  avatarChainWatchdogTimer = null;
+  if (avatarChainWatchdogTimer !== null) {
+    clearTimeout(avatarChainWatchdogTimer);
+    avatarChainWatchdogTimer = null;
+  }
 }
 
-/** Wall-clock backup when main-thread timers were throttled (also used on tab focus). */
+/** Wall-clock backup if a duration callback was missed (also used on tab focus). */
 export function flushOverdueAvatarChainTimer(): void {
   if (avatarChainDueAtMs == null || avatarChainDueSettle == null) return;
   if (Date.now() < avatarChainDueAtMs) return;
@@ -105,7 +103,7 @@ export function flushOverdueAvatarChainTimer(): void {
 
 /**
  * Recover a stalled CSV chain: flush a lost duration timer, or kick advance when
- * idle with unfired segments (no pending Done / no retry armed).
+ * idle with unfired segments (no pending clip / no retry armed).
  */
 export function recoverStalledAvatarChain(): void {
   flushOverdueAvatarChainTimer();
@@ -127,11 +125,9 @@ export function recoverStalledAvatarChain(): void {
     avatarChainAdvancingSinceMs = null;
   }
 
-  // Wall-clock expiry: duration timer/Worker lost and dueAt never flushed.
-  // Gaps >> CSV duration (seen ~60s Chrome-throttle class) land here.
+  // Wall-clock expiry: duration timer lost and dueAt never flushed.
   if (pendingAvatarDone) {
-    const limit =
-      pendingAvatarDone.timeoutMs + AVATAR_CHAIN_TAIL_MS + AVATAR_PENDING_STALL_GRACE_MS;
+    const limit = pendingAvatarDone.timeoutMs + AVATAR_PENDING_STALL_GRACE_MS;
     if (now - pendingAvatarDone.armedAtMs > limit) {
       console.warn(
         "[avatar] clearing pending past wall-clock timeout — re-kicking CSV chain",
@@ -170,7 +166,7 @@ function armAvatarChainWatchdog(): void {
   clearAvatarChainWatchdog();
   if (!avatarChainContext) return;
   const epoch = avatarPlaybackEpoch;
-  avatarChainWatchdogTimer = scheduleReliableTimeout(() => {
+  avatarChainWatchdogTimer = setTimeout(() => {
     avatarChainWatchdogTimer = null;
     if (epoch !== avatarPlaybackEpoch || !avatarChainContext) return;
     recoverStalledAvatarChain();
@@ -180,7 +176,7 @@ function armAvatarChainWatchdog(): void {
 
 function scheduleAvatarChainRetry(delayMs: number, epoch: number): void {
   clearAvatarChainRetryTimer();
-  avatarChainRetryTimer = scheduleReliableTimeout(() => {
+  avatarChainRetryTimer = setTimeout(() => {
     avatarChainRetryTimer = null;
     if (epoch !== avatarPlaybackEpoch) return;
     kickAvatarChainAdvance(epoch);
@@ -229,6 +225,22 @@ function withAvatarFireLock<T>(work: () => Promise<T>): Promise<T> {
   return run;
 }
 
+async function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((_, reject) => {
+        timer = setTimeout(() => {
+          reject(new DOMException(`${label} timed out after ${ms}ms`, "TimeoutError"));
+        }, ms);
+      })
+    ]);
+  } finally {
+    if (timer !== null) clearTimeout(timer);
+  }
+}
+
 export async function executeAvatarVisualCue(
   visual: VisualCue,
   anarchyLevel: number,
@@ -246,13 +258,17 @@ export async function executeAvatarVisualCue(
     timestamp: Date.now()
   };
   try {
-    const result = await postDirectorExecuteLayered(decision, {
-      anarchy_level: anarchyLevel,
-      stack: false,
-      skip_interval_check: true,
-      stagger: false,
-      text_excerpt: textExcerpt
-    });
+    const result = await withTimeout(
+      postDirectorExecuteLayered(decision, {
+        anarchy_level: anarchyLevel,
+        stack: false,
+        skip_interval_check: true,
+        stagger: false,
+        text_excerpt: textExcerpt
+      }),
+      AVATAR_EXECUTE_TIMEOUT_MS,
+      `avatar execute ${visual.clip_id ?? "?"}`
+    );
     if (shouldAbort() || isDirectorPerformanceAborted()) return { executed: false, cueNames: [] };
     if (!result.executed) {
       console.warn(
@@ -286,24 +302,23 @@ function pixeraCueNamesFromCommands(commands: OscCommand[]): string[] {
   return names;
 }
 
-function avatarDoneTimeoutMs(segment: AvatarTextSegment): number {
+function avatarClipDurationMs(segment: AvatarTextSegment): number {
   const durations = segment.avatar_layers
     .map((layer) => layer.visual_cue?.duration_ms)
     .filter((ms): ms is number => typeof ms === "number" && ms > 0);
-  const base = durations.length > 0 ? Math.max(...durations) : DEFAULT_AVATAR_DONE_TIMEOUT_MS;
-  return base + AVATAR_DONE_TIMEOUT_GRACE_MS;
+  return durations.length > 0 ? Math.max(...durations) : DEFAULT_AVATAR_CLIP_MS;
 }
 
 /**
  * Await the in-flight clip before starting another avatar OSC.
- * Always wait on `pending.finished` (CSV duration or /avatar/done) — even when the
- * Done gate is off (`blocksNextOsc=false`). Skipping that wait let recover/retry
- * idle-kicks cascade the rest of the CSV chain in one HTTP burst.
+ * Always wait on `pending.finished` (CSV duration) — skipping that wait let
+ * recover/retry idle-kicks cascade the rest of the CSV chain in one HTTP burst.
  *
- * When pauseNarrator is true (text already at next anchor), TTS holds until Done.
+ * When pauseNarrator is true (text already at next anchor / show end), TTS holds
+ * until the CSV duration elapses.
  */
 async function waitForPendingAvatarDone(
-  shouldAbort: () => boolean,
+  _shouldAbort: () => boolean,
   pauseNarrator: boolean
 ): Promise<void> {
   const pending = pendingAvatarDone;
@@ -314,18 +329,7 @@ async function waitForPendingAvatarDone(
   }
   setPlaybackPaused(true);
   try {
-    const result = await pending.finished;
-    if (result?.status === "timeout") {
-      console.warn(
-        "[avatar] done-gate timeout — continuing narrator",
-        pending.cueNames,
-        result.missing.length ? `missing=${result.missing.join(",")}` : ""
-      );
-    }
-  } catch (err) {
-    if (!(err instanceof DOMException && err.name === "AbortError")) {
-      console.warn("[avatar] done-gate wait failed — continuing narrator:", err);
-    }
+    await pending.finished;
   } finally {
     // Always release our pause — leaving playbackPaused=true breaks the next run.
     setPlaybackPaused(false);
@@ -357,30 +361,26 @@ function kickAvatarChainAdvance(epoch: number): void {
 
 function noteAvatarStarted(
   cueNames: string[],
-  timeoutMs: number,
+  clipDurationMs: number,
   shouldAbort: () => boolean
 ): void {
   const names = cueNames.map((n) => n.trim()).filter(Boolean);
-  const token = Symbol("avatar-done");
+  const token = Symbol("avatar-clip");
   const epoch = avatarPlaybackEpoch;
-  const clipDurationMs = Math.max(0, timeoutMs - AVATAR_DONE_TIMEOUT_GRACE_MS);
+  const chainDelayMs = Math.max(0, clipDurationMs) + AVATAR_CHAIN_TAIL_MS;
 
   let settled = false;
-  let resolveFinished: (value: AvatarDoneWaitResult | null) => void = () => undefined;
-  const finished = new Promise<AvatarDoneWaitResult | null>((resolve) => {
+  let resolveFinished: () => void = () => undefined;
+  const finished = new Promise<void>((resolve) => {
     resolveFinished = resolve;
   });
 
-  /**
-   * Arm the next CSV avatar exactly once — either when /avatar/done arrives or when
-   * CSV duration elapses. The duration timer is scheduled synchronously so a hung
-   * Done-gate status fetch can never freeze the rest of the sequence.
-   */
-  const settle = (result: AvatarDoneWaitResult | null) => {
+  /** Arm the next CSV avatar exactly once when CSV duration elapses. */
+  const settle = () => {
     if (settled) return;
     settled = true;
     clearAvatarChainTimer();
-    resolveFinished(result);
+    resolveFinished();
     if (epoch !== avatarPlaybackEpoch) {
       // Do not leave pending set — recoverStalled would no-op forever.
       if (pendingAvatarDone?.token === token) pendingAvatarDone = null;
@@ -407,58 +407,27 @@ function noteAvatarStarted(
 
   pendingAvatarDone = {
     cueNames: names,
-    timeoutMs,
+    timeoutMs: chainDelayMs,
     finished,
     token,
-    blocksNextOsc: false,
     armedAtMs: Date.now()
   };
   avatarChainEverArmed = true;
 
   clearAvatarChainTimer();
-  // CSV duration + short tail (Pixera start latency; no Done signal available).
-  const chainDelayMs = clipDurationMs + AVATAR_CHAIN_TAIL_MS;
   const onDurationElapsed = () => {
     avatarChainTimer = null;
     avatarChainDueAtMs = null;
     avatarChainDueSettle = null;
-    settle({
-      status: "timeout",
-      received: [],
-      missing: names,
-      wait_ms: chainDelayMs
-    });
+    settle();
   };
   avatarChainDueAtMs = Date.now() + chainDelayMs;
   avatarChainDueSettle = onDurationElapsed;
-  // Worker timer: survives background-tab throttling that breaks main-thread setTimeout.
-  avatarChainTimer = scheduleReliableTimeout(onDurationElapsed, chainDelayMs);
-
-  if (!names.length) {
-    // Still chain after duration — missing Pixera names must not kill the sequence.
-    return;
-  }
-
-  void (async () => {
-    try {
-      if (!(await isAvatarDoneGateEnabled())) return;
-      if (epoch !== avatarPlaybackEpoch || settled) return;
-      if (pendingAvatarDone?.token === token) {
-        pendingAvatarDone.blocksNextOsc = true;
-      }
-      const result = await waitForAvatarVideosDone(names, timeoutMs, shouldAbort);
-      if (epoch !== avatarPlaybackEpoch || settled) return;
-      settle(result);
-    } catch (err) {
-      if (!(err instanceof DOMException && err.name === "AbortError")) {
-        console.warn("[avatar] done-gate wait failed:", err);
-      }
-      // Duration timer remains armed as fallback.
-    }
-  })();
+  // Main-thread timer: reliable while the Aufführung tab stays foreground.
+  avatarChainTimer = setTimeout(onDurationElapsed, chainDelayMs);
 }
 
-/** Bind plan/fired callbacks so Done can chain the next CSV avatar without delay. */
+/** Bind plan/fired callbacks so CSV duration can chain the next avatar without delay. */
 export function bindAvatarChainContext(ctx: AvatarChainContext | null): void {
   avatarChainContext = ctx;
   if (ctx) {
@@ -469,7 +438,7 @@ export function bindAvatarChainContext(ctx: AvatarChainContext | null): void {
 }
 
 /**
- * Full reset between runs: drops Done-gate, chain context, debounce timer, and the
+ * Full reset between runs: drops pending clip, chain context, debounce timer, and the
  * serial fire lock so a stuck first show cannot block the second.
  */
 export function resetAvatarPlaybackState(): void {
@@ -490,7 +459,7 @@ export function resetAvatarPlaybackState(): void {
   pendingAvatarPositionFire = null;
 }
 
-/** Clear in-flight done-wait (tests / abort). Also resets fire-lock for re-entry safety. */
+/** Clear in-flight CSV wait (tests / abort). Also resets fire-lock for re-entry safety. */
 export function clearPendingAvatarDoneGate(): void {
   resetAvatarPlaybackState();
 }
@@ -505,16 +474,15 @@ export function injectStuckPendingAvatarForTests(cueNames: string[] = ["stuck"])
   pendingAvatarDone = {
     cueNames,
     timeoutMs: 1_000,
-    finished: Promise.resolve(null),
+    finished: Promise.resolve(),
     token: Symbol("stuck-pending"),
-    blocksNextOsc: false,
     armedAtMs: Date.now()
   };
 }
 
 /**
  * Test helper — pending + dueAt still armed but wall clock already past timeout
- * (lost Worker/main timers, settle never ran).
+ * (lost duration callback, settle never ran).
  */
 export function injectOverduePendingAvatarForTests(
   cueNames: string[] = ["overdue"],
@@ -524,13 +492,12 @@ export function injectOverduePendingAvatarForTests(
   avatarChainAdvancing = false;
   avatarChainAdvancingSinceMs = null;
   clearAvatarChainRetryTimer();
-  const armedAtMs = Date.now() - (timeoutMs + AVATAR_CHAIN_TAIL_MS + AVATAR_PENDING_STALL_GRACE_MS + 500);
+  const armedAtMs = Date.now() - (timeoutMs + AVATAR_PENDING_STALL_GRACE_MS + 500);
   pendingAvatarDone = {
     cueNames,
     timeoutMs,
     finished: new Promise(() => undefined),
     token: Symbol("overdue-pending"),
-    blocksNextOsc: false,
     armedAtMs
   };
   // dueAt still in the future so flushOverdue alone would no-op — wall-clock path must clear.
@@ -539,7 +506,7 @@ export function injectOverduePendingAvatarForTests(
   avatarChainTimer = null;
 }
 
-/** Block narrator until any in-flight avatar finishes (e.g. show end). */
+/** Block narrator until any in-flight avatar CSV duration finishes (e.g. show end). */
 export async function flushPendingAvatarDoneGate(shouldAbort: () => boolean): Promise<void> {
   await waitForPendingAvatarDone(shouldAbort, true);
   if (pendingAvatarDone) pendingAvatarDone = null;
@@ -674,29 +641,45 @@ export async function fireAvatarSegmentIfDue(
   options?: { pauseNarratorForPending?: boolean }
 ): Promise<boolean> {
   if (shouldAbort()) return false;
-  // Avatars run on clip duration / Done only — never gate on playbackPaused.
+  // Avatars run on clip duration only — never gate on playbackPaused.
   // Pause may hold TTS (timing clock) but must not stall the Pixera CSV sequence.
   const pauseNarrator = options?.pauseNarratorForPending === true;
   await waitForPendingAvatarDone(shouldAbort, pauseNarrator);
   if (shouldAbort()) return false;
+
+  const layers = segment.avatar_layers.filter((layer) => Boolean(layer.visual_cue));
+  if (!layers.length) return false;
+
+  // Parallel layers: one slow/hung HTTP must not delay siblings or the CSV timer
+  // (seen as wo4_nicolas → wo4_schimpanse ~68s same-segment splits).
   let anySent = false;
+  let armed = false;
   const cueNames: string[] = [];
-  for (const layer of segment.avatar_layers) {
-    if (!layer.visual_cue) continue;
-    if (shouldAbort()) return anySent;
-    const result = await executeAvatarVisualCue(
-      layer.visual_cue,
-      anarchyLevel,
-      onCommands,
-      shouldAbort,
-      segment.text_excerpt
-    );
-    anySent = anySent || result.executed;
-    cueNames.push(...result.cueNames);
-  }
-  if (anySent) {
-    noteAvatarStarted(cueNames, avatarDoneTimeoutMs(segment), shouldAbort);
-  }
+  const durationMs = avatarClipDurationMs(segment);
+  const armOnce = () => {
+    if (armed || !anySent || shouldAbort()) return;
+    armed = true;
+    noteAvatarStarted([...cueNames], durationMs, shouldAbort);
+  };
+
+  await Promise.all(
+    layers.map(async (layer) => {
+      if (shouldAbort() || !layer.visual_cue) return;
+      const result = await executeAvatarVisualCue(
+        layer.visual_cue,
+        anarchyLevel,
+        onCommands,
+        shouldAbort,
+        segment.text_excerpt
+      );
+      if (result.executed) anySent = true;
+      cueNames.push(...result.cueNames);
+      // Arm CSV chain on first success — do not wait for slower sibling layers.
+      armOnce();
+    })
+  );
+
+  armOnce();
   return anySent;
 }
 
@@ -717,34 +700,41 @@ export async function fireAvatarMomentCues(
 ): Promise<void> {
   await waitForPendingAvatarDone(shouldAbort, true);
   if (shouldAbort()) return;
-  const cueNames: string[] = [];
+  const visuals = avatarVisualCuesForMoment(moment);
+  if (!visuals.length) return;
+
   let anySent = false;
-  for (const visual of avatarVisualCuesForMoment(moment)) {
-    if (shouldAbort()) return;
-    const result = await executeAvatarVisualCue(
-      visual,
-      anarchyLevel,
-      onCommands,
-      shouldAbort,
-      moment.text_excerpt
-    );
-    anySent = anySent || result.executed;
-    cueNames.push(...result.cueNames);
-  }
-  if (anySent) {
-    const durationMs =
-      moment.avatar_layers
-        ?.map((layer) => layer.visual_cue?.duration_ms)
-        .filter((ms): ms is number => typeof ms === "number" && ms > 0)
-        .reduce((a, b) => Math.max(a, b), 0) ||
-      moment.avatar_video_cue?.duration_ms ||
-      DEFAULT_AVATAR_DONE_TIMEOUT_MS;
-    noteAvatarStarted(
-      cueNames,
-      (durationMs || DEFAULT_AVATAR_DONE_TIMEOUT_MS) + AVATAR_DONE_TIMEOUT_GRACE_MS,
-      shouldAbort
-    );
-  }
+  let armed = false;
+  const cueNames: string[] = [];
+  const durationMs =
+    moment.avatar_layers
+      ?.map((layer) => layer.visual_cue?.duration_ms)
+      .filter((ms): ms is number => typeof ms === "number" && ms > 0)
+      .reduce((a, b) => Math.max(a, b), 0) ||
+    moment.avatar_video_cue?.duration_ms ||
+    DEFAULT_AVATAR_CLIP_MS;
+  const armOnce = () => {
+    if (armed || !anySent || shouldAbort()) return;
+    armed = true;
+    noteAvatarStarted([...cueNames], durationMs || DEFAULT_AVATAR_CLIP_MS, shouldAbort);
+  };
+
+  await Promise.all(
+    visuals.map(async (visual) => {
+      if (shouldAbort()) return;
+      const result = await executeAvatarVisualCue(
+        visual,
+        anarchyLevel,
+        onCommands,
+        shouldAbort,
+        moment.text_excerpt
+      );
+      if (result.executed) anySent = true;
+      cueNames.push(...result.cueNames);
+      armOnce();
+    })
+  );
+  armOnce();
 }
 
 export function momentNeedsAvatarVisualRefresh(moment: CompositionMoment): boolean {

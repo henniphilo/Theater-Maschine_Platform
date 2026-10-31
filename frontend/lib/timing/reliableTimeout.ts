@@ -1,12 +1,12 @@
 /**
- * Timers that keep firing when the Aufführung tab is backgrounded.
+ * Optional dual-arm timers (Worker + main thread) for when a tab may be backgrounded.
  *
- * Chrome/Safari throttle main-thread setTimeout to ~1/min in background tabs,
- * which stalls the Teil-2 avatar CSV chain. Worker timers are not throttled.
+ * The Teil-2 avatar CSV chain uses plain `setTimeout` again (Aufführung tab stays
+ * foreground during shows). Keep this helper if another path needs background-safe
+ * delays.
  *
- * Production schedules **both** a Worker timer and a main-thread timer; the first
- * callback wins. That way a dead/lost Worker still advances when the tab is
- * visible, and a throttled main thread still advances via the Worker.
+ * Chrome/Safari throttle main-thread setTimeout to ~1/min in background tabs;
+ * Worker timers are not. Production schedules **both**; the first callback wins.
  *
  * In Vitest (`process.env.VITEST`) we stay on the main thread so
  * `vi.useFakeTimers()` keeps working.

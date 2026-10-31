@@ -38,7 +38,6 @@ app/db/init_db.py
 app/db/local_user.py
 app/db/session.py
 app/director/__init__.py
-app/director/avatar_done_gate.py
 app/director/light_desk_test.py
 app/director/output_targets.py
 app/director/pipeline.py
@@ -80,7 +79,6 @@ app/director/media/sound_inventory.py
 app/director/media/video_inventory.py
 app/director/outputs/__init__.py
 app/director/outputs/artnet.py
-app/director/outputs/avatar_done_listener.py
 app/director/outputs/eos_light.py
 app/director/outputs/light_scene_tracker.py
 app/director/outputs/light_tcp.py
@@ -232,7 +230,6 @@ tests/test_asset_model.py
 tests/test_asset_service.py
 tests/test_asset_upload.py
 tests/test_atmosphere_required_clips.py
-tests/test_avatar_done_gate.py
 tests/test_avatar_required_lights.py
 tests/test_avatar_speech_catalog.py
 tests/test_baerenklau_beat.py

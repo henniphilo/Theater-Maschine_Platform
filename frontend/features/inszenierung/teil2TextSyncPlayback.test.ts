@@ -43,8 +43,6 @@ vi.mock("@/lib/api/director", () => ({
     osc_commands: []
   }),
   isDirectorPerformanceAborted: () => false,
-  isAvatarDoneGateEnabled: vi.fn().mockResolvedValue(false),
-  waitForAvatarVideosDone: vi.fn().mockResolvedValue(null)
 }));
 
 vi.mock("@/features/show/cuePlayback", async (importOriginal) => {

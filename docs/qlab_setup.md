@@ -5,10 +5,9 @@ Theatermaschine sendet Video als **Pixera-OSC** (`/pixera/args/cue/apply`) und L
 ```
 Theatermaschine  →  127.0.0.1:8990  →  pixera_qlab_relay  →  QLab :53000
                  →  127.0.0.1:7000  →       (Licht)
-QLab cue/stop    →  Relay  →  /avatar/done  →  Theatermaschine :8991  (optional, Avatar-Gate)
 ```
 
-Avatar-Videos können nach Clip-Ende zurückmelden, damit Erzähler und nächster Avatar bei Drift synchron bleiben (sonst parallel) — siehe [avatar_done_gate.md](avatar_done_gate.md).
+Avatar-Clips laufen rein zeitbasiert (CSV-`duration_ms`); es gibt kein `/avatar/done`-Feedback von Pixera.
 
 Auf der Bühne entfällt der Relay; Pixera und EOS empfangen die Befehle direkt.
 
@@ -249,11 +248,6 @@ Umgebungsvariablen (optional):
 | `LIGHT_LISTEN_PORT` | `7000` | = `OSC_PORT` wenn `LIGHT_OSC_MIRROR=true` |
 | `QLAB_HOST` | `127.0.0.1` | QLab-Mac |
 | `QLAB_PORT` | `53000` | QLab OSC-Port |
-| `AVATAR_DONE_HOST` | `127.0.0.1` | Ziel für `/avatar/done` (Backend-Listener) |
-| `AVATAR_DONE_PORT` | `8991` | = `AVATAR_DONE_OSC_PORT` |
-| `QLAB_FEEDBACK_KEEPALIVE_S` | `30` | `/listen` + `/udpKeepAlive` Intervall |
-
-Avatar-Done-Gate (Sync bei Drift, sonst parallel): [avatar_done_gate.md](avatar_done_gate.md). Abschalten am Relay: `--no-qlab-feedback`.
 
 Video-Mapping:
 

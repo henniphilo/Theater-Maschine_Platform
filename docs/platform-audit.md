@@ -77,7 +77,7 @@ backend/app/
 | conversations | `/conversations` | Verlauf (Postgres) |
 | debate | `/debate` | `POST /stream`, `POST /` |
 | tts | `/tts` | `/status`, `/voices`, `/speak` |
-| director | `/director` | dialogue-event, execute, execute-layered, safety, emergency, technik, light/*, record, events, osc-log, remote-transport, avatar-done/wait |
+| director | `/director` | dialogue-event, execute, execute-layered, safety, emergency, technik, light/*, record, events, osc-log, remote-transport |
 | scripts | `/scripts` | CRUD, dramaturgy/stream, performance export/import |
 | inszenierung | `/inszenierung` | corpus CRUD, prepare (202), compose-script, export/import, analyse/komposition (Legacy) |
 | media | `/media` | sound-cues, video-cues, avatar-speech, catalog |
@@ -162,7 +162,6 @@ Nav (`AppShell`): Technik-Test, Teil 1, Teil 2.
 | Sound | `outputs/sound.py` + `sound_midi.py` | MIDI und/oder OSC | `SOUND_OUTPUT=midi` |
 | Licht | `outputs/lighting.py`, `light_tcp.py`, `eos_light.py` | TCP 1.0 + EOS OSC auf Socket; Mirror→OSC | Host `10.101.90.112:3032` |
 | Art-Net | `outputs/artnet.py` | Stub (`NotImplementedError`) | — |
-| Avatar-Done | `avatar_done_listener.py` | OSC Gate (QLab→Pixera geplant) | optional |
 
 QLab: Makefile-Targets + Scripts (Relay, Cue-Listen, Light-Patch) — Preview/Test-Pfad, nicht Kern-Runtime.
 

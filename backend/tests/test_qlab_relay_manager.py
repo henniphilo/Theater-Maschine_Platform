@@ -34,9 +34,6 @@ def _sample_config() -> QlabRelayConfig:
         light_listener_enabled=True,
         qlab_host="127.0.0.1",
         qlab_port=53000,
-        feedback_enabled=False,
-        avatar_done_host="127.0.0.1",
-        avatar_done_port=18991,
     )
 
 
@@ -48,9 +45,6 @@ def _stage_config() -> QlabRelayConfig:
         light_listener_enabled=True,
         qlab_host="127.0.0.1",
         qlab_port=53000,
-        feedback_enabled=False,
-        avatar_done_host="127.0.0.1",
-        avatar_done_port=18991,
     )
 
 

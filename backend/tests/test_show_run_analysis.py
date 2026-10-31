@@ -212,6 +212,28 @@ def test_avatar_chain_stall_when_past_clip_duration() -> None:
     assert "CSV" in stalls[0].detail or "zu lang" in stalls[0].detail
 
 
+def test_avatar_cofire_layers_not_flagged_as_stall() -> None:
+    """Multi-layer segment (~26ms) must not be compared against CSV duration."""
+    events = [
+        {"event": "run.started", "run_id": "run-test", "ts_wall": _ts(BASE, 0)},
+        _decision(offset_ms=0, cue_id="bak3_hasen", reason="Avatar-Sprache"),
+        _decision(offset_ms=26, cue_id="bak3_mavie", reason="Avatar-Sprache"),
+        _decision(offset_ms=20_506, cue_id="bak4_inge", reason="Avatar-Sprache"),
+    ]
+    report = analyze_show_run(
+        events,
+        thresholds=AnalysisThresholds(
+            avatar_duration_sec_by_cue={
+                "bak3_hasen": 20.48,
+                "bak3_mavie": 20.48,
+                "bak4_inge": 8.44,
+            },
+            avatar_stall_grace_sec=5.0,
+        ),
+    )
+    assert not any(f.kind == "avatar_chain_stall" for f in report.findings)
+
+
 def test_signal_drop_finding() -> None:
     events = [
         {"event": "run.started", "run_id": "run-test", "ts_wall": _ts(BASE, 0)},

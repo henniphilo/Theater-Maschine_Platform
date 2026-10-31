@@ -30,7 +30,9 @@ from app.services.avatar_speech_catalog import get_avatar_speech_catalog_service
 from app.services.teil2_anarchy_cues import (
     apply_anarchy_to_keyword_cue_point,
     build_keyword_cue_point,
+    balance_keyword_cue_points,
     densify_keyword_sound_cues,
+    diversify_keyword_sound_cues,
     extract_text_fallback_keywords,
     find_sentence_index_for_keyword,
     keyword_in_script,
@@ -305,9 +307,10 @@ class Teil2PrepareService:
                 "Wiederholung, rhetorische Spitze — was im Text wirklich auffällt.\n"
                 "Keine vorgegebene Themenliste, keine Schlagwort-Vorgabe von außen.\n"
                 "Jedes keyword muss wörtlich im Textabschnitt vorkommen.\n"
-                "Licht oft; Sound sparsam: nur bei starken Brüchen/Kontrasten, "
-                "cue_id aus sounds[] (nur play, keine _out/cut). Nicht jeder Cue braucht Sound.\n"
-                "Sounds sollen über mehrere Sätze wirken — lieber zu wenige Sound-Starts als Dauerfeuer.\n"
+                "Licht oft; Sound mäßig: bei Brüchen/Kontrasten, cue_id aus dem gesamten sounds[]-Pool "
+                "(nur play, keine _out/cut). Nicht jeder Cue braucht Sound.\n"
+                "Sounds dürfen ein paar Sätze halten, dann wechseln — aus dem ganzen Pool schöpfen, "
+                "keine Wiederholung hintereinander.\n"
                 "Mehrere Cues pro Abschnitt; Anarchie steigt über den Verlauf (früh dezent, spät überlagert).\n\n"
                 f"Textabschnitt:\n{chunk_text}\n\n"
                 f"Medien-Allowlist:\n{allowlist}\n\n"
@@ -324,10 +327,10 @@ class Teil2PrepareService:
                         "role": "system",
                         "content": (
                             "Teil-2-Cue-Planner: Entdecke Stichworte im Textabschnitt "
-                            "und weise Licht/Sound zu. Sound optional und sparsam — "
-                            "Betten länger halten lassen. Keine _out/cut_all. "
-                            "Keine externe Wortliste. keyword muss wörtlich im Text stehen. "
-                            "Kein Dialog. Nur JSON."
+                            "und weise Licht/Sound zu. Sound optional, mäßig wechseln — "
+                            "ganzen sounds[]-Pool nutzen, keine direkten Wiederholungen. "
+                            "Keine _out/cut_all. Keine externe Wortliste. "
+                            "keyword muss wörtlich im Text stehen. Kein Dialog. Nur JSON."
                         ),
                     },
                     {"role": "user", "content": prompt},
@@ -418,6 +421,8 @@ class Teil2PrepareService:
             self.llm.media_db,
         )
         merged_points = thin_keyword_sound_cues(merged_points)
+        merged_points = diversify_keyword_sound_cues(merged_points, self.llm.media_db)
+        merged_points = balance_keyword_cue_points(merged_points)
         return DramaturgyDecision(
             reason="Teil-2 Stichwort-Cues (Regel-Fallback ohne LLM)",
             tags=["teil2", "text_sync", "keyword", "anarchy", "fallback"],
@@ -458,12 +463,17 @@ class Teil2PrepareService:
             seen_keywords.add(norm)
             validated.append(fixed)
 
-        decision.cue_points = thin_keyword_sound_cues(
-            densify_keyword_sound_cues(
-                validated,
-                script_text,
-                sentences,
-                curve,
+        decision.cue_points = balance_keyword_cue_points(
+            diversify_keyword_sound_cues(
+                thin_keyword_sound_cues(
+                    densify_keyword_sound_cues(
+                        validated,
+                        script_text,
+                        sentences,
+                        curve,
+                        self.llm.media_db,
+                    )
+                ),
                 self.llm.media_db,
             )
         )

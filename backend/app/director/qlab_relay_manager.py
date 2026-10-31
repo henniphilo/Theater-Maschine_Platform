@@ -25,9 +25,6 @@ class QlabRelayConfig:
     light_listener_enabled: bool
     qlab_host: str
     qlab_port: int
-    feedback_enabled: bool
-    avatar_done_host: str
-    avatar_done_port: int
 
 
 _LOCALHOST = "127.0.0.1"
@@ -44,7 +41,6 @@ class QlabRelayStatus:
     light_listener_enabled: bool = True
     qlab_host: str = "127.0.0.1"
     qlab_port: int = 53000
-    feedback_enabled: bool = False
     error: str | None = None
     notice: str | None = None
 
@@ -155,7 +151,6 @@ def relay_config() -> QlabRelayConfig:
     video_host, video_port = effective_video_target()
     _light_host, light_port = effective_light_target()
     light_enabled = settings.light_uses_preview_osc()
-    feedback_enabled = settings.avatar_done_gate_enabled
     return QlabRelayConfig(
         listen_host=video_host,
         pixera_listen_port=video_port,
@@ -163,9 +158,6 @@ def relay_config() -> QlabRelayConfig:
         light_listener_enabled=light_enabled,
         qlab_host=settings.qlab_host,
         qlab_port=settings.qlab_port,
-        feedback_enabled=feedback_enabled,
-        avatar_done_host=settings.avatar_done_osc_host,
-        avatar_done_port=settings.avatar_done_osc_port,
     )
 
 
@@ -188,7 +180,6 @@ def _status_from_config(
         light_listener_enabled=config.light_listener_enabled,
         qlab_host=config.qlab_host,
         qlab_port=config.qlab_port,
-        feedback_enabled=config.feedback_enabled,
         error=error,
         notice=notice,
     )
@@ -356,15 +347,9 @@ class QlabRelayManager:
             config.qlab_host,
             "--qlab-port",
             str(config.qlab_port),
-            "--avatar-done-host",
-            config.avatar_done_host,
-            "--avatar-done-port",
-            str(config.avatar_done_port),
         ]
         if not config.light_listener_enabled:
             cmd.append("--no-light")
-        if not config.feedback_enabled:
-            cmd.append("--no-qlab-feedback")
         return cmd
 
     @staticmethod

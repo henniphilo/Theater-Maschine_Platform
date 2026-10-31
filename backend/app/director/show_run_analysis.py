@@ -307,6 +307,45 @@ def _expected_avatar_wait_sec(
     return fallback_sec, None
 
 
+def _collapse_avatar_cofires(
+    avatars: list[dict[str, Any]],
+    *,
+    window_sec: float = 0.15,
+) -> list[list[dict[str, Any]]]:
+    """Group multi-layer segment fires (~20–30ms apart) into one chain step."""
+    if not avatars:
+        return []
+    groups: list[list[dict[str, Any]]] = [[avatars[0]]]
+    for nxt in avatars[1:]:
+        gap = _gap_seconds(groups[-1][-1], nxt)
+        if gap is not None and gap <= window_sec:
+            groups[-1].append(nxt)
+        else:
+            groups.append([nxt])
+    return groups
+
+
+def _group_catalog_duration_sec(
+    group: list[dict[str, Any]],
+    durations: dict[str, float],
+) -> tuple[str, float | None]:
+    """Return (representative cue_id, max CSV duration among group)."""
+    best_id = ""
+    best_sec: float | None = None
+    for row in group:
+        cue = str(row.get("cue_id") or "")
+        key = cue.strip().lower()
+        sec = durations.get(key) if key else None
+        if sec is None:
+            if not best_id:
+                best_id = cue
+            continue
+        if best_sec is None or sec > best_sec:
+            best_sec = sec
+            best_id = cue
+    return best_id, best_sec
+
+
 def _find_avatar_gaps(
     avatars: list[dict[str, Any]],
     *,
@@ -314,20 +353,23 @@ def _find_avatar_gaps(
     grace_sec: float,
     durations: dict[str, float],
 ) -> list[Finding]:
-    """Stall only when wait exceeds previous clip CSV duration (+ grace)."""
+    """Stall only when wait exceeds previous clip CSV duration (+ grace).
+
+    Near-simultaneous multi-layer fires are collapsed so bak3_hasen→bak3_mavie
+    (26ms) is not compared against CSV duration.
+    """
     findings: list[Finding] = []
-    for prev, nxt in zip(avatars, avatars[1:]):
-        gap = _gap_seconds(prev, nxt)
+    groups = _collapse_avatar_cofires(avatars)
+    for prev_group, nxt_group in zip(groups, groups[1:]):
+        gap = _gap_seconds(prev_group[-1], nxt_group[0])
         if gap is None:
             continue
-        prev_cue = str(prev.get("cue_id") or "")
-        next_cue = str(nxt.get("cue_id") or "")
-        stall_after, catalog_sec = _expected_avatar_wait_sec(
-            prev_cue,
-            durations=durations,
-            fallback_sec=fallback_sec,
-            grace_sec=grace_sec,
-        )
+        prev_cue, catalog_sec = _group_catalog_duration_sec(prev_group, durations)
+        next_cue = str(nxt_group[0].get("cue_id") or "")
+        if catalog_sec is not None:
+            stall_after = catalog_sec + grace_sec
+        else:
+            stall_after = fallback_sec
         if gap < stall_after:
             continue
         over_by = gap - (catalog_sec if catalog_sec is not None else fallback_sec)
@@ -347,7 +389,7 @@ def _find_avatar_gaps(
                 severity="warn" if over_by < grace_sec * 2 else "critical",
                 kind="avatar_chain_stall",
                 detail=detail,
-                ts_wall=str(prev.get("ts_wall") or "") or None,
+                ts_wall=str(prev_group[-1].get("ts_wall") or "") or None,
                 duration_ms=gap * 1000.0,
                 cues=[prev_cue, next_cue],
             )

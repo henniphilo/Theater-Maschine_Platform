@@ -277,6 +277,10 @@ def _fill_free_projectors_at(
     return points, next_index
 
 
+# Spread multi-beamer fills so one tick does not fire every free surface in the same ms.
+ATMO_BEAMER_STAGGER_SEC = 1.35
+
+
 def _rule_based_atmosphere_points(
     *,
     script_text: str,
@@ -289,6 +293,7 @@ def _rule_based_atmosphere_points(
     """Walk the show timeline and fill free (non-avatar) beamers with B-roll.
 
     Density and how many free surfaces get a clip both escalate with the anarchy curve.
+    Free beamers are staggered in time (elegant, still anarchic) — early coverage stays.
     ``sentences`` / ``dramaturgy`` are unused but kept for call-site compatibility.
     """
     _ = (sentences, dramaturgy)
@@ -307,10 +312,9 @@ def _rule_based_atmosphere_points(
         video_min, video_max = atmosphere_intervals_for_anarchy(anarchy)
 
         base_step = max(2.5, (video_min + video_max) / 2.0)
-        # Beginning: longer holds so Begleitclips breathe on free beamers before overwrite.
-        # End of show keeps the denser anarchy intervals unchanged.
+        # Mild early hold — Begleitclips appear from t=0, but do not overwrite instantly.
         early_phase_end = min(50.0, total_sec * 0.4)
-        early_multiplier = 1.55 if time_sec < early_phase_end else 1.0
+        early_multiplier = 1.2 if time_sec < early_phase_end else 1.0
         step = base_step * early_multiplier
 
         free = free_projectors_at(windows, time_sec)
@@ -321,8 +325,19 @@ def _rule_based_atmosphere_points(
             pool=pool,
             clip_index=clip_index,
         )
-        points.extend(batch)
-        time_sec += step
+        placed = 0
+        for index, point in enumerate(batch):
+            offset = round(time_sec + index * ATMO_BEAMER_STAGGER_SEC, 2)
+            if offset >= total_sec:
+                break
+            projector = point.visual.projector if point.visual else None
+            # Stagger must not land on a beamer the avatar owns at fire time.
+            if projector and projector in reserved_projectors_at(windows, offset):
+                continue
+            points.append(point.model_copy(update={"time_offset_sec": offset}))
+            placed += 1
+        stagger_span = max(0.0, (placed - 1) * ATMO_BEAMER_STAGGER_SEC) if placed else 0.0
+        time_sec += max(step, stagger_span + video_min * 0.45)
 
     points.sort(key=lambda item: item.time_offset_sec)
     return points

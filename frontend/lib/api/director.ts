@@ -53,7 +53,6 @@ export async function armDirectorForPerformance(options?: { tryout?: boolean }):
   await stopTail;
   performanceOscAbort?.abort();
   performanceOscAbort = new AbortController();
-  resetAvatarDoneGateCache();
   if (options?.tryout != null) {
     noteDesiredPerformanceTryout(options.tryout);
   } else {
@@ -130,68 +129,10 @@ export type DirectorStatus = {
   last_osc_commands: OscCommand[];
   dramaturgy_state?: Record<string, unknown>;
   open_proposals?: CueProposal[];
-  avatar_done_gate_enabled?: boolean;
-  avatar_done_source?: string;
   active_production_id?: string | null;
   active_production_name?: string | null;
   active_production_slug?: string | null;
 };
-
-export type AvatarDoneWaitStatus = "disabled" | "skipped" | "done" | "timeout" | "cancelled";
-
-export type AvatarDoneWaitResult = {
-  status: AvatarDoneWaitStatus;
-  received: string[];
-  missing: string[];
-  wait_ms: number;
-};
-
-let cachedAvatarDoneGateEnabled: boolean | null = null;
-
-export function resetAvatarDoneGateCache(): void {
-  cachedAvatarDoneGateEnabled = null;
-}
-
-export async function isAvatarDoneGateEnabled(): Promise<boolean> {
-  if (cachedAvatarDoneGateEnabled != null) return cachedAvatarDoneGateEnabled;
-  try {
-    const status = await fetchDirectorStatus();
-    cachedAvatarDoneGateEnabled = Boolean(status.avatar_done_gate_enabled);
-  } catch {
-    cachedAvatarDoneGateEnabled = false;
-  }
-  return cachedAvatarDoneGateEnabled;
-}
-
-export async function postAvatarDoneWait(
-  cueNames: string[],
-  timeoutMs: number,
-  signal?: AbortSignal
-): Promise<AvatarDoneWaitResult> {
-  const res = await apiFetch("/director/avatar-done/wait", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ cue_names: cueNames, timeout_ms: timeoutMs }),
-    signal
-  });
-  if (!res.ok) throw new Error("Avatar done wait failed");
-  return res.json();
-}
-
-/** Wait until QLab (via relay) reports avatar video completion, or timeout. */
-export async function waitForAvatarVideosDone(
-  cueNames: string[],
-  timeoutMs: number,
-  shouldAbort: () => boolean
-): Promise<AvatarDoneWaitResult | null> {
-  const names = cueNames.map((n) => n.trim()).filter(Boolean);
-  if (!names.length) return null;
-  if (!(await isAvatarDoneGateEnabled())) return null;
-  if (shouldAbort() || isDirectorPerformanceAborted()) {
-    return { status: "cancelled", received: [], missing: names, wait_ms: 0 };
-  }
-  return postAvatarDoneWait(names, timeoutMs, directorPerformanceSignal());
-}
 
 export type SafetyUpdate = Partial<DirectorSafety>;
 
@@ -578,7 +519,6 @@ export type QlabRelayStatus = {
   light_listener_enabled: boolean;
   qlab_host: string;
   qlab_port: number;
-  feedback_enabled: boolean;
   error?: string | null;
   notice?: string | null;
 };

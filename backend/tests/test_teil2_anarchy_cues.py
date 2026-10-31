@@ -3,17 +3,22 @@
 from app.director.cues.cue_models import CuePoint, CuePointTrigger, LightCue, SoundCue
 from app.schemas.inszenierung import AnarchyCurve
 from app.services.teil2_anarchy_cues import (
+    KEYWORD_CUES_PER_SENTENCE,
     anarchy_at,
     anarchy_for_char_offset,
     anarchy_function,
     apply_anarchy_to_keyword_cue_point,
+    balance_keyword_cue_points,
     build_keyword_cue_point,
     densify_keyword_sound_cues,
+    diversify_keyword_sound_cues,
     extract_text_fallback_keywords,
     is_playable_sound_id,
     keyword_in_script,
     min_keyword_cues_for_script,
+    pick_sound_id,
     playable_dramaturgy_sounds,
+    playable_sound_pool,
     sound_volume_for_anarchy,
     teil2_cue_allowlist,
     thin_keyword_sound_cues,
@@ -91,6 +96,50 @@ def test_extract_text_fallback_keywords_uses_script_surface_only() -> None:
     assert all(keyword_in_script(keyword, script) for keyword, _, _ in keywords)
 
 
+def test_extract_fallback_spreads_keywords_across_sentences() -> None:
+    """Long first sentence must not hoard more than KEYWORD_CUES_PER_SENTENCE."""
+    long = (
+        "21. Der Bärenklau: Pflanzen Schuld Maschine Puls Tausch Bruch Nachhall "
+        "Erinnerung Glitch Käfig Echo Metall."
+    )
+    short = [
+        "Der Delphin spricht.",
+        "Das Lamm bleibt.",
+        "Der Wolf wartet.",
+        "Die Krabbe flieht.",
+    ]
+    script = " ".join([long, *short])
+    sentences = [long, *short]
+    curve = AnarchyCurve(start=0.35, end=1.0)
+    keywords = extract_text_fallback_keywords(
+        script, sentences, curve, min_keywords=8, max_keywords=40
+    )
+    from collections import Counter
+
+    per_sentence = Counter(sent_idx for _, sent_idx, _ in keywords)
+    assert per_sentence
+    assert max(per_sentence.values()) <= KEYWORD_CUES_PER_SENTENCE
+    assert len(per_sentence) >= 3
+
+
+def test_balance_keyword_cue_points_caps_per_sentence() -> None:
+    points = [
+        build_keyword_cue_point("eins", 0, 0.4, slot=0),
+        build_keyword_cue_point("zwei", 0, 0.4, slot=1),
+        build_keyword_cue_point("drei", 0, 0.4, slot=2),
+        build_keyword_cue_point("vier", 1, 0.5, slot=3),
+    ]
+    balanced = balance_keyword_cue_points(points, max_per_sentence=2)
+    from collections import Counter
+
+    counts = Counter(point.sentence_index or 0 for point in balanced)
+    assert counts[0] == 2
+    assert counts[1] == 1
+    assert all(
+        point.sound and is_playable_sound_id(point.sound.cue_id) for point in balanced
+    )
+
+
 def test_keyword_in_script_is_case_insensitive() -> None:
     assert keyword_in_script("Delphin", "Der delphin spricht.")
     assert not keyword_in_script("Wolf", "Der Delphin spricht.")
@@ -101,16 +150,35 @@ def test_min_keyword_cues_scales_with_script_length() -> None:
     assert min_keyword_cues_for_script("x" * 5000) >= 27
 
 
-def test_allowlist_and_picks_use_play_cues_only() -> None:
+def test_allowlist_and_picks_use_full_play_pool() -> None:
     allowlist = teil2_cue_allowlist()
     assert allowlist["sounds"]
     assert all(item["action"] == "play" for item in allowlist["sounds"])
     from app.director.media.database import MediaDatabase
 
     db = MediaDatabase()
-    playable = playable_dramaturgy_sounds(db.dramaturgy_sounds)
+    playable = playable_sound_pool(db)
     assert playable
     assert all(sound.action == "play" for sound in playable)
+    allowlist_ids = {item["id"] for item in allowlist["sounds"]}
+    assert allowlist_ids == {sound.id for sound in playable}
+    # Full catalog play cues, not only dramaturgy_active subset.
+    assert len(playable) >= len(playable_dramaturgy_sounds(db.dramaturgy_sounds))
+    assert "stallluft_digital" in allowlist_ids
+
+
+def test_pick_sound_id_cycles_through_pool() -> None:
+    pool = playable_sound_pool()
+    assert len(pool) >= 4
+    recent: list[str] = []
+    picked: list[str] = []
+    for slot in range(len(pool)):
+        cue_id = pick_sound_id(slot, 0.5, pool, recent=recent)
+        assert cue_id is not None
+        assert is_playable_sound_id(cue_id)
+        picked.append(cue_id)
+        recent.append(cue_id)
+    assert len(set(picked)) == len(pool)
 
 
 def test_apply_anarchy_replaces_stop_sound_with_play() -> None:
@@ -156,7 +224,7 @@ def test_densify_fills_wide_sound_gaps_between_sentences() -> None:
     indexes = sorted(point.sentence_index or 0 for point in sound_points)
     gaps = [right - left for left, right in zip(indexes, indexes[1:])]
     assert gaps
-    assert max(gaps) <= 8
+    assert max(gaps) <= 5
 
 
 def test_thin_keyword_sound_cues_keeps_light_and_widens_gaps() -> None:
@@ -178,12 +246,12 @@ def test_thin_keyword_sound_cues_keeps_light_and_widens_gaps() -> None:
         CuePoint(
             trigger=CuePointTrigger.KEYWORD,
             keyword="drei",
-            sentence_index=8,
+            sentence_index=6,
             sound=SoundCue(cue_id="drone"),
             light=LightCue(scene_id="saallicht"),
         ),
     ]
-    thinned = thin_keyword_sound_cues(points, min_gap_sentences=6)
+    thinned = thin_keyword_sound_cues(points, min_gap_sentences=4)
     assert thinned[0].sound is not None
     assert thinned[0].light is not None
     assert thinned[1].sound is None
@@ -194,4 +262,37 @@ def test_thin_keyword_sound_cues_keeps_light_and_widens_gaps() -> None:
         for point in thinned
         if point.sound and is_playable_sound_id(point.sound.cue_id)
     ]
-    assert sound_indexes == [0, 8]
+    assert sound_indexes == [0, 6]
+
+
+def test_diversify_keyword_sound_cues_avoids_consecutive_repeats() -> None:
+    points = [
+        CuePoint(
+            trigger=CuePointTrigger.KEYWORD,
+            keyword="eins",
+            sentence_index=0,
+            sound=SoundCue(cue_id="maschinen_grundader"),
+        ),
+        CuePoint(
+            trigger=CuePointTrigger.KEYWORD,
+            keyword="zwei",
+            sentence_index=5,
+            sound=SoundCue(cue_id="maschinen_grundader"),
+        ),
+        CuePoint(
+            trigger=CuePointTrigger.KEYWORD,
+            keyword="drei",
+            sentence_index=10,
+            sound=SoundCue(cue_id="maschinen_grundader"),
+        ),
+    ]
+    diversified = diversify_keyword_sound_cues(points)
+    ids = [
+        point.sound.cue_id
+        for point in diversified
+        if point.sound and is_playable_sound_id(point.sound.cue_id)
+    ]
+    assert len(ids) == 3
+    assert ids[0] != ids[1]
+    assert ids[1] != ids[2]
+    assert len(set(ids)) >= 2

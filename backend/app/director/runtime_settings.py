@@ -30,8 +30,6 @@ RuntimeSettingKey = Literal[
     "teil2_atmosphere_use_llm",
     "teil2_use_analyse_llm",
     "teil2_dramaturgy_chunk_size",
-    "avatar_done_gate_enabled",
-    "avatar_done_source",
     "part1_workshop_preview_hardware",
     "director_execute_mode",
     "signal_trace_enabled",
@@ -50,8 +48,6 @@ ALLOWLIST: frozenset[str] = frozenset(
         "teil2_atmosphere_use_llm",
         "teil2_use_analyse_llm",
         "teil2_dramaturgy_chunk_size",
-        "avatar_done_gate_enabled",
-        "avatar_done_source",
         "part1_workshop_preview_hardware",
         "director_execute_mode",
         "signal_trace_enabled",
@@ -63,7 +59,6 @@ _VALIDATORS: dict[str, Any] = {
     "light_output": frozenset({"tcp", "osc", "mirror"}),
     "visual_output": frozenset({"pixera", "touchdesigner", "both"}),
     "sound_output": frozenset({"osc", "midi", "both"}),
-    "avatar_done_source": frozenset({"qlab", "pixera", "manual"}),
     "director_execute_mode": frozenset({"immediate", "sequenced"}),
 }
 
@@ -128,7 +123,6 @@ def _validate_value(key: str, value: Any) -> Any:
         "sound_osc_mirror",
         "teil2_atmosphere_use_llm",
         "teil2_use_analyse_llm",
-        "avatar_done_gate_enabled",
         "part1_workshop_preview_hardware",
         "signal_trace_enabled",
     }:
@@ -160,23 +154,6 @@ def _side_effects(changed: set[str]) -> None:
             refresh_pipeline_targets()
         except Exception:
             logger.exception("Failed to refresh pipeline targets after settings change")
-
-    if "avatar_done_gate_enabled" in changed or "avatar_done_source" in changed:
-        try:
-            from app.director.outputs.avatar_done_listener import (
-                start_avatar_done_listener,
-                stop_avatar_done_listener,
-            )
-
-            stop_avatar_done_listener()
-            if settings.avatar_done_gate_enabled:
-                start_avatar_done_listener(
-                    host=settings.avatar_done_osc_host,
-                    port=settings.avatar_done_osc_port,
-                )
-        except Exception:
-            logger.exception("Failed to restart avatar-done listener")
-
 
 def load_persisted_overrides() -> None:
     """Load overrides from disk once (call from app lifespan)."""

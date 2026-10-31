@@ -181,24 +181,9 @@ class DirectorStatusResponse(BaseModel):
     last_osc_commands: list[OscCommand] = Field(default_factory=list)
     dramaturgy_state: dict[str, object] = Field(default_factory=dict)
     open_proposals: list[CueProposal] = Field(default_factory=list)
-    avatar_done_gate_enabled: bool = False
-    avatar_done_gate: dict[str, object] = Field(default_factory=dict)
-    avatar_done_source: str = "qlab"
     active_production_id: str | None = None
     active_production_name: str | None = None
     active_production_slug: str | None = None
-
-
-class AvatarDoneWaitRequest(BaseModel):
-    cue_names: list[str] = Field(default_factory=list)
-    timeout_ms: int = Field(default=120_000, ge=0, le=600_000)
-
-
-class AvatarDoneWaitResponse(BaseModel):
-    status: Literal["disabled", "skipped", "done", "timeout", "cancelled"]
-    received: list[str] = Field(default_factory=list)
-    missing: list[str] = Field(default_factory=list)
-    wait_ms: int = 0
 
 
 class OscTestRequest(BaseModel):
@@ -371,7 +356,6 @@ class QlabRelayStatusResponse(BaseModel):
     light_listener_enabled: bool
     qlab_host: str
     qlab_port: int
-    feedback_enabled: bool
     error: str | None = None
     notice: str | None = None
 

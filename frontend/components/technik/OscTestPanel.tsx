@@ -531,7 +531,6 @@ export function OscTestPanel() {
                   ? `aktiv · PID ${relayStatus?.pid ?? "—"}`
                   : "aktiv (extern — z. B. make qlab-relay)"
                 : "inaktiv"}
-              {relayStatus?.feedback_enabled ? " · Avatar-Done-Feedback" : null}
             </p>
           </div>
         </div>
